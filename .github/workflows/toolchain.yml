@@ -31,5 +31,6 @@ jobs:
         with:
           name: toolchain-${{ matrix.gate }}-${{ github.sha }}
           path: .build/
+          include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
