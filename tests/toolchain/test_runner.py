@@ -78,6 +78,7 @@ class RunnerTests(unittest.TestCase):
         # still requires a spawned child and verifies it cannot survive timeout.
         step = self.process(code, timeout=5)
         self.assertEqual(step['result'], 'TIMEOUT')
+        self.assertEqual(step['returncode'], -signal.SIGKILL)
         self.assertTrue(pidfile.is_file(), 'Timeout fixture did not start its child within five seconds')
         pid = int(pidfile.read_text())
         # An unreaped zombie is stopped; it cannot continue compiling or solving.

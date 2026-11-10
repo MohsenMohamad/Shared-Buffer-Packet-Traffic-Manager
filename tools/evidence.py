@@ -55,7 +55,7 @@ def execute(argv, directory, stem, timeout, cwd=None, env=None):
                     os.killpg(process.pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
-                process.wait()
+                returncode = process.wait()
                 result, error = 'TIMEOUT', f'Timeout after {timeout}s; process group killed'
         except OSError as exc:
             result, error = 'TOOL_ERROR', str(exc)
