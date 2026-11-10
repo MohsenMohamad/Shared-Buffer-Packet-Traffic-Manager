@@ -1,0 +1,344 @@
+{
+  "schema_version": 1,
+  "gate": "G0",
+  "scope": "Native toolchain capability fixtures only; no traffic-manager hardware validation",
+  "result": "PASS",
+  "base_commit": "e3d40edf942e00fb5c0e5d9a86a480e8931c3ac7",
+  "validated_revision": "6e1365a47eb11bd5caa72e92a0016ef019c6e8e4",
+  "command": "make ci JOBS=2",
+  "raw_artifact_directory": ".build/runs/ci-2026-11-10T232033.801563+0000-8882afad",
+  "start_utc": "2026-11-10T23:20:33.816338+00:00",
+  "end_utc": "2026-11-10T23:24:58.635822+00:00",
+  "dependency_digests": {
+    "tools/dependencies.json": "ee72fb11c5b7ebeecb0d207936969810358cf6ff36b236f6d28799730397db15",
+    "tools/packages.lock.json": "ec22b5d0f143c715413302386e67c49b23e138f91560590fd3f3a125ab99922a"
+  },
+  "constraint_digests": {
+    "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+    "tests/toolchain/timing.sdc": "d64d496e74e5e51fb1456b9a9cd6b658fb3d32524ae3ea7f59d0f6bdac809e73"
+  },
+  "fixture_digests": {
+    "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+    "tests/toolchain/counter.sv": "8a895c2fe1e3ee2eaba5929ea917df7d72bace177f94459dd6eb0a2d167e0964",
+    "tests/toolchain/four_state.sv": "4f841fe97930d6e35eaacac4ebee9ecc03ff3d6f15a8d245267e81615eb45a8e",
+    "tests/toolchain/mapping.v": "34328fc3efa5282533ecf1c8cabce515c425936a5555a93c9e358a916c2db9dc",
+    "tests/toolchain/test_runner.py": "9b3f870edc946bae4b84bee62c97730b0303b8126e1e6ef457af0839634cce76",
+    "tests/toolchain/timing.sdc": "d64d496e74e5e51fb1456b9a9cd6b658fb3d32524ae3ea7f59d0f6bdac809e73",
+    "tests/toolchain/timing.tcl": "901413f701efcfc679a8de2413368831f91c20a3eb4b2ae5be2489ee72c8589c",
+    "tests/toolchain/uvm_smoke.sv": "1a3ce89d69e229353bc61b5060a05c618ce3056adfb637bc4854297b6892d08d"
+  },
+  "tool_versions": {
+    "python": "Python 3.12.14",
+    "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261110-e3d40ed (mod)",
+    "verilator_coverage": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261110-e3d40ed (mod)",
+    "yosys": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+    "abc": "ABC command line: \"version\".\n\nUC Berkeley, ABC 1.01 (compiled May  4 2025 16:37:33)",
+    "sby": "SBY v0.71",
+    "z3": "Z3 version 4.13.3 - 64 bit",
+    "opensta": "2.0.17",
+    "compiler": "g++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "make": "GNU Make 4.4.1\nBuilt for x86_64-pc-linux-gnu\nCopyright (C) 1988-2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.",
+    "bash": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)\nCopyright (C) 2022 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\nThis is free software; you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law."
+  },
+  "cases": {
+    "versions": {
+      "result": "PASS",
+      "returncodes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "cxx20": {
+      "result": "PASS",
+      "returncodes": [
+        0,
+        0
+      ]
+    },
+    "solver-sat-unsat": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "repository-contracts": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "runner-unit": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "lint-fixture": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "compile-error-rejection": {
+      "result": "PASS",
+      "returncodes": [
+        1
+      ]
+    },
+    "uvm-build": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "uvm-seed17": {
+      "result": "PASS",
+      "returncodes": [
+        0,
+        0
+      ]
+    },
+    "uvm-seed19": {
+      "result": "PASS",
+      "returncodes": [
+        0,
+        0
+      ]
+    },
+    "uvm-replay": {
+      "result": "PASS",
+      "returncodes": [
+        0,
+        0
+      ]
+    },
+    "uvm-held-data-mutation": {
+      "result": "PASS",
+      "returncodes": [
+        1
+      ]
+    },
+    "uvm-seed-replay": {
+      "result": "PASS",
+      "returncodes": []
+    },
+    "formal-prove": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "formal-cover": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "formal-mutation": {
+      "result": "PASS",
+      "returncodes": [
+        2
+      ]
+    },
+    "mapped-synthesis": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    },
+    "sta-max-min": {
+      "result": "PASS",
+      "returncodes": [
+        0
+      ]
+    }
+  },
+  "uvm": {
+    "uvm-seed17": {
+      "seed": 17,
+      "transactions": 64,
+      "transaction_digest": "6f53ba93",
+      "coverage": {
+        "owned_code_points": {
+          "line": {
+            "hit": 17,
+            "total": 26
+          },
+          "expr": {
+            "hit": 8,
+            "total": 11
+          },
+          "branch": {
+            "hit": 11,
+            "total": 32
+          },
+          "toggle": {
+            "hit": 141,
+            "total": 142
+          },
+          "covergroup": {
+            "hit": 17,
+            "total": 19
+          }
+        },
+        "functional_bins": {
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[0]": 15,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[1]": 13,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[2]": 14,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[3]": 22,
+          "tm_cap_pkg::tm_cap_test::cg.l.short_pkt": 2,
+          "tm_cap_pkg::tm_cap_test::cg.l.mid_pkt": 23,
+          "tm_cap_pkg::tm_cap_test::cg.l.long_pkt": 39,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],long_pkt>": 8,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],mid_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],short_pkt>": 0,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],long_pkt>": 6,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],mid_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],short_pkt>": 0,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],long_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],mid_pkt>": 6,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],short_pkt>": 1,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],long_pkt>": 18,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],mid_pkt>": 3,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],short_pkt>": 1
+        }
+      }
+    },
+    "uvm-seed19": {
+      "seed": 19,
+      "transactions": 64,
+      "transaction_digest": "fe8b80f9",
+      "coverage": {
+        "owned_code_points": {
+          "line": {
+            "hit": 17,
+            "total": 26
+          },
+          "expr": {
+            "hit": 8,
+            "total": 11
+          },
+          "branch": {
+            "hit": 11,
+            "total": 32
+          },
+          "toggle": {
+            "hit": 141,
+            "total": 142
+          },
+          "covergroup": {
+            "hit": 17,
+            "total": 19
+          }
+        },
+        "functional_bins": {
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[0]": 17,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[1]": 11,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[2]": 14,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[3]": 22,
+          "tm_cap_pkg::tm_cap_test::cg.l.short_pkt": 4,
+          "tm_cap_pkg::tm_cap_test::cg.l.mid_pkt": 32,
+          "tm_cap_pkg::tm_cap_test::cg.l.long_pkt": 28,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],long_pkt>": 5,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],mid_pkt>": 12,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],short_pkt>": 0,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],long_pkt>": 6,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],mid_pkt>": 4,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],short_pkt>": 1,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],long_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],mid_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],short_pkt>": 0,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],long_pkt>": 10,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],mid_pkt>": 9,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],short_pkt>": 3
+        }
+      }
+    },
+    "uvm-replay": {
+      "seed": 17,
+      "transactions": 64,
+      "transaction_digest": "6f53ba93",
+      "coverage": {
+        "owned_code_points": {
+          "line": {
+            "hit": 17,
+            "total": 26
+          },
+          "expr": {
+            "hit": 8,
+            "total": 11
+          },
+          "branch": {
+            "hit": 11,
+            "total": 32
+          },
+          "toggle": {
+            "hit": 141,
+            "total": 142
+          },
+          "covergroup": {
+            "hit": 17,
+            "total": 19
+          }
+        },
+        "functional_bins": {
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[0]": 15,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[1]": 13,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[2]": 14,
+          "tm_cap_pkg::tm_cap_test::cg.q.queues[3]": 22,
+          "tm_cap_pkg::tm_cap_test::cg.l.short_pkt": 2,
+          "tm_cap_pkg::tm_cap_test::cg.l.mid_pkt": 23,
+          "tm_cap_pkg::tm_cap_test::cg.l.long_pkt": 39,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],long_pkt>": 8,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],mid_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[0],short_pkt>": 0,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],long_pkt>": 6,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],mid_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[1],short_pkt>": 0,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],long_pkt>": 7,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],mid_pkt>": 6,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[2],short_pkt>": 1,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],long_pkt>": 18,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],mid_pkt>": 3,
+          "tm_cap_pkg::tm_cap_test::cg.ql.<queues[3],short_pkt>": 1
+        }
+      }
+    }
+  },
+  "seed_replay_digests": [
+    "6f53ba93",
+    "fe8b80f9",
+    "6f53ba93"
+  ],
+  "mapped_cells": {
+    "DFF_X1": 1,
+    "XOR2_X1": 1
+  },
+  "mapped_area": 6.118,
+  "limits": [
+    {
+      "test": "four-state-reproducer",
+      "result": "UNSUPPORTED",
+      "reason": "Executed separately at the validated revision; Verilator cannot retain X/Z"
+    },
+    {
+      "test": "uvm-dpi-backdoor",
+      "result": "NOT_RUN",
+      "reason": "Outside UVM_NO_DPI baseline"
+    },
+    {
+      "test": "traffic-manager-hardware",
+      "result": "NOT_IMPLEMENTED",
+      "reason": "Later implementation tasks"
+    }
+  ]
+}

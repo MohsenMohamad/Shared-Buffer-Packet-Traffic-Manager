@@ -2,7 +2,7 @@
 
 | Gate | Status | Evidence |
 |---|---|---|
-| G0 Toolchain | PENDING | P00 |
+| G0 Toolchain | PASS (native capability fixtures) | [P00 evidence](results/P00-toolchain.md) |
 | G1 Contracts | PENDING | P01 |
 | G2 Components | PENDING | P02–P08 |
 | G3 Vertical path | PENDING | P09 |
