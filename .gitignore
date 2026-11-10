@@ -1,0 +1,12 @@
+.build/
+.deps/
+.tools/
+.work/
+.venv/
+__pycache__/
+*.pyc
+*.vcd
+*.fst
+coverage.dat
+.env
+.env.*
