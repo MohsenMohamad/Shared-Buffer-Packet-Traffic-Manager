@@ -1,0 +1,35 @@
+name: Toolchain capabilities
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capability:
+    name: capability-${{ matrix.gate }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        gate: [uvm, formal, synth]
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Bootstrap compiler and native build prerequisites
+        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man
+      - name: Install checksum-locked toolchain
+        run: make setup JOBS=2
+      - name: Qualify installed versions and selected capability
+        run: make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test ${{ matrix.gate }}'
+      - name: Retain manifests, separate logs, coverage, traces and mapped netlists
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: toolchain-${{ matrix.gate }}-${{ github.sha }}
+          path: .build/
+          retention-days: 14
+          if-no-files-found: error

@@ -6,7 +6,7 @@ Default configuration: four 64-bit packet inputs, sixteen logical queues, one ou
 
 ## Project state
 
-This initial repository contains the implementation specification, staged work items and tool-capability test sources. Traffic-manager RTL and its subsystem verification are not yet delivered. Track integration gates in [docs/status.md](docs/status.md).
+This repository contains the implementation specification, staged work items and executable toolchain capability gates. Traffic-manager RTL and its subsystem verification are not yet delivered. Track integration gates in [docs/status.md](docs/status.md).
 
 ## Documentation
 
@@ -14,5 +14,6 @@ This initial repository contains the implementation specification, staged work i
 - [Implementation plan](docs/implementation/plan.md)
 - [Contribution and validation workflow](CONTRIBUTING.md)
 - [Dependencies](tools/dependencies.json)
+- [Toolchain setup and commands](docs/implementation/toolchain.md)
 
-`make repo-check` validates the specification package and requirement data. Hardware build, simulation, formal and implementation commands are introduced by the toolchain task and subsequent component tasks. Executed results identify their exact source revision, profile and tool versions.
+`make setup` installs the pinned native tools. `make ci` exercises UVM/randomization/assertions/saved coverage, formal prove/cover/mutation, and mapped synthesis/max/min STA on independent fixtures. `make repo-check` validates documents and requirement data only. Executed results identify their source revision, profile and tool versions.

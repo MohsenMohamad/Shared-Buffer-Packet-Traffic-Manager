@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "qualification": "P00 must record a qualified toolchain combination before hardware integration",
+  "qualification": "P00 toolchain capability suite; see docs/results/P00-toolchain.md for executed evidence",
   "verilator": {
     "version": "5.054",
     "url": "https://codeload.github.com/verilator/verilator/tar.gz/refs/tags/v5.054",
@@ -22,5 +22,21 @@
     "commit": "9275989ffcad3e17a1be884b31e5c9bb4a42c06e",
     "url": "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD-flow-scripts/9275989ffcad3e17a1be884b31e5c9bb4a42c06e/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
     "sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+  },
+  "sby": {
+    "commit": "79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
+    "version": "0.71",
+    "url": "https://codeload.github.com/YosysHQ/sby/tar.gz/79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
+    "sha256": "683953197cef986832fe02423bfb7726b0261f2af153a09899501ba5c92052c7"
+  },
+  "qualified_versions": {
+    "verilator": "5.054",
+    "uvm": "2020.3.1",
+    "yosys": "0.52",
+    "sby": "0.71",
+    "z3": "4.13.3",
+    "opensta": "2.0.17",
+    "compiler": "GCC 14.2.0 (C++20)",
+    "python": "3.11+"
   }
 }
