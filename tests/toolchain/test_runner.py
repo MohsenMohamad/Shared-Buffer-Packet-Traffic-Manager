@@ -74,8 +74,11 @@ class RunnerTests(unittest.TestCase):
         code = ('import subprocess,time,pathlib; '
                 'p=subprocess.Popen(["sleep","30"]); '
                 f'pathlib.Path({str(pidfile)!r}).write_text(str(p.pid)); time.sleep(30)')
-        step = self.process(code, timeout=0.5)
+        # Include interpreter startup under a busy cloud CPU quota. The test
+        # still requires a spawned child and verifies it cannot survive timeout.
+        step = self.process(code, timeout=5)
         self.assertEqual(step['result'], 'TIMEOUT')
+        self.assertTrue(pidfile.is_file(), 'Timeout fixture did not start its child within five seconds')
         pid = int(pidfile.read_text())
         # An unreaped zombie is stopped; it cannot continue compiling or solving.
         status = Path(f'/proc/{pid}/stat')
