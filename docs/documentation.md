@@ -81,3 +81,16 @@ git fetch origin pull/NUMBER/head:refs/remotes/origin/pr-NUMBER
 ```
 
 Substitute actual recorded values. Consult the report's commands, locks and source hashes before replaying; a dirty historical base alone cannot reconstruct missing edits. Record unavailable artifacts or unrecoverable source differences explicitly. Expiring artifacts must never be the only explanation of a result.
+
+### Historical P01/P02 retrieval
+
+The existing reports remain authoritative and their JSON is unchanged. P01 records base `56abc747f1b86aa7a5f6631e5bb4f4e24613a218` with a dirty P01 worktree; [PR #2](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/2) contains delivered head `fb5e05ed9880fd9883d5570364932d46b1065c2a`. That delivered head is a retrieval aid, not a replacement tested SHA. Compare the recorded behavioral hashes; checking out the clean base alone does not reproduce P01.
+
+P02 records tested revision `040863d055ba5fd70b3c09f18e3c268c67d3c1ef` with per-run dirty flags and behavioral hashes. It is a commit in [PR #3](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/3) and remains fetchable:
+
+```sh
+git fetch origin 040863d055ba5fd70b3c09f18e3c268c67d3c1ef
+git worktree add --detach ../p02-tested 040863d055ba5fd70b3c09f18e3c268c67d3c1ef
+```
+
+The [Repository push run 42962551741](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/42962551741) references that exact P02 SHA and concluded failure; it is not the recorded local storage proof/regression result. The P02 report explicitly records its hosted storage qualification as NOT_RUN. Later successful integrated-main runs and merge `b663f47de525e132f32afe621cff69ac82633478` must not be substituted for those historical tested records. Retrieve commands and source hashes from [P01](results/P01-contracts.md) and [P02](results/P02-storage-primitives.md), preserving their original scope and limitations.

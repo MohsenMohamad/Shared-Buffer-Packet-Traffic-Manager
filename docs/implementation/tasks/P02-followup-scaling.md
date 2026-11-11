@@ -6,7 +6,7 @@ Characterize the actual integrated P02 allocator now, completing this follow-up 
 
 ## Execution sequence
 
-1. Inspect the real cell/descriptor wrappers and bitmap selection kernel. Use production source lists and capacities including 1024, with representative smaller capacities and actual return-lane/ID widths. A surrogate priority encoder cannot qualify this study.
+1. Inspect the real cell/descriptor wrappers and bitmap selection kernel. Use production source lists and a capacity matrix including 1024 cells, representative smaller cell capacities and supported descriptor capacities, with actual return-lane/ID widths. A surrogate priority encoder cannot qualify this study.
 2. Commit and push the experiment definition **before** running experiments: exact source selection, capacity matrix, pinned tools and Liberty/library/PVT, clock and timing budget, uncertainty, explicit input/output delays, transition and output loads, synthesis options, path groups and legitimate exceptions. Define area/timing/fanout decision criteria and constraint coverage checks in that commit.
 3. Distinguish exploratory timing conditions from an agreed F0 acceptance requirement. No exploratory clock establishes a new acceptance target. State which criteria prompt investigation and which, if any, are agreed blocking requirements.
 4. Run mapped synthesis/STA on the actual production allocator. Record cell area, selection-path timing, overall worst path, relevant fanout/buffering and unconstrained paths at each capacity, with exact revisions, commands, digests and tool/library versions.
