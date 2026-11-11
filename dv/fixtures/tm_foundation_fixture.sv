@@ -35,6 +35,8 @@ module tm_foundation_fixture(
     trace_t plan,events;
     int rr,cursor,deficit[N_Q],used_cells[N_CELL],used_desc[N_DESC];
     bit visit;
+    logic tx_valid_q;
+    assign tx.valid=obs.rst_n && tx_valid_q;
     int offset,cell_index,u,r,a,d,h[N_Q],cycle;
     int selected,selected_desc,selected_cell;
     packet selected_packet;
@@ -75,7 +77,7 @@ module tm_foundation_fixture(
         quantum=$test$plusargs("SMALL_QUANTUM")?64:MAX_PACKET_BYTES;
         foreach(ingress[p]) ingress[p]=new;
         foreach(queues[q]) queues[q]=new;
-        plan='0;ready='0;tx.valid=0;tx.beat='0;obs.statuses='0;
+        plan='0;ready='0;tx_valid_q=0;tx.beat='0;obs.statuses='0;
     end
     // Form the next action from registered state, a half cycle before sampling.
     always @(negedge clk) begin : prepare
@@ -83,7 +85,7 @@ module tm_foundation_fixture(
         beat_t beat;
         int len,q,n,reason,remaining,id;
         bit found;
-        plan='0;ready='0;obs.statuses='0;tx.valid=0;tx.beat='0;
+        plan='0;ready='0;obs.statuses='0;tx_valid_q=0;tx.beat='0;
         selected=-1;selected_desc=-1;selected_cell=-1;selected_packet=null;
         grant=0;allocate=0;bad_beat=0;next_credit=0;
         if(obs.rst_n) begin
@@ -95,13 +97,13 @@ module tm_foundation_fixture(
                 for(int port=0;port<N_RX;port++) if(pending_status[port].valid) obs.statuses[port*STATUS_W+STATUS_W-2-:4]=4'(FRAME_ERROR);
             end
             if(active!=null && !$test$plusargs("MUT_LOST")) begin
-                tx.valid=1;tx.beat=active.words[offset];
+                tx_valid_q=1;tx.beat=active.words[offset];
                 tx.beat.user={16'b0,8'(active.info.source),active.info.tag,active.info.length,8'(active.info.qid)};
                 if($test$plusargs("MUT_CORRUPT")) tx.beat.data[0]=!tx.beat.data[0];
             end else if(active==null && completed>0 && !duplicate_sent && $test$plusargs("MUT_DUPLICATE")) begin
-                tx.valid=1;tx.beat=previous_last;
+                tx_valid_q=1;tx.beat=previous_last;
             end
-            if($test$plusargs("MUT_STALE") && reset_count>1 && !stale_sent) begin tx.valid=1;tx.beat=previous_last;end
+            if($test$plusargs("MUT_STALE") && reset_count>1 && !stale_sent) begin tx_valid_q=1;tx.beat=previous_last;end
             // One queue inspected each free-TX cycle; quantum once per visit.
             if(active==null) begin
                 if(queues[cursor].packets.size()!=0) begin
@@ -224,7 +226,7 @@ module tm_foundation_fixture(
     logic [31:0] awaddr,wdata,control;
     logic [3:0] wstrb;
     // Independent holds, registered outputs and read-before-write.
-    always @(posedge clk) begin
+    always @(posedge clk or negedge obs.rst_n) begin
         if(!obs.rst_n) begin bus.rsp<='0;have_aw<=0;have_w<=0;control<=0;end
         else begin
             bus.rsp.awready<=!have_aw && !bus.rsp.bvalid;

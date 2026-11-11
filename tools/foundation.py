@@ -29,7 +29,7 @@ def coverage(path):
         if not match:
             continue
         fields = dict(part.split('\x02', 1) for part in match[1].split('\x01') if '\x02' in part)
-        if '/dv/' not in fields.get('f', ''):
+        if not re.search(r'(^|/)dv/',fields.get('f', '')):
             continue
         kind, count = fields.get('t'), int(match[2])
         group = counts.setdefault(kind, dict(hit=0, total=0))

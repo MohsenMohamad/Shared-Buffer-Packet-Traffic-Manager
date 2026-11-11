@@ -42,6 +42,16 @@ package tm_bench_pkg;
     import uvm_pkg::*;
     import tm_bench_types::*;
     `include "uvm_macros.svh"
+    // UVM's default $finish exit is zero on this simulator. Keep the genuine
+    // UVM report and terminate immediately so errors cannot execute past fatal.
+    class tm_report_server extends uvm_default_report_server;
+        virtual function void execute_report_message(uvm_report_message report_message,string composed_message);
+            bit failed=(report_message.get_severity()==UVM_FATAL || report_message.get_severity()==UVM_ERROR);
+            if(failed) report_message.set_action((report_message.get_action() | UVM_DISPLAY) & ~(UVM_EXIT | UVM_STOP | UVM_COUNT));
+            super.execute_report_message(report_message,composed_message);
+            if(failed) $fatal(1,"TM_UVM_CHECKER_STOP");
+        endfunction
+    endclass
     `include "tm_stream_agent.svh"
     `include "tm_axil_agent.svh"
     `include "tm_checkers.svh"
