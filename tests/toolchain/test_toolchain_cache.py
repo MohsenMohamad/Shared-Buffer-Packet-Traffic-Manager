@@ -2,6 +2,7 @@
 import copy
 import json
 import os
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -29,6 +30,7 @@ class CacheTests(unittest.TestCase):
             else:
                 path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(name)
+            path.chmod(0o644)
         os.symlink('example', self.root / '.tools/install/link')
 
     def test_integrity_includes_deletion_bytes_mode_and_symlink(self):
@@ -55,6 +57,19 @@ class CacheTests(unittest.TestCase):
         path.unlink()
         with self.assertRaises(ValueError):
             cache.check_payload(self.identity, self.root)
+
+    def test_transfer_preserves_modes_under_restrictive_umask(self):
+        self.populate()
+        (self.root / '.tools/install/example').chmod(0o755)
+        cache.seal(self.identity, self.root)
+        archive = self.root / 'installation.tar'
+        subprocess.run(['tar', '-cf', str(archive), *cache.PAYLOAD, cache.MANIFEST],
+                       cwd=self.root, check=True, timeout=30)
+        consumer = self.root / 'consumer'
+        consumer.mkdir()
+        subprocess.run(['tar', '-xpf', str(archive)], cwd=consumer, check=True,
+                       preexec_fn=lambda: os.umask(0o077), timeout=30)
+        cache.check_payload(self.identity, consumer)
 
     def test_partial_payload_rejected(self):
         self.populate()
@@ -128,6 +143,7 @@ class CacheTests(unittest.TestCase):
             path = self.root / name
             path.parent.mkdir(exist_ok=True, parents=True)
             path.write_text(name)
+            path.chmod(0o644)
         runtime = self.root / 'libstdc++.so.6'
         runtime.write_bytes(b'ABI1')
         def command(argv):
@@ -140,6 +156,7 @@ class CacheTests(unittest.TestCase):
                 path.write_text(name + ' changed')
                 self.assertNotEqual(cache.cache_key(cache.compatibility(self.root)), key, name)
                 path.write_text(name)
+            path.chmod(0o644)
             runtime.write_bytes(b'ABI2')
             self.assertNotEqual(cache.cache_key(cache.compatibility(self.root)), key)
         for field in ('checkout', 'system', 'architecture', 'os_release', 'libc', 'python_abi', 'compiler'):

@@ -1,0 +1,22 @@
+name: Native prerequisites
+description: Use hosted bootstrap tools; install missing packages only
+runs:
+  using: composite
+  steps:
+    - name: Check bootstrap tools
+      shell: bash
+      run: |
+        set -euo pipefail
+        missing=()
+        for tool in g++-14 make perl curl git dpkg-deb python3 zstd; do
+          if ! command -v "$tool" >/dev/null 2>&1; then
+            case "$tool" in
+              dpkg-deb) missing+=(dpkg) ;;
+              *) missing+=("$tool") ;;
+            esac
+          fi
+        done
+        if ((${#missing[@]})); then
+          sudo apt-get update
+          sudo apt-get install -y "${missing[@]}"
+        fi
