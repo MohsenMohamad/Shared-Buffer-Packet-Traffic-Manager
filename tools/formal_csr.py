@@ -1,6 +1,7 @@
 """FP-CSR production protocol proof, covers and coupled-channel mutation."""
 from evidence import Case, ROOT, output, sha
 from registry import sources, fingerprint
+from frontend import read_sources, selected, expose_symbolic_inputs
 
 
 def formal_csr(run, args, configuration):
@@ -23,9 +24,16 @@ def formal_csr(run, args, configuration):
                 mutant.write_text(text.replace(target, target[:-1]+' && bus_req.wvalid;'))
                 source = mutant
                 case.data.update(mutation='AWREADY depends on WVALID', mutant_sha256=sha(mutant))
+            if source.name == 'csr_formal.sv' and selected(args, 'formal') == 'slang':
+                text, ports = expose_symbolic_inputs(source)
+                source = case.path / source.name
+                source.write_text(text)
+                case.data.update(symbolic_inputs=ports, harness_sha256=sha(source),
+                                 symbolic_representation='arbitrary top-level inputs; assumptions/properties unchanged')
             files.append(source.name+' '+str(source))
-        script = 'read_verilog -formal -sv '+' '.join((ROOT/p).name for p in registered['sources'] if p != 'formal/pools/storage_formal.sv')
-        script += '\nprep -top csr_formal\nasync2sync\ndffunmap'
+        case.data['frontend'] = selected(args, 'formal')
+        script = read_sources([(ROOT/p).name for p in registered['sources'] if p != 'formal/pools/storage_formal.sv'], 'csr_formal', frontend=selected(args, 'formal'), formal=True)
+        script += 'prep -top csr_formal\nasync2sync\ndffunmap'
         config = case.path/'csr.sby'
         config.write_text((ROOT/'formal/csr/csr.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
         step = case.execute(['sby','-f','-d',str(case.path/'engine'),str(config),task],timeout=args.timeout,cwd=case.path)

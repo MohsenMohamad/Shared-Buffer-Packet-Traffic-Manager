@@ -166,7 +166,7 @@ class CacheTests(unittest.TestCase):
 
     def test_generation_bump_and_warning_escaping(self):
         key = cache.cache_key(self.identity)
-        with patch.object(cache, 'CACHE_PREFIX', 'tm-tools-v2-'):
+        with patch.object(cache, 'CACHE_PREFIX', cache.CACHE_PREFIX + 'next-'):
             self.assertNotEqual(cache.cache_key(self.identity), key)
             self.assertTrue(cache.cache_key(self.identity).startswith('tm-tools-v2-'))
         console = io.StringIO()

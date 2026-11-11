@@ -3,6 +3,7 @@ import json
 import re
 from evidence import Case, ROOT, output, sha
 from registry import sources, fingerprint
+from frontend import read_sources, selected, expose_symbolic_inputs
 
 
 def selection(args):
@@ -41,10 +42,16 @@ def formal_rtl(run, args):
                     mutant.write_text(original.replace(target,"next_count = next_count + DELTA_W'(2);"))
                     source=mutant
                     case.data.update(mutation='Return adds two credits instead of one', mutant_sha256=sha(mutant))
+                if source.name == 'storage_formal.sv' and selected(args, 'formal') == 'slang':
+                    text, ports = expose_symbolic_inputs(source)
+                    source = case.path / source.name
+                    source.write_text(text)
+                    case.data.update(symbolic_inputs=ports, harness_sha256=sha(source),
+                                     symbolic_representation='arbitrary top-level inputs; assumptions/properties unchanged')
                 files.append(source.name+' '+str(source))
-            defines=' '.join('-D '+d for d in specs[name]['defines'])
-            script='read_verilog -formal -sv '+defines+' '+ ' '.join((ROOT/p).name for p in registered['sources'])
-            script+='\nprep -top storage_formal\nasync2sync\ndffunmap'
+            case.data['frontend'] = selected(args, 'formal')
+            script=read_sources([(ROOT/p).name for p in registered['sources']], 'storage_formal', defines=specs[name]['defines'], frontend=selected(args, 'formal'), formal=True)
+            script+='prep -top storage_formal\nasync2sync\ndffunmap'
             template=(ROOT/'formal/pools/storage.sby').read_text()
             config=case.path/'storage.sby'
             config.write_text(template.replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))

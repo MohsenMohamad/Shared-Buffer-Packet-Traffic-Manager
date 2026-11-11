@@ -11,6 +11,7 @@ import sys
 import uuid
 
 from evidence import Case, IGNORED, ROOT, Run, completed, output, utc
+from frontend import read_sources
 
 FIXTURES = ROOT / 'tests/toolchain'
 
@@ -136,6 +137,14 @@ def formal(run, args):
         case = Case(run, 'formal-' + task)
         for source in ('counter.sv', 'counter.sby'):
             shutil.copyfile(FIXTURES / source, case.path / source)
+        config = case.path / 'counter.sby'
+        text = config.read_text()
+        for label, defines in [('prove', ()), ('cover', ()), ('mutation', ('MUTATE',))]:
+            old = label + ': read -formal -sv ' + ('-D MUTATE ' if defines else '') + 'counter.sv'
+            command = read_sources(['counter.sv'], 'counter', defines=defines, frontend=args.frontend, formal=True).strip()
+            text = text.replace(old, '\n'.join(label + ': ' + line for line in command.splitlines()))
+        config.write_text(text)
+        case.data['frontend'] = args.frontend
         step = case.execute(['sby', '-f', '-d', str(case.path / 'engine'), 'counter.sby', task],
                             timeout=args.timeout, cwd=case.path)
         status_file = case.path / 'engine/status'
@@ -164,7 +173,7 @@ def synth(run, args):
     liberty = ROOT / '.deps/liberty.lib'
     script = case.path / 'mapping.ys'
     netlist, stats = case.path / 'mapped.v', case.path / 'stats.json'
-    script.write_text(f'read_verilog {FIXTURES}/mapping.v\nsynth -top mapping\n'
+    script.write_text(read_sources([FIXTURES / 'mapping.v'], 'mapping', frontend=args.frontend) + 'synth -top mapping -noabc\n'
                       f'dfflibmap -liberty {liberty}\nabc -liberty {liberty}\nclean\n'
                       f'read_liberty -lib {liberty}\ncheck -assert\nwrite_verilog -noattr {netlist}\n'
                       f'tee -o {stats} stat -json -liberty {liberty}\n')
@@ -189,14 +198,28 @@ def synth(run, args):
     step = sta.execute(['sta', '-exit', str(FIXTURES / 'timing.tcl')], timeout=args.timeout)
     text = output(step)
     result, reason = completed(step, 'TM_STA_DONE')
-    maximum = text.split('TM_STA_MAX_BEGIN')[-1].split('TM_STA_MIN_BEGIN')[0]
-    minimum = text.split('TM_STA_MIN_BEGIN')[-1].split('TM_STA_DONE')[0]
-    if result == 'PASS' and (re.search(r'(?im)^\s*(?:Error|Warning):', text) or
-                            any('slack' not in section or 'Startpoint:' not in section or
-                                'Endpoint:' not in section for section in (maximum, minimum))):
-        result, reason = 'FAIL', 'Timing errors, warnings or missing max/min constrained paths'
+    result, reason = sta_result(step)
     sta.data['artifacts'].update(sdc=str(FIXTURES / 'timing.sdc'), liberty=str(liberty), netlist=str(netlist))
     sta.finish(result, reason, analysis='Nangate45 typical; pre-layout wire model; synthetic fixture only')
+
+
+def sta_result(step):
+    text = output(step)
+    result, reason = completed(step, 'TM_STA_DONE')
+    if result != 'PASS':
+        return result, reason
+    # OpenSTA can print Error <number>: and keep executing Tcl, even returning
+    # zero with a completion marker. A marker cannot overrule those diagnostics.
+    markers = ['TM_STA_MAX_BEGIN', 'TM_STA_MIN_BEGIN', 'TM_STA_DONE']
+    if any(text.count(m) != 1 for m in markers) or not text.index(markers[0]) < text.index(markers[1]) < text.index(markers[2]):
+        return 'FAIL', 'Missing, duplicated or unordered timing report sections'
+    maximum = text.split(markers[0])[1].split(markers[1])[0]
+    minimum = text.split(markers[1])[1].split(markers[2])[0]
+    if re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:', text) or any(
+            'slack' not in section or 'Startpoint:' not in section or 'Endpoint:' not in section
+            for section in (maximum, minimum)):
+        return 'FAIL', 'Timing errors, warnings or missing max/min constrained paths'
+    return 'PASS', None
 
 
 def lint(run, args):
@@ -248,6 +271,7 @@ def main(argv=None):
     parser = ManifestParser(description=__doc__)
     parser.add_argument('action')
     parser.add_argument('--profile', default=None)
+    parser.add_argument('--frontend', choices=('slang', 'verilog'), help='Override registered frontend for a diagnostic comparison')
     parser.add_argument('--test', action='append', help='CI gate or regression suite selection (repeatable)')
     parser.add_argument('--seed', action='append', type=int)
     parser.add_argument('--jobs', type=int, default=2)
@@ -274,6 +298,9 @@ def main(argv=None):
     if args.profile is None:
         args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
     run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
+    from frontend import selected
+    args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal') else 'synthesis')
+    run.versions['rtl_frontend'] = args.frontend
     if action == 'formal-rtl':
         from formal_storage import formal_rtl, selection as formal_selection
         run.scope = 'Local production storage/CSR properties and reachability; no integrated TM proof'

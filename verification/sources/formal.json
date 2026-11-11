@@ -14,5 +14,7 @@
     "formal/pools/fifo_properties.svh",
     "formal/csr/csr_properties.svh"
   ],
-  "scope": "Local production storage and CSR protocol proofs; no integrated TM ownership or datapath proof."
+  "scope": "Local production storage and CSR protocol proofs; no integrated TM ownership or datapath proof.",
+  "frontend": "slang",
+  "diagnostic_frontend": "verilog"
 }

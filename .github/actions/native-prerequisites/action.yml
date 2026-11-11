@@ -8,7 +8,7 @@ runs:
       run: |
         set -euo pipefail
         missing=()
-        for tool in g++-14 make perl curl git dpkg-deb python3 zstd; do
+        for tool in g++-14 make perl curl git dpkg-deb python3 zstd pkg-config; do
           if ! command -v "$tool" >/dev/null 2>&1; then
             case "$tool" in
               dpkg-deb) missing+=(dpkg) ;;
