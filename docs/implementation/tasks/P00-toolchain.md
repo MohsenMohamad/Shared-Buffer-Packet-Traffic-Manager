@@ -1,29 +1,46 @@
 # P00: Open-source toolchain and executable capability gates
 
-## Dependencies
+## Objective and prerequisites
 
-Initial specification seed
+Qualify a reproducible native open-source tool combination before production RTL work. This card defines G0; it is not an instruction to redo an existing qualified P00 implementation.
 
-## Relevant contracts
+Dependencies: Initial specification seed. Preserve an existing P00 implementation as described below.
 
-- [ toolchain.md ](../../spec/toolchain.md)
-- [ automation.md ](../../spec/automation.md)
-- [ acceptance.md ](../../spec/acceptance.md)
+## Sources and work boundary
 
-## Scope and primary paths
+- [toolchain.md](../../spec/toolchain.md)
+- [automation.md](../../spec/automation.md)
+- [acceptance.md](../../spec/acceptance.md)
 
-tools/setup.sh; tools/doctor.py; tools/run.py; tests/toolchain/; Makefile; dependency lock; .github/workflows/
+`tools/`, `tests/toolchain/`, dependency locks, `Makefile`, capability CI and their focused documentation.
 
-## Deliverable
+## Execution sequence
 
-Install and pin the open-source toolchain in the cloud workspace. Add idempotent setup, version/capability reporting, bounded runner and CI capability jobs. Qualify the supplied UVM smoke and a negative assertion build, saved code/functional coverage, seed replay, a real formal prove/cover/mutation trio and a mapped Liberty/OpenSTA max/min smoke. Preserve exact source pins and report unsupported constructs. Keep the initial implementation independent of hardware modules.
+1. Check whether P00 is already integrated. If it is, use its setup guide, lockfiles and evidence; investigate only a demonstrated missing capability. If it is still on a candidate branch, have that candidate reviewed and integrated by the maintainer before P01 rather than building a second toolchain.
 
-## Validation
+2. For a unimplemented P00, install and lock the simulator/UVM/solver/formal/synthesis/STA combination. Verify source integrity and host ABI/compiler compatibility. Keep setup separate from test execution and prove that repeat installation reuses verified inputs.
 
-make doctor; make repo-check; make test-uvm-smoke; make formal-smoke; make synth-smoke; make ci. Inspect actual saved coverage points/bins. Prove that compile/tool errors and empty selections cannot pass. Pin the final compatible toolchain combination.
+3. Build the actual supplied UVM fixture with timing, assertions and coverage. Exercise successful and unsatisfiable randomization, two distinct seeds and same-seed replay. Inspect saved owned-code points and functional bins.
 
-## Exit condition
+4. Run a held-output mutation and require the intended assertion and trace. Add a real unbounded proof, reachable cover and assertion counterexample on a formal fixture; distinguish each outcome.
 
-G0. If a tool feature is unsupported, deliver its minimal reproducer and implementation/test source with UNSUPPORTED status; continue independent setup. The primary executable UVM path remains required.
+5. Map a real fixture through Liberty/ABC and run constrained max/min OpenSTA paths. Preserve the identified cell library and all timing inputs.
 
-Deliver one cohesive reviewable change. If the card is larger than a safe single change, split it along tested component boundaries and record what remains. State actual executed commands/results and unresolved limits in the PR. Update a compact handoff only when unfinished work needs continuation.
+6. Exercise the bounded runner against compiler errors, missing tools, malformed/empty selections and timeout descendants. Check nonempty result/artifact generation, not just a shell exit.
+
+7. Use the repository command entry points in independent hosted capability jobs. Preserve portable unsupported-feature reproducers separately from the required executable UVM baseline.
+
+## Required checks
+
+| Area | Evidence required |
+| --- | --- |
+| Installation | Clean setup, repeat setup, locked version/integrity checks and native host prerequisites. |
+| Capabilities | `make doctor`, `make repo-check`, `make test-unit`, `make lint`, `make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke`, `make ci`; these are capability checks at this stage. |
+| Checker rejection | Intended assertion/counterexample detection, real compiler/tool-error rejection, empty selection rejection and bounded process cleanup. |
+| Evidence boundary | Saved coverage and traces; two-state/X-Z and UVM service limits distinguished from TM verification. |
+
+## Completion
+
+G0 has an executable required UVM path, proof/cover/mutation and mapping/STA fixtures, with reproducible setup and genuine error detection. A candidate result is not integrated completion until its change is merged.
+
+Requirement focus: G0 capability evidence; no production-hardware requirement is closed by fixtures.

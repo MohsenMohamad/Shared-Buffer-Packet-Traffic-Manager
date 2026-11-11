@@ -1,30 +1,51 @@
-# P11B: Transmit scheduler and register property closure
+# P11B: Transmit, scheduler and register property closure
 
-## Dependencies
+## Objective and prerequisites
 
-P10
+Close the selected production TX/DRR/AXI safety claims, separating unconditional safety from progress under explicit environmental assumptions.
 
-## Relevant contracts
+Dependencies: [P10](P10-concurrency.md)
 
-- [ formal.md ](../../spec/formal.md)
-- [ interfaces.md ](../../spec/interfaces.md)
-- [ queues-and-scheduling.md ](../../spec/queues-and-scheduling.md)
-- [ registers.md ](../../spec/registers.md)
+## Sources and work boundary
 
-## Scope and primary paths
+- [formal.md](../../spec/formal.md)
+- [interfaces.md](../../spec/interfaces.md)
+- [queues-and-scheduling.md](../../spec/queues-and-scheduling.md)
+- [registers.md](../../spec/registers.md)
 
-formal/tx/; formal/scheduler/; formal/csr/; matching RTL fixes/tests; proof reports
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-## Deliverable
+`formal/tx/`, `formal/scheduler/`, `formal/csr/`, assertion correspondence, matching RTL/tests and control-proof selection.
 
-Complete the selected read-credit/retirement, dispatch/deficit and AXI4-Lite safety properties on production RTL. Separate unconditional safety from bounded-stall liveness assumptions. Check semantic correspondence to simulation assertions.
+## Execution sequence
 
-## Validation
+1. Inventory FP-TX, FP-SCHED and FP-CSR checks from P04/P05/P06 against current integrated source. Document each property's production target, configuration, assumption and matching simulation assertion.
 
-Production configuration/assumption manifests, no stale output/read after reset/reuse within scope, arbitrary sink stalls for safety, simultaneous register events, covers and selected negative checker tests.
+2. Prove buffered-plus-outstanding capacity, response preservation, stalled-output stability and exactly-once cell/descriptor retirement with arbitrary sink stalls. Include next-link capture, rapid reuse and fixed latency one/two.
 
-## Exit condition
+3. Check reset invalidation so a prior RAM response cannot produce new-epoch output. State precisely which ownership/memory response assumptions are discharged elsewhere.
 
-Interface/control portion of G5 with honest result scope.
+4. Prove scheduler grants belong to eligible queue heads, quantum additions/debits follow visit events, deficits stay bounded and true-empty/merged replacement semantics agree with the queue contract.
 
-Deliver one cohesive reviewable change. If the card is larger than a safe single change, split it along tested component boundaries and record what remains. State actual executed commands/results and unresolved limits in the PR. Update a compact handoff only when unfinished work needs continuation.
+5. Prove independent AW/W capture, stable B/R responses, one response per accepted transaction and no state mutation on rejected writes. Include overlapping read/write and reset cases.
+
+6. Keep liveness/progress tasks separate and state bounded-stall or progressing-sink assumptions explicitly. Those assumptions must not leak into safety harnesses or suppress a never-ready sink.
+
+7. Reach pending-response stalls, empty/reactivation, simultaneous queue events and AXI channel-order covers. Detect selected credit/quantum/AW-W defects at the relevant intended property.
+
+8. Register control-family selection under `formal-rtl` and compare formal monitor-state translations with simulation SVA semantics. Repair legitimate discrepancies with a reproducing test.
+
+## Required checks
+
+| Area | Evidence required |
+| --- | --- |
+| TX safety | Fixed response latency 1/2, arbitrary sink stalls, response credits, exact retirement/reuse and reset epochs. |
+| DRR safety | Head eligibility, add/debit discipline, bounded deficit and merged empty handling. |
+| CSR safety | AW/W separation, stable responses, transaction accounting and rejected-write stability. |
+| Assumptions/checkers | Safety independent of sink fairness, separately scoped liveness, reachable covers and intended negative detections. |
+
+## Completion
+
+The interface/control portion of G5 has the selected production safety results and explicit progress scope, with no unexplained assertion-semantic divergence or required inconclusive result counted as complete.
+
+Requirement focus: `IF-01`, `MEM-04`, `MEM-05`, `SCH-01`, `SCH-02`, `SCH-03`, `SCH-04`, `SCH-06`, `CSR-02`, `CSR-03`, `CSR-04`, `CSR-05`, `RST-02`
