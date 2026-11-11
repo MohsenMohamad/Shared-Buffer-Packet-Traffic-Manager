@@ -49,3 +49,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 An executable UVM foundation with qualified models/checkers is available to P08/P09. Fixture results and unimplemented production checks remain distinct.
 
 Requirement focus: `IF-01`, `IF-03`, `LEN-01`, `Q-01`, `CSR-02`, `CSR-03`, `RST-02`
+
+## Scheduled follow-up
+
+Complete [checker readability and constrained packet stimulus](P07-followup-stimulus.md) before P08. Keep behavior-preserving cleanup in separate commits ahead of new generator functionality; existing fixture qualifications remain applicable.

@@ -52,3 +52,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The receive/resource portion of G2 exercises real storage/queue/pool boundaries with executable independent checking. All required admission/format cases are represented; captured data are never mislabeled as admission or commit.
 
 Requirement focus: `ADM-01`, `ADM-02`, `ADM-03`, `ADM-04`, `ADM-05`, `ADM-06`, `ADM-07`, `ADM-08`, `FMT-01`, `FMT-02`, `FMT-03`, `FMT-04`, `FMT-05`, `FMT-06`, `LEN-03`, `MEM-02`, `MEM-06`, `RST-02`
+
+## Additional entry and timing checks
+
+Both the [P02 scaling](P02-followup-scaling.md) and [P07 stimulus](P07-followup-stimulus.md) follow-ups must be completed before P08 starts. Recheck the actual allocator consumer path through receive/admission at production capacity, including 1024 cells, under identified tool/library and timing constraints. Report selection-path and overall worst-path timing, fanout and constraint coverage; compare with the standalone findings and distinguish exploratory conditions from any agreed F0 acceptance requirement.

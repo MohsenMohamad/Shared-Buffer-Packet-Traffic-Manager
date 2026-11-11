@@ -48,3 +48,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 G5: required functional/proof coverage is accounted for, required properties have their actual results, and every remaining experiment/diagnostic obligation has an owner. A schema-only or fixture-only mapping cannot close a hardware requirement.
 
 Requirement focus: Functional IF, LEN, ADM, MEM, Q, SCH, FMT, RST, CSR and PAR families; performance/diagnostic closure remains with P12/P13.
+
+## Early measurement gate
+
+Before P11 closure, require the [P10 packet-rate report and explicit baseline/optimization decision](P10-concurrency.md#packet-rate-diagnosis-and-decision). Keep any proposed optimization and affected revalidation visible; an unreviewed measurement or unresolved proposal cannot silently close this gate. P12 retains full performance acceptance.

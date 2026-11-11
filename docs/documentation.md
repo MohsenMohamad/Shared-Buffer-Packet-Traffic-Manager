@@ -64,3 +64,20 @@ Do not copy raw logs into narrative documentation. A short error excerpt is appr
 ## Before delivery
 
 Check Markdown structure, tables, code fences and relative links, including files under `.github`. Inspect rendered output when a suitable preview is available. Ensure result summaries lead to the actual evidence and that material limitations remain visible. Run relevant existing lightweight checks; a prose-only change does not itself require rerunning expensive hardware qualification.
+
+## Durable evidence for new work
+
+Commit compact durable revision/configuration/tool/result/measurement and reproduction records to Git. Keep bulky per-process detail, raw logs, waves, databases and generated outputs in build/CI artifacts. Preserve enough numeric measurements, assumptions, expected-negative identities and limitations in the durable report to explain the result after artifacts expire. This policy applies to new work; existing results JSON, including P01/P02, remain unchanged and are not retrospectively compacted, relocated or deleted.
+
+Record the actual tested SHA and dirty state, configuration/dependency/constraint digests, exact commands and tool identities. Associate the PR and workflow/run references when available. An integration SHA on merged main may be added as metadata; it must not replace the tested SHA or imply execution on that untested revision. For historical dirty runs, retain the recorded base SHA and behavioral hashes; do not invent a clean tested commit.
+
+To retrieve historical sources, fetch the recorded tested commit (or the associated PR head ref when needed), then check it out in a separate worktree. Use `gh pr view NUMBER --json commits,mergeCommit,url` and `gh run view RUN_ID` where references exist to distinguish tested heads from merge metadata. For example:
+
+```sh
+git fetch origin TESTED_SHA
+git worktree add --detach ../historical-result TESTED_SHA
+# If the commit is reachable only through the recorded PR:
+git fetch origin pull/NUMBER/head:refs/remotes/origin/pr-NUMBER
+```
+
+Substitute actual recorded values. Consult the report's commands, locks and source hashes before replaying; a dirty historical base alone cannot reconstruct missing edits. Record unavailable artifacts or unrecoverable source differences explicitly. Expiring artifacts must never be the only explanation of a result.

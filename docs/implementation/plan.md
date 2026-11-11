@@ -16,7 +16,9 @@ Shared APIs, state/array ownership and source/profile registration are fixed in 
 | P05 | [Finite-port packet store and transmit engine](tasks/P05-memory-tx.md) | P03 |
 | P06 | [AXI4-Lite configuration and coherent statistics](tasks/P06-registers.md) | P01 |
 | P07 | [UVM agents, monitors and independent models](tasks/P07-verification-foundation.md) | P01 |
-| P08 | [Interleaved receive, admission and abort cleanup](tasks/P08-receive-admission.md) | P02, P03, P05, P07 |
+| P02 follow-up | [Production allocator scaling](tasks/P02-followup-scaling.md) | P02; now, before P08 |
+| P07 follow-up | [Readable checkers and constrained packet stimulus](tasks/P07-followup-stimulus.md) | P07; before P08 |
+| P08 | [Interleaved receive, admission and abort cleanup](tasks/P08-receive-admission.md) | P02, P03, P05, P07 and both follow-ups |
 | P09 | [Single-flow end-to-end vertical integration](tasks/P09-vertical-integration.md) | P04, P05, P06, P07, P08 |
 | P10 | [Full subsystem concurrency and parameter regression](tasks/P10-concurrency.md) | P09 |
 | P11A | [Ownership, conservation and queue proof closure](tasks/P11A-formal-resources.md) | P10 |
@@ -25,6 +27,16 @@ Shared APIs, state/array ownership and source/profile registration are fixed in 
 | P12 | [Traffic benchmarks, mapped synthesis and timing](tasks/P12-measurements.md) | P11C |
 | P13 | [Regression evidence and checked diagnostic workflow](tasks/P13-diagnostics.md) | P10 |
 | P14 | [Independent integration audit and release evidence](tasks/P14-release.md) | P12, P13 |
+
+## Stabilization before the next implementation stage
+
+P00, P01, P02, P06 and P07 are integrated at `a473b8c535d02b50b23604047f1bae64638c89df` (PRs #1–#5). These completed stages retain their recorded component/fixture boundaries. P03 and later hardware remain paused during this stabilization pass and its reevaluation.
+
+1. Maintain CI preparation/cache orchestration and the durable evidence policy now.
+2. Complete the focused [P02 allocator-scaling follow-up](tasks/P02-followup-scaling.md) now, before P08. Commit and push constraints and decision criteria before experiments; review measured findings without presupposing replacement.
+3. Complete the [P07 readability and constrained-stimulus follow-up](tasks/P07-followup-stimulus.md) before P08.
+4. Reevaluate stabilization results. P03 remains the next new implementation stage; completed stages and hardware scope are unchanged.
+5. Measure basic packet rate in P09, expand diagnosis in P10, and explicitly accept the measured baseline or propose optimization after P10 before P11 closure. P12 retains the full benchmark study.
 
 ## Starting and integrating work
 
@@ -64,6 +76,6 @@ Selection grammar and profile handling are implemented/documented with the ownin
 
 ## Requirement accounting
 
-Each card names requirements it contributes to, not permission to mark all of them PASS after a local test. Keep `verification/requirements.json` tied to tests, actual outcomes and scope. P10 establishes integrated functional/parameter evidence; P11A/P11B establish the selected production proofs; P11C reconciles required verification coverage; P12 owns the performance experiments and P13 owns AI-01. P14 checks all 52 obligations against the final source.
+Each card names requirements it contributes to, not permission to mark all of them PASS after a local test. Keep `verification/requirements.json` tied to tests, actual outcomes and scope. P10 establishes integrated functional/parameter evidence; P11A/P11B establish the selected production proofs; P11C reconciles required verification coverage; P09/P10 establish early packet-rate measurements and a pre-P11 baseline decision; P12 owns the full performance experiments and P13 owns AI-01. P14 checks all 52 obligations against the final source.
 
 Use reduced formal dimensions only under the documented formal elaboration/abstraction contract. They do not expand the supported functional profile range. Required unresolved proofs/tests block their gate; recording a truthful unsupported or inconclusive status is not completion of that obligation.

@@ -19,7 +19,7 @@ Integrated RTL fixes, `dv/sequences/`, `dv/tests/`, assertion/coverage refinemen
 
 ## Execution sequence
 
-1. Build a directed checklist from IF/LEN/ADM/MEM/Q/SCH/FMT/RST/CSR/PAR rows in verification.md. Reuse existing component and vertical tests; identify which claims still need full integrated evidence. Performance experiments and AI workflow remain owned by P12/P13.
+1. Build a directed checklist from IF/LEN/ADM/MEM/Q/SCH/FMT/RST/CSR/PAR rows in verification.md. Reuse existing component and vertical tests; identify which claims still need full integrated evidence. Full performance experiments and AI workflow remain owned by P12/P13; the early packet-rate diagnosis below is required here.
 
 2. Run all inputs/queues with source gaps and same-queue cross-port traffic. Force the shorter later-started packet to commit first, singleton and longer-list replacement, different-qid updates and no same-edge empty dispatch.
 
@@ -51,3 +51,11 @@ Integrated RTL fixes, `dv/sequences/`, `dv/tests/`, assertion/coverage refinemen
 G4: required concurrent functional and parameter regressions execute without unexplained deterministic failures. Coverage/formal closure and performance/diagnostic requirements remain separate gates.
 
 Requirement focus: Functional IF, LEN, ADM, MEM, Q, SCH, FMT, RST, CSR and PAR families; performance/diagnostic closure remains with P12/P13.
+
+## Packet-rate diagnosis and decision
+
+Expand the P09 baseline with saturated 64-byte and 1536-byte traffic, one backlogged queue and representative multi-queue traffic. Use an always-ready output for internal-overhead characterization; separate runs with output stalls quantify external backpressure. Commit configuration, warm-up/measurement windows, boundary counting, clocks and traffic generation before interpreting results. Verify sustained backlog and record delivered packets/beats, elapsed cycles and interpacket gaps, including distributions and sample counts.
+
+Define an exhaustive, non-double-counted per-cycle attribution over the measurement window. Count a delivered beat as productive. For idle output cycles, classify a pending valid beat blocked by ready as output stall; otherwise classify lack of dispatch eligibility due to scanning empty queues as empty-queue scanning, selection/dispatch work with eligible backlog as scheduling/dispatch, and an active transfer awaiting memory/read-credit/data as memory/data availability. State and justify precedence for overlapping causes, record reset/warm-up outside the window, and identify any residual/unclassified cycles explicitly. Cross-check category totals against elapsed cycles and use trace observations to substantiate causal labels rather than inferring them only from a low utilization number.
+
+After P10, record an explicit reviewed decision to accept the measured baseline or propose a scoped optimization with its validation plan before P11 closure. There is no agreed hard minimum-packet utilization target; the 1536-byte target must not silently apply to 64-byte packets. This decision does not close P12's full benchmark, fairness, latency and implementation studies.
