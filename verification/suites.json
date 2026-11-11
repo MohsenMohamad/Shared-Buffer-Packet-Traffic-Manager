@@ -1,1 +1,37 @@
-{"schema_version":1,"suites":{"contracts":{"handler":"contracts","profiles":["F0","F1","I0","I1","E0","E1"],"source_sets":["production","simulation","synthesis"],"scope":"G1 declaration elaboration and independent event-batching example only"}}}
+{
+  "schema_version": 1,
+  "suites": {
+    "contracts": {
+      "handler": "contracts",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "production",
+        "simulation",
+        "synthesis"
+      ],
+      "scope": "G1 declaration elaboration and independent event-batching example only"
+    },
+    "pools": {
+      "handler": "pools",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "simulation"
+      ],
+      "scope": "Production FIFO and pool component tests; no integrated TM behavior"
+    }
+  }
+}

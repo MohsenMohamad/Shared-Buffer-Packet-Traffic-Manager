@@ -6,7 +6,7 @@ Default configuration: four 64-bit packet inputs, sixteen logical queues, one ou
 
 ## Project state
 
-This repository contains the implementation specification, executable toolchain capability gates, and G1 module/type/event contracts. Production RTL is declaration-only; the functional traffic-manager datapath and subsystem verification are not yet delivered. Track integration gates in [docs/status.md](docs/status.md).
+This repository contains the implementation specification, executable toolchain capability gates, and G1 module/type/event contracts. The registered FIFO and cell/descriptor pools are implemented; the top and other component APIs remain declarations. Integrated traffic-manager behavior and subsystem verification remain pending. Track integration gates in [docs/status.md](docs/status.md).
 
 ## Documentation
 
@@ -21,3 +21,7 @@ This repository contains the implementation specification, executable toolchain 
 G1 contract regression: `make regression RUN_ARGS="--profile E0 --test contracts --seed 17"`.
 See [module contracts](docs/spec/module-contracts.md) for APIs and scope.
 Declaration compilation does not establish traffic-manager functionality.
+
+Storage component regression: `make regression RUN_ARGS="--profile E0 --test pools --seed 17"`.
+Production local proofs: `make formal-rtl RUN_ARGS="--timeout 240"`.
+See [P02 evidence](docs/results/P02-storage-primitives.md) for scope and results.

@@ -251,7 +251,7 @@ def main(argv=None):
     parser.add_argument('--test', action='append', help='CI gate or regression suite selection (repeatable)')
     parser.add_argument('--seed', action='append', type=int)
     parser.add_argument('--jobs', type=int, default=2)
-    parser.add_argument('--timeout', type=float, default=120)
+    parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')
@@ -261,6 +261,8 @@ def main(argv=None):
         run = Run(ROOT / '.build/runs' / ('invalid-' + uuid.uuid4().hex))
         Case(run, 'malformed-input').finish('TOOL_ERROR', str(error))
         return run.finish()
+    if args.timeout is None:
+        args.timeout = 240 if args.action == 'formal-rtl' else 120
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     activation = ROOT / '.tools/environment.json'
     if activation.is_file():
@@ -270,21 +272,35 @@ def main(argv=None):
     action = {'test-uvm-smoke': 'uvm', 'formal-smoke': 'formal', 'synth-smoke': 'synth',
               'test-unit': 'unit', 'repo-check': 'repo'}.get(args.action, args.action)
     if args.profile is None:
-        args.profile = 'F0' if action == 'regression' else 'toolchain'
+        args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
     run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
+    if action == 'formal-rtl':
+        from formal_storage import formal_rtl, selection as formal_selection
+        run.scope = 'Local production storage invariants and reachability; no integrated TM ownership proof'
+        try:
+            if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
+                raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
+            formal_selection(args)
+            from doctor import qualify
+            qualify(run)
+            formal_rtl(run, args)
+        except (OSError, ValueError, KeyError) as error:
+            Case(run, 'formal-selection-or-suite-error').finish('TOOL_ERROR', str(error))
+        return run.finish()
     if action == 'regression':
         from registry import selection
         from contracts import contracts
-        run.scope = 'G1 contracts only; no component functionality evaluated'
+        from storage import pools
+        run.scope = 'Selected contract/component suites; no integrated TM validation'
         try:
             selected = selection(args.profile, args.test)
             if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
                 raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
             if args.seed is not None and (len(args.seed) != 1 or not 1 <= args.seed[0] <= 2**31-1):
-                raise ValueError('Contracts replay accepts one positive 31-bit functional seed')
+                raise ValueError('Regression accepts one positive 31-bit functional seed')
             from doctor import qualify
             qualify(run)
-            handlers = {'contracts': contracts}
+            handlers = {'contracts': contracts, 'pools': pools}
             for name in selected:
                 handlers[name](run, args)
         except (OSError, ValueError, KeyError) as error:

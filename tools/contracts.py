@@ -28,8 +28,8 @@ INVALID = {
 
 def wrapper(path, monitor=False):
     # Derive from the production declarations themselves; no copied port list.
-    declarations = (ROOT / 'rtl/include/tm_module_ports.sv').read_text()
-    modules = ['tm_top'] + re.findall(r'^module (\w+)', declarations, re.M)
+    declarations = '\n'.join((ROOT/p).read_text() for p in sources('production')['sources'])
+    modules = ['tm_top'] + re.findall(r'^module (tm_\w+_api)', declarations, re.M)
     text = 'module tm_contract_elab #(\n`include "tm_parameters.svh"\n) ();\n'
     text += '`include "tm_types.svh"\n'
     if monitor:

@@ -28,7 +28,7 @@ def sources(name, seen=()):
             target = (ROOT / path).resolve()
             if not target.is_relative_to(ROOT) or not target.exists():
                 raise ValueError('Missing or external registered path: ' + path)
-            if key != 'include_dirs' and name in ('production', 'formal', 'synthesis') and not path.startswith('rtl/'):
+            if key != 'include_dirs' and name in ('production', 'formal', 'synthesis') and not (path.startswith('rtl/') or (name=='formal' and path.startswith('formal/'))):
                 raise ValueError('Non-production source in ' + name + ': ' + path)
     return result
 
@@ -42,7 +42,7 @@ def selection(profile_name, tests):
     for name in selected:
         if name not in suites or profile_name not in suites[name]['profiles']:
             raise ValueError('Unknown suite/profile selection: ' + name)
-        if suites[name]['handler'] not in ('contracts',):
+        if suites[name]['handler'] not in ('contracts', 'pools'):
             raise ValueError('Suite has no executable handler: ' + name)
         for source_set in suites[name]['source_sets']:
             sources(source_set)

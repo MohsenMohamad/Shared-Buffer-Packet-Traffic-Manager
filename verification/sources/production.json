@@ -1,1 +1,20 @@
-{"schema_version":1,"include_dirs":["rtl/include"],"sources":["rtl/include/tm_module_ports.sv","rtl/tm_top.sv"],"headers":["rtl/include/tm_parameters.svh","rtl/include/tm_types.svh","rtl/include/tm_validate.svh"],"scope":"Declarations only; replace APIs with implementations in component tasks."}
+{
+  "schema_version": 1,
+  "include_dirs": [
+    "rtl/include"
+  ],
+  "sources": [
+    "rtl/include/tm_module_ports.sv",
+    "rtl/tm_top.sv",
+    "rtl/common/tm_axis_rx_fifo.sv",
+    "rtl/pools/tm_bitmap_pool.sv",
+    "rtl/pools/tm_cell_pool.sv",
+    "rtl/pools/tm_desc_pool.sv"
+  ],
+  "headers": [
+    "rtl/include/tm_parameters.svh",
+    "rtl/include/tm_types.svh",
+    "rtl/include/tm_validate.svh"
+  ],
+  "scope": "Storage APIs implemented; other APIs and top remain declarations."
+}

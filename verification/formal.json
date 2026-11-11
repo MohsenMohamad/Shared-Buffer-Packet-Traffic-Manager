@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "configurations": {
+    "cell": {"defines":["PROVE_CELL"],"capacity":16,"id_width":5,"returns":1},
+    "descriptor": {"defines":["PROVE_DESC"],"capacity":8,"id_width":4,"returns":2},
+    "fifo2": {"defines":["FIFO_DEPTH=2"],"depth":2,"beat_width":137},
+    "fifo4": {"defines":["FIFO_DEPTH=4"],"depth":4,"beat_width":137}
+  },
+  "scope": "Local production storage APIs at E0 dimensions; extended pool ID widths exercise invalid encodings. No RX/queue/TX ownership composition."
+}
