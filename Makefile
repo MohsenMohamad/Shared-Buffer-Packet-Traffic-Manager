@@ -2,9 +2,9 @@ PYTHON ?= python3
 JOBS ?= 2
 RUN_ARGS ?=
 
-.PHONY: setup doctor repo-check lint test-unit test-uvm-smoke formal-smoke formal-rtl synth-smoke ci regression coverage benchmark synthesis sta
+.PHONY: setup doctor repo-check lint test-unit test-uvm-smoke formal-smoke formal-rtl synth-smoke frontends bridge ci regression coverage benchmark synthesis sta
 setup:
 	bash tools/setup.sh --jobs $(JOBS)
 
-doctor repo-check lint test-unit test-uvm-smoke formal-smoke formal-rtl synth-smoke ci regression coverage benchmark synthesis sta:
+doctor repo-check lint test-unit test-uvm-smoke formal-smoke formal-rtl synth-smoke frontends bridge ci regression coverage benchmark synthesis sta:
 	$(PYTHON) tools/run.py $@ --jobs $(JOBS) $(RUN_ARGS)

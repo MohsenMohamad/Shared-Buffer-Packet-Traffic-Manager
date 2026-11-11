@@ -107,7 +107,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gate: [uvm, formal, synth]
+        gate: [uvm, formal, synth, frontends, bridge]
     env:
       CXX: g++-14
     steps:

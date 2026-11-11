@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Validate repository contracts; this is not a hardware verification run."""
-import json,re,sys
+import json,re,sys,subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 failures=[]
-for f in ROOT.rglob('*.md'):
+# Limit checks to repository inputs, excluding ignored dependency/scratch trees.
+paths=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','--','*.md'],cwd=ROOT,text=True).splitlines()
+for path in paths:
+    f=ROOT/path
     if any(p.startswith('.') for p in f.relative_to(ROOT).parts):
         continue
     text=f.read_text()
