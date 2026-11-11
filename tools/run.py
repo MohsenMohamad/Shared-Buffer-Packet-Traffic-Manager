@@ -132,6 +132,22 @@ def uvm(run, args):
                   observed_digests=digests)
 
 
+def uvm_dpi(run,args):
+    case=Case(run,'uvm-dpi-services')
+    uvm_src=Path(os.environ['UVM_HOME'])/'src'
+    binary=case.path/'obj/Vuvm_dpi_probe'
+    argv=['verilator','--binary','--timing','--assert','--vpi','--public-flat-rw',
+          '--timescale','1ns/1ps','--build-jobs',str(args.jobs),'--output-groups','4',
+          '--output-split','20000','-CFLAGS','-O0 -DVERILATOR -I'+str(uvm_src/'dpi'),
+          '-I'+str(uvm_src),str(uvm_src/'uvm_pkg.sv'),str(FIXTURES/'uvm_dpi.sv'),
+          str(uvm_src/'dpi/uvm_dpi.cc'),'--top-module','uvm_dpi_probe','--Mdir',str(binary.parent)]
+    step=case.execute(argv,timeout=args.build_timeout)
+    if step['result']!='PASS' or not binary.is_file():
+        case.finish(step['result'] if step['result']!='PASS' else 'TOOL_ERROR','DPI service build failed')
+        return
+    case.finish(*completed(case.execute([str(binary)],cwd=case.path,timeout=args.timeout),'TM_UVM_DPI_PASS'))
+
+
 def formal(run, args):
     for task in ('prove', 'cover', 'mutation'):
         case = Case(run, 'formal-' + task)
@@ -197,10 +213,54 @@ def synth(run, args):
     os.environ.update(TM_LIBERTY=str(liberty), TM_NETLIST=str(netlist), TM_SDC=str(FIXTURES / 'timing.sdc'))
     step = sta.execute(['sta', '-exit', str(FIXTURES / 'timing.tcl')], timeout=args.timeout)
     text = output(step)
-    result, reason = completed(step, 'TM_STA_DONE')
     result, reason = sta_result(step)
     sta.data['artifacts'].update(sdc=str(FIXTURES / 'timing.sdc'), liberty=str(liberty), netlist=str(netlist))
-    sta.finish(result, reason, analysis='Nangate45 typical; pre-layout wire model; synthetic fixture only')
+    slacks = re.findall(r'([-+]?\d+\.\d+)\s+slack', text)
+    sta.finish(result, reason, analysis='Nangate45 typical 1.10 V / 25 C; ns, fF; 10 fF load; ideal-clock pre-layout fixture', slacks_ns=slacks)
+    timing_rejections(run, args, liberty, netlist)
+
+
+
+def timing_rejections(run, args, liberty, netlist):
+    original_sdc = (FIXTURES / 'timing.sdc').read_text()
+    original_tcl = (FIXTURES / 'timing.tcl').read_text()
+    saved = {k: os.environ.get(k) for k in ('TM_LIBERTY','TM_NETLIST','TM_SDC')}
+    try:
+        for variant in ('driving-cell','bad-library','bad-netlist','bad-constraint','unconstrained','error-with-completion'):
+            case = Case(run, 'sta-' + variant)
+            sdc, script = case.path / 'timing.sdc', case.path / 'timing.tcl'
+            sdc.write_text(original_sdc)
+            script.write_text(original_tcl)
+            os.environ.update(TM_LIBERTY=str(liberty),TM_NETLIST=str(netlist),TM_SDC=str(sdc))
+            if variant == 'driving-cell':
+                sdc.write_text(original_sdc.replace('set_input_transition 0.05 [get_ports {a b}]',
+                    'set_driving_cell -lib_cell BUF_X1 -pin Z [get_ports {a b}]'))
+            elif variant == 'bad-library':
+                os.environ['TM_LIBERTY'] = str(case.path / 'missing.lib')
+            elif variant == 'bad-netlist':
+                os.environ['TM_NETLIST'] = str(case.path / 'missing.v')
+            elif variant == 'bad-constraint':
+                sdc.write_text(original_sdc + '\nthis_is_not_an_sdc_command\n')
+            elif variant == 'unconstrained':
+                sdc.write_text('# Deliberate lack of clocks and IO constraints.\n')
+            elif variant == 'error-with-completion':
+                script.write_text('read_liberty ' + str(case.path / 'missing.lib') + '\n' + original_tcl)
+            step = case.execute(['sta','-exit',str(script)],timeout=args.timeout)
+            result, reason = sta_result(step)
+            text = output(step)
+            if variant == 'driving-cell':
+                case.finish(result,reason)
+            else:
+                diagnosis = bool(re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:',text))
+                if variant == 'unconstrained':
+                    diagnosis = diagnosis or ('no clock' in text.lower() or 'unconstrained' in text.lower())
+                ok = result == 'FAIL' and diagnosis and step['result'] != 'TIMEOUT' and 'TM_STA_DONE' in text
+                case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing intended timing-input rejection with completion marker',
+                            expected='TIMING_INPUT_REJECTION', classifier_result=result, diagnostic=reason)
+    finally:
+        for key,value in saved.items():
+            if value is None:os.environ.pop(key,None)
+            else:os.environ[key]=value
 
 
 def sta_result(step):
@@ -340,6 +400,7 @@ def main(argv=None):
     from frontend_qualification import audit as frontend_audit
     gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge)
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
+    gates['uvm-dpi'] = uvm_dpi
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
     error = None
     if args.profile != 'toolchain':
@@ -360,7 +421,7 @@ def main(argv=None):
     else:
         # Version records accompany direct capability runs as well as CI. Independent
         # gates continue after failures; compilation remains prerequisite to execution.
-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge')):
+        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge', 'uvm-dpi')):
             qualify(run)
         for name in selected:
             try:

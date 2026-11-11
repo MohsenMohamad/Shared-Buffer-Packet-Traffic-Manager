@@ -50,3 +50,10 @@ Dependencies: [P00](P00-toolchain.md)
 G1: module APIs, shared types, source/profile ownership and independent event batching are executable and documented. The contracts suite runs; no component functionality is inferred from declaration compilation.
 
 Requirement focus: `PAR-01`
+
+## Representation follow-up
+
+Consume the [current frontend qualification](P00-followup-modern-toolchain.md),
+then complete [the focused representation change](P01-followup-representation.md)
+before allocator characterization. Existing API/parameter/ownership contracts
+remain normative; old frontend limitations are reassessed by executable evidence.

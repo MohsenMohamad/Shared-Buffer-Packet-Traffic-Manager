@@ -20,11 +20,11 @@ def audit(run, args):
     if step['result'] != 'PASS':
         return
     manifest = json.loads((generated/'candidates.json').read_text())
-    for name in CANDIDATES + ('features',):
-        top = 'feature_top' if name=='features' else 'bits_type' if name=='bits_type' else 'synth_top'
+    for name in CANDIDATES + ('features','unpacked','interface'):
+        top = {'features':'feature_top','unpacked':'unpacked_ports','interface':'interface_top'}.get(name) or ('bits_type' if name=='bits_type' else 'synth_top')
         includes = [generated, ROOT/'rtl/include']
-        if name=='features':
-            files=[BASE/'features.sv']
+        if name in ('features','unpacked','interface'):
+            files=[BASE/(name+'.sv')]
         else:
             files=([generated/'tm_fixed.sv'] if name in PACKAGES else [])
             files += ([generated/'bits_type.sv'] if name=='bits_type' else

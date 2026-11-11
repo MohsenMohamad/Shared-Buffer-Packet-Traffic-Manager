@@ -19,7 +19,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Execution sequence
 
-1. Qualify new sequencer/driver, analysis-port, register/RAL and coverage constructs beyond P00 using small capability cases. Use the pinned UVM library's supported frontdoor/no-DPI baseline.
+1. Qualify new sequencer/driver, analysis-port, register/RAL and coverage constructs beyond P00 using small capability cases. Use the pinned UVM library's qualified frontdoor configuration. The no-DPI baseline is a tested service selection, not a universal prohibition; see the [current capability dispositions](../modern-toolchain-decisions.md).
 
 2. Implement packet source/sink agents and AXI4-Lite master/monitor components. Independently randomize valid gaps, ready stalls, AW/W separation and B/R response acceptance. Monitors reconstruct actual handshakes rather than reusing driver intention objects.
 
