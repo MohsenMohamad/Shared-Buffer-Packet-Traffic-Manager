@@ -9,6 +9,8 @@ module tm_foundation_top;
     tm_stream_if rx[N_RX](clk,obs.rst_n);
     tm_stream_if tx(clk,obs.rst_n);
     tm_axil_if bus(clk,obs.rst_n);
+    a_reset_outputs: assert property (@(posedge clk) !obs.rst_n |-> !tx.valid && !bus.rsp.bvalid && !bus.rsp.rvalid)
+        else $fatal(1,"TM_RESET_OUTPUT");
     tm_foundation_fixture fixture(clk,rx,tx,bus,obs);
     for(genvar p=0;p<N_RX;p++) begin : g_config
         initial uvm_config_db#(virtual tm_stream_if)::set(null,$sformatf("uvm_test_top.env.rx%0d",p),"vif",rx[p]);

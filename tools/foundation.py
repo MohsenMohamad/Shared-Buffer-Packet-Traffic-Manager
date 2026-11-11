@@ -16,6 +16,8 @@ DEFECTS = {
     'STATUS': 'STATUS_CAUSALITY',
     'SERVICE': 'SERVICE_DATA',
     'ADMISSION': 'ADMISSION_PREDICATE',
+    'SCHEDULE': 'SCHEDULE_HEAD',
+    'STALE': 'BYTE_UNEXPECTED',
 }
 
 
@@ -118,6 +120,28 @@ def foundation(run, args):
                 case.execute(command+['+TRACE'],timeout=args.timeout,cwd=rerun,stem='failing-rerun')
                 case.data['artifacts']['waveform']=str(rerun/'wave.vcd')
             case.finish(status,reason)
+    probes=[('barrier', 'tm_batch_test',None,'TM_BATCH_PASS')]
+    probes += [('barrier-'+name.lower(),'tm_batch_test','BATCH_'+name,'BATCH_'+name)
+               for name in ('DUPLICATE','MISSING','STALE')]
+    if params['N_RX']>=2:
+        probes += [('atomic','tm_atomic_test',None,'TM_ATOMIC_PASS'),
+                   ('atomic-limit','tm_atomic_test','ATOMIC_LIMIT','ADMISSION_PREDICATE')]
+    for name,test,mutation,marker in probes:
+        case=Case(run,'foundation-'+name,seed)
+        if result!='PASS':
+            case.finish('NOT_RUN','Foundation compilation did not qualify')
+            continue
+        command=[str(binary),f'+verilator+seed+{seed}','+UVM_NO_RELNOTES','+UVM_TESTNAME='+test]
+        if mutation:
+            command += ['+MUT_'+mutation,'+TRACE']
+        step=case.execute(command,timeout=args.timeout,cwd=case.path)
+        if mutation:
+            fatals=re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]',output(step))
+            wave=case.path/'wave.vcd'
+            ok=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and fatals==[marker] and wave.is_file() and wave.stat().st_size>0
+            case.finish('PASS' if ok else ('TIMEOUT' if step['result']=='TIMEOUT' else 'FAIL'),None if ok else 'Expected first barrier/model detection missing',expected='SEEDED_DEFECT_DETECTION',detector=marker)
+        else:
+            case.finish(*completed(step,marker))
     replay=Case(run,'foundation-seed-replay',seed)
     ok=len(signatures)==3 and signatures[0]==signatures[1] and signatures[0]!=signatures[2]
     replay.finish('PASS' if ok else 'FAIL',None if ok else 'Missing, nonrepeatable or seed-independent observed trace',transaction_digests=signatures)

@@ -92,14 +92,21 @@ class tm_service_checker extends uvm_component;
     bit cell_owned[int];
     int cell_desc[int];
     int u=N_CELL,r=0,a=0,d=N_DESC,h[N_Q];
+    int limits[N_Q];
+    bit wait_mode=0;
+    bit blocked[N_RX];
+    bit csr_pending;
+    bit [31:0] csr_expected;
+    int csr_checks;
     int services,admissions,commits,status_count,aborts;
     tm_frame committed_frame;
     function new(string name,uvm_component parent);
-        super.new(name,parent); foreach(fifo[p]) fifo[p]=new;
+        super.new(name,parent); foreach(fifo[p]) fifo[p]=new;foreach(limits[q]) limits[q]=N_CELL;
     endfunction
     function void flush();
-        foreach(fifo[p]) begin fifo[p].beats.delete(); current[p]=null; ordinals[p]=0; due[p]='0; end
+        foreach(fifo[p]) begin fifo[p].beats.delete(); current[p]=null; ordinals[p]=0; due[p]='0;blocked[p]=0; end
         descriptors.delete(); cell_owned.delete(); cell_desc.delete();
+        csr_pending=0;
         u=N_CELL;r=0;a=0;d=N_DESC; foreach(h[q]) h[q]=0;
     endfunction
     function descriptor_t info(tm_frame f);
@@ -121,6 +128,22 @@ class tm_service_checker extends uvm_component;
         du=0;dr=0;da=0;dd=0;foreach(dh[q]) dh[q]=0;
         committed_frame=null;
         if(b.reset_asserted) begin flush(); return; end
+        if(csr_pending && b.bus_rsp.rvalid) begin
+            if(b.bus_rsp.rresp!=OKAY || b.bus_rsp.rdata!=csr_expected) `uvm_fatal("CSR_RESOURCE","CSR read differs from independent AR-edge resource state")
+            if(b.bus_req.rready) begin csr_pending=0;csr_checks++;end
+        end
+        if(b.bus_req.arvalid && b.bus_rsp.arready) begin
+            case(b.bus_req.araddr)
+                'h024:begin csr_pending=1;csr_expected=32'(u);end
+                'h028:begin csr_pending=1;csr_expected=32'(r);end
+                'h02c:begin csr_pending=1;csr_expected=32'(d);end
+                default:csr_pending=0;
+            endcase
+        end
+        if(t.cell_free.valid && (!cell_owned.exists(int'(t.cell_free.id)) ||
+           (t.cell_alloc.valid && t.cell_alloc.id==t.cell_free.id))) `uvm_fatal("CELL_RETURN","return must have a pre-state owner")
+        if(t.abort_done.valid && !descriptors.exists(int'(t.abort_done.desc))) `uvm_fatal("ABORT_DONE","completion must have a pre-state owner")
+        if(t.tx_done.valid && !descriptors.exists(int'(t.tx_done.desc))) `uvm_fatal("TX_DONE","completion must have a pre-state owner")
         // Compare observations to independently reconstructed pre-state.
         if({live.unreserved,live.reserved_free,live.assigned,live.physical_free,live.free_desc}!=
            {CELL_COUNT_W'(u),CELL_COUNT_W'(r),CELL_COUNT_W'(a),CELL_COUNT_W'(N_CELL-a),DESC_COUNT_W'(d)})
@@ -129,7 +152,7 @@ class tm_service_checker extends uvm_component;
         for(int port=0;port<N_RX;port++) begin
             st=status_t'(b.statuses[port*STATUS_W+:STATUS_W]);
             if(st!=due[port]) `uvm_fatal("STATUS_CAUSALITY",$sformatf("wrong/missing status port=%0d expected=%h got=%h",port,due[port],st))
-            if(st.valid) status_count++;
+            if(st.valid) begin status_count++;blocked[port]=0;end
             due[port]='0;
         end
         if(t.rx_service.valid) begin
@@ -139,22 +162,25 @@ class tm_service_checker extends uvm_component;
             if(beat!=t.rx_service.beat) `uvm_fatal("SERVICE_DATA","service differs from oldest captured beat")
             if(t.rx_service.sop!=(current[p]==null)) `uvm_fatal("SERVICE_SOP","wrong frame boundary")
             if(current[p]==null) begin
+                if(blocked[p]) `uvm_fatal("SERVICE_STATUS","new SOP before previous disposition")
+                blocked[p]=1;
                 f=new; f.source=p; f.ordinal=ordinals[p]++; f.epoch=int'(b.epoch);
                 f.qid=int'(beat.user[7:0]);f.length=int'(beat.user[23:8]);f.tag=int'(beat.user[39:24]);
                 n=(f.length+CELL_BYTES-1)/CELL_BYTES; f.ncell=n;
                 reason=0;
                 if(f.qid>=N_Q) reason=1;
                 else if(f.length==0 || f.length>MAX_PACKET_BYTES) reason=2;
-                else if(h[f.qid]+n>N_CELL) reason=3;
+                else if(h[f.qid]+n>limits[f.qid]) reason=3;
                 else if(d==0) reason=4;
                 else if(u<n) reason=5;
+                if(wait_mode && reason>=3 && n<=limits[f.qid]) `uvm_fatal("WAIT_SERVICE","temporary shortage was serviced in WAIT mode")
                 if(!t.admit.valid || t.admit.source!=RX_ID_W'(p) || t.admit.qid!=8'(f.qid) || t.admit.length!=16'(f.length) || t.admit.tag!=16'(f.tag) || t.admit.accept!=(reason==0) || int'(t.admit.reason)!=reason)
                     `uvm_fatal("ADMISSION_PREDICATE","admission/reason disagrees with observed header and pre-state credits")
                 if(reason!=2 && reason!=1 && t.admit.ncell!=CELL_COUNT_W'(n)) `uvm_fatal("ADMISSION_SIZE","wrong reservation")
                 f.survives=(reason==0); current[p]=f;
                 if(f.survives) begin
                     f.desc=int'(t.admit.desc);
-                    if(descriptors.exists(f.desc)) `uvm_fatal("DESC_OWNERSHIP","allocated live descriptor")
+                    if(f.desc>=N_DESC || descriptors.exists(f.desc)) `uvm_fatal("DESC_OWNERSHIP","allocated live descriptor")
                     descriptors[f.desc]=f; du-=n;dr+=n;dd--;dh[f.qid]+=n;admissions++;
                 end else expect_status(f,status_code_t'(reason));
             end else if(t.admit.valid) `uvm_fatal("ADMISSION_SOP","admit on non-SOP")
@@ -165,7 +191,7 @@ class tm_service_checker extends uvm_component;
                 needs_cell=!malformed && (f.serviced%CELL_BYTES==0);
                 if(t.cell_alloc.valid!=needs_cell) `uvm_fatal("MATERIALIZATION","wrong cell allocation boundary")
                 if(needs_cell) begin
-                    if(t.cell_alloc.desc!=DESC_ID_W'(f.desc) || cell_owned.exists(int'(t.cell_alloc.id))) `uvm_fatal("CELL_OWNERSHIP","cell allocated twice or to wrong descriptor")
+                    if(int'(t.cell_alloc.id)>=N_CELL || t.cell_alloc.desc!=DESC_ID_W'(f.desc) || cell_owned.exists(int'(t.cell_alloc.id))) `uvm_fatal("CELL_OWNERSHIP","cell allocated twice or to wrong descriptor")
                     cell_owned[int'(t.cell_alloc.id)]=1;cell_desc[int'(t.cell_alloc.id)]=f.desc;
                     f.allocated++;da++;dr--;
                 end
@@ -261,6 +287,8 @@ class tm_schedule_checker extends uvm_component;
         if(b.output_sample.valid && b.output_sample.ready) begin
             if(active==null || grant) `uvm_fatal("SCHEDULE_OUTPUT","output without previously dispatched packet")
             if(b.output_sample.beat.user!={16'b0,8'(active.source),16'(active.tag),16'(active.length),8'(active.qid)}) `uvm_fatal("SCHEDULE_OUTPUT","output is not dispatched packet")
+            if((t.cell_free.valid && t.cell_free.desc!=DESC_ID_W'(active.desc)) ||
+               (t.tx_done.valid && t.tx_done.desc!=DESC_ID_W'(active.desc))) `uvm_fatal("SCHEDULE_RETIRE","release of a different packet")
             offset+=$countones(b.output_sample.beat.keep);
             if(t.cell_free.valid!=((offset%CELL_BYTES==0)||b.output_sample.beat.last)) `uvm_fatal("SCHEDULE_RETIRE","incorrect cell retirement boundary")
             if(t.tx_done.valid!=b.output_sample.beat.last) `uvm_fatal("SCHEDULE_DONE","missing or premature completion")

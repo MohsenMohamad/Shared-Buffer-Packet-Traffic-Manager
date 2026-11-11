@@ -43,6 +43,9 @@ module tm_foundation_fixture(
     bit duplicate_sent;
     beat_t previous_last;
     int completed;
+    int reset_count=0;
+    bit was_reset=0,stale_sent=0;
+    int quantum;
     for(genvar p=0;p<N_RX;p++) begin : g_capture
         assign captures[p]=rx[p].beat;
         assign capture_valid[p]=rx[p].valid && rx[p].ready;
@@ -61,6 +64,7 @@ module tm_foundation_fixture(
             if(tx.beat.last) events.tx_done='{1,DESC_ID_W'(active.desc),active.info.qid,active.info.length};
         end
         obs.trace_events=events;
+        if($test$plusargs("MUT_SCHEDULE") && events.dispatch.valid) obs.trace_events.dispatch.info.length=events.dispatch.info.length+1;
         if($test$plusargs("MUT_SERVICE") && events.rx_service.valid) obs.trace_events.rx_service.beat.data[0]=!events.rx_service.beat.data[0];
         obs.live='0;
         obs.live.unreserved=CELL_COUNT_W'(u);obs.live.reserved_free=CELL_COUNT_W'(r);
@@ -68,6 +72,7 @@ module tm_foundation_fixture(
         for(int q=0;q<N_Q;q++) obs.live.owned[q*CELL_COUNT_W+:CELL_COUNT_W]=CELL_COUNT_W'(h[q]);
     end
     initial begin
+        quantum=$test$plusargs("SMALL_QUANTUM")?64:MAX_PACKET_BYTES;
         foreach(ingress[p]) ingress[p]=new;
         foreach(queues[q]) queues[q]=new;
         plan='0;ready='0;tx.valid=0;tx.beat='0;obs.statuses='0;
@@ -83,7 +88,7 @@ module tm_foundation_fixture(
         grant=0;allocate=0;bad_beat=0;next_credit=0;
         if(obs.rst_n) begin
             for(int port=0;port<N_RX;port++) begin
-                ready[port]=(ingress[port].words.size()<RX_FIFO_DEPTH);
+                ready[port]=(ingress[port].words.size()<RX_FIFO_DEPTH && cycle%7!=0);
                 obs.statuses[port*STATUS_W+:STATUS_W]=pending_status[port];
             end
             if($test$plusargs("MUT_STATUS")) begin
@@ -96,10 +101,11 @@ module tm_foundation_fixture(
             end else if(active==null && completed>0 && !duplicate_sent && $test$plusargs("MUT_DUPLICATE")) begin
                 tx.valid=1;tx.beat=previous_last;
             end
+            if($test$plusargs("MUT_STALE") && reset_count>1 && !stale_sent) begin tx.valid=1;tx.beat=previous_last;end
             // One queue inspected each free-TX cycle; quantum once per visit.
             if(active==null) begin
                 if(queues[cursor].packets.size()!=0) begin
-                    p=queues[cursor].packets[0];next_credit=deficit[cursor]+(visit?0:MAX_PACKET_BYTES);
+                    p=queues[cursor].packets[0];next_credit=deficit[cursor]+(visit?0:quantum);
                     grant=(int'(p.info.length)<=next_credit);
                     if(grant) plan.dispatch='{1,Q_ID_W'(cursor),DESC_ID_W'(p.desc),p.info};
                 end
@@ -154,6 +160,7 @@ module tm_foundation_fixture(
         int q,id;
         #1; // Monitors sample immutable pre-state before fixture state advances.
         if(!obs.rst_n) begin
+            if(!was_reset) reset_count++;was_reset=1;
             foreach(ingress[port]) begin ingress[port].words.delete();receiving[port]=null;pending_status[port]='0;end
             foreach(queues[qi]) begin queues[qi].packets.delete();deficit[qi]=0;h[qi]=0;end
             foreach(used_cells[ci]) used_cells[ci]=0;
@@ -161,7 +168,7 @@ module tm_foundation_fixture(
             reserved.delete();active=null;cleaning=null;rr=0;cursor=0;visit=0;offset=0;cell_index=0;
             u=N_CELL;r=0;a=0;d=N_DESC;cycle=0;completed=0;duplicate_sent=0;
         end else begin
-            cycle++;
+            was_reset=0;cycle++;
             foreach(pending_status[port]) pending_status[port]='0;
             if(events.cell_free.valid) begin
                 id=int'(events.cell_free.id);used_cells[id]=0;a--;
@@ -178,7 +185,7 @@ module tm_foundation_fixture(
                     if(tx.beat.last) begin
                         previous_last=tx.beat;completed++;d++;used_desc[active.desc]=0;reserved.delete(active.desc);active=null;
                     end else offset++;
-                end else duplicate_sent=1;
+                end else begin duplicate_sent=1;stale_sent=1;end
             end
             // plan.dispatch was computed before any current commit or completion.
             if(plan.dispatch.valid) begin
@@ -231,7 +238,14 @@ module tm_foundation_fixture(
             end
             if(bus.rsp.bvalid && bus.req.bready) begin bus.rsp.bvalid<=0;have_aw<=0;have_w<=0;end
             if(bus.req.arvalid && bus.rsp.arready) begin
-                bus.rsp.arready<=0;bus.rsp.rvalid<=1;bus.rsp.rdata<=control;bus.rsp.rresp<=bus.req.araddr==0?OKAY:DECERR;
+                bus.rsp.arready<=0;bus.rsp.rvalid<=1;bus.rsp.rresp<=OKAY;
+                case(bus.req.araddr)
+                    0:bus.rsp.rdata<=control;
+                    'h024:bus.rsp.rdata<=32'(u);
+                    'h028:bus.rsp.rdata<=32'(r);
+                    'h02c:bus.rsp.rdata<=32'(d);
+                    default:begin bus.rsp.rdata<=0;bus.rsp.rresp<=DECERR;end
+                endcase
             end
             if(bus.rsp.rvalid && bus.req.rready) bus.rsp.rvalid<=0;
         end

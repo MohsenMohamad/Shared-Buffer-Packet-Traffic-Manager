@@ -47,4 +47,5 @@ package tm_bench_pkg;
     `include "tm_checkers.svh"
     `include "tm_environment.svh"
     `include "tm_foundation_test.svh"
+    `include "tm_batch_test.svh"
 endpackage

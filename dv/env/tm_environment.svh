@@ -127,7 +127,8 @@ class tm_environment extends uvm_env;
     tm_observation_monitor observations[3];
     tm_coordinator coordinator;
     tm_foundation_coverage coverage_collector;
-    tm_register_block registers;
+    tm_fixture_register_block registers;
+    tm_register_block production_registers;
     tm_axil_adapter adapter;
     uvm_reg_predictor #(tm_axil_item) predictor;
     virtual tm_observe_if observe;
@@ -143,7 +144,10 @@ class tm_environment extends uvm_env;
         end
         coordinator=tm_coordinator::type_id::create("coordinator",this);
         coverage_collector=tm_foundation_coverage::type_id::create("coverage_collector",this);
-        registers=tm_register_block::type_id::create("registers");registers.build();registers.reset();
+        registers=tm_fixture_register_block::type_id::create("registers");registers.build();registers.reset();
+        production_registers=tm_register_block::type_id::create("production_registers");production_registers.build();
+        if(production_registers.words["ID"].get_reset()!=64'h544d0100 || production_registers.words.num()!=34+16*N_Q) `uvm_fatal("RAL_MAP","production map shape/reset mismatch")
+        if($test$plusargs("SMALL_QUANTUM")) coordinator.schedule_model.quantum=64;
         adapter=tm_axil_adapter::type_id::create("adapter");predictor=new("predictor",this);
     endfunction
     function void connect_phase(uvm_phase phase);

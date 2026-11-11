@@ -34,14 +34,16 @@ endclass
 class tm_bus_sequence extends uvm_sequence #(tm_axil_item);
     `uvm_object_utils(tm_bus_sequence)
     int order;
-    bit read_only;
+    bit read_only,expect_reset;
+    int response_stall=5;
+    bit [31:0] address=0;
     function new(string name="bus_sequence");super.new(name);endfunction
     task body();
         tm_axil_item x=new;
         tm_axil_item response;
-        x.write=!read_only;x.addr=0;x.data=32'h12345678;x.aw_delay=order==0?6:0;x.w_delay=order==2?6:0;x.response_stall=5;
+        x.write=!read_only;x.addr=address;x.data=32'h12345678;x.aw_delay=order==0?6:0;x.w_delay=order==2?6:0;x.response_stall=response_stall;
         start_item(x);finish_item(x);get_response(response);
-        if(response.response!=OKAY) `uvm_fatal("BUS_RESPONSE","fixture write failed")
+        if(response.response!=(expect_reset?SLVERR:OKAY)) `uvm_fatal("BUS_RESPONSE","fixture write failed")
     endtask
 endclass
 
@@ -79,17 +81,39 @@ class tm_foundation_sequence extends uvm_sequence;
         if(status!=UVM_IS_OK) `uvm_fatal("RAL_MIRROR","frontdoor mirror failed")
         // All ports and queues, repeated tags, partial words and cell boundaries.
         for(int q=0;q<N_Q;q++) send(q%N_RX,9,q,3+q);
+        if(N_RX>1) begin
+            fork
+                send(0,MAX_PACKET_BYTES,0,31);
+                send(1,1,0,32);
+            join
+        end
         send(0,1,0,20);send(0,7,0,21);send(0,8,0,22);
-        send(0,CELL_BYTES-1,0,23);send(0,CELL_BYTES,0,24);send(0,CELL_BYTES+1,0,25);
+        fork
+            send(0,CELL_BYTES-1,0,23);
+            begin
+                for(int i=0;i<3;i++) begin
+                    tm_bus_sequence resource_read=new;resource_read.read_only=1;resource_read.address=32'h24+32'(4*i);resource_read.start(e.axil.sequencer);
+                end
+            end
+        joinsend(0,CELL_BYTES,0,24);send(0,CELL_BYTES+1,0,25);
         send(0,MAX_PACKET_BYTES,0,26);
         send(0,9,255,27);send(0,9,0,28,1);
         repeat(1000) @(negedge e.observe.clk);
         e.coordinator.drained();
         // Reset with committed/partially captured traffic and a stalled sink.
-        send(0,MAX_PACKET_BYTES,0,29);
-        @(negedge e.observe.clk);e.observe.rst_n=0;
-        repeat(4) @(negedge e.observe.clk);
-        e.observe.rst_n=1;e.registers.reset();
+        fork
+            begin
+                tm_bus_sequence aborted_bus=new;aborted_bus.expect_reset=1;aborted_bus.response_stall=MAX_PACKET_BYTES*2+50;
+                aborted_bus.start(e.axil.sequencer);
+            end
+            begin
+                wait(e.axil.vif.rsp.bvalid);
+                send(0,MAX_PACKET_BYTES,0,29);
+                @(negedge e.observe.clk);e.observe.rst_n=0;
+                repeat(4) @(negedge e.observe.clk);
+                e.observe.rst_n=1;e.registers.reset();
+            end
+        join
         send(0,9,0,42);
         repeat(1000) @(negedge e.observe.clk);
         e.coordinator.drained();
@@ -113,6 +137,7 @@ class tm_foundation_test extends uvm_test;
         env.observe.rst_n=1;
         fork sink_seq.start(env.tx.sequencer); join_none
         seq.start(sequencer);
+        sink_seq.kill();
         `uvm_info("FOUNDATION",$sformatf("TM_FOUNDATION_PASS captures=%0d services=%0d commits=%0d delivered=%0d dispatches=%0d batches=%0d",env.coverage_collector.captures,env.coordinator.service_model.services,env.coordinator.service_model.commits,env.coordinator.bytes_model.delivered,env.coordinator.schedule_model.dispatches,env.coordinator.batches),UVM_NONE)
         phase.drop_objection(this);
     endtask

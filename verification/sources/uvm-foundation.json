@@ -19,7 +19,8 @@
     "dv/agents/tm_stream_agent.svh",
     "dv/agents/tm_axil_agent.svh",
     "dv/env/tm_environment.svh",
-    "dv/tests/tm_foundation_test.svh"
+    "dv/tests/tm_foundation_test.svh",
+    "dv/tests/tm_batch_test.svh"
   ],
   "scope": "Simulation-only behavioral fixture and UVM foundation; generated profile config is recorded by the runner"
 }

@@ -5,6 +5,7 @@ class tm_axil_item extends uvm_sequence_item;
     bit [3:0] strb=15;
     axil_resp_t response;
     int aw_delay=0,w_delay=0,response_stall=0;
+    int epoch;
     function new(string name="axil_item"); super.new(name); endfunction
 endclass
 
@@ -13,38 +14,41 @@ class tm_axil_driver extends uvm_driver #(tm_axil_item);
     virtual tm_axil_if vif;
     function new(string name,uvm_component parent); super.new(name,parent); endfunction
     mailbox #(tm_axil_item) writes=new, reads=new;
+    int epoch=0;
     task drive_write(tm_axil_item x);
+        if(x.epoch!=epoch) begin x.response=SLVERR;seq_item_port.put_response(x);return;end
         while(!vif.rst_n) @(negedge vif.clk);
         fork
             begin
-                repeat(x.aw_delay) @(negedge vif.clk);
-                @(negedge vif.clk); vif.req.awaddr=x.addr; vif.req.awvalid=1;
-                do @(posedge vif.clk); while(vif.rst_n && !vif.rsp.awready);
+                for(int i=0;i<x.aw_delay && x.epoch==epoch;i++) @(negedge vif.clk);
+                @(negedge vif.clk); vif.req.awaddr=x.addr; vif.req.awvalid=(x.epoch==epoch && vif.rst_n);
+                do @(posedge vif.clk); while(x.epoch==epoch && vif.rst_n && !vif.rsp.awready);
                 @(negedge vif.clk); vif.req.awvalid=0;
             end
             begin
-                repeat(x.w_delay) @(negedge vif.clk);
-                @(negedge vif.clk); vif.req.wdata=x.data; vif.req.wstrb=x.strb; vif.req.wvalid=1;
-                do @(posedge vif.clk); while(vif.rst_n && !vif.rsp.wready);
+                for(int i=0;i<x.w_delay && x.epoch==epoch;i++) @(negedge vif.clk);
+                @(negedge vif.clk); vif.req.wdata=x.data; vif.req.wstrb=x.strb; vif.req.wvalid=(x.epoch==epoch && vif.rst_n);
+                do @(posedge vif.clk); while(x.epoch==epoch && vif.rst_n && !vif.rsp.wready);
                 @(negedge vif.clk); vif.req.wvalid=0;
             end
         join
-        repeat(x.response_stall) @(negedge vif.clk);
-        vif.req.bready=vif.rst_n;
-        do @(posedge vif.clk); while(vif.rst_n && !vif.rsp.bvalid);
-        x.response=vif.rst_n?vif.rsp.bresp:SLVERR;
+        for(int i=0;i<x.response_stall && x.epoch==epoch;i++) @(negedge vif.clk);
+        vif.req.bready=(x.epoch==epoch && vif.rst_n);
+        do @(posedge vif.clk); while(x.epoch==epoch && vif.rst_n && !vif.rsp.bvalid);
+        x.response=(x.epoch==epoch && vif.rst_n)?vif.rsp.bresp:SLVERR;
         @(negedge vif.clk); vif.req.bready=0;
         seq_item_port.put_response(x);
     endtask
     task drive_read(tm_axil_item x);
+        if(x.epoch!=epoch) begin x.response=SLVERR;seq_item_port.put_response(x);return;end
         while(!vif.rst_n) @(negedge vif.clk);
-        @(negedge vif.clk); vif.req.araddr=x.addr; vif.req.arvalid=1;
-        do @(posedge vif.clk); while(vif.rst_n && !vif.rsp.arready);
+        @(negedge vif.clk); vif.req.araddr=x.addr; vif.req.arvalid=(x.epoch==epoch && vif.rst_n);
+        do @(posedge vif.clk); while(x.epoch==epoch && vif.rst_n && !vif.rsp.arready);
         @(negedge vif.clk); vif.req.arvalid=0;
-        repeat(x.response_stall) @(negedge vif.clk);
-        vif.req.rready=vif.rst_n;
-        do @(posedge vif.clk); while(vif.rst_n && !vif.rsp.rvalid);
-        x.data=vif.rsp.rdata;x.response=vif.rst_n?vif.rsp.rresp:SLVERR;
+        for(int i=0;i<x.response_stall && x.epoch==epoch;i++) @(negedge vif.clk);
+        vif.req.rready=(x.epoch==epoch && vif.rst_n);
+        do @(posedge vif.clk); while(x.epoch==epoch && vif.rst_n && !vif.rsp.rvalid);
+        x.data=vif.rsp.rdata;x.response=(x.epoch==epoch && vif.rst_n)?vif.rsp.rresp:SLVERR;
         @(negedge vif.clk); vif.req.rready=0;
         seq_item_port.put_response(x);
     endtask
@@ -52,8 +56,13 @@ class tm_axil_driver extends uvm_driver #(tm_axil_item);
         vif.req='0;
         fork
             forever begin
+                @(negedge vif.rst_n);epoch++;
+                vif.req.awvalid=0;vif.req.wvalid=0;vif.req.arvalid=0;vif.req.bready=0;vif.req.rready=0;
+            end
+            forever begin
                 tm_axil_item x;
                 seq_item_port.get_next_item(x);
+                x.epoch=epoch;
                 if(x.write) writes.put(x);else reads.put(x);
                 seq_item_port.item_done();
             end
@@ -144,8 +153,8 @@ class tm_config_reg extends uvm_reg;
     endfunction
 endclass
 
-class tm_register_block extends uvm_reg_block;
-    `uvm_object_utils(tm_register_block)
+class tm_fixture_register_block extends uvm_reg_block;
+    `uvm_object_utils(tm_fixture_register_block)
     tm_config_reg control;
     function new(string name="registers"); super.new(name,UVM_NO_COVERAGE); endfunction
     function void build();
@@ -172,5 +181,52 @@ class tm_axil_agent extends uvm_agent;
     endfunction
     function void connect_phase(uvm_phase phase);
         if(is_active==UVM_ACTIVE) driver.seq_item_port.connect(sequencer.seq_item_export);
+    endfunction
+endclass
+
+// Production map declaration for P06/P09 hookup; never claim fixture accesses
+// exercise the production slave. Each entry still uses this agent's frontdoor.
+class tm_word_reg extends uvm_reg;
+    `uvm_object_utils(tm_word_reg)
+    uvm_reg_field value;
+    function new(string name="word");super.new(name,32,UVM_NO_COVERAGE);endfunction
+    function void build(string access,uvm_reg_data_t reset_value,int width=32,bit live=0);
+        value=uvm_reg_field::type_id::create("value");
+        value.configure(this,width,0,access,live,reset_value,1,0,0);
+        if(live) value.set_compare(UVM_NO_CHECK);
+    endfunction
+endclass
+class tm_register_block extends uvm_reg_block;
+    `uvm_object_utils(tm_register_block)
+    tm_word_reg words[string];
+    function new(string name="tm_registers");super.new(name,UVM_NO_COVERAGE);endfunction
+    function void add_word(string name,uvm_reg_addr_t addr,string access,uvm_reg_data_t reset_value=0,int width=32,bit live=0);
+        tm_word_reg word=tm_word_reg::type_id::create(name);
+        word.configure(this);word.build(access,reset_value,width,live);
+        words[name]=word;default_map.add_reg(word,addr,access);
+    endfunction
+    function void build();
+        default_map=create_map("frontdoor",0,4,UVM_LITTLE_ENDIAN);
+        add_word("ID",'h000,"RO",'h544d0100);
+        add_word("VERSION",'h004,"RO",'h00010000);
+        add_word("CAP0",'h008,"RO",uvm_reg_data_t'({8'(CELL_BYTES),8'd8,8'(N_Q),8'(N_RX)}));
+        add_word("CAP1",'h00c,"RO",uvm_reg_data_t'({16'(N_DESC),16'(N_CELL)}));
+        add_word("CTRL",'h010,"RW",0,1);
+        add_word("STATUS",'h014,"RO",2,4,1);
+        add_word("SNAPSHOT",'h018,"WO",0,1);
+        add_word("CLEAR_STATS",'h01c,"WO",0,1);
+        add_word("ADMISSION_MODE",'h020,"RW",0,1);
+        add_word("FREE_CREDIT",'h024,"RO",uvm_reg_data_t'( N_CELL ),32,1);
+        add_word("RESERVED_FREE",'h028,"RO",0,32,1);
+        add_word("FREE_DESC",'h02c,"RO",uvm_reg_data_t'( N_DESC ),32,1);
+        add_word("SCHED_MODE",'h030,"RO",uvm_reg_data_t'( SCHED_MODE ));
+        add_word("MAX_LENGTH",'h034,"RO",uvm_reg_data_t'( MAX_PACKET_BYTES ));
+        for(int k=0;k<20;k++) add_word($sformatf("GLOBAL_%0d",k),'h100+uvm_reg_addr_t'(4*k),"RO",0,32,1);
+        for(int q=0;q<N_Q;q++) begin
+            add_word($sformatf("Q%0d_LIMIT",q),'h400+uvm_reg_addr_t'(64*q),"RW",uvm_reg_data_t'( N_CELL ));
+            add_word($sformatf("Q%0d_QUANTUM",q),'h404+uvm_reg_addr_t'(64*q),"RW",uvm_reg_data_t'( MAX_PACKET_BYTES ));
+            for(int k=2;k<16;k++) add_word($sformatf("Q%0d_WORD%0d",q,k),'h400+uvm_reg_addr_t'(64*q+4*k),"RO",0,32,1);
+        end
+        lock_model();reset();
     endfunction
 endclass
