@@ -32,7 +32,7 @@ No external credential, GUI or container daemon is needed.
 `make ci` runs doctor, repository contracts, runner tests, fixture lint and
 compiler-error rejection, UVM, formal and mapping/STA in sequence, continuing
 independent gates after failures. GitHub Actions runs UVM/formal/synthesis
-in independent jobs, each with its doctor and orchestration checks. Routine
+in dependent consumer jobs after one shared preparation, each with its doctor and orchestration checks. Routine
 artifacts are retained for 14 days. Hosted execution status belongs in the
 PR; adding a workflow is not evidence that it executed successfully.
 
@@ -112,3 +112,39 @@ saved coverage and exact seeded-defect detections on a declared behavioral
 fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
 This route is separate from production TM requirements and the P00 tool fixture.
 See [P07 results](../results/P07-verification-foundation.md).
+
+## One CI preparation producer
+
+[CI](../../.github/workflows/toolchain.yml) owns PR, integrated-main push and manual triggers. It calls the existing repository and component workflows through `workflow_call`; those files no longer launch independent preparations. The repository check can run immediately. The capability matrix and every heavy component workflow have a real `needs: prepare` edge in the caller. A dependency orders jobs but does not share their files: each consumer downloads the producer's same-run installation archive, extracts it in its checkout, and runs strict validation. Consumers never build on a missing or rejected payload.
+
+The producer computes an exact compatibility key, restores a matching Actions cache when available, then runs `tools/toolchain_cache.py prepare`. A valid installation passes inventory/checksum checks and the real doctor (version, C++20 and solver execution). A miss or rejected installation is discarded and built once from the locks, then doctored and sealed. Only successful preparation is cached and uploaded. No partial installation is accepted. The installation transfer is retained for two days; diagnostic/test artifacts for 14 days. Raw transfer tarballs are excluded from consumer evidence uploads.
+
+Compatibility includes both dependency locks, setup/activation/evidence/doctor/runner/cache-helper inputs, Linux OS release, architecture, glibc, Python ABI, compiler version/target and the C++ runtime digest. It does not include the repository HEAD; unrelated RTL/docs commits reuse compatible tools. Setup embeds absolute paths, so the checkout root is also included and consumers must use the same checkout layout. Standard hosted jobs for this repository provide that layout; a custom runner must reproduce it or prepare its own compatible installation. Preserve the pinned qualified versions even if a newer runner compiler causes doctor to reject them.
+
+Caches are an optimization. Cache service restore/save failures do not remove the cold build path. A corrupt immutable cache entry can be rejected and rebuilt, but cannot be overwritten under the same key; delete that specific bad entry administratively before expecting reuse. PR-created caches are scoped to the PR merge ref and are **not available to main**. Integrated main may require its own cold build unless a compatible main/default-branch cache already exists. PR jobs may restore a compatible default-branch cache according to Actions cache scope rules. Superseded runs for a PR or ref are canceled by the caller's concurrency group; completed integrated-main checks remain separately observable.
+
+### Local preparation and transfer checks
+
+The preparation command owns and may replace ignored `.tools` and `.deps` directories. Do not run it against an installation you need to preserve without a backup. Ordinary developer `make setup` remains available.
+
+```sh
+CXX=g++-14 python3 tools/toolchain_cache.py key
+CXX=g++-14 python3 tools/toolchain_cache.py prepare --jobs 2
+CXX=g++-14 python3 tools/toolchain_cache.py prepare --jobs 2
+mkdir -p .build/toolchain-transfer
+tar --zstd -cf .build/toolchain-transfer/toolchain.tar.zst .tools .deps/downloads .deps/src/uvm .deps/liberty.lib
+CXX=g++-14 python3 tools/toolchain_cache.py validate
+python3 -m unittest discover -s tests/toolchain -p test_toolchain_cache.py -v
+```
+
+The first command on an empty installation must report `cold`, the second `cache`. Preserve `.build/setup-cache/preparation.json` after each invocation if comparing them: the latest preparation replaces that summary. Each validation records the real doctor's case manifests under `.build/runs`. A local tar transfer should be extracted into an emptied installation at the same absolute checkout path and validated before executing a consumer command. Local checks establish implementation behavior, not hosted cache scope or Actions orchestration.
+
+### Hosted verification procedure
+
+1. Open/update the PR and inspect the CI run for its actual head/merge revision, or dispatch CI explicitly with `gh workflow run toolchain.yml --ref chore/review-preparation`. Locate its real run ID with `gh run list --workflow toolchain.yml --branch chore/review-preparation`; inspect it with `gh run view RUN_ID --json headSha,event,status,conclusion,jobs,url`.
+2. For a fresh compatibility key, confirm exactly one `prepare-toolchain` job records a miss and `source: cold`, successful setup/doctor, cache save and transfer upload. All heavy consumers must start only after preparation succeeds and must download and validate the same named artifact in their own workspaces. Inspect every suite's actual result, including intended negative qualifications; merely scheduled or skipped jobs do not pass.
+3. Dispatch again on the same compatible branch/environment. Verify the same key, an exact cache hit and `source: cache`, a successful restore-doctor and no setup invocation. Record both run IDs/URLs and tested SHAs in a compact results report.
+4. On a disposable branch, change a relevant setup input or lock without changing qualified versions. Verify the key changes and the producer cold path executes once. Keep criteria/source modifications separate from measured results. Unit tests cover corruption/ABI invalidation; a hosted corruption exercise, if needed, must use a disposable cache key, never damage shared main entries.
+5. Verify a main push after integration independently: PR cache availability is not evidence of main reuse. Do not merge merely to test this task. If Actions cannot run or be inspected, record the precise limitation and leave these hosted outcomes unverified.
+
+The supporting [review-preparation results](../results/review-preparation.md) distinguish executed local checks from observed hosted runs.

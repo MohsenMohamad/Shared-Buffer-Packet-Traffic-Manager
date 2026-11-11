@@ -1,4 +1,4 @@
-name: Toolchain capabilities
+name: CI
 on:
   pull_request:
   push:
@@ -6,8 +6,77 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
+  repository:
+    uses: ./.github/workflows/repository.yml
+  prepare:
+    name: prepare-toolchain
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      CXX: g++-14
+    outputs:
+      artifact: toolchain-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Bootstrap native build prerequisites
+        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man zstd
+      - name: Compute installation compatibility
+        id: identity
+        run: python3 tools/toolchain_cache.py key --github-output "$GITHUB_OUTPUT"
+      - name: Restore exact compatible installation
+        id: cache
+        continue-on-error: true
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          key: ${{ steps.identity.outputs.key }}
+          path: |
+            .tools/
+            .deps/downloads/
+            .deps/src/uvm/
+            .deps/liberty.lib
+      - name: Validate restored installation or build once on a cold miss
+        run: python3 tools/toolchain_cache.py prepare --jobs 2
+      - name: Save only a complete validated installation
+        continue-on-error: true
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          key: ${{ steps.identity.outputs.key }}
+          path: |
+            .tools/
+            .deps/downloads/
+            .deps/src/uvm/
+            .deps/liberty.lib
+      - name: Package installation for this run's consumers
+        run: |
+          mkdir -p .build/toolchain-transfer
+          tar --zstd -cf .build/toolchain-transfer/toolchain.tar.zst .tools .deps/downloads .deps/src/uvm .deps/liberty.lib
+      - name: Transfer prepared installation
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: toolchain-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .build/toolchain-transfer/toolchain.tar.zst
+          compression-level: 0
+          retention-days: 2
+          if-no-files-found: error
+      - name: Retain preparation provenance and diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: preparation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .build/setup-cache/
+            .build/setup/
+            .build/runs/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error
   capability:
+    needs: prepare
     name: capability-${{ matrix.gate }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -19,10 +88,17 @@ jobs:
       CXX: g++-14
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Bootstrap compiler and native build prerequisites
-        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man
-      - name: Install checksum-locked toolchain
-        run: make setup JOBS=2
+      - name: Bootstrap native build prerequisites
+        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man zstd
+      - name: Receive prepared installation
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ needs.prepare.outputs.artifact }}
+          path: .build/toolchain-transfer
+      - name: Unpack and validate; consumers never build
+        run: |
+          tar --zstd -xf .build/toolchain-transfer/toolchain.tar.zst
+          python3 tools/toolchain_cache.py validate
       - name: Qualify installed versions and selected capability
         run: make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test ${{ matrix.gate }}'
       - name: Retain manifests, separate logs, coverage, traces and mapped netlists
@@ -30,7 +106,29 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: toolchain-${{ matrix.gate }}-${{ github.sha }}
-          path: .build/
+          path: |
+            .build/runs/
+            .build/setup-cache/
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
+  contracts:
+    needs: prepare
+    uses: ./.github/workflows/contracts.yml
+    with:
+      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+  storage:
+    needs: prepare
+    uses: ./.github/workflows/storage.yml
+    with:
+      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+  csr:
+    needs: prepare
+    uses: ./.github/workflows/csr.yml
+    with:
+      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+  foundation:
+    needs: prepare
+    uses: ./.github/workflows/uvm-foundation.yml
+    with:
+      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
