@@ -64,3 +64,33 @@ Do not copy raw logs into narrative documentation. A short error excerpt is appr
 ## Before delivery
 
 Check Markdown structure, tables, code fences and relative links, including files under `.github`. Inspect rendered output when a suitable preview is available. Ensure result summaries lead to the actual evidence and that material limitations remain visible. Run relevant existing lightweight checks; a prose-only change does not itself require rerunning expensive hardware qualification.
+
+## Durable evidence for new work
+
+Commit compact durable revision/configuration/tool/result/measurement and reproduction records to Git. Keep bulky per-process detail, raw logs, waves, databases and generated outputs in build/CI artifacts. Preserve enough numeric measurements, assumptions, expected-negative identities and limitations in the durable report to explain the result after artifacts expire. This policy applies to new work; existing results JSON, including P01/P02, remain unchanged and are not retrospectively compacted, relocated or deleted.
+
+Record the actual tested SHA and dirty state, configuration/dependency/constraint digests, exact commands and tool identities. Associate the PR and workflow/run references when available. An integration SHA on merged main may be added as metadata; it must not replace the tested SHA or imply execution on that untested revision. For historical dirty runs, retain the recorded base SHA and behavioral hashes; do not invent a clean tested commit.
+
+To retrieve historical sources, fetch the recorded tested commit (or the associated PR head ref when needed), then check it out in a separate worktree. Use `gh pr view NUMBER --json commits,mergeCommit,url` and `gh run view RUN_ID` where references exist to distinguish tested heads from merge metadata. For example:
+
+```sh
+git fetch origin TESTED_SHA
+git worktree add --detach ../historical-result TESTED_SHA
+# If the commit is reachable only through the recorded PR:
+git fetch origin pull/NUMBER/head:refs/remotes/origin/pr-NUMBER
+```
+
+Substitute actual recorded values. Consult the report's commands, locks and source hashes before replaying; a dirty historical base alone cannot reconstruct missing edits. Record unavailable artifacts or unrecoverable source differences explicitly. Expiring artifacts must never be the only explanation of a result.
+
+### Historical P01/P02 retrieval
+
+The existing reports remain authoritative and their JSON is unchanged. P01 records base `56abc747f1b86aa7a5f6631e5bb4f4e24613a218` with a dirty P01 worktree; [PR #2](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/2) contains delivered head `fb5e05ed9880fd9883d5570364932d46b1065c2a`. That delivered head is a retrieval aid, not a replacement tested SHA. Compare the recorded behavioral hashes; checking out the clean base alone does not reproduce P01.
+
+P02 records tested revision `040863d055ba5fd70b3c09f18e3c268c67d3c1ef` with per-run dirty flags and behavioral hashes. It is a commit in [PR #3](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/3) and remains fetchable:
+
+```sh
+git fetch origin 040863d055ba5fd70b3c09f18e3c268c67d3c1ef
+git worktree add --detach ../p02-tested 040863d055ba5fd70b3c09f18e3c268c67d3c1ef
+```
+
+The [Repository push run 42962551741](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/42962551741) references that exact P02 SHA and concluded failure; it is not the recorded local storage proof/regression result. The P02 report explicitly records its hosted storage qualification as NOT_RUN. Later successful integrated-main runs and merge `b663f47de525e132f32afe621cff69ac82633478` must not be substituted for those historical tested records. Retrieve commands and source hashes from [P01](results/P01-contracts.md) and [P02](results/P02-storage-primitives.md), preserving their original scope and limitations.

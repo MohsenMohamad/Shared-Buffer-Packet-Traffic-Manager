@@ -32,7 +32,7 @@ No external credential, GUI or container daemon is needed.
 `make ci` runs doctor, repository contracts, runner tests, fixture lint and
 compiler-error rejection, UVM, formal and mapping/STA in sequence, continuing
 independent gates after failures. GitHub Actions runs UVM/formal/synthesis
-in independent jobs, each with its doctor and orchestration checks. Routine
+in dependent consumer jobs after one shared preparation, each with its doctor and orchestration checks. Routine
 artifacts are retained for 14 days. Hosted execution status belongs in the
 PR; adding a workflow is not evidence that it executed successfully.
 
@@ -112,3 +112,56 @@ saved coverage and exact seeded-defect detections on a declared behavioral
 fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
 This route is separate from production TM requirements and the P00 tool fixture.
 See [P07 results](../results/P07-verification-foundation.md).
+
+## One CI preparation producer
+
+[CI](../../.github/workflows/toolchain.yml) owns PR, integrated-main push and manual triggers. It calls the existing repository and component workflows through `workflow_call`; those files no longer launch independent preparations. The repository check can run immediately. The capability matrix and every heavy component workflow have a real `needs: prepare` edge in the caller. A dependency orders jobs but does not share their files: each consumer downloads the producer's same-run installation archive, extracts it with preserved permissions (`tar --zstd -xpf`) in its checkout, and runs strict validation. Consumers never build on a missing or rejected payload.
+
+The producer computes an exact installation key, restores a matching Actions cache when available, then runs `tools/toolchain_cache.py prepare`. A valid installation passes inventory/checksum checks and the current doctor (version, C++20 and solver execution). A miss or rejected installation is discarded and built once from the locks, then doctored and sealed. Only successful preparation is cached and uploaded. A job step records the validated `cold`/`cache` outcome and `miss`/`accepted`/`rejected` status as well as the preparation artifact. No partial installation is accepted.
+
+Installation identity includes both dependency locks, setup scripts, setup-imported `evidence.py`, the cache-format helper, Linux OS release, architecture, glibc, Python ABI, compiler version/target, inherited compiler/linker/Make flags and the C++ runtime digest. It excludes `tools/run.py`, `tools/doctor.py` and repository HEAD. Suite registration and non-rejecting validator-only edits therefore reuse identical tools. Every restore and every consumer still executes the current validator; neither a matching key nor an old seal is acceptance.
+
+If a validator change rejects previously compatible installations, bump `CACHE_PREFIX` in `tools/toolchain_cache.py` in the same PR. The versioned generation (currently `tm-tools-v1-`) provides a new immutable key under which a successful rebuild can be saved, even when the tool binaries are unchanged. The changed validator must pass before sealing/saving; a prefix bump cannot turn a failed validation into success.
+
+Setup embeds absolute paths, so the checkout root remains part of identity and consumers must use the same layout. Standard hosted jobs for this repository provide that layout; a custom runner must reproduce it or prepare its own compatible installation. Preserve the pinned qualified versions even if a newer runner compiler causes doctor to reject them.
+
+Hosted bootstrap checks use installed compiler/Make/Perl/curl/Git/dpkg/Python/zstd and install packages only when missing. Autoconf, Bison, Flex and help2man come from the checksum-locked sysroot, so a warm run does not require an unnecessary apt mirror refresh.
+
+Caches are an optimization. Cache service restore/save failures do not remove the cold build path. Rejection emits a workflow warning naming the actual restored key and reason. `.build/setup-cache/preparation.json` retains `rejected_key`, `restore_rejected`, `cache_status: rejected` and `source: cold`; an Actions exact hit followed by rebuilding is not healthy cache reuse. An immutable rejected entry cannot be overwritten: bump the existing `CACHE_PREFIX` generation and commit/push the change before expecting a replacement entry. Failed setup or current validation never produces a complete seal or a cache save.
+
+PR-created caches are scoped to the PR merge ref and are **not available to main**. Main may need its own cold build unless a compatible default-branch cache exists. PR jobs may restore a compatible default-branch cache according to Actions scope rules.
+
+Only superseded pull-request runs share a cancellation group. Every main push and manual run/attempt has its own group, so both active and older pending runs can complete independently. Setting only `cancel-in-progress: false` on a shared main group would still allow GitHub to replace an older pending run; unique groups avoid that loss.
+
+### Ephemeral handoff cleanup
+
+The per-run installation handoff has one-day retention. After all heavy consumers settle, including failed/skipped consumers, an `always()` cleanup job verifies the producer's exact artifact ID, name, run ID and attempt before deleting that handoff alone. Only this job has job-level `actions: write`; the workflow default remains `contents: read`. Diagnostic/result artifacts retain their 14-day policy and are never selected for deletion. Raw transfer tarballs remain excluded from consumer evidence uploads.
+
+Cleanup is best effort. A missing/restricted token, API failure or metadata mismatch emits a warning and records `retention-fallback` in the job output and summary. Cancellation may prevent cleanup from executing; the producer announces the one-day fallback before upload. Previously uploaded historical handoffs keep their original retention and are not swept. Rerun the whole workflow, including preparation, when a new handoff is needed; rerunning a consumer alone cannot recover a deleted or expired archive.
+
+### Local preparation and transfer checks
+
+The preparation command owns and may replace ignored `.tools` and `.deps` directories. Do not run it against an installation you need to preserve without a backup. Ordinary developer `make setup` remains available.
+
+```sh
+CXX=g++-14 python3 tools/toolchain_cache.py key
+CXX=g++-14 python3 tools/toolchain_cache.py prepare --jobs 2
+CXX=g++-14 python3 tools/toolchain_cache.py prepare --jobs 2
+mkdir -p .build/toolchain-transfer
+tar --zstd -cf .build/toolchain-transfer/toolchain.tar.zst .tools .deps/downloads .deps/src/uvm .deps/liberty.lib
+CXX=g++-14 python3 tools/toolchain_cache.py validate
+python3 -m unittest discover -s tests/toolchain -p test_toolchain_cache.py -v
+```
+
+The first command on an empty installation must report `cold`, the second `cache`. Preserve `.build/setup-cache/preparation.json` after each invocation if comparing them: the latest preparation replaces that summary. Each validation records the real doctor's case manifests under `.build/runs`. A local tar transfer should be extracted into an emptied installation at the same absolute checkout path and validated before executing a consumer command. Local checks establish implementation behavior, not hosted cache scope or Actions orchestration.
+
+### Hosted verification procedure
+
+1. Open/update the PR and inspect the CI run for its actual head/merge revision, or dispatch CI explicitly with `gh workflow run toolchain.yml --ref chore/review-preparation`. Locate its real run ID with `gh run list --workflow toolchain.yml --branch chore/review-preparation`; inspect it with `gh run view RUN_ID --json headSha,event,status,conclusion,jobs,url`.
+2. For a fresh compatibility key, confirm exactly one `prepare-toolchain` job records a miss and `source: cold`, successful setup/doctor, cache save and transfer upload. All heavy consumers must start only after preparation succeeds and must download and validate the same named artifact in their own workspaces. Inspect every suite's actual result, including intended negative qualifications; merely scheduled or skipped jobs do not pass.
+3. Use a second run: push an unrelated documentation commit on the same PR to test PR-cache reuse, or dispatch twice on the same branch for branch-scoped reuse. Do not expect a branch dispatch to see a PR-merge-ref cache. Verify the same key, an exact hit, `source: cache`, `cache_status: accepted`, a successful current restore-doctor and no setup invocation. Record cold and reuse run IDs/URLs and tested SHAs separately; one run cannot demonstrate both paths.
+4. On a disposable branch, change a relevant setup input or lock without changing qualified versions. Verify the key changes and the producer cold path executes once. Keep criteria/source modifications separate from measured results. Unit tests cover corruption/ABI invalidation; a hosted corruption exercise, if needed, must use a disposable cache key, never damage shared main entries.
+5. Verify a main push after integration independently: PR cache availability is not evidence of main reuse. Do not merge merely to test this task. If Actions cannot run or be inspected, record the precise limitation and leave these hosted outcomes unverified.
+6. After consumers settle, inspect `cleanup-handoff`. Confirm the selected handoff ID is absent after `deleted`, while preparation and test artifacts remain. A reported permission/API failure or cancellation leaves the one-day fallback; record it as a fallback, not successful deletion. Check concurrency with distinct main/manual run IDs and shared same-PR groups; do not claim hosted main execution from a local policy test.
+
+The supporting [review-preparation results](../results/review-preparation.md) distinguish executed local checks from observed hosted runs.

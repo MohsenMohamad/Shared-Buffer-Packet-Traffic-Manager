@@ -37,3 +37,7 @@ checks independent event batching; it does not execute a TM datapath. Suite and
 source registration, seed/replay rules and case scope are defined in
 [module-contracts.md](module-contracts.md). Capability CI selectors remain
 separate from regression suite selectors.
+
+## Durable versus execution evidence
+
+For new work, follow [the durable evidence policy](../documentation.md#durable-evidence-for-new-work): Git stores compact tested-revision/configuration/tool/result/measurement and reproduction records; artifacts store bulky execution details, logs, waves and databases. Existing result JSON files are preserved unchanged. Record the actual tested SHA with PR/workflow references where available; integrated-main metadata never substitutes for tested-source provenance.

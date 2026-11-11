@@ -21,6 +21,8 @@ Do not push directly to the default branch, merge PRs, rewrite shared history or
 
 ## Code Review Rules
 
+- Check readability: descriptive names, separated statements and state transitions, manageable functions, and explanations of non-obvious invariants.
+
 - Review reservation/physical ownership and simultaneous updates against pre-state admission plus merged deltas; flag leaks, double frees and premature reuse.
 - Check that reference data originate from observed handshakes and that trace/status assertions are independently cross-checked.
 - Check the actual scope of verification evidence. Local proofs, two-state simulation and positive pre-layout slack must not be reported as broader validation.

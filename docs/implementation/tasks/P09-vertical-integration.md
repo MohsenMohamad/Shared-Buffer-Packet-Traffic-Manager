@@ -51,3 +51,9 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 G3: an exercised genuine UVM/production-RTL vertical path, a runnable subsystem smoke entry point and correct final resource/control state. This does not yet establish all-input/all-queue concurrency.
 
 Requirement focus: `IF-01`, `IF-03`, `LEN-01`, `LEN-02`, `LEN-03`, `Q-01`, `MEM-02`, `MEM-03`, `MEM-04`, `MEM-05`, `FMT-06`, `RST-01`, `RST-02`, `CSR-05`, `CSR-06`
+
+## Early packet-rate measurement
+
+Measure saturated 64-byte and 1536-byte traffic on the real path with an always-ready output to characterize internal overhead. Keep one backlogged queue for the initial vertical baseline; also run representative multi-queue traffic once that path is available, with completion required in P10. Define reset/setup, warm-up and measurement windows explicitly; record sustained backlog, delivered packets/beats, elapsed measurement cycles, packets/cycle, beats/cycle and the interpacket-gap distribution. State how packets crossing window boundaries are counted. Define an interpacket gap as the output cycles strictly between the previous packet's final transfer and the next packet's first transfer; adjacent transfers have zero gap.
+
+Use the common [P09/P10 measurement accounting](P10-concurrency.md#packet-rate-diagnosis-and-decision) so overhead cycles are attributed once. This is early diagnosis, not P12 benchmark closure. No hard minimum-packet utilization target is agreed; do not invent one or apply the large-packet target to 64-byte traffic.

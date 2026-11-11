@@ -47,3 +47,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The FIFO and pool portion of G2 has executable local evidence and scoped unbounded invariants. Local descriptor bitmap consistency does not yet prove RX/queue/TX ownership composition.
 
 Requirement focus: `IF-02`, `MEM-01`, `MEM-06`, `RST-01`, `PAR-01`
+
+## Scheduled follow-up
+
+The completed component work remains intact. Run the [allocator-scaling follow-up](P02-followup-scaling.md) now and complete it before P08; standalone scaling evidence does not close consumer-path timing.

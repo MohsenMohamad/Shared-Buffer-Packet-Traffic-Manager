@@ -1,9 +1,10 @@
 name: Storage components
 on:
-  pull_request:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      toolchain-artifact:
+        required: true
+        type: string
 permissions:
   contents: read
 jobs:
@@ -14,10 +15,17 @@ jobs:
       CXX: g++-14
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Bootstrap native build prerequisites
-        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man
-      - name: Install checksum-locked toolchain
-        run: make setup JOBS=2
+      - name: Ensure native build prerequisites
+        uses: ./.github/actions/native-prerequisites
+      - name: Receive the prepared installation
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ inputs.toolchain-artifact }}
+          path: .build/toolchain-transfer
+      - name: Unpack and validate; consumers never build
+        run: |
+          tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
+          python3 tools/toolchain_cache.py validate
       - name: Check storage components at every production size
         shell: bash
         run: |
@@ -34,7 +42,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: storage-${{ github.sha }}
-          path: .build/
+          path: |
+            .build/runs/
+            .build/setup-cache/
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error

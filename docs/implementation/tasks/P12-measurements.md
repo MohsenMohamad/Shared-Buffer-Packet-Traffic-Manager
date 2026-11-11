@@ -51,3 +51,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 G6: reproducible matched traffic and implementation studies with diagnosed target outcomes. Any later executable variant change refreshes affected G5 evidence. No routed timing, silicon power or black-box total-area result is implied.
 
 Requirement focus: `PERF-01`, `PERF-02`, `PERF-03`, `PERF-04`, `SCH-05`
+
+## Earlier baseline
+
+Consume the P09/P10 packet-rate measurements and pre-P11 baseline decision, then perform the full study above. Early measurements do not replace the matched benchmark matrix or extend the 1536-byte utilization target to minimum packets.
