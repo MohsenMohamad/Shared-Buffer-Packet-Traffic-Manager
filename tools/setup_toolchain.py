@@ -96,6 +96,13 @@ def main():
     prefix.mkdir(parents=True, exist_ok=True)
     for pin in packages:
         subprocess.run(['dpkg-deb', '-x', str(cache / pin['file']), str(sysroot)], check=True, timeout=120)
+    # Debian alternatives are installed by maintainer scripts, which dpkg -x
+    # does not execute. Supply exact local aliases instead of using host tools.
+    (prefix / 'bin').mkdir(parents=True, exist_ok=True)
+    for alias, target in {'automake':'automake-1.17', 'aclocal':'aclocal-1.17', 'tclsh':'tclsh8.6'}.items():
+        link = prefix / 'bin' / alias
+        link.unlink(missing_ok=True)
+        link.symlink_to(sysroot / 'usr/bin' / target)
     # Relocate only packaged build-tool metadata, retaining license/doc files.
     mappings = {'/usr/share/autoconf': str(sysroot / 'usr/share/autoconf'),
                 '/usr/share/automake-1.17': str(sysroot / 'usr/share/automake-1.17'),

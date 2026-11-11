@@ -20,10 +20,10 @@ def audit(run, args):
     if step['result'] != 'PASS':
         return
     manifest = json.loads((generated/'candidates.json').read_text())
-    for name in CANDIDATES + ('features','unpacked','interface'):
-        top = {'features':'feature_top','unpacked':'unpacked_ports','interface':'interface_top'}.get(name) or ('bits_type' if name=='bits_type' else 'synth_top')
+    for name in CANDIDATES + ('features','unpacked','interface','record_memory'):
+        top = {'features':'feature_top','unpacked':'unpacked_ports','interface':'interface_top','record_memory':'record_memory'}.get(name) or ('bits_type' if name=='bits_type' else 'synth_top')
         includes = [generated, ROOT/'rtl/include']
-        if name in ('features','unpacked','interface'):
+        if name in ('features','unpacked','interface','record_memory'):
             files=[BASE/(name+'.sv')]
         else:
             files=([generated/'tm_fixed.sv'] if name in PACKAGES else [])
@@ -48,7 +48,7 @@ def audit(run, args):
             if name=='forward_typedef':
                 # The source references a module-local typedef before declaration.
                 ok=step['returncode'] not in (0,None) and step['result']!='TIMEOUT' and bool(re.search(
-                    r"(?:used before|before (?:its )?declaration|unknown type|undeclared identifier).*trace_t|trace_t.*(?:used before|before (?:its )?declaration|unknown type|undeclared)",text,re.I))
+                    r"(?:used before|before (?:its )?declaration|unknown type|undeclared identifier).*(?:beat_t|trace_t|axil_request_t)|(?:beat_t|trace_t|axil_request_t).*(?:used before|before (?:its )?declaration|unknown type|undeclared)",text,re.I))
                 case.finish('PASS' if ok else 'FAIL',None if ok else 'Expected invalid forward-reference diagnostic',expected='INVALID_FORWARD_REFERENCE')
             elif step['result']!='PASS':
                 case.finish(step['result'],step['first_failure'])
@@ -57,12 +57,13 @@ def audit(run, args):
                 cells=[c['type'] for m in net['modules'].values() for c in m.get('cells',{}).values()]
                 bad=[c for c in cells if 'latch' in c.lower()]
                 fields=dict(generic_cells=len(cells),latches=bad,netlist_sha256=sha(case.path/'netlist.json'))
-                if name=='features':
+                if name in ('features','record_memory'):
                     inferred=json.loads((case.path/'inferred.json').read_text())
                     memories=[c for m in inferred['modules'].values() for c in m.get('cells',{}).values() if c['type']=='$mem_v2']
                     fields['inferred_memories']=[{k:int(c['parameters'][k],2) for k in ('WIDTH','SIZE','RD_PORTS','WR_PORTS','RD_CLK_ENABLE')} for c in memories]
-                    if len(memories)!=2 or sorted(int(c['parameters']['WIDTH'],2) for c in memories)!=[10,16]:
-                        bad.append('Expected two heterogeneous packed-record memories')
+                    widths=[10,16] if name=='features' else [10]
+                    if len(memories)!=len(widths) or sorted(int(c['parameters']['WIDTH'],2) for c in memories)!=widths:
+                        bad.append('Unexpected packed-record memory count/width')
                 case.finish('FAIL' if bad else 'PASS','Unexpected latch/memory structure' if bad else None,**fields)
             else:
                 case.finish('PASS')

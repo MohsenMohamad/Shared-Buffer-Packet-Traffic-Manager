@@ -12,8 +12,16 @@ def selected(args, source_set='synthesis'):
 def read_sources(files, top, includes=(), defines=(), params=None, frontend='slang', formal=False):
     if frontend not in ('slang', 'verilog'):
         raise ValueError('Unknown RTL frontend: ' + frontend)
-    files = ' '.join(json.dumps(str(p)) for p in files)
-    flags = ' '.join('-I' + str(p) for p in includes)
+    def slang_path(value):
+        path = Path(value)
+        # read_slang's argument parser retains literal Yosys quotes. Use
+        # checkout-relative paths; formal staging already uses bare filenames.
+        value = str(path.relative_to(ROOT)) if path.is_absolute() and path.is_relative_to(ROOT) else str(path)
+        if any(c.isspace() for c in value):
+            raise ValueError('Unqualified whitespace in slang source path: ' + value)
+        return value
+    files = ' '.join(slang_path(p) if frontend == 'slang' else json.dumps(str(p)) for p in files)
+    flags = ' '.join('-I' + (slang_path(p) if frontend == 'slang' else str(p)) for p in includes)
     defines = list(defines)
     if formal and 'FORMAL' not in defines:
         defines.append('FORMAL')

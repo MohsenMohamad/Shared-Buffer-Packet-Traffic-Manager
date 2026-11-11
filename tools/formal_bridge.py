@@ -49,6 +49,7 @@ def comparable(data, top, names):
 
 
 def bridge(run,args):
+    symbolics(run,args)
     specs=json.loads((ROOT/'verification/formal.json').read_text())['configurations']
     registered=sources('formal')
     for name,spec in specs.items():
@@ -105,3 +106,55 @@ def bridge(run,args):
             ok=step['returncode']==0 and status.is_file() and status.read_text().split()[0]=='PASS' and 'successful proof by k-induction' in output(step)
             case.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' else 'FAIL',None if ok else 'Unbounded assumption-inclusion proof missing',
                         method='Mutual trace inclusion of complete assumption predicates; production DUT retained; all arbitrary inputs shared; no fairness added')
+
+
+def symbolics(run,args):
+    base=ROOT/'tests/frontends'
+    for frontend in ('verilog','slang'):
+        for variant in ('symbolic_attributes','symbolic_functions','symbolic_ports'):
+            case=Case(run,'symbolic-'+frontend+'-'+variant+'-sources')
+            source=base/(variant+'.sv' if variant!='symbolic_ports' else 'symbolics.sv')
+            net=case.path/'sources.json';script=case.path/'sources.ys'
+            script.write_text(read_sources([source],variant,frontend=frontend,formal=True)+f'prep -top {variant}\nwrite_json {net}\n')
+            step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=args.timeout)
+            text=output(step)
+            if frontend=='slang' and variant=='symbolic_functions':
+                ok=step['returncode'] not in (0,None) and step['result']!='TIMEOUT' and "unknown system name '$anyseq'" in text and "unknown system name '$anyconst'" in text
+                case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing intended unsupported symbolic-function diagnostic',
+                            expected='REJECT_UNSUPPORTED_FUNCTIONS',capability='UNSUPPORTED')
+                continue
+            if step['result']!='PASS' or not net.is_file():
+                case.finish(step['result'] if step['result']!='PASS' else 'TOOL_ERROR','Symbolic-source elaboration failed')
+                continue
+            module=json.loads(net.read_text())['modules'][variant]
+            kinds=Counter(c['type'] for c in module['cells'].values())
+            unsupported=frontend=='slang' and variant=='symbolic_attributes'
+            if variant=='symbolic_ports':
+                ok=set(module['ports'])=={'clk','rst_n','enable','arbitrary'}
+            else:
+                ok=(kinds['$anyseq']==0 and kinds['$anyconst']==0) if unsupported else (kinds['$anyseq']==1 and kinds['$anyconst']==1)
+            case.finish('PASS' if ok else 'FAIL',None if ok else 'Unexpected symbolic input representation',
+                        capability='UNSUPPORTED' if unsupported else 'SUPPORTED',source_cells=dict(kinds),
+                        symbolic_nets={n:v['bits'] for n,v in module['netnames'].items() if n in ('arbitrary','fixed_bit')})
+            if not ok:continue
+            tasks=('prove',) if unsupported else ('prove','cover','mutation') if variant=='symbolic_ports' else ('prove','cover')
+            for task in tasks:
+                check=Case(run,'symbolic-'+frontend+'-'+variant+'-'+task)
+                config=check.path/'symbolic.sby'
+                defines=['MUTATE'] if task=='mutation' else []
+                config.write_text('[options]\nmode '+('cover' if task=='cover' else 'prove')+'\ndepth 12\n[engines]\nsmtbmc z3\n[script]\n'+
+                                  read_sources([source.name],variant,defines=defines,frontend=frontend,formal=True)+
+                                  f'prep -top {variant}\nasync2sync\ndffunmap\n[files]\n{source.name} {source}\n')
+                step=check.execute(['sby','-f','-d',str(check.path/'engine'),str(config)],timeout=args.timeout,cwd=check.path)
+                status=check.path/'engine/status';status=status.read_text().split()[0] if status.is_file() else None
+                waves=[str(p) for p in (check.path/'engine').rglob('*.vcd') if p.stat().st_size]
+                text=output(step)
+                if unsupported or task=='mutation':
+                    label='a_constant' if unsupported else 'a_capture'
+                    ok=step['returncode'] not in (0,None) and step['result']!='TIMEOUT' and status=='FAIL' and waves and label in text and 'Assert failed' in text
+                    expected='DETECT_LOST_ANYCONST_SEMANTICS' if unsupported else 'SEEDED_DEFECT_DETECTION'
+                else:
+                    marker='Reached cover statement' if task=='cover' else 'successful proof by k-induction'
+                    ok=step['returncode']==0 and status=='PASS' and marker in text and (task!='cover' or bool(waves));expected=task.upper()
+                check.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' else 'FAIL',None if ok else 'Missing intended symbolic-input proof/cover/detection',
+                             expected=expected,capability='UNSUPPORTED' if unsupported else 'SUPPORTED',engine_status=status,traces=waves)
