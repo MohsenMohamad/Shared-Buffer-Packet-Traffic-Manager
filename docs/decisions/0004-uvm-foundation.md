@@ -29,6 +29,11 @@ model limits/WAIT and quantum are explicit configuration inputs. Configuration
 changes must be coordinated with the eventual CSR integration, not inferred
 from admission outcomes.
 
+A standard UVM report-server extension preserves error/fatal messages and
+terminates them with nonzero status. This avoids the simulator's zero-exit
+`$finish` path and prevents execution after a fatal; the reference library is
+unmodified.
+
 The fixture has a scratch RW register at address zero to qualify RAL accesses,
 independent AW/W, concurrent read/write and response stalls. That scratch
 register is deliberately not the production ID register. `tm_register_block`
