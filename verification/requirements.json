@@ -328,7 +328,11 @@
       "name": "Parameter matrix",
       "requirement": "F0/F1/I0/I1/E0/E1; counters/indices at minimum sizes; invalid elaborations rejected.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "contract_tests": [
+        "contracts"
+      ],
+      "contract_scope": "G1 checks production declarations, profile guards and type layouts only. Functional parameter regression remains NOT_IMPLEMENTED."
     },
     {
       "id": "PERF-01",
@@ -365,5 +369,11 @@
       "tests": [],
       "status": "NOT_IMPLEMENTED"
     }
-  ]
+  ],
+  "contract_gate": {
+    "id": "G1",
+    "suite": "contracts",
+    "evidence": "docs/results/P01-contracts.md",
+    "scope": "Module declarations and event-batching interfaces only; no functional requirement is marked PASS by declaration compilation."
+  }
 }

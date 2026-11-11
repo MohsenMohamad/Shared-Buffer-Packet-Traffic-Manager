@@ -8,6 +8,7 @@ Performance values are acceptance targets until backed by an identified run.
 | Document | Authority |
 |---|---|
 | [architecture.md](architecture.md) | Scope, profiles, block boundaries and performance targets |
+| [module-contracts.md](module-contracts.md) | G1 module APIs, update ownership, portable types and monitor batching |
 | [interfaces.md](interfaces.md) | Clock/reset, packet/control ports and event observation |
 | [buffer-management.md](buffer-management.md) | Admission, reservations, ownership, storage and cleanup |
 | [queues-and-scheduling.md](queues-and-scheduling.md) | Queue linearization, DRR and transmission |

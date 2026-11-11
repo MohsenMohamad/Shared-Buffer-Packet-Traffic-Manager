@@ -247,8 +247,8 @@ def unit(run, args):
 def main(argv=None):
     parser = ManifestParser(description=__doc__)
     parser.add_argument('action')
-    parser.add_argument('--profile', default='toolchain')
-    parser.add_argument('--test', action='append', help='CI gate selection: doctor, repo, unit, lint, uvm, formal, synth')
+    parser.add_argument('--profile', default=None)
+    parser.add_argument('--test', action='append', help='CI gate or regression suite selection (repeatable)')
     parser.add_argument('--seed', action='append', type=int)
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=120)
@@ -269,14 +269,34 @@ def main(argv=None):
         os.environ['UVM_HOME'] = str(args.uvm_home.resolve())
     action = {'test-uvm-smoke': 'uvm', 'formal-smoke': 'formal', 'synth-smoke': 'synth',
               'test-unit': 'unit', 'repo-check': 'repo'}.get(args.action, args.action)
+    if args.profile is None:
+        args.profile = 'F0' if action == 'regression' else 'toolchain'
     run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
+    if action == 'regression':
+        from registry import selection
+        from contracts import contracts
+        run.scope = 'G1 contracts only; no component functionality evaluated'
+        try:
+            selected = selection(args.profile, args.test)
+            if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
+                raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
+            if args.seed is not None and (len(args.seed) != 1 or not 1 <= args.seed[0] <= 2**31-1):
+                raise ValueError('Contracts replay accepts one positive 31-bit functional seed')
+            from doctor import qualify
+            qualify(run)
+            handlers = {'contracts': contracts}
+            for name in selected:
+                handlers[name](run, args)
+        except (OSError, ValueError, KeyError) as error:
+            Case(run, 'selection-or-suite-error').finish('TOOL_ERROR', str(error))
+        return run.finish()
     from doctor import qualify
     gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth)
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
     error = None
     if args.profile != 'toolchain':
-        error = 'Only toolchain profile is implemented'
+        error = 'Capability commands require the toolchain profile'
     if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
         error = 'jobs must be 1..8; timeouts must be >0 and <=3600 seconds'
     if args.seed is not None and (len(set(args.seed)) != len(args.seed) or len(args.seed) < 2 or

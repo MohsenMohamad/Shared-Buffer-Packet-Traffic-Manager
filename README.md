@@ -6,7 +6,7 @@ Default configuration: four 64-bit packet inputs, sixteen logical queues, one ou
 
 ## Project state
 
-This repository contains the implementation specification, staged work items and executable toolchain capability gates. Traffic-manager RTL and its subsystem verification are not yet delivered. Track integration gates in [docs/status.md](docs/status.md).
+This repository contains the implementation specification, executable toolchain capability gates, and G1 module/type/event contracts. Production RTL is declaration-only; the functional traffic-manager datapath and subsystem verification are not yet delivered. Track integration gates in [docs/status.md](docs/status.md).
 
 ## Documentation
 
@@ -17,3 +17,7 @@ This repository contains the implementation specification, staged work items and
 - [Toolchain setup and commands](docs/implementation/toolchain.md)
 
 `make setup` installs the pinned native tools. `make ci` exercises UVM/randomization/assertions/saved coverage, formal prove/cover/mutation, and mapped synthesis/max/min STA on independent fixtures. `make repo-check` validates documents and requirement data only. Executed results identify their source revision, profile and tool versions.
+
+G1 contract regression: `make regression RUN_ARGS="--profile E0 --test contracts --seed 17"`.
+See [module contracts](docs/spec/module-contracts.md) for APIs and scope.
+Declaration compilation does not establish traffic-manager functionality.
