@@ -105,3 +105,10 @@ duplicate or unknown family selections and seeds. It runs prove/cover tasks and
 the pool wrong-delta qualifications. See [proof scope](../../formal/pools/README.md).
 `formal-smoke` remains the P00 counter fixture. Component tests and local pool
 proofs do not establish integrated traffic-manager ownership or payload behavior.
+
+P07 adds `regression --profile E0 --test uvm-foundation --seed 17`. The suite
+executes real UVM agents, frontdoor RAL, independent observed-transaction models,
+saved coverage and exact seeded-defect detections on a declared behavioral
+fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
+This route is separate from production TM requirements and the P00 tool fixture.
+See [P07 results](../results/P07-verification-foundation.md).

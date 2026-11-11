@@ -1,0 +1,33 @@
+name: UVM foundation fixture
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Bootstrap native build prerequisites
+        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man
+      - name: Install checksum-locked toolchain
+        run: make setup JOBS=2
+      - name: Run UVM fixture and exact seeded detections
+        run: |
+          make regression RUN_ARGS='--profile E0 --test uvm-foundation --seed 17'
+          make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'
+      - name: Retain logs, raw coverage, manifests and failing waveforms
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: uvm-foundation-${{ github.sha }}
+          path: .build/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error

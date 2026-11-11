@@ -181,8 +181,9 @@ there is no functional trace producer in the G1 declaration-only top.
 monitor batch: epoch/cycle/reset, all external stream levels/beat fields, output
 levels, full AXI channel levels, per-input status and architectural trace.
 [events.py](../../dv/model/events.py) supplies immutable Python records and an
-executable collector/example policy boundary. Later UVM agents publish matching
-samples; these records do not replace the P07 UVM agents/checkers.
+executable collector/example policy boundary. P07 UVM agents publish matching
+samples through the [bench package](../../dv/env/tm_bench_pkg.sv); these records
+do not replace the executable UVM agents/checkers.
 
 A coordinator accepts one explicit sample, including idle, from each RX monitor,
 output monitor, bus monitor, status monitor, policy observation adapter and reset
@@ -241,3 +242,12 @@ and `fifo4` selections; it accepts no random seed. `formal-smoke` retains the
 P00 fixture route. Other unfinished commands remain NOT_IMPLEMENTED. A
 passing declaration case is never evidence that IF/ADM/MEM/Q/SCH/CSR behavior
 exists; full PAR-01 functional regression remains for later component integration.
+
+P07 registers the simulation-only `uvm-foundation` source set and regression
+suite independently of production, storage, formal and synthesis lists.
+`make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'`
+executes real UVM agents/RAL, the declared behavioral fixture, independent
+observed-transaction models, saved coverage and exact seeded detections.
+The P01 packed records remain unchanged. See [bench reuse](../../dv/README.md)
+and [fixture evidence](../results/P07-verification-foundation.md); fixture
+qualification never substitutes for production TM requirement closure.

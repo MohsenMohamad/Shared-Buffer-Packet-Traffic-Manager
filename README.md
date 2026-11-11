@@ -25,3 +25,8 @@ Declaration compilation does not establish traffic-manager functionality.
 Storage component regression: `make regression RUN_ARGS="--profile E0 --test pools --seed 17"`.
 Production local proofs: `make formal-rtl RUN_ARGS="--timeout 240"`.
 See [P02 evidence](docs/results/P02-storage-primitives.md) for scope and results.
+
+The [UVM foundation](dv/README.md) runs independently of full TM integration:
+`make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'`.
+Its behavioral fixture qualifies the bench and checkers; production verification
+remains tracked separately.

@@ -16,7 +16,7 @@ def profile(name):
 
 
 def sources(name, seen=()):
-    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis'):
+    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation'):
         raise ValueError('Unknown or cyclic source set: ' + name)
     data = read('sources/' + name + '.json')
     inherited = sources(data['extends'], (*seen, name)) if 'extends' in data else dict(
@@ -42,7 +42,7 @@ def selection(profile_name, tests):
     for name in selected:
         if name not in suites or profile_name not in suites[name]['profiles']:
             raise ValueError('Unknown suite/profile selection: ' + name)
-        if suites[name]['handler'] not in ('contracts', 'pools'):
+        if suites[name]['handler'] not in ('contracts', 'pools', 'uvm-foundation'):
             raise ValueError('Suite has no executable handler: ' + name)
         for source_set in suites[name]['source_sets']:
             sources(source_set)

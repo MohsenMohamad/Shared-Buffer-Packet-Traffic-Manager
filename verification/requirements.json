@@ -6,7 +6,17 @@
       "name": "Stream handshake",
       "requirement": "Every captured beat obeys valid/ready; no output changes while stalled. Independently vary input valid and output ready.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "IF-02",
@@ -26,21 +36,51 @@
       "name": "Metadata",
       "requirement": "Every source and qid; duplicate tags; changing non-SOP user metadata; preservation of meaningful fields and zeroed output reserved bits.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "LEN-01",
       "name": "Length sweep",
       "requirement": "1, 7, 8, 9, CELL_BYTES\u22121, CELL_BYTES, CELL_BYTES+1, MAX\u22121 and MAX. Compare all valid bytes and final keep.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "LEN-02",
       "name": "Multi-cell data",
       "requirement": "Distinct per-byte patterns across cell and word boundaries; no corruption or missing final partial cell.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "LEN-03",
@@ -54,14 +94,34 @@
       "name": "Basic admission",
       "requirement": "Empty pool, valid header, exact reservation and one descriptor. All selected policies/reasons match the specification.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "ADM-02",
       "name": "Cell-credit boundary",
       "requirement": "U=n, U=n\u22121 and same-cycle release. Admission uses pre-cycle U, not optimistic reclaimed resources.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "ADM-03",
@@ -123,7 +183,17 @@
       "name": "Reservation equations",
       "requirement": "Check A+F=N, F=U+R and U+sum(H)=N each event batch, including multiple releases.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "MEM-03",
@@ -164,7 +234,17 @@
       "name": "Basic FIFO order",
       "requirement": "Several packets per queue from different inputs; expected order follows internal valid commit, not external SOP order.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "Q-02",
@@ -192,35 +272,85 @@
       "name": "Empty dequeue",
       "requirement": "Empty queue cannot dispatch, including a concurrent first commit; next-cycle visibility is explicit.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "Q-06",
       "name": "Input completion order",
       "requirement": "A short packet on one input commits before an earlier-started long packet on another input; preserve the resulting queue commit order.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "SCH-01",
       "name": "Eligible grants",
       "requirement": "No dispatch from an empty queue; descriptor/length belong to its head; no double dispatch.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "SCH-02",
       "name": "Credit discipline",
       "requirement": "Add quantum once per visit, debit packet bytes once per dispatch, freeze during TX stalls and avoid counter wrap.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "SCH-03",
       "name": "Small quantum",
       "requirement": "A large packet eventually becomes eligible after several visits; credit carries rather than resets while backlogged.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "SCH-04",
@@ -248,14 +378,34 @@
       "name": "Bad headers",
       "requirement": "Invalid qid encodings and zero/oversize declared lengths; no resource allocation.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "FMT-02",
       "name": "Bad keep",
       "requirement": "Sparse/empty keep, partial nonfinal beat and wrong final mask; no partial packet reaches output. Include a first-beat error with zero allocated cells and deferred descriptor return.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "FMT-03",
@@ -303,7 +453,17 @@
       "name": "Reset in flight",
       "requirement": "Reset during RX reservation, commit/dispatch race, sink stall, outstanding RAM responses, abort cleanup and AXI-Lite responses. No stale new-epoch output.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "CSR-01",
@@ -317,14 +477,34 @@
       "name": "Independent AW/W",
       "requirement": "AW before W, W before AW, same cycle, and long separation. No coupled-channel assumption.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "CSR-03",
       "name": "Bus backpressure",
       "requirement": "BREADY/RREADY stalls, read/write overlap, no lost response, one-outstanding transaction limits.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "fixture_qualification": {
+        "suite": "uvm-foundation",
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
+      }
     },
     {
       "id": "CSR-04",

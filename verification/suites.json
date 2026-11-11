@@ -32,6 +32,21 @@
         "simulation"
       ],
       "scope": "Production FIFO and pool component tests; no integrated TM behavior"
+    },
+    "uvm-foundation": {
+      "handler": "uvm-foundation",
+      "profiles": [
+        "E0",
+        "I0",
+        "I1",
+        "E1",
+        "F0",
+        "F1"
+      ],
+      "source_sets": [
+        "uvm-foundation"
+      ],
+      "scope": "Behavioral fixture qualification of UVM agents, RAL and independent checkers only; no production TM result"
     }
   }
 }
