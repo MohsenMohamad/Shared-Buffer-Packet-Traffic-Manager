@@ -27,12 +27,17 @@ The final local 39-test suite ran on `3f29870f0fa81c25ebd95beee5c936713d21e9c3` 
 | Run | PR head / actual prepared checkout | Observed result |
 | --- | --- | --- |
 | Cold [43059337631](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43059337631) | Head `9099f29a4eac183dd7ce3ce06d9a74ba5f0c04db`; checkout `df1bfc08bce1fce8303819527e85e2f6ec0a59e3` | PASS: all 11 jobs, cold/miss preparation, all eight consumer validations and scoped cleanup. |
+| Reuse [43062416399](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43062416399) | Head `936e08050a0e09d809ba0735f05866100acef921`; checkout `b5196c640f30d4e964e97fdf591f468cddc5c1a6` | PASS: all 11 jobs, cache/accepted preparation, all eight current consumer validations and scoped cleanup. |
 
 The producer completed in 280 seconds and saved `tm-tools-v1-ef4ae20c7122a9f78378ae3323566cf85738c3847bd85a741fd3115b79145846`. The tested checkout tree `488e0ab738c80b28e071ce1bfbf5e22db9a9c446` equals the PR head tree. Current production runner/doctor validation code is unchanged; the installation-identity change, not a tool upgrade, forced this cold miss.
 
 Before cleanup, GitHub metadata identified handoff `13872922733` as `toolchain-43059337631-1` with one-day expiry. After all consumers settled, cleanup job `130666703844` reported `Handoff deleted`. The run's artifact list no longer contains that handoff and retains all nine preparation/result artifacts, including preparation `13872393375`, with 14-day expiry. Historical handoff `13863779897` from run `43040782624` remains present with its original expiry; it was not swept.
 
-A separate compatible-reuse run is NOT_RUN at this snapshot. It must be identified independently; this cold run and historical successes below cannot demonstrate current reuse. The next run also includes the HTTP 404 fallback refinement from `3f29870f0fa81c25ebd95beee5c936713d21e9c3`; installation inputs and current production validator files are byte-identical to the cold run. Main/manual queue isolation and restricted-token cleanup behavior are covered by focused local policy/failure fixtures; hosted main/manual queueing and a deliberately restricted-token run are not claimed.
+The separate reuse run completed preparation in 22 seconds, reported `cache (accepted)`, and accessed the same `ef4ae20c…` key. No setup was invoked. The tested checkout tree `952b1fbe6863fd8d09760aa5091177b70374a706` equals its PR head tree. This run includes the HTTP 404 fallback refinement from `3f29870f0fa81c25ebd95beee5c936713d21e9c3`; installation inputs and current production validator files are byte-identical to the cold run.
+
+Reuse cleanup job `130675149591` reported `Handoff deleted` after all consumers settled. Handoff `13873399105`, previously observed with one-day expiry, is absent from the completed run's artifact list. All nine preparation/result artifacts remain, including `13874196895` with 14-day expiry. Historical handoff `13863779897` is still present with its original expiry. Neither successful cleanup run exercised a restricted-token failure; those warning/fallback branches remain explicitly fixture-tested.
+
+Cold and reuse evidence comes from two distinct runs at the repaired installation definition; historical successes below are not substituted. Main/manual queue isolation and restricted-token cleanup behavior are covered by focused local policy/failure fixtures; hosted main/manual queueing and a deliberately restricted-token run are not claimed. Subsequent report-only edits do not relabel these tested SHAs as executions of a later revision.
 
 ## Historical evidence before the CI review repair
 
