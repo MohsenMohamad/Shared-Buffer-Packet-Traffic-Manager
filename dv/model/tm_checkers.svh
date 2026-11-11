@@ -199,7 +199,7 @@ class tm_service_checker extends uvm_component;
                     f.allocated++;da++;dr--;
                 end
                 if(malformed) begin
-                    if(!t.abort_mark.valid || t.abort_mark.desc!=DESC_ID_W'(f.desc) || t.abort_mark.allocated!=CELL_COUNT_W'(f.allocated) || t.abort_mark.reserved!=CELL_COUNT_W'(f.ncell)) `uvm_fatal("ABORT_CAUSALITY","malformed service without matching abort")
+                    if(!t.abort_mark.valid || t.abort_mark.source!=RX_ID_W'(f.source) || t.abort_mark.qid!=Q_ID_W'(f.qid) || (f.allocated>0 && t.abort_mark.head!=CELL_ID_W'(f.head)) || t.abort_mark.desc!=DESC_ID_W'(f.desc) || t.abort_mark.allocated!=CELL_COUNT_W'(f.allocated) || t.abort_mark.reserved!=CELL_COUNT_W'(f.ncell)) `uvm_fatal("ABORT_CAUSALITY","malformed service without matching abort")
                     f.aborted=1;aborts++;
                 end else if(beat.last) begin
                     if(!t.commit.valid || t.commit.desc!=DESC_ID_W'(f.desc) || t.commit.qid!=Q_ID_W'(f.qid) || t.commit.info!=info(f)) `uvm_fatal("COMMIT_CAUSALITY","commit does not match serviced complete frame")
@@ -227,7 +227,7 @@ class tm_service_checker extends uvm_component;
             n=int'(t.abort_done.desc);
             if(!descriptors.exists(n)) `uvm_fatal("ABORT_DONE","completion of unknown descriptor")
             f=descriptors[n];
-            if(!f.aborted || f.allocated!=0 || t.abort_done.qid!=Q_ID_W'(f.qid) || t.abort_done.ncell!=CELL_COUNT_W'(f.ncell)) `uvm_fatal("ABORT_DONE","cleanup before reclaim or wrong reservation")
+            if(!f.aborted || f.allocated!=0 || t.abort_done.source!=RX_ID_W'(f.source) || t.abort_done.qid!=Q_ID_W'(f.qid) || t.abort_done.ncell!=CELL_COUNT_W'(f.ncell)) `uvm_fatal("ABORT_DONE","cleanup before reclaim or wrong reservation")
             du+=f.ncell;dr-=f.ncell;dh[f.qid]-=f.ncell;dd++;expect_status(f,FRAME_ERROR);descriptors.delete(n);
         end
         if(t.tx_done.valid) begin
