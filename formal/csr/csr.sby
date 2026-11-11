@@ -1,0 +1,21 @@
+[tasks]
+prove
+cover
+mutation
+
+[options]
+prove: mode prove
+prove: depth 8
+cover: mode cover
+cover: depth 24
+mutation: mode prove
+mutation: depth 8
+
+[engines]
+smtbmc z3
+
+[script]
+@SCRIPT@
+
+[files]
+@FILES@

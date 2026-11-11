@@ -2,14 +2,17 @@
   "schema_version": 1,
   "extends": "production",
   "include_dirs": [
-    "formal/pools"
+    "formal/pools",
+    "formal/csr"
   ],
   "sources": [
-    "formal/pools/storage_formal.sv"
+    "formal/pools/storage_formal.sv",
+    "formal/csr/csr_formal.sv"
   ],
   "headers": [
     "formal/pools/bitmap_properties.svh",
-    "formal/pools/fifo_properties.svh"
+    "formal/pools/fifo_properties.svh",
+    "formal/csr/csr_properties.svh"
   ],
-  "scope": "Production storage proofs only; no capability fixtures or integrated TM ownership proof"
+  "scope": "Local production storage and CSR protocol proofs; no integrated TM ownership or datapath proof."
 }
