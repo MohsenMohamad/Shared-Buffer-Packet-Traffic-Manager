@@ -22,6 +22,23 @@ DEFECTS = {
 }
 
 
+def run_result(step,marker):
+    text=output(step)
+    if step['result']!='TIMEOUT' and re.search(r'UVM_(?:ERROR|FATAL)\b[^\n]*\[|%Fatal:.*Assertion failed',text):
+        return 'FAIL','Executed UVM checker or assertion failure'
+    return completed(step,marker)
+
+
+def first_failure(case,step,expected=None):
+    trace=case.path/'transactions.jsonl'
+    recent=trace.read_text().splitlines()[-32:] if trace.is_file() else []
+    artifact=case.path/'first_failure.json'
+    artifact.write_text(json.dumps(dict(expected=expected,observed=re.findall(r'UVM_(?:ERROR|FATAL)[^\n]*\[([^]]+)\]',output(step)),
+        seed=case.data['seed'],profile=case.data['profile'],source_revision=case.data['source_revision'],
+        stdout=step['stdout'],stderr=step['stderr'],recent_batches=recent),indent=2)+'\n')
+    case.data['artifacts']['first_failure']=str(artifact)
+
+
 def coverage(path):
     counts, bins = {}, {}
     for line in path.read_text().splitlines():
@@ -99,11 +116,10 @@ def foundation(run, args):
             wave=case.path/'wave.vcd'
             ok=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and fatals==[DEFECTS[defect]] and wave.is_file() and wave.stat().st_size>0
             case.data['artifacts'].update(waveform=str(wave),transactions=str(case.path/'transactions.jsonl'))
-            (case.path/'first_failure.json').write_text(json.dumps(dict(expected=DEFECTS[defect],observed=fatals,seed=case_seed,profile=args.profile,source_revision=run.provenance['source_revision']),indent=2)+'\n')
-            case.data['artifacts']['first_failure']=str(case.path/'first_failure.json')
+            first_failure(case,step,DEFECTS[defect])
             case.finish('PASS' if ok else ('TIMEOUT' if step['result']=='TIMEOUT' else 'FAIL'),None if ok else 'Intended first checker detection/waveform missing',expected='SEEDED_DEFECT_DETECTION',detector=DEFECTS[defect],observed_fatals=fatals)
         else:
-            status,reason=completed(step,'TM_FOUNDATION_PASS')
+            status,reason=run_result(step,'TM_FOUNDATION_PASS')
             if status=='PASS':
                 try:
                     case.data['coverage']=coverage(case.path/'coverage.dat')
@@ -120,6 +136,7 @@ def foundation(run, args):
                 except (OSError, ValueError, AttributeError) as error:
                     status,reason='FAIL',str(error)
             if status!='PASS' and step['result']!='TIMEOUT':
+                first_failure(case,step)
                 rerun=case.path/'failing-rerun';rerun.mkdir()
                 case.execute(command+['+TRACE'],timeout=args.timeout,cwd=rerun,stem='failing-rerun')
                 case.data['artifacts']['waveform']=str(rerun/'wave.vcd')
@@ -143,9 +160,11 @@ def foundation(run, args):
             fatals=re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]',output(step))
             wave=case.path/'wave.vcd'
             ok=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and fatals==[marker] and wave.is_file() and wave.stat().st_size>0
+            first_failure(case,step,marker)
+            case.data['artifacts'].update(waveform=str(wave),transactions=str(case.path/'transactions.jsonl'))
             case.finish('PASS' if ok else ('TIMEOUT' if step['result']=='TIMEOUT' else 'FAIL'),None if ok else 'Expected first barrier/model detection missing',expected='SEEDED_DEFECT_DETECTION',detector=marker)
         else:
-            case.finish(*completed(step,marker))
+            case.finish(*run_result(step,marker))
     replay=Case(run,'foundation-seed-replay',seed)
     ok=len(signatures)==3 and signatures[0]==signatures[1] and signatures[0]!=signatures[2]
     replay.finish('PASS' if ok else 'FAIL',None if ok else 'Missing, nonrepeatable or seed-independent observed trace',transaction_digests=signatures)

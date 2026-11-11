@@ -21,7 +21,7 @@ class tm_byte_checker extends uvm_component;
     `uvm_component_utils(tm_byte_checker)
     tm_frame frames[$], capture[N_RX], output_frame;
     int ordinals[N_RX], output_offset, delivered,total_captured;
-    function new(string name,uvm_component parent); super.new(name,parent); endfunction
+    function new(string name,uvm_component parent); super.new(name,parent);delivered=0;total_captured=0;flush();endfunction
     function void flush();
         frames.delete(); foreach(capture[p]) begin capture[p]=null; ordinals[p]=0; end
         output_frame=null; output_offset=0;
@@ -103,6 +103,7 @@ class tm_service_checker extends uvm_component;
     tm_frame committed_frame;
     function new(string name,uvm_component parent);
         super.new(name,parent); foreach(fifo[p]) fifo[p]=new;foreach(limits[q]) limits[q]=N_CELL;
+        services=0;admissions=0;commits=0;status_count=0;aborts=0;csr_checks=0;flush();
     endfunction
     function void flush();
         foreach(fifo[p]) begin fifo[p].beats.delete(); current[p]=null; ordinals[p]=0; due[p]='0;blocked[p]=0; end
@@ -258,7 +259,7 @@ class tm_schedule_checker extends uvm_component;
     int cursor,deficit[N_Q],quantum=MAX_PACKET_BYTES,dispatches,offset;
     bit visit;
     function new(string name,uvm_component parent);
-        super.new(name,parent); foreach(queues[q]) queues[q]=new;
+        super.new(name,parent); foreach(queues[q]) queues[q]=new;dispatches=0;flush();
     endfunction
     function void flush();
         foreach(queues[q]) begin queues[q].frames.delete();deficit[q]=0;end

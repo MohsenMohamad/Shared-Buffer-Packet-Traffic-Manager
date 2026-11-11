@@ -16,7 +16,8 @@ module tm_foundation_top;
         initial uvm_config_db#(virtual tm_stream_if)::set(null,$sformatf("uvm_test_top.env.rx%0d",p),"vif",rx[p]);
     end
     initial begin
-        tm_report_server server=new;
+        tm_report_server server;
+        server=new;
         uvm_report_server::set_server(server);
         uvm_config_db#(virtual tm_stream_if)::set(null,"uvm_test_top.env.tx","vif",tx);
         uvm_config_db#(virtual tm_axil_if)::set(null,"uvm_test_top.env.axil","vif",bus);

@@ -40,7 +40,7 @@ class tm_foundation_coverage extends uvm_subscriber #(tm_sample);
         order_stall:cross arrival_order,response_stall;
     endgroup
     bit b_stalled;
-    function new(string name,uvm_component parent);super.new(name,parent);traffic=new;bus=new;aw_cycle=-1;w_cycle=-1;endfunction
+    function new(string name,uvm_component parent);super.new(name,parent);captures=0;outputs=0;traffic=new;bus=new;aw_cycle=-1;w_cycle=-1;endfunction
     function void write(tm_sample x);
         stream_sample_t s;
         monitor_batch_t b=x.batch;
@@ -76,12 +76,13 @@ class tm_coordinator extends uvm_component;
     longint unsigned last_cycle;
     bit have_last;
     function new(string name,uvm_component parent);
-        super.new(name,parent);input_samples=new("input_samples",this);sealed_batches=new("sealed_batches",this);
+        super.new(name,parent);batches=0;last_epoch=0;last_cycle=0;input_samples=new("input_samples",this);sealed_batches=new("sealed_batches",this);
     endfunction
     function void build_phase(uvm_phase phase);
         bytes_model=tm_byte_checker::type_id::create("bytes_model",this);
         service_model=tm_service_checker::type_id::create("service_model",this);
         schedule_model=tm_schedule_checker::type_id::create("schedule_model",this);
+        if($test$plusargs("SMALL_QUANTUM")) schedule_model.quantum=64;
         trace_file=$fopen("transactions.jsonl","w");
     endfunction
     function void write(tm_sample x);
@@ -147,7 +148,6 @@ class tm_environment extends uvm_env;
         registers=tm_fixture_register_block::type_id::create("registers");registers.build();registers.reset();
         production_registers=tm_register_block::type_id::create("production_registers");production_registers.build();
         if(production_registers.words["ID"].get_reset()!=64'h544d0100 || production_registers.words.num()!=34+16*N_Q) `uvm_fatal("RAL_MAP","production map shape/reset mismatch")
-        if($test$plusargs("SMALL_QUANTUM")) coordinator.schedule_model.quantum=64;
         adapter=tm_axil_adapter::type_id::create("adapter");predictor=new("predictor",this);
     endfunction
     function void connect_phase(uvm_phase phase);
