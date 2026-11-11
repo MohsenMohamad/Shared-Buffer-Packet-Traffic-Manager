@@ -1,0 +1,118 @@
+{
+  "head": "a473b8c535d02b50b23604047f1bae64638c89df",
+  "tracked_files_unchanged": 146,
+  "pins_sha256": "ee72fb11c5b7ebeecb0d207936969810358cf6ff36b236f6d28799730397db15",
+  "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261110",
+  "yosys": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+  "sby": "SBY v0.71",
+  "z3": "Z3 version 4.13.3 - 64 bit",
+  "execution_kind": "original-investigation",
+  "executed_on": "2026-11-11",
+  "script_sha256": {
+    "generate.py": "46147f52ad1d9bd5c96e00c2d8bde13fed2539a65ffe81d9af61fb8182e28faf",
+    "run.py": "67dd5ac8b75386375ad76338ab18fe4903b37d378339b230a83f856b13217ef1",
+    "formal_run.py": "2ee0f48f9b83c8f7dff0baedc24127aad223115f332debfe7f15595ae0f4caeb"
+  },
+  "source_sha256": {
+    "ansi_vectors/probe_unit.sv": "f37f3a48b4b644725405e1ee6b5a01e6578a6c66a34a7883c3c8ac5d2d0adc7a",
+    "ansi_vectors/tm_axil_regs.sv": "b4857fcfbaeb1c0819410a00cdcea7b754c73f82ed5fbae3110f0e68e4993195",
+    "ansi_vectors/tm_axis_rx_fifo.sv": "6abdf4feac409cb725df34fe95f2999568ab26e7cddfe86a53c3c14430a2bca2",
+    "ansi_vectors/tm_statistics.sv": "d2a6d04d55eaf84d214e0cdb90be6186b156f81bb4702b05e78d26b89e7bf8c6",
+    "baseline/probe_unit.sv": "f37f3a48b4b644725405e1ee6b5a01e6578a6c66a34a7883c3c8ac5d2d0adc7a",
+    "baseline/tm_axil_regs.sv": "bafb30effab2138ca8a9b8775ccd85df89a5cccde9144e183914387a88c791b7",
+    "baseline/tm_axis_rx_fifo.sv": "13894d38711e7cd988bc39af142597d543e6758ea3f92f45dfb1e7b5d9f7587d",
+    "baseline/tm_statistics.sv": "33b83d6dc4236df0df2a351d0602eca47793c34fd6a33c53ce729aba1cbe6be3",
+    "connections.svh": "627a6b14dda55ec4f98405a15f88cc0313ff2eed94203ccbf25069809678c9cf",
+    "forward_typedef/probe_unit.sv": "f37f3a48b4b644725405e1ee6b5a01e6578a6c66a34a7883c3c8ac5d2d0adc7a",
+    "forward_typedef/tm_axil_regs.sv": "4781620ecdf1b93b7ac1b85cf18bd9979272b7c5030670cefee0c0a32a3c326e",
+    "forward_typedef/tm_axis_rx_fifo.sv": "38b387a8884cfa24edcfebc465fbbcd4578505455ebee107b2ff52ff31bbdc68",
+    "forward_typedef/tm_statistics.sv": "734ad541e3245dee3a1d162bf900a338c99e0ea4373f34329812bb336a93bddb",
+    "inline_struct/probe_unit.sv": "6217fd3038abf605af1ec7834fcfe1d62a4c6601968123e255758254b88d8591",
+    "inline_struct/tm_axil_regs.sv": "137fd584864e8c5acc652f7eedd57acde58708a5b1235e7b6576d009c67aa35a",
+    "inline_struct/tm_axis_rx_fifo.sv": "c1eca8a567759a1d82846c49df1b389864c6aacb1c1fe4bbb78656bdde558af7",
+    "inline_struct/tm_statistics.sv": "1a88ff77975b2512c464a8acd65e3e5f7c5216546e29d0f4d591400abc50a861",
+    "minimal/probe_unit.sv": "311ab4c20ae9b3b3fd7701a2be01fb6a8ea7d93ba179a1438da4c513f40d0f95",
+    "minimal/tm_axil_regs.sv": "03b0efb77a9d2cfd391ddd00c1eb168744268010d52cbe54579a692a625cf8c7",
+    "minimal/tm_axis_rx_fifo.sv": "f3ca78a48cbf2848fea6dac57bb482ae2de389a72adbf501a5cea0b7d4ff6ab5",
+    "minimal/tm_statistics.sv": "be99e5e1ede830fea38eebdca87694cb966f1f2abf323eb30dd7705c5af18a7d",
+    "named_widths/probe_unit.sv": "311ab4c20ae9b3b3fd7701a2be01fb6a8ea7d93ba179a1438da4c513f40d0f95",
+    "named_widths/tm_axil_regs.sv": "2229d3e3236b2e158347cb5772d2ce5727820589f29efe74594ab089e3bc446e",
+    "named_widths/tm_axis_rx_fifo.sv": "7fb9cd82398316453c33401b2c081245b7b8ba6aa4106ffb83d19da81344de5c",
+    "named_widths/tm_statistics.sv": "d9767c7be7a96a0fcff4061ddde59e93dfa1a4406116a5e699a52351994c0946",
+    "package_scoped/probe_unit.sv": "311ab4c20ae9b3b3fd7701a2be01fb6a8ea7d93ba179a1438da4c513f40d0f95",
+    "package_scoped/tm_axil_regs.sv": "03b0efb77a9d2cfd391ddd00c1eb168744268010d52cbe54579a692a625cf8c7",
+    "package_scoped/tm_axis_rx_fifo.sv": "6e6a08670cf589571f29fdf17efa2f907cb6eb8717d957a6b073c3c1b658fbe0",
+    "package_scoped/tm_statistics.sv": "be99e5e1ede830fea38eebdca87694cb966f1f2abf323eb30dd7705c5af18a7d",
+    "package_vectors/probe_unit.sv": "6217fd3038abf605af1ec7834fcfe1d62a4c6601968123e255758254b88d8591",
+    "package_vectors/tm_axil_regs.sv": "376c3332778b68ec66712c303ad93fd932aa6601d77e528daebc6043c0d5bdce",
+    "package_vectors/tm_axis_rx_fifo.sv": "62a8ebd4e0939bc7642f0fc352958671ec196feb6296e562106f29c9cbed7847",
+    "package_vectors/tm_statistics.sv": "f1f0175bac8374c6b87fbedfff3fdc683e2a1fce60d64f3254dd79f217e9623f",
+    "tm_fixed.sv": "11295bfb96f3eb349fd5692eeefb7d945fa2a8ebf83c4add2b0821e1c41d9983",
+    "tm_local_types.svh": "09485aa266f95e2fd3c2dff8b21c0a2a93fb995207531fb01bb06d8a27104a2e",
+    "tm_scoped_types.svh": "9eed4cd437f434339ffb400fa3277c20df99eb5706bb3fabb193e02bcf94f512",
+    "type_parameter/probe_unit.sv": "6217fd3038abf605af1ec7834fcfe1d62a4c6601968123e255758254b88d8591",
+    "type_parameter/tm_axil_regs.sv": "faf40040d5bea1a6eaf36a77dd1379fadf9e8e8668abd7ce701e217c9eb176cd",
+    "type_parameter/tm_axis_rx_fifo.sv": "47e5bdbc4019c45b07efc700034fed612d68d1aea7e4b7c263434f3feb43dce3",
+    "type_parameter/tm_statistics.sv": "1c2852c0eeba94584dc6efba5b7fe8847f75772f4493f3ac22545619229dbfa9"
+  },
+  "fixture_sha256": {
+    "bits_type.sv": "7acf2905f9886358b1ef6e8a3625c52ea1fa6b4af165c66e7aecb9d119c2ed2f",
+    "formal_probe.sv": "0f3728e76c0fb622033f2b12b3bb147e8a437caf2f19c8af07dd843e87ac0306",
+    "probe_unit.sv": "bd89d5fd515b83eadc6865339c3bc6b900d3f5726c7bc9b3032f995c07317b9e",
+    "synth_top.sv": "558b7802c77fb768e64ec181f4c7359ffe65fa6ea4df086a125d74bf496270f4",
+    "test.sv": "deac064d023d9ebcad55efca97819401c1028806f7507c67f3be26e7a4da454b"
+  },
+  "input_sha256": {
+    "rtl/common/tm_axis_rx_fifo.sv": "13894d38711e7cd988bc39af142597d543e6758ea3f92f45dfb1e7b5d9f7587d",
+    "rtl/csr/tm_axil_regs.sv": "bafb30effab2138ca8a9b8775ccd85df89a5cccde9144e183914387a88c791b7",
+    "rtl/csr/tm_statistics.sv": "33b83d6dc4236df0df2a351d0602eca47793c34fd6a33c53ce729aba1cbe6be3",
+    "rtl/include/tm_types.svh": "46b954fca4fcf041d9ceeeca6303801a66fac4e9e41ac7d4eed79bd8f8dd1f11",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+    "tools/dependencies.json": "ee72fb11c5b7ebeecb0d207936969810358cf6ff36b236f6d28799730397db15"
+  },
+  "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+  "qualified_source_pins": {
+    "schema_version": 1,
+    "qualification": "P00 toolchain capability suite; see docs/results/P00-toolchain.md for executed evidence",
+    "verilator": {
+      "version": "5.054",
+      "url": "https://codeload.github.com/verilator/verilator/tar.gz/refs/tags/v5.054",
+      "sha256": "18658731b46922ef660bcb650be0aa503d751e5c17eb9d4644fdfabb11835198"
+    },
+    "uvm": {
+      "version": "2020.3.1",
+      "commit": "78c06547a2a0a29b3dc9dcafae62b75b2ff61544",
+      "url": "https://codeload.github.com/accellera-official/uvm-core/tar.gz/refs/tags/2020.3.1",
+      "sha256": "f55bdbc02cc500d4a2f41b31bad127653289eb2073f806ce156fb82662b362b8"
+    },
+    "formal_reference": {
+      "yosys_commit": "fee39a3284c90249e1d9684cf6944ffbbcbb8f90",
+      "sby_commit": "79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
+      "solver": "Z3"
+    },
+    "liberty": {
+      "name": "NangateOpenCellLibrary_typical.lib",
+      "commit": "9275989ffcad3e17a1be884b31e5c9bb4a42c06e",
+      "url": "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD-flow-scripts/9275989ffcad3e17a1be884b31e5c9bb4a42c06e/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+    },
+    "sby": {
+      "commit": "79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
+      "version": "0.71",
+      "url": "https://codeload.github.com/YosysHQ/sby/tar.gz/79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
+      "sha256": "683953197cef986832fe02423bfb7726b0261f2af153a09899501ba5c92052c7"
+    },
+    "qualified_versions": {
+      "verilator": "5.054",
+      "uvm": "2020.3.1",
+      "yosys": "0.52",
+      "sby": "0.71",
+      "z3": "4.13.3",
+      "opensta": "2.0.17",
+      "compiler": "GCC 14.2.0 (C++20)",
+      "python": "3.11+"
+    }
+  }
+}

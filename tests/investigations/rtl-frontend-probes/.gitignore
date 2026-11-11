@@ -1,0 +1,6 @@
+generated/
+runs/
+obj/
+logs/
+netlist.json
+*.sby

@@ -1,0 +1,1006 @@
+{
+  "execution_kind": "original-investigation",
+  "note": "Historical absolute paths are evidence, not portable reproduction commands. Logs/waves stay outside Git; their hashes are recorded here.",
+  "commands": [
+    {
+      "label": "baseline-build-retry",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/baseline/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/baseline/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/baseline/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/baseline/tm_statistics.sv",
+        "/workspace/work/rtl-representation/baseline/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/baseline/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/baseline/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/baseline/tm_axil_regs.sv /workspace/work/rtl-representation/baseline/tm_statistics.sv /workspace/work/rtl-representation/baseline/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 20.971,
+      "stdout_sha256": "0868d9a609bfedcfbafb4d4aca1883e80a7dbab27f5e27e2754de6aa30a89ac9",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "baseline-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/baseline/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/baseline/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.003,
+      "stdout_sha256": "067a2ab121c1e87d71c7700c357f2936efbfc38f396ffc56f487d818127812ae",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "baseline-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/baseline/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/baseline/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 19.51,
+      "stdout_sha256": "37d266a48cc581206716e1f0ede58ff295dc79e9c3c4531ab718be19b3527d51",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "ansi_vectors-build-retry",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/ansi_vectors/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/ansi_vectors/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/ansi_vectors/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/ansi_vectors/tm_statistics.sv",
+        "/workspace/work/rtl-representation/ansi_vectors/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/ansi_vectors/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/ansi_vectors/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/ansi_vectors/tm_axil_regs.sv /workspace/work/rtl-representation/ansi_vectors/tm_statistics.sv /workspace/work/rtl-representation/ansi_vectors/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 14.942,
+      "stdout_sha256": "639d69582803cb9c29ca2bc51d6ed4adcf9fcdaac8f1be99fb38068946a6f986",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "ansi_vectors-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/ansi_vectors/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/ansi_vectors/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.004,
+      "stdout_sha256": "0a1450b3376c2385d9cd85c893f368500d8deae31fde53f4fefed4d748eb9245",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "ansi_vectors-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/ansi_vectors/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/ansi_vectors/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 20.188,
+      "stdout_sha256": "8488f5e1cea196530be26d04e1e521f774d2438c347798caca340b0bdf565a73",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "package_vectors-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/package_vectors/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/package_vectors/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/package_vectors/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/package_vectors/tm_statistics.sv",
+        "/workspace/work/rtl-representation/package_vectors/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/package_vectors/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/package_vectors/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/package_vectors/tm_axil_regs.sv /workspace/work/rtl-representation/package_vectors/tm_statistics.sv /workspace/work/rtl-representation/package_vectors/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 23.921,
+      "stdout_sha256": "92d70713c4f94874787d96293b973ae707054a854906379d77735aad34af1128",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "package_vectors-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/package_vectors/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/package_vectors/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.009,
+      "stdout_sha256": "f137d692bbd6204c006d575b1e79b27dfd18a91dd9f77e187b523a4c95669686",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "package_vectors-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/package_vectors/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/package_vectors/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 1,
+      "seconds": 0.015,
+      "stdout_sha256": "eb7f76dc24f8da8acb79f918196c1185ac5fe24b41ca94f4faac3994938c9607",
+      "stderr_sha256": "6d496192b5a75f7f41bc792c777797d4de863e88c16b0eda63f539a965ddaeef",
+      "evidence": [
+        "/workspace/work/rtl-representation/package_vectors/tm_axis_rx_fifo.sv:22: ERROR: syntax error, unexpected TOK_PACKAGESEP, expecting '(' or '['"
+      ]
+    },
+    {
+      "label": "inline_struct-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/inline_struct/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/inline_struct/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/inline_struct/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/inline_struct/tm_statistics.sv",
+        "/workspace/work/rtl-representation/inline_struct/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/inline_struct/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/inline_struct/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/inline_struct/tm_axil_regs.sv /workspace/work/rtl-representation/inline_struct/tm_statistics.sv /workspace/work/rtl-representation/inline_struct/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 22.402,
+      "stdout_sha256": "035fb326830b82f9eeb3af391ad09f683847f1b1e2d17cf69167c84faa339f77",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "inline_struct-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/inline_struct/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/inline_struct/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.008,
+      "stdout_sha256": "2407dda0a38ebc9bfb4bc81ce41915ac80e86c1fca3de30cf87f6c6ecf4884ba",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "inline_struct-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/inline_struct/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/inline_struct/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 1,
+      "seconds": 0.018,
+      "stdout_sha256": "33e25225c2f0b801f596bb6e7af58eae3edd4e74c724739a51af690c4a72837e",
+      "stderr_sha256": "9e01da85c76342c616b122c1ba8d478db3d739e03ef9bcb0e047aeaf9240094e",
+      "evidence": [
+        "/workspace/work/rtl-representation/inline_struct/tm_axis_rx_fifo.sv:15: ERROR: syntax error, unexpected TOK_STRUCT"
+      ]
+    },
+    {
+      "label": "type_parameter-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/type_parameter/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/type_parameter/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/type_parameter/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/type_parameter/tm_statistics.sv",
+        "/workspace/work/rtl-representation/type_parameter/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/type_parameter/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/type_parameter/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/type_parameter/tm_axil_regs.sv /workspace/work/rtl-representation/type_parameter/tm_statistics.sv /workspace/work/rtl-representation/type_parameter/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 14.826,
+      "stdout_sha256": "78003f9b334e2164db41899b8bf73430b75c4c2069dba4662e0df1e68f0c7dc8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "type_parameter-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/type_parameter/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/type_parameter/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.004,
+      "stdout_sha256": "8b7d74614064772f51206b31427288bb84297a8d2e584770b677b0255b561b0b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "type_parameter-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/type_parameter/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/type_parameter/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 1,
+      "seconds": 0.032,
+      "stdout_sha256": "70c6efdb7436eb232e44ae3e94abc730867ab8b8e1e9b1e93f3da11f7d2486dd",
+      "stderr_sha256": "0da0da7f9b7775f87a69c787a779a01ca5b22cac886315ed308ec3e26b5da86b",
+      "evidence": [
+        "/workspace/work/rtl-representation/type_parameter/tm_axis_rx_fifo.sv:10: ERROR: syntax error, unexpected TOK_ID, expecting ',' or '=' or ')'"
+      ]
+    },
+    {
+      "label": "forward_typedef-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/forward_typedef/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/forward_typedef/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/forward_typedef/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/forward_typedef/tm_statistics.sv",
+        "/workspace/work/rtl-representation/forward_typedef/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/forward_typedef/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/forward_typedef/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/forward_typedef/tm_axil_regs.sv /workspace/work/rtl-representation/forward_typedef/tm_statistics.sv /workspace/work/rtl-representation/forward_typedef/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 1,
+      "seconds": 0.27,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "04e95480388cf9c95364dc6077e485765811efe49e6f640c0ec2b62b99ceefdc",
+      "evidence": [
+        "%Error: /workspace/work/rtl-representation/forward_typedef/tm_statistics.sv:15:11: Reference to 'trace_t' before declaration (IEEE 1800-2023 6.18)",
+        "                                                                                 : ... Suggest move the declaration before the reference, or use a forward typedef",
+        "   15 |     input trace_t events,",
+        "      |           ^~~~~~~",
+        "        /workspace/work/rtl-representation/forward_typedef/tm_statistics.sv:104:75: ... Location of original declaration",
+        "  104 |     abort_mark_t abort_mark; abort_done_t abort_done; tx_done_t tx_done;} trace_t;",
+        "      |                                                                           ^~~~~~~",
+        "        ... See the manual at https://verilator.org/verilator_doc.html?v=5.054 for more assistance."
+      ]
+    },
+    {
+      "label": "forward_typedef-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/forward_typedef/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/forward_typedef/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 1,
+      "seconds": 0.017,
+      "stdout_sha256": "52545b05b1d4ec49f78513d8ed225fa2c056782deb0139671cc67283d2865b03",
+      "stderr_sha256": "dfa508e5cfe0bc923e585b136e0549e1ea0998173cfbec303a590259b71e3c85",
+      "evidence": [
+        "/workspace/work/rtl-representation/forward_typedef/tm_axis_rx_fifo.sv:16: ERROR: syntax error, unexpected TOK_ID, expecting ',' or '=' or ')'"
+      ]
+    },
+    {
+      "label": "package_scoped-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/package_scoped/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/package_scoped/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/package_scoped/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/package_scoped/tm_statistics.sv",
+        "/workspace/work/rtl-representation/package_scoped/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/package_scoped/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/package_scoped/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/package_scoped/tm_axil_regs.sv /workspace/work/rtl-representation/package_scoped/tm_statistics.sv /workspace/work/rtl-representation/package_scoped/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.238,
+      "stdout_sha256": "631d13470b153863eb5aa0cdf37360d6e942fe53c2d8f29a27bdf28ee6637f9a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "package_scoped-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/package_scoped/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/package_scoped/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.008,
+      "stdout_sha256": "7ad9baa5454f57e5db02316cf5c4aa4d6984aabebd9a464730cf908f292ac2d1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "package_scoped-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/package_scoped/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/package_scoped/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 47.203,
+      "stdout_sha256": "a306914b807fc800d9d8c05ba6c97b43d6784e459188b4f4b9837c1599c94b09",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "minimal-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/minimal/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/minimal/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/minimal/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/minimal/tm_statistics.sv",
+        "/workspace/work/rtl-representation/minimal/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/minimal/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/minimal/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/minimal/tm_axil_regs.sv /workspace/work/rtl-representation/minimal/tm_statistics.sv /workspace/work/rtl-representation/minimal/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 21.057,
+      "stdout_sha256": "de511981a2060ce2eeabdd3f742aa883973b7da282677d6cdcada6214e33c01a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "minimal-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/minimal/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/minimal/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.033,
+      "stdout_sha256": "31c9a72f1e42c019fa7e2d6637fba25309e62ceefe5a830709520a2ab989ac89",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "minimal-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/minimal/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/minimal/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 30.468,
+      "stdout_sha256": "afe0e681b96a760e725e1258f885fde3fb5ec212513f7c9bba5f3883b6d8fc57",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "named_widths-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--timescale",
+        "1ns/1ps",
+        "--build-jobs",
+        "2",
+        "--top-module",
+        "test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/named_widths/obj",
+        "-I/workspace/work/rtl-representation",
+        "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/named_widths/tm_axis_rx_fifo.sv",
+        "/workspace/work/rtl-representation/named_widths/tm_axil_regs.sv",
+        "/workspace/work/rtl-representation/named_widths/tm_statistics.sv",
+        "/workspace/work/rtl-representation/named_widths/probe_unit.sv",
+        "/workspace/work/rtl-representation/test.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/work/rtl-representation/named_widths/obj -I/workspace/work/rtl-representation -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/named_widths/tm_axis_rx_fifo.sv /workspace/work/rtl-representation/named_widths/tm_axil_regs.sv /workspace/work/rtl-representation/named_widths/tm_statistics.sv /workspace/work/rtl-representation/named_widths/probe_unit.sv /workspace/work/rtl-representation/test.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 12.482,
+      "stdout_sha256": "bca5e7a487ee735a6ae641d6fa3b5f797415fc10d01d96538662a247ea009307",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "named_widths-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/named_widths/obj/Vtest"
+      ],
+      "shell": "/workspace/work/rtl-representation/named_widths/obj/Vtest",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.008,
+      "stdout_sha256": "3117dcf658ecc952d530398e5a881e71c2998e45b148d55a76e15ec33dfbdbce",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "PROBE_CASE_PASS N_Q=4 N_CELL=32 N_RX=2 DEPTH=4 STATS_W=1944",
+        "PROBE_CASE_PASS N_Q=2 N_CELL=16 N_RX=1 DEPTH=2 STATS_W=1290",
+        "PROBE_PASS two independent configurations"
+      ]
+    },
+    {
+      "label": "named_widths-synthesis",
+      "argv": [
+        "yosys",
+        "-s",
+        "/workspace/work/rtl-representation/named_widths/synth.ys"
+      ],
+      "shell": "yosys -s /workspace/work/rtl-representation/named_widths/synth.ys",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 25.278,
+      "stdout_sha256": "ecc64b09e343c7ab3fca25762b783fcbce1a7230d25ffe51ccd6f1fa5ce5af22",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "ansi_vectors-formal-prove",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/ansi_vectors-formal-prove",
+        "/workspace/work/rtl-representation/ansi_vectors-prove.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/ansi_vectors-formal-prove /workspace/work/rtl-representation/ansi_vectors-prove.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 63.847,
+      "stdout_sha256": "78a81c4f78757f7e89b3cdbc0c70f5484cc71de206c47c4a35f368bbac4b6361",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 45",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/ansi_vectors/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "summary: successful proof by k-induction.",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {}
+    },
+    {
+      "label": "ansi_vectors-formal-cover",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/ansi_vectors-formal-cover",
+        "/workspace/work/rtl-representation/ansi_vectors-cover.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/ansi_vectors-formal-cover /workspace/work/rtl-representation/ansi_vectors-cover.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 1.123,
+      "stdout_sha256": "840882b2584167baf82a3c813d0b10bb39595e279af5ce2ea27bc8357023d084",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 0",
+      "config": "[options]\nmode cover\ndepth 16\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/ansi_vectors/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.b: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.a: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_wrap",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_stall",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 5 at formal_top.fifo: c_full",
+        "engine_0: ##   0:00:00  Reached cover statement in step 6 at formal_top.fifo: c_reset_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 7 at formal_top.fifo: c_drain",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace1.vcd": "f7eb5f51acaf957a1897a3015247724538d14c08d6322619d4fde99076fc067b",
+        "engine_0/trace3.vcd": "e413e6f7daa2f86bae94ead98147750e9abecafd4cfd53bc4b37f82215ad5004",
+        "engine_0/trace4.vcd": "c1621cacae0fa6cf90b9f14f26816bfaa68705b73d62fb19b29cbf59f5c9a80f",
+        "engine_0/trace0.vcd": "5577359331a41153cfbd56ead0edb02eb60c6c5e800d6f39a027da3557953414",
+        "engine_0/trace2.vcd": "992b13f488aaf88a3719800918c8d4c1d42748be7140cf37aa6d5f3de60fdbaf"
+      }
+    },
+    {
+      "label": "ansi_vectors-formal-mutation",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/ansi_vectors-formal-mutation",
+        "/workspace/work/rtl-representation/ansi_vectors-mutation.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/ansi_vectors-formal-mutation /workspace/work/rtl-representation/ansi_vectors-mutation.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 2,
+      "seconds": 0.672,
+      "stdout_sha256": "2d6663db2a9b95da7fc85eca3d3dffe1b4e64192671f43dd452356197a787122",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "FAIL 2 0",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv -D MUTATION tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/ansi_vectors/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.b: a_snapshot",
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.a: a_snapshot",
+        "summary:   failed assertion formal_top.a.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "summary:   failed assertion formal_top.b.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "DONE (FAIL, rc=2)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace.vcd": "12e73b920d5f3643b749b824105a948a9c98d6cf58ec99b5012ab553d92dd775"
+      }
+    },
+    {
+      "label": "package_scoped-formal-prove",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/package_scoped-formal-prove",
+        "/workspace/work/rtl-representation/package_scoped-prove.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/package_scoped-formal-prove /workspace/work/rtl-representation/package_scoped-prove.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 35.864,
+      "stdout_sha256": "af1697ac5aaf734b269a0cfdcda6beb6bc86db6d68fd08314fe08275c3173a93",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 38",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/package_scoped/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "summary: successful proof by k-induction.",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {}
+    },
+    {
+      "label": "package_scoped-formal-cover",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/package_scoped-formal-cover",
+        "/workspace/work/rtl-representation/package_scoped-cover.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/package_scoped-formal-cover /workspace/work/rtl-representation/package_scoped-cover.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.977,
+      "stdout_sha256": "cbfa75b1aa71054d29eab614b69ed4b6d53544d890b0c2c3f317826a90e40c19",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 0",
+      "config": "[options]\nmode cover\ndepth 16\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/package_scoped/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.b: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.a: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_wrap",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_stall",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 5 at formal_top.fifo: c_full",
+        "engine_0: ##   0:00:00  Reached cover statement in step 6 at formal_top.fifo: c_reset_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 7 at formal_top.fifo: c_drain",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace1.vcd": "f7eb5f51acaf957a1897a3015247724538d14c08d6322619d4fde99076fc067b",
+        "engine_0/trace3.vcd": "e413e6f7daa2f86bae94ead98147750e9abecafd4cfd53bc4b37f82215ad5004",
+        "engine_0/trace4.vcd": "c1621cacae0fa6cf90b9f14f26816bfaa68705b73d62fb19b29cbf59f5c9a80f",
+        "engine_0/trace0.vcd": "5577359331a41153cfbd56ead0edb02eb60c6c5e800d6f39a027da3557953414",
+        "engine_0/trace2.vcd": "992b13f488aaf88a3719800918c8d4c1d42748be7140cf37aa6d5f3de60fdbaf"
+      }
+    },
+    {
+      "label": "package_scoped-formal-mutation",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/package_scoped-formal-mutation",
+        "/workspace/work/rtl-representation/package_scoped-mutation.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/package_scoped-formal-mutation /workspace/work/rtl-representation/package_scoped-mutation.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 2,
+      "seconds": 0.667,
+      "stdout_sha256": "2c99780066d39766bf2b76cb0862f73dee0acaf18698d5a688ee4ac31bfb3a4a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "FAIL 2 0",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv -D MUTATION tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/package_scoped/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.b: a_snapshot",
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.a: a_snapshot",
+        "summary:   failed assertion formal_top.a.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "summary:   failed assertion formal_top.b.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "DONE (FAIL, rc=2)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace.vcd": "12e73b920d5f3643b749b824105a948a9c98d6cf58ec99b5012ab553d92dd775"
+      }
+    },
+    {
+      "label": "minimal-formal-prove",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/minimal-formal-prove",
+        "/workspace/work/rtl-representation/minimal-prove.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/minimal-formal-prove /workspace/work/rtl-representation/minimal-prove.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 45.651,
+      "stdout_sha256": "cb4df6f3620c18de0c2259d008ccb37d47ddf6fde1b24e45c9ac7fa887714aa3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 41",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/minimal/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "summary: successful proof by k-induction.",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {}
+    },
+    {
+      "label": "minimal-formal-cover",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/minimal-formal-cover",
+        "/workspace/work/rtl-representation/minimal-cover.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/minimal-formal-cover /workspace/work/rtl-representation/minimal-cover.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 1.034,
+      "stdout_sha256": "72ff3f3493ac029f39bbbb2fe1190b426b2bd9df9ad3ba4b91c6569bb8e300be",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 0",
+      "config": "[options]\nmode cover\ndepth 16\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/minimal/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.b: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.a: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_wrap",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_stall",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 5 at formal_top.fifo: c_full",
+        "engine_0: ##   0:00:00  Reached cover statement in step 6 at formal_top.fifo: c_reset_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 7 at formal_top.fifo: c_drain",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace1.vcd": "452de4a2657c3cf5579b2ed13de16c865e74316313105e4d4d69a9b0f3e31c9f",
+        "engine_0/trace3.vcd": "3060bdfc44551fdaadce5093e5d5a3aea21e934615d549260239d609a6bca617",
+        "engine_0/trace4.vcd": "256626573022462742daa96368f68133409bf9e7d27ac2ca6b15b28fb8eda81d",
+        "engine_0/trace0.vcd": "027f1bd3e833bb5b599eeb73c918f70d47428f23cfc6b19bf9833f5296b891ec",
+        "engine_0/trace2.vcd": "db45e01654007363c166faaf7598505cae1f3997d8c176226375328f1d32059c"
+      }
+    },
+    {
+      "label": "minimal-formal-mutation",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/minimal-formal-mutation",
+        "/workspace/work/rtl-representation/minimal-mutation.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/minimal-formal-mutation /workspace/work/rtl-representation/minimal-mutation.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 2,
+      "seconds": 0.795,
+      "stdout_sha256": "7f0c5525b55c96badc102079e95ecbaa1332e28607d435123bea43f715635e02",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "FAIL 2 0",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv -D MUTATION tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/minimal/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.b: a_snapshot",
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.a: a_snapshot",
+        "summary:   failed assertion formal_top.a.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "summary:   failed assertion formal_top.b.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "DONE (FAIL, rc=2)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace.vcd": "0ca26a275c5f8ae0f540b714245b1ce7274dfc517f74b002eb3473218665e29b"
+      }
+    },
+    {
+      "label": "named_widths-formal-prove",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/named_widths-formal-prove",
+        "/workspace/work/rtl-representation/named_widths-prove.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/named_widths-formal-prove /workspace/work/rtl-representation/named_widths-prove.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 6.675,
+      "stdout_sha256": "3b877f8969d2898597b67feb85a7ecde4ba44cd42afc3111a495ac62188fec19",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 4",
+      "config": "[options]\nmode prove\ndepth 4\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/named_widths/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "summary: successful proof by k-induction.",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {}
+    },
+    {
+      "label": "named_widths-formal-cover",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/named_widths-formal-cover",
+        "/workspace/work/rtl-representation/named_widths-cover.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/named_widths-formal-cover /workspace/work/rtl-representation/named_widths-cover.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 1.453,
+      "stdout_sha256": "0c86694f8c5410d1c3feee50c0fa81beb1988ae8b50fa38abaeeadc280439223",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 0",
+      "config": "[options]\nmode cover\ndepth 16\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/named_widths/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.b: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.a: c_snapshot_last_lane",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_wrap",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_stall",
+        "engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top.fifo: c_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 5 at formal_top.fifo: c_full",
+        "engine_0: ##   0:00:00  Reached cover statement in step 6 at formal_top.fifo: c_reset_collision",
+        "engine_0: ##   0:00:00  Reached cover statement in step 7 at formal_top.fifo: c_drain",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace1.vcd": "452de4a2657c3cf5579b2ed13de16c865e74316313105e4d4d69a9b0f3e31c9f",
+        "engine_0/trace3.vcd": "3060bdfc44551fdaadce5093e5d5a3aea21e934615d549260239d609a6bca617",
+        "engine_0/trace4.vcd": "256626573022462742daa96368f68133409bf9e7d27ac2ca6b15b28fb8eda81d",
+        "engine_0/trace0.vcd": "027f1bd3e833bb5b599eeb73c918f70d47428f23cfc6b19bf9833f5296b891ec",
+        "engine_0/trace2.vcd": "db45e01654007363c166faaf7598505cae1f3997d8c176226375328f1d32059c"
+      }
+    },
+    {
+      "label": "named_widths-formal-mutation",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/named_widths-formal-mutation",
+        "/workspace/work/rtl-representation/named_widths-mutation.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/named_widths-formal-mutation /workspace/work/rtl-representation/named_widths-mutation.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 2,
+      "seconds": 0.819,
+      "stdout_sha256": "1e2e64635ecb5c6940a2eea6728dfeb48523ca5aab10a82e9218f4bf5da79c92",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "FAIL 2 0",
+      "config": "[options]\nmode prove\ndepth 8\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv -D MUTATION tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/named_widths/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.b: a_snapshot",
+        "engine_0.basecase: ##   0:00:00  Assert failed in formal_top.a: a_snapshot",
+        "summary:   failed assertion formal_top.a.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "summary:   failed assertion formal_top.b.a_snapshot at formal_probe.sv:33.9-33.55 step 4",
+        "DONE (FAIL, rc=2)"
+      ],
+      "wave_sha256": {
+        "engine_0/trace.vcd": "9a1e5a5038fe3e3e23a365371062c5a437111ffa4e6e813d97f93d142c2b99d9"
+      }
+    },
+    {
+      "label": "bits_type-build",
+      "argv": [
+        "verilator",
+        "--binary",
+        "--timing",
+        "--assert",
+        "--top-module",
+        "bits_type_test",
+        "--Mdir",
+        "/workspace/work/rtl-representation/bits_obj",
+        "/workspace/work/rtl-representation/tm_fixed.sv",
+        "/workspace/work/rtl-representation/bits_type.sv"
+      ],
+      "shell": "verilator --binary --timing --assert --top-module bits_type_test --Mdir /workspace/work/rtl-representation/bits_obj /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/bits_type.sv",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 13.8,
+      "stdout_sha256": "fa26f39db11d39735b761e9c17d5f681f0d857cefda5279e8ba9731728f22f6d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": []
+    },
+    {
+      "label": "bits_type-simulation",
+      "argv": [
+        "/workspace/work/rtl-representation/bits_obj/Vbits_type_test"
+      ],
+      "shell": "/workspace/work/rtl-representation/bits_obj/Vbits_type_test",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 0.004,
+      "stdout_sha256": "67b5c5f6af8ea09fd79a718e0b9f4dffc80a901d401a30e40f57c50776cba818",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence": [
+        "BITS_TYPE_PASS",
+        "- /workspace/work/rtl-representation/bits_type.sv:13: Verilog $finish",
+        "- S i m u l a t i o n   R e p o r t: Verilator 5.054 2026-11-01"
+      ]
+    },
+    {
+      "label": "bits_type-synthesis",
+      "argv": [
+        "yosys",
+        "-p",
+        "read_verilog -sv /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/bits_type.sv; hierarchy -check -top bits_type; synth -top bits_type; check -assert"
+      ],
+      "shell": "yosys -p 'read_verilog -sv /workspace/work/rtl-representation/tm_fixed.sv /workspace/work/rtl-representation/bits_type.sv; hierarchy -check -top bits_type; synth -top bits_type; check -assert'",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 1,
+      "seconds": 0.018,
+      "stdout_sha256": "c1f630406f377c3b900b0fb561fee9a64a335ccdedf62f111043b19985d4c5be",
+      "stderr_sha256": "bba452bfe1ba91758ef9882340313dacc23993d14dfa1c884149d4576d4d6f99",
+      "evidence": [
+        "/workspace/work/rtl-representation/bits_type.sv:1: ERROR: syntax error, unexpected ')', expecting OP_CAST"
+      ]
+    },
+    {
+      "label": "ansi_vectors-formal-prove-k4",
+      "argv": [
+        "sby",
+        "-f",
+        "-d",
+        "/workspace/work/rtl-representation/ansi_vectors-formal-prove-k4",
+        "/workspace/work/rtl-representation/ansi_vectors-prove-k4.sby"
+      ],
+      "shell": "sby -f -d /workspace/work/rtl-representation/ansi_vectors-formal-prove-k4 /workspace/work/rtl-representation/ansi_vectors-prove-k4.sby",
+      "cwd": "/workspace/work/rtl-representation",
+      "returncode": 0,
+      "seconds": 4.404,
+      "stdout_sha256": "ce0188c707484a605968e8209e0c9db9f8bcbf4713b12c401bd1c72b895cbd6e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "PASS 0 4",
+      "config": "[options]\nmode prove\ndepth 4\n[engines]\nsmtbmc z3\n[script]\nread_verilog -formal -sv  tm_fixed.sv tm_axis_rx_fifo.sv formal_probe.sv\nprep -top formal_top\nasync2sync\ndffunmap\n[files]\ntm_fixed.sv /workspace/work/rtl-representation/tm_fixed.sv\ntm_axis_rx_fifo.sv /workspace/work/rtl-representation/ansi_vectors/tm_axis_rx_fifo.sv\nformal_probe.sv /workspace/work/rtl-representation/formal_probe.sv\ntm_scoped_types.svh /workspace/work/rtl-representation/tm_scoped_types.svh\ntm_parameters.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_parameters.svh\ntm_types.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_types.svh\ntm_validate.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_validate.svh\nfifo_properties.svh /workspace/Shared-Buffer-Packet-Traffic-Manager/formal/pools/fifo_properties.svh\n",
+      "evidence": [
+        "summary: successful proof by k-induction.",
+        "DONE (PASS, rc=0)"
+      ],
+      "wave_sha256": {}
+    }
+  ]
+}

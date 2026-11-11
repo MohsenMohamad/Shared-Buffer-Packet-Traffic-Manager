@@ -1,0 +1,1186 @@
+{
+  "execution_kind": "preservation-validation",
+  "executed_on": "2026-11-11",
+  "investigated_revision": "a473b8c535d02b50b23604047f1bae64638c89df",
+  "byte_comparison": {
+    "status": "PASS",
+    "checked_digests": 53,
+    "production_files_changed": 0
+  },
+  "orchestration_sha256": {
+    "common.py": "787b5252ed0a25cc3ebb31d295a374eaedacefd7b48b2f5cf26f491ccaff2bb0",
+    "formal_run.py": "4a1fa73e8638f791f4ad66280ec537f20e6526e293321e7ca3a257a154bb84b1",
+    "generate.py": "fb6771cf2b8006629df5654b22c4ec58b0e7d5de204ce626d798415879e442ad",
+    "run.py": "e43f2e3015f83f8c148f2b79e04f52d3ec49547616fd5e85660aded663994f50",
+    "verify.py": "b26efb22223b9510268b7a022ae09dddf765c07e708a8e75b089f8cb748d137a"
+  },
+  "executions": [
+    {
+      "label": "new-simulation-replay",
+      "command": "python3 tests/investigations/rtl-frontend-probes/run.py --output .build/rtl-frontend-probes/preservation-simulation-synthesis",
+      "tools": {
+        "verilator": {
+          "executable": "/workspace/toolchain/install/bin/verilator",
+          "identity": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261110",
+          "matches_old_pin": true
+        },
+        "yosys": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/yosys",
+          "identity": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+          "matches_old_pin": true
+        }
+      },
+      "old_expectations_matched": true,
+      "cases": [
+        {
+          "label": "baseline-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/baseline/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/baseline/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/baseline/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:15:59.679518+00:00",
+          "seconds": 24.374,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "baseline-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/baseline/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/baseline/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:24.054301+00:00",
+          "seconds": 0.004,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "ansi_vectors-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/ansi_vectors/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/ansi_vectors/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/ansi_vectors/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:15:59.679367+00:00",
+          "seconds": 24.225,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "ansi_vectors-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/ansi_vectors/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/ansi_vectors/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:23.908322+00:00",
+          "seconds": 0.005,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "package_vectors-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_vectors/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_vectors/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_vectors/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:23.931383+00:00",
+          "seconds": 19.266,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "package_vectors-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_vectors/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_vectors/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:43.198324+00:00",
+          "seconds": 0.004,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "inline_struct-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/inline_struct/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/inline_struct/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/inline_struct/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:24.066759+00:00",
+          "seconds": 19.934,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "inline_struct-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/inline_struct/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/inline_struct/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:44.001978+00:00",
+          "seconds": 0.005,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "type_parameter-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/type_parameter/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/type_parameter/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/type_parameter/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:43.211209+00:00",
+          "seconds": 19.794,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "type_parameter-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/type_parameter/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/type_parameter/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:03.008857+00:00",
+          "seconds": 0.009,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "forward_typedef-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/forward_typedef/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/forward_typedef/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/forward_typedef/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 1,
+          "started_utc": "2026-11-11T16:16:44.058919+00:00",
+          "seconds": 0.139,
+          "expectation": "REJECT_REFERENCE_BEFORE_DECLARATION",
+          "matched": true
+        },
+        {
+          "label": "package_scoped-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_scoped/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_scoped/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/package_scoped/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:44.247923+00:00",
+          "seconds": 18.956,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "package_scoped-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_scoped/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/package_scoped/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:03.204727+00:00",
+          "seconds": 0.004,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "minimal-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/minimal/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/minimal/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/minimal/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:03.055446+00:00",
+          "seconds": 19.248,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "minimal-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/minimal/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/minimal/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:22.303871+00:00",
+          "seconds": 0.004,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "named_widths-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/named_widths/obj",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+            "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/tm_axis_rx_fifo.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/tm_axil_regs.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/tm_statistics.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/probe_unit.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/named_widths/obj -I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated -I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/tm_axis_rx_fifo.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/tm_axil_regs.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/tm_statistics.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/named_widths/probe_unit.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:03.217274+00:00",
+          "seconds": 19.437,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "named_widths-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/named_widths/obj/Vtest"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/named_widths/obj/Vtest",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:22.654555+00:00",
+          "seconds": 0.003,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "bits_type-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--top-module",
+            "bits_type_test",
+            "--Mdir",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/bits_type/obj",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/bits_type.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --top-module bits_type_test --Mdir /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/bits_type/obj /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/tm_fixed.sv /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated/bits_type.sv",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:22.316068+00:00",
+          "seconds": 6.838,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "bits_type-simulation",
+          "argv": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/bits_type/obj/Vbits_type_test"
+          ],
+          "shell": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-simulation-synthesis/bits_type/obj/Vbits_type_test",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:29.154854+00:00",
+          "seconds": 0.004,
+          "expectation": "SIMULATION",
+          "matched": true
+        }
+      ],
+      "runner_exit_code": 1,
+      "case_selection": "Build/simulation rows only from the initial invocation; its synthesis-path failures are retained separately below."
+    },
+    {
+      "label": "new-synthesis-replay",
+      "command": "python3 tests/investigations/rtl-frontend-probes/run.py --phase synthesis --output .build/rtl-frontend-probes/preservation-synthesis-final",
+      "tools": {
+        "verilator": {
+          "executable": "/workspace/toolchain/install/bin/verilator",
+          "identity": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261110",
+          "matches_old_pin": true
+        },
+        "yosys": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/yosys",
+          "identity": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+          "matches_old_pin": true
+        }
+      },
+      "old_expectations_matched": true,
+      "cases": [
+        {
+          "label": "baseline-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/baseline/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/baseline/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/baseline",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:18:50.157642+00:00",
+          "seconds": 75.64,
+          "expectation": "SYNTHESIS",
+          "matched": true
+        },
+        {
+          "label": "ansi_vectors-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/ansi_vectors/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/ansi_vectors/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/ansi_vectors",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:18:50.149339+00:00",
+          "seconds": 79.656,
+          "expectation": "SYNTHESIS",
+          "matched": true
+        },
+        {
+          "label": "package_vectors-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/package_vectors/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/package_vectors/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/package_vectors",
+          "returncode": 1,
+          "started_utc": "2026-11-11T16:20:05.800014+00:00",
+          "seconds": 0.01,
+          "expectation": "REJECT_FRONTEND",
+          "matched": true
+        },
+        {
+          "label": "inline_struct-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/inline_struct/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/inline_struct/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/inline_struct",
+          "returncode": 1,
+          "started_utc": "2026-11-11T16:20:05.810769+00:00",
+          "seconds": 0.043,
+          "expectation": "REJECT_FRONTEND",
+          "matched": true
+        },
+        {
+          "label": "type_parameter-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/type_parameter/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/type_parameter/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/type_parameter",
+          "returncode": 1,
+          "started_utc": "2026-11-11T16:20:05.854412+00:00",
+          "seconds": 0.008,
+          "expectation": "REJECT_FRONTEND",
+          "matched": true
+        },
+        {
+          "label": "forward_typedef-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/forward_typedef/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/forward_typedef/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/forward_typedef",
+          "returncode": 1,
+          "started_utc": "2026-11-11T16:20:05.862956+00:00",
+          "seconds": 0.008,
+          "expectation": "REJECT_FRONTEND",
+          "matched": true
+        },
+        {
+          "label": "package_scoped-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/package_scoped/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/package_scoped/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/package_scoped",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:05.871322+00:00",
+          "seconds": 48.238,
+          "expectation": "SYNTHESIS",
+          "matched": true
+        },
+        {
+          "label": "minimal-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/minimal/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/minimal/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/minimal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:09.810561+00:00",
+          "seconds": 46.852,
+          "expectation": "SYNTHESIS",
+          "matched": true
+        },
+        {
+          "label": "named_widths-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/named_widths/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/named_widths/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/named_widths",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:54.116171+00:00",
+          "seconds": 24.784,
+          "expectation": "SYNTHESIS",
+          "matched": true
+        },
+        {
+          "label": "bits_type-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/bits_type/synth.ys"
+          ],
+          "shell": "yosys -s /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/bits_type/synth.ys",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-synthesis-final/bits_type",
+          "returncode": 1,
+          "started_utc": "2026-11-11T16:20:56.667875+00:00",
+          "seconds": 0.008,
+          "expectation": "REJECT_FRONTEND",
+          "matched": true
+        }
+      ],
+      "runner_exit_code": 0
+    },
+    {
+      "label": "new-formal-replay",
+      "command": "python3 tests/investigations/rtl-frontend-probes/formal_run.py --output .build/rtl-frontend-probes/preservation-formal; python3 tests/investigations/rtl-frontend-probes/formal_run.py minimal --timeout 240 --output .build/rtl-frontend-probes/preservation-formal-minimal-retry",
+      "tools": {
+        "yosys": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/yosys",
+          "identity": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+          "matches_old_pin": true
+        },
+        "sby": {
+          "executable": "/workspace/toolchain/install/bin/sby",
+          "identity": "SBY v0.71",
+          "matches_old_pin": true
+        },
+        "z3": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/z3",
+          "identity": "Z3 version 4.13.3 - 64 bit",
+          "matches_old_pin": true
+        }
+      },
+      "old_expectations_matched": true,
+      "cases": [
+        {
+          "label": "ansi_vectors-formal-prove",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-formal-prove",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-prove.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-formal-prove /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-prove.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:16:01.598025+00:00",
+          "seconds": 85.166,
+          "expectation": "UNBOUNDED_K_INDUCTION",
+          "matched": true,
+          "status": "PASS",
+          "depth": 8
+        },
+        {
+          "label": "ansi_vectors-formal-cover",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-formal-cover",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-cover.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-formal-cover /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-cover.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:26.780492+00:00",
+          "seconds": 1.072,
+          "expectation": "COVER_REACHED",
+          "matched": true,
+          "status": "PASS",
+          "depth": 16
+        },
+        {
+          "label": "ansi_vectors-formal-mutation",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-formal-mutation",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-mutation.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-formal-mutation /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/ansi_vectors-mutation.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 2,
+          "started_utc": "2026-11-11T16:17:27.855211+00:00",
+          "seconds": 0.847,
+          "expectation": "SEEDED_DEFECT_DETECTION",
+          "matched": true,
+          "status": "FAIL",
+          "depth": 8
+        },
+        {
+          "label": "package_scoped-formal-prove",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-formal-prove",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-prove.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-formal-prove /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-prove.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:17:28.703852+00:00",
+          "seconds": 42.604,
+          "expectation": "UNBOUNDED_K_INDUCTION",
+          "matched": true,
+          "status": "PASS",
+          "depth": 8
+        },
+        {
+          "label": "package_scoped-formal-cover",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-formal-cover",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-cover.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-formal-cover /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-cover.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:18:11.312831+00:00",
+          "seconds": 2.786,
+          "expectation": "COVER_REACHED",
+          "matched": true,
+          "status": "PASS",
+          "depth": 16
+        },
+        {
+          "label": "package_scoped-formal-mutation",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-formal-mutation",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-mutation.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-formal-mutation /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/package_scoped-mutation.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 2,
+          "started_utc": "2026-11-11T16:18:14.103416+00:00",
+          "seconds": 3.057,
+          "expectation": "SEEDED_DEFECT_DETECTION",
+          "matched": true,
+          "status": "FAIL",
+          "depth": 8
+        },
+        {
+          "label": "named_widths-formal-prove",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-formal-prove",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-prove.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-formal-prove /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-prove.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:22.210003+00:00",
+          "seconds": 16.038,
+          "expectation": "UNBOUNDED_K_INDUCTION",
+          "matched": true,
+          "status": "PASS",
+          "depth": 4
+        },
+        {
+          "label": "named_widths-formal-cover",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-formal-cover",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-cover.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-formal-cover /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-cover.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:38.251148+00:00",
+          "seconds": 3.35,
+          "expectation": "COVER_REACHED",
+          "matched": true,
+          "status": "PASS",
+          "depth": 16
+        },
+        {
+          "label": "named_widths-formal-mutation",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-formal-mutation",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-mutation.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-formal-mutation /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/named_widths-mutation.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": 2,
+          "started_utc": "2026-11-11T16:20:41.603555+00:00",
+          "seconds": 2.344,
+          "expectation": "SEEDED_DEFECT_DETECTION",
+          "matched": true,
+          "status": "FAIL",
+          "depth": 8
+        },
+        {
+          "label": "minimal-formal-prove",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-formal-prove",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-prove.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-formal-prove /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-prove.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:21:03.779073+00:00",
+          "seconds": 38.262,
+          "expectation": "UNBOUNDED_K_INDUCTION",
+          "matched": true,
+          "status": "PASS",
+          "depth": 8
+        },
+        {
+          "label": "minimal-formal-cover",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-formal-cover",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-cover.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-formal-cover /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-cover.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:21:42.048286+00:00",
+          "seconds": 1.029,
+          "expectation": "COVER_REACHED",
+          "matched": true,
+          "status": "PASS",
+          "depth": 16
+        },
+        {
+          "label": "minimal-formal-mutation",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-formal-mutation",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-mutation.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-formal-mutation /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry/minimal-mutation.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal-minimal-retry",
+          "returncode": 2,
+          "started_utc": "2026-11-11T16:21:43.079772+00:00",
+          "seconds": 0.819,
+          "expectation": "SEEDED_DEFECT_DETECTION",
+          "matched": true,
+          "status": "FAIL",
+          "depth": 8
+        }
+      ],
+      "runner_exit_codes": [
+        1,
+        0
+      ],
+      "case_selection": "Nine non-minimal cases from the first invocation plus three minimal cases from the unchanged-property retry; the original timeout is retained separately below."
+    },
+    {
+      "label": "relocated-checkout-simulation-synthesis",
+      "command": "cwd=/tmp; python3 /tmp/rtl-frontend-checkout.8a4c_5cg/tests/investigations/rtl-frontend-probes/run.py named_widths --output /tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun",
+      "tools": {
+        "verilator": {
+          "executable": "/workspace/toolchain/install/bin/verilator",
+          "identity": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261110",
+          "matches_old_pin": true
+        },
+        "yosys": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/yosys",
+          "identity": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+          "matches_old_pin": true
+        }
+      },
+      "old_expectations_matched": true,
+      "cases": [
+        {
+          "label": "named_widths-build",
+          "argv": [
+            "verilator",
+            "--binary",
+            "--timing",
+            "--assert",
+            "--timescale",
+            "1ns/1ps",
+            "--build-jobs",
+            "2",
+            "--top-module",
+            "test",
+            "--Mdir",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths/obj",
+            "-I/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated",
+            "-I/tmp/rtl-frontend-checkout.8a4c_5cg/rtl/include",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/tm_fixed.sv",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/tm_axis_rx_fifo.sv",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/tm_axil_regs.sv",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/tm_statistics.sv",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/probe_unit.sv",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/test.sv"
+          ],
+          "shell": "verilator --binary --timing --assert --timescale 1ns/1ps --build-jobs 2 --top-module test --Mdir /tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths/obj -I/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated -I/tmp/rtl-frontend-checkout.8a4c_5cg/rtl/include /tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/tm_fixed.sv /tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/tm_axis_rx_fifo.sv /tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/tm_axil_regs.sv /tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/tm_statistics.sv /tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/named_widths/probe_unit.sv /tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated/test.sv",
+          "cwd": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:19:23.993210+00:00",
+          "seconds": 30.262,
+          "expectation": "BUILD",
+          "matched": true
+        },
+        {
+          "label": "named_widths-simulation",
+          "argv": [
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths/obj/Vtest"
+          ],
+          "shell": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths/obj/Vtest",
+          "cwd": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/rtl-frontend-probes/generated",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:19:54.256836+00:00",
+          "seconds": 0.006,
+          "expectation": "SIMULATION",
+          "matched": true
+        },
+        {
+          "label": "named_widths-synthesis",
+          "argv": [
+            "yosys",
+            "-s",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths/synth.ys"
+          ],
+          "shell": "yosys -s /tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths/synth.ys",
+          "cwd": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/simulation-rerun/named_widths",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:19:54.264861+00:00",
+          "seconds": 50.284,
+          "expectation": "SYNTHESIS",
+          "matched": true
+        }
+      ],
+      "runner_exit_code": 0
+    },
+    {
+      "label": "relocated-checkout-formal",
+      "command": "cwd=/tmp; python3 /tmp/rtl-frontend-checkout.8a4c_5cg/tests/investigations/rtl-frontend-probes/formal_run.py named_widths --output /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun",
+      "tools": {
+        "yosys": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/yosys",
+          "identity": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+          "matches_old_pin": true
+        },
+        "sby": {
+          "executable": "/workspace/toolchain/install/bin/sby",
+          "identity": "SBY v0.71",
+          "matches_old_pin": true
+        },
+        "z3": {
+          "executable": "/workspace/toolchain/sysroot/usr/bin/z3",
+          "identity": "Z3 version 4.13.3 - 64 bit",
+          "matches_old_pin": true
+        }
+      },
+      "old_expectations_matched": true,
+      "cases": [
+        {
+          "label": "named_widths-formal-prove",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-formal-prove",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-prove.sby"
+          ],
+          "shell": "sby -f -d /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-formal-prove /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-prove.sby",
+          "cwd": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:44.774103+00:00",
+          "seconds": 8.03,
+          "expectation": "UNBOUNDED_K_INDUCTION",
+          "matched": true,
+          "status": "PASS",
+          "depth": 4
+        },
+        {
+          "label": "named_widths-formal-cover",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-formal-cover",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-cover.sby"
+          ],
+          "shell": "sby -f -d /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-formal-cover /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-cover.sby",
+          "cwd": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun",
+          "returncode": 0,
+          "started_utc": "2026-11-11T16:20:52.813147+00:00",
+          "seconds": 1.787,
+          "expectation": "COVER_REACHED",
+          "matched": true,
+          "status": "PASS",
+          "depth": 16
+        },
+        {
+          "label": "named_widths-formal-mutation",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-formal-mutation",
+            "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-mutation.sby"
+          ],
+          "shell": "sby -f -d /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-formal-mutation /tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun/named_widths-mutation.sby",
+          "cwd": "/tmp/rtl-frontend-checkout.8a4c_5cg/.build/formal-rerun",
+          "returncode": 2,
+          "started_utc": "2026-11-11T16:20:54.602095+00:00",
+          "seconds": 1.307,
+          "expectation": "SEEDED_DEFECT_DETECTION",
+          "matched": true,
+          "status": "FAIL",
+          "depth": 8
+        }
+      ],
+      "runner_exit_code": 0
+    }
+  ],
+  "corrected_portability_attempts": [
+    {
+      "cause": "Quoted Yosys -I options did not resolve include directories; stage byte-identical headers and use -I. instead.",
+      "outcomes": [
+        {
+          "run": "preservation-simulation-synthesis",
+          "old_expectations_matched": false,
+          "mismatches": [
+            {
+              "label": "baseline-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "ansi_vectors-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "package_vectors-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "inline_struct-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "type_parameter-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "forward_typedef-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "package_scoped-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "minimal-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "named_widths-synthesis",
+              "returncode": 1
+            }
+          ]
+        },
+        {
+          "run": "preservation-simulation-synthesis-final",
+          "old_expectations_matched": false,
+          "mismatches": [
+            {
+              "label": "baseline-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "ansi_vectors-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "package_vectors-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "inline_struct-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "type_parameter-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "forward_typedef-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "package_scoped-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "minimal-synthesis",
+              "returncode": 1
+            },
+            {
+              "label": "named_widths-synthesis",
+              "returncode": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cause": "One unchanged depth-8 proof exceeded the 120-second allowance during concurrent tool runs. Retry used timeout 240 with identical assertions, reset model and depth; proof passed in 38.262 seconds.",
+      "outcome": [
+        {
+          "label": "minimal-formal-prove",
+          "argv": [
+            "sby",
+            "-f",
+            "-d",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/minimal-formal-prove",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/minimal-prove.sby"
+          ],
+          "shell": "sby -f -d /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/minimal-formal-prove /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal/minimal-prove.sby",
+          "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/rtl-frontend-probes/preservation-formal",
+          "returncode": "TIMEOUT",
+          "started_utc": "2026-11-11T16:18:17.161577+00:00",
+          "seconds": 120.006,
+          "expectation": "UNBOUNDED_K_INDUCTION",
+          "matched": false,
+          "status": null,
+          "depth": 8
+        }
+      ]
+    }
+  ],
+  "relocated_checkout": {
+    "method": "git archive investigated revision, overlay only the isolated investigation directory, invoke scripts with cwd=/tmp and no --repo-root override",
+    "path": "/tmp/rtl-frontend-checkout.8a4c_5cg",
+    "source_digests_match": true
+  },
+  "limitations": "Representation capabilities only; not integrated hardware verification, equivalence, four-state simulation or a representation choice for newer frontends.",
+  "repository_checks": [
+    {
+      "command": "make repo-check",
+      "result": "PASS",
+      "scope": "repository contracts only"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "PASS",
+      "scope": "staged whitespace"
+    }
+  ]
+}
