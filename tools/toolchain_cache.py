@@ -126,7 +126,7 @@ def prepare(identity, jobs, root=ROOT, restored_key=None):
                         'entry remains bad, bump CACHE_PREFIX before expecting healthy reuse.')
             # CI owns these ignored directories. Discard partial/stale build
             # trees as well as stamps, so a cold rebuild cannot reuse old objects.
-            for name in ('.tools', '.deps'):
+            for name in ('.tools', '.deps', '.build/setup/yosys', '.build/setup/eigen', '.build/setup/opensta'):
                 path = root / name
                 if path.is_symlink():
                     path.unlink()

@@ -211,7 +211,7 @@ def synth(run, args):
         sta.finish('NOT_RUN', 'Mapped synthesis did not qualify')
         return
     os.environ.update(TM_LIBERTY=str(liberty), TM_NETLIST=str(netlist), TM_SDC=str(FIXTURES / 'timing.sdc'))
-    step = sta.execute(['sta', '-exit', str(FIXTURES / 'timing.tcl')], timeout=args.timeout)
+    step = sta.execute(['sta', '-no_init', '-exit', str(FIXTURES / 'timing.tcl')], timeout=args.timeout)
     text = output(step)
     result, reason = sta_result(step)
     sta.data['artifacts'].update(sdc=str(FIXTURES / 'timing.sdc'), liberty=str(liberty), netlist=str(netlist))
@@ -244,8 +244,8 @@ def timing_rejections(run, args, liberty, netlist):
             elif variant == 'unconstrained':
                 sdc.write_text('# Deliberate lack of clocks and IO constraints.\n')
             elif variant == 'error-with-completion':
-                script.write_text('read_liberty ' + str(case.path / 'missing.lib') + '\n' + original_tcl)
-            step = case.execute(['sta','-exit',str(script)],timeout=args.timeout)
+                script.write_text('set sta_continue_on_error 1\nread_liberty ' + str(case.path / 'missing.lib') + '\n' + original_tcl)
+            step = case.execute(['sta','-no_init','-exit',str(script)],timeout=args.timeout)
             result, reason = sta_result(step)
             text = output(step)
             if variant == 'driving-cell':
@@ -254,7 +254,13 @@ def timing_rejections(run, args, liberty, netlist):
                 diagnosis = bool(re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:',text))
                 if variant == 'unconstrained':
                     diagnosis = diagnosis or ('no clock' in text.lower() or 'unconstrained' in text.lower())
-                ok = result == 'FAIL' and diagnosis and step['result'] != 'TIMEOUT' and 'TM_STA_DONE' in text
+                targets = {'bad-library':'missing.lib', 'bad-netlist':'missing.v',
+                           'bad-constraint':'this_is_not_an_sdc_command', 'error-with-completion':'missing.lib'}
+                if variant in targets:
+                    diagnosis = diagnosis and targets[variant] in text
+                ok = result in ('FAIL','TOOL_ERROR') and diagnosis and step['result'] != 'TIMEOUT'
+                if variant == 'error-with-completion':
+                    ok = ok and result == 'FAIL' and step['returncode'] == 0 and 'TM_STA_DONE' in text
                 case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing intended timing-input rejection with completion marker',
                             expected='TIMING_INPUT_REJECTION', classifier_result=result, diagnostic=reason)
     finally:

@@ -92,6 +92,10 @@ def main():
         return
     # A stale completion stamp must not survive any failed replacement build.
     stamp.unlink(missing_ok=True)
+    if sysroot.is_symlink():
+        sysroot.unlink()
+    elif sysroot.exists():
+        shutil.rmtree(sysroot)
     sysroot.mkdir(parents=True, exist_ok=True)
     prefix.mkdir(parents=True, exist_ok=True)
     for pin in packages:
@@ -143,6 +147,11 @@ def main():
                         destination.write_bytes(stream.read(info))
                         destination.chmod((info.external_attr >> 16) & 0o777 or 0o644)
         else:
+            marker = target / '.archive-sha256'
+            fresh = not marker.is_file() or marker.read_text().strip() != digest(archive)
+            build_name = 'yosys' if pin.get('target', name).startswith('yosys') else name
+            if fresh and build_name in ('yosys','opensta','eigen'):
+                shutil.rmtree(logs / build_name, ignore_errors=True)
             unpack(archive, target, reuse=True)
     shutil.copyfile(cache / 'liberty.lib', ROOT / '.deps/liberty.lib')
     env = os.environ.copy()
@@ -248,7 +257,9 @@ def main():
     uvm_digests = {str(p.relative_to(ROOT)): digest(p) for p in (src / 'uvm/src').rglob('*') if p.is_file()}
     identities = {name: dict(commit=pin.get('commit'), archive_sha256=pin['sha256']) for name, pin in downloads.items()}
     stamp.write_text(json.dumps(dict(schema_version=2, recipe_sha256=recipe, sources=deps, packages=packages,
-                                    uvm_digests=uvm_digests, source_identities=identities), indent=2) + '\n')
+                                    uvm_digests=uvm_digests, source_identities=identities,
+                                    build_host=dict(compiler=subprocess.check_output([env['CXX'], '--version'], text=True).strip(),
+                                                    libc=platform.libc_ver(), architecture=platform.machine())), indent=2) + '\n')
     print('Prepared native toolchain. source .tools/activate.sh; make doctor')
 
 

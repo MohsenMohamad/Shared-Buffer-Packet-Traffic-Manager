@@ -131,3 +131,30 @@ The installed Python package and its license are inside the sealed prefix.
 Colorama is a Windows-only optional dependency of this source distribution and
 is not used by the Linux runtime. This corrects the initial candidate package
 classification before SBY qualification; it is not a passing result.
+
+Cold-build discovery retained `libfl-dev` solely for `FlexLexer.h`; its shared
+scanner library (`libfl2`) is not linked by the selected Verilator build and is
+not an active runtime package. Build recipes supply the selected sysroot include
+directory, exact local Debian alternatives and relocated Autotools executables.
+Verilator installs upstream runtime/data targets without manual-page generation,
+so help2man remains unnecessary. Eigen 5 is installed with BLAS/LAPACK, demos,
+documentation and tests disabled; OpenSTA uses only its header-only interface.
+Its current finder supports the Tcl 8 ABI (Tcl 9 names are explicitly disabled in
+the selected authoritative source); the locked Tcl 8.6.16 headers/runtime are
+therefore intentional. OpenSTA's current CMake finder receives explicit Tcl and
+Flex header paths instead of discovering unrelated host development packages.
+
+Upstream component review: the selected Yosys release carries slang 12.0 and
+sv-elab 2026-10-13, while standalone slang 12.1 / sv-elab 2026-11-09 are newer.
+Use the current published Yosys release's integrated source combination; the
+native and integrated frontend comparisons identify which limitations remain.
+The bundled fmt headers report 12.2.1, matching the current published release;
+cxxopts 3.3.1 and toml++ 3.4.0 are current published releases. ABC and its bundled
+solver libraries are selected together by the exact Yosys gitlink/archive,
+including their original licenses; they are not separately fetched or silently
+replaced by host solvers.
+
+Workflow diagnosis additionally used actionlint 1.7.12, an explicit development
+utility outside runtime/setup. Its official Linux archive SHA256 is
+`8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`.
+All current workflows passed this lint; this is not evidence of hosted execution.

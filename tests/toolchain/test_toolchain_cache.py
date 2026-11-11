@@ -94,6 +94,9 @@ class CacheTests(unittest.TestCase):
             cache.check_payload(self.identity, self.root)
 
     def test_cold_once_then_reuse_without_setup(self):
+        stale = self.root / '.build/setup/yosys/stale.o'
+        stale.parent.mkdir(parents=True)
+        stale.write_bytes(b'old source/compiler objects must not survive cold preparation')
         calls = []
         def step(argv, stem, timeout, root):
             calls.append(stem)
@@ -102,6 +105,7 @@ class CacheTests(unittest.TestCase):
             return {'result': 'PASS', 'argv': argv}
         with patch.object(cache, 'checked_step', side_effect=step):
             self.assertEqual(cache.prepare(self.identity, 2, self.root)['source'], 'cold')
+            self.assertFalse(stale.exists())
             self.assertEqual(cache.prepare(self.identity, 2, self.root)['source'], 'cache')
         self.assertEqual(calls, ['cold-setup', 'cold-doctor', 'restore-doctor'])
 
