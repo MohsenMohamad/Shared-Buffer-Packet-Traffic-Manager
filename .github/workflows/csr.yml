@@ -1,0 +1,40 @@
+name: CSR components
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  csr:
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [E0, F0]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Bootstrap native build prerequisites
+        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man
+      - name: Install checksum-locked toolchain
+        run: make setup JOBS=2
+      - name: Exercise production CSR with independent events and rollover
+        run: make regression RUN_ARGS='--profile ${{ matrix.profile }} --test csr --seed 17'
+      - name: Prove production CSR protocol and qualify coupling defect
+        if: matrix.profile == 'E0'
+        run: make formal-rtl RUN_ARGS='--test csr --timeout 240'
+      - name: Retain CSR evidence and counterexamples
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: csr-${{ matrix.profile }}-${{ github.sha }}
+          path: |
+            .build/runs/
+            .build/setup/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error

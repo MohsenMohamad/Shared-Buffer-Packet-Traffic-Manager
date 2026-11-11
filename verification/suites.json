@@ -47,6 +47,21 @@
         "uvm-foundation"
       ],
       "scope": "Behavioral fixture qualification of UVM agents, RAL and independent checkers only; no production TM result"
+    },
+    "csr": {
+      "handler": "csr",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "csr"
+      ],
+      "scope": "Production register/statistics APIs; independent events and whole-system busy fixture; production 64-bit and reduced rollover counters."
     }
   }
 }

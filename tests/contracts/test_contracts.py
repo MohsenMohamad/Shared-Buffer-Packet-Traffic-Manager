@@ -127,6 +127,12 @@ class RegistrationTests(unittest.TestCase):
         self.assertIn('formal/pools/storage_formal.sv', sources('formal')['sources'])
         self.assertFalse(any('tests/toolchain' in p for p in sources('formal')['sources']))
         self.assertEqual(selection('E0', ['pools']), ['pools'])
+        self.assertEqual(selection('E0', ['csr']), ['csr'])
+        self.assertIn('rtl/csr/tm_axil_regs.sv', sources('production')['sources'])
+        self.assertIn('rtl/csr/tm_statistics.sv', sources('synthesis')['sources'])
+        self.assertIn('dv/fixtures/tm_csr_fixture.sv', sources('csr')['sources'])
+        self.assertNotIn('dv/fixtures/tm_csr_fixture.sv', sources('formal')['sources'])
+        self.assertIn('formal/csr/csr_formal.sv', sources('formal')['sources'])
 
     def test_bad_selections(self):
         for name,tests in [('unknown',['contracts']),('F0',[]),('F0',['']),
@@ -158,7 +164,7 @@ class StorageRoutingTests(unittest.TestCase):
         from argparse import Namespace
         from formal_storage import selection as formal_selection
         specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
-        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4'})
+        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr'})
         for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
                 ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
             with self.assertRaises(ValueError):
@@ -178,5 +184,8 @@ class StorageRoutingTests(unittest.TestCase):
             with patch('storage.pools', side_effect=done) as storage:
                 self.assertEqual(main(['regression','--profile','I0','--test','pools','--seed','17','--output',folder]),0)
                 storage.assert_called_once()
+            with patch('csr.csr', side_effect=done) as registers:
+                self.assertEqual(main(['regression','--profile','E0','--test','csr','--seed','17','--output',folder]),0)
+                registers.assert_called_once()
 
 if __name__=='__main__': unittest.main()

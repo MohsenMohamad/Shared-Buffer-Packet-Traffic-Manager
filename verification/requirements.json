@@ -445,8 +445,19 @@
         "pools",
         "formal-rtl"
       ],
-      "component_scope": "FIFO/pool reset only; RUN, queues and integrated packet cancellation remain pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md"
+      "component_scope": "FIFO/pool and CSR reset verified locally, including RUN/configuration/statistics defaults; queue and integrated packet reset remain pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md",
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      }
     },
     {
       "id": "RST-02",
@@ -463,6 +474,17 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
       }
     },
     {
@@ -470,14 +492,26 @@
       "name": "Register map",
       "requirement": "Reset values, capabilities, all implemented qids, unmapped/misaligned accesses and RO/WO semantics.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_RUN",
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      },
+      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
     },
     {
       "id": "CSR-02",
       "name": "Independent AW/W",
       "requirement": "AW before W, W before AW, same cycle, and long separation. No coupled-channel assumption.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED",
+      "status": "NOT_RUN",
       "fixture_qualification": {
         "suite": "uvm-foundation",
         "status": "PASS",
@@ -487,14 +521,26 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      },
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      },
+      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
     },
     {
       "id": "CSR-03",
       "name": "Bus backpressure",
       "requirement": "BREADY/RREADY stalls, read/write overlap, no lost response, one-outstanding transaction limits.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED",
+      "status": "NOT_RUN",
       "fixture_qualification": {
         "suite": "uvm-foundation",
         "status": "PASS",
@@ -504,28 +550,76 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      },
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      },
+      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
     },
     {
       "id": "CSR-04",
       "name": "Write strobes",
       "requirement": "Each byte lane, zero strobes, merged-value range checks and rejected atomic updates.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_RUN",
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      },
+      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
     },
     {
       "id": "CSR-05",
       "name": "Configuration lock",
       "requirement": "Busy disable and running configuration writes reject without changing behavior. Reconfiguration after legitimate drain succeeds.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_RUN",
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      },
+      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
     },
     {
       "id": "CSR-06",
       "name": "Statistics",
       "requirement": "Snapshot coherence, low/high read order, pre-update capture, live/shadow separation, clear restrictions and reset.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_RUN",
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      },
+      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
     },
     {
       "id": "PAR-01",
@@ -541,8 +635,19 @@
         "pools",
         "formal-rtl"
       ],
-      "component_scope": "FIFO/pool portion of all six profiles; complete TM functional parameter regression remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md"
+      "component_scope": "FIFO/pool portion of all six profiles; CSR behavior at E0/F0 and contract elaboration at all six profiles. Complete TM functional parameter regression remains pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md",
+      "csr_component_verification": {
+        "suite": "csr",
+        "formal_selection": "formal-rtl --test csr",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
+        "evidence": "docs/results/P06-registers.json"
+      }
     },
     {
       "id": "PERF-01",

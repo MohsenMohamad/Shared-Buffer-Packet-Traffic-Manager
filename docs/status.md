@@ -3,14 +3,15 @@
 G0 is qualified on toolchain fixtures; G1 fixes executable module/type/event
 contracts. P02 implements and locally verifies registered FIFOs and bitmap
 pools. P07 qualifies reusable UVM agents/RAL and independent checkers on a
-behavioral fixture. The top and other component APIs remain declarations; integrated
+behavioral fixture. P06 implements and locally verifies the CSR/statistics APIs
+with independent events. The top and remaining component APIs are declarations; integrated
 traffic-manager functional gates remain pending.
 
 | Gate | Status | Evidence |
 | --- | --- | --- |
 | G0 Toolchain | PASS (toolchain fixtures) | [P00 evidence](results/P00-toolchain.md) |
 | G1 Contracts | PASS (declarations and batching only) | [P01 evidence](results/P01-contracts.md) |
-| G2 Components | PARTIAL: FIFO/pools; UVM foundation fixture | [P02 evidence](results/P02-storage-primitives.md); [P07 evidence](results/P07-verification-foundation.md); remaining P03–P06 and P08 |
+| G2 Components | PARTIAL: FIFO/pools, CSR/statistics; UVM foundation fixture | [P02 evidence](results/P02-storage-primitives.md); [P07 evidence](results/P07-verification-foundation.md); [P06 evidence](results/P06-registers.md); remaining P03–P05 and P08 |
 | G3 Vertical path | PENDING | P09 |
 | G4 Concurrency | PENDING | P10 |
 | G5 Verification | PENDING | P11A–P11C |

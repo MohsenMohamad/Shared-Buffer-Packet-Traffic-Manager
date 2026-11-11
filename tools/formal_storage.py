@@ -9,7 +9,7 @@ def selection(args):
     specs = json.loads((ROOT/'verification/formal.json').read_text())['configurations']
     selected = list(specs) if args.test is None else args.test
     if args.profile != 'E0' or not selected or len(set(selected))!=len(selected) or any(s not in specs for s in selected):
-        raise ValueError('formal-rtl requires profile E0 and nonempty distinct storage selections: '+', '.join(specs))
+        raise ValueError('formal-rtl requires profile E0 and nonempty distinct production selections: '+', '.join(specs))
     if args.seed is not None:
         raise ValueError('formal-rtl is symbolic; --seed is not applicable')
     return specs, selected
@@ -19,6 +19,10 @@ def formal_rtl(run, args):
     specs, selected = selection(args)
     registered = sources('formal')
     for name in selected:
+        if name == 'csr':
+            from formal_csr import formal_csr
+            formal_csr(run, args, specs[name])
+            continue
         for task in ('prove','cover','mutation') if name in ('cell','descriptor') else ('prove','cover'):
             case = Case(run, 'rtl-'+name+'-'+task)
             case.data.update(configuration=specs[name], source_set='formal',

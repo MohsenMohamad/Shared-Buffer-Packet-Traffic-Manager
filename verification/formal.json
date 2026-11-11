@@ -1,10 +1,46 @@
 {
   "schema_version": 1,
   "configurations": {
-    "cell": {"defines":["PROVE_CELL"],"capacity":16,"id_width":5,"returns":1},
-    "descriptor": {"defines":["PROVE_DESC"],"capacity":8,"id_width":4,"returns":2},
-    "fifo2": {"defines":["FIFO_DEPTH=2"],"depth":2,"beat_width":137},
-    "fifo4": {"defines":["FIFO_DEPTH=4"],"depth":4,"beat_width":137}
+    "cell": {
+      "defines": [
+        "PROVE_CELL"
+      ],
+      "capacity": 16,
+      "id_width": 5,
+      "returns": 1
+    },
+    "descriptor": {
+      "defines": [
+        "PROVE_DESC"
+      ],
+      "capacity": 8,
+      "id_width": 4,
+      "returns": 2
+    },
+    "fifo2": {
+      "defines": [
+        "FIFO_DEPTH=2"
+      ],
+      "depth": 2,
+      "beat_width": 137
+    },
+    "fifo4": {
+      "defines": [
+        "FIFO_DEPTH=4"
+      ],
+      "depth": 4,
+      "beat_width": 137
+    },
+    "csr": {
+      "defines": [],
+      "top": "csr_formal",
+      "N_RX": 1,
+      "N_Q": 2,
+      "N_CELL": 16,
+      "N_DESC": 8,
+      "CELL_BYTES": 16,
+      "MAX_PACKET_BYTES": 128
+    }
   },
-  "scope": "Local production storage APIs at E0 dimensions; extended pool ID widths exercise invalid encodings. No RX/queue/TX ownership composition."
+  "scope": "Local production storage APIs at E0 dimensions; extended pool ID widths exercise invalid encodings. No RX/queue/TX ownership composition. CSR targets production register slave with arbitrary live/shadow inputs and response backpressure."
 }

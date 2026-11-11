@@ -150,33 +150,3 @@ output abort_done_t abort_done;
 output logic idle;
 `include "tm_validate.svh"
 endmodule
-
-module tm_axil_regs_api #(
-`include "tm_parameters.svh"
-) (clk, rst_n, initialized, bus_req, bus_rsp, live, live_stats, shadow_stats, cfg, stats_command);
-`include "tm_types.svh"
-input logic clk, rst_n;
-input axil_request_t bus_req;
-output axil_response_t bus_rsp;
-input live_t live;
-input statistics_t live_stats, shadow_stats;
-input logic initialized;
-output config_t cfg;
-output stats_command_t stats_command;
-`include "tm_validate.svh"
-endmodule
-
-module tm_statistics_api #(
-`include "tm_parameters.svh"
-) (clk, rst_n, events, input_stalled, output_stalled, output_fire, output_beat, run, live, command, live_stats, shadow_stats);
-`include "tm_types.svh"
-input logic clk, rst_n;
-input trace_t events;
-input logic [N_RX-1:0] input_stalled;
-input logic output_stalled, output_fire, run;
-input beat_t output_beat;
-input live_t live;
-input stats_command_t command;
-output statistics_t live_stats, shadow_stats;
-`include "tm_validate.svh"
-endmodule
