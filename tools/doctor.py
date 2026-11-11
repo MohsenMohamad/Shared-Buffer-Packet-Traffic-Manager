@@ -24,6 +24,7 @@ PROBES = {
     'cmake': (['cmake', '--version'], r'cmake version 4\.4\.5\b'),
     'swig': (['swig', '-version'], r'SWIG Version 4\.5\.1\b'),
     'slang': (['yosys', '-Q', '-T', '-p', 'help read_slang'], r'(?m)^    read_slang \[options\] \[filename\]$'),
+    'slang_revision': (['yosys', '-Q', '-T', '-p', 'slang_version'], r'(?s)sv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222.*slang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f'),
     'make': (['make', '--version'], r'GNU Make'),
     'bash': (['bash', '--version'], r'GNU bash'),
 }
@@ -37,7 +38,7 @@ def qualify(run):
         text = output(step).strip()
         executable = shutil.which(argv[0])
         run.versions[name] = (str(executable) + ': ' + text) if text else 'unavailable'
-        if name in ('verilator','verilator_coverage','yosys','abc','sby','z3','opensta','slang','cmake','swig'):
+        if name in ('verilator','verilator_coverage','yosys','abc','sby','z3','opensta','slang','slang_revision','cmake','swig'):
             if not executable or not Path(executable).resolve().is_relative_to(ROOT / '.tools/install'):
                 failures.append(name + ': executable outside selected installation')
         if step['result'] != 'PASS' or not re.search(expected, text):

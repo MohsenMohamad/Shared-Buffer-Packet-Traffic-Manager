@@ -158,3 +158,12 @@ Workflow diagnosis additionally used actionlint 1.7.12, an explicit development
 utility outside runtime/setup. Its official Linux archive SHA256 is
 `8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`.
 All current workflows passed this lint; this is not evidence of hosted execution.
+
+The current Actions-major candidate produced hosted `startup_failure` with zero
+jobs/check runs and no logs in runs `43096000196` and `43097152225`. An unchanged
+main control dispatch, `43099254455`, succeeded. All workflow files pass
+checksum-verified actionlint 1.7.12. Actions policy reads return HTTP 403 for the
+integration, so they cannot establish a policy cause. Compare the previously
+accepted exact cache/upload/download pins while retaining the expanded modern
+capability jobs and source stack. This comparison is not yet a passing result or
+a universal incompatibility claim about the upstream actions.

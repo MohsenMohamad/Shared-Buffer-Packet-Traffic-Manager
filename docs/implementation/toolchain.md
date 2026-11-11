@@ -1,7 +1,8 @@
 # Running the P00 capability gates
 
-Install prerequisites on Linux x86-64: Python 3.11+, glibc 2.38+, GCC 14
-(C++20), Make, Bash, Perl, Git, curl, and dpkg-deb. Then run:
+Install prerequisites on Linux x86-64: Python 3.11+, glibc 2.39+, a C++20
+compiler with working `std::format` (GCC 14 is tested), Make, Bash, Perl, Git,
+curl, pkg-config and dpkg-deb. CI transfer additionally uses zstd. Then run:
 
 ```sh
 make setup JOBS=2
@@ -12,17 +13,42 @@ make lint
 make test-uvm-smoke JOBS=2
 make formal-smoke
 make synth-smoke
+make frontends
+make bridge
+make representation-formal
 make ci JOBS=2
 ```
 
-`setup` verifies all cached/downloaded bytes before use, extracts pinned
-packages into `.tools/sysroot`, installs tools into `.tools/install` and
-places dependency sources in `.deps`. It writes `.tools/setup.json` only
-after successful installation. Repeating the same recipe verifies downloads
-and reuses the prepared installation. Delete `.tools/setup.json` to rerun
-installation, or delete `.deps/src/verilator` for a clean simulator rebuild.
-Installation logs are under `.build/setup`. Builds are bounded to 30 minutes
-per setup step. Source checks are never implicitly installed by tests.
+The active candidate locks are Yosys 0.70 with its integrated slang frontend and
+ABC gitlinks, Verilator 5.054, UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative
+OpenSTA 3.2.0 source. CMake 4.4.5, SWIG 4.5.1, Eigen 5.0.1, CUDD 3.0.0 and Click
+8.5.1 are explicit dependencies. See the [inventory and source identities](modern-toolchain-plan.md)
+and [current qualification status](../results/modern-toolchain.md); active pins do
+not imply all required qualification has completed.
+
+`setup` verifies every cached/downloaded archive, extracts the audited build and
+Tcl/zlib packages into `.tools/sysroot`, builds to `.tools/install`, and retains
+external source/licenses under `.deps`. It does not depend on an old toolchain
+installation, a container, system package installation or mutable upstream
+branches. The upstream Z3 binary requires glibc 2.39; C++ language/runtime
+compatibility is tested by compilation/execution, rather than rejecting every
+compiler patch different from 14.2.0.
+
+A cold source build can take substantial time on two cores. Yosys/ABC builds are
+bounded to two hours; other setup steps to one hour. Logs are under `.build/setup`.
+The completion stamp is written only after every install succeeds. Repeated setup
+verifies archives and reuses a complete matching recipe. Changed source archives
+invalidate their CMake objects; CI cold preparation discards all owned tool/source
+and CMake build trees, preventing an ABI/lock miss from reusing stale objects.
+
+Autoconf/Automake/Bison/Flex/M4 and the Flex C++ header come from exact package
+locks. CMake uses its checksum-locked official distribution; SWIG is source-built.
+Local alternatives and Autotools metadata/executables are relocated explicitly.
+Help2man, old packaged tools, Boost Python/filesystem/system, readline and ffi are
+not required by the chosen recipes. Eigen is header-only here; optional BLAS,
+LAPACK, demos, tests and documentation are disabled. Tcl 8.6 matches the selected
+OpenSTA finder/runtime ABI. No implicit fmt fetch occurs because the compiler's
+`std::format` probe must succeed.
 
 The runner loads `.tools/environment.json`; for direct native commands use
 `source .tools/activate.sh`. The compatibility UVM entry point delegates to
@@ -31,7 +57,7 @@ No external credential, GUI or container daemon is needed.
 
 `make ci` runs doctor, repository contracts, runner tests, fixture lint and
 compiler-error rejection, UVM, formal and mapping/STA in sequence, continuing
-independent gates after failures. GitHub Actions runs UVM/formal/synthesis
+independent gates after failures. GitHub Actions runs UVM/formal/synthesis/frontend/bridge/representation checks
 in dependent consumer jobs after one shared preparation, each with its doctor and orchestration checks. Routine
 artifacts are retained for 14 days. Hosted execution status belongs in the
 PR; adding a workflow is not evidence that it executed successfully.
@@ -70,7 +96,7 @@ bins. Unhit bins stay visible. Tool percentages are not substituted for raw
 counts. Positive failures are rerun with tracing using the same executable,
 seed and profile. The negative assertion run always saves `wave.vcd`.
 
-Verilator is two-state: X/Z propagation is unsupported. UVM DPI/backdoor
+Verilator is two-state: X/Z propagation is unsupported. The separate current-stack reproducer retains its actual execution status in the refresh report. UVM DPI/backdoor
 services are deliberately outside the qualified `UVM_NO_DPI` baseline. No
 production RTL, full-system proof, physical timing signoff or silicon result
 is implied. See [the decision record](../decisions/0001-native-toolchain.md)
@@ -113,6 +139,61 @@ fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
 This route is separate from production TM requirements and the P00 tool fixture.
 See [P07 results](../results/P07-verification-foundation.md).
 
+## Registered frontend and representation checks
+
+The formal and synthesis source registries select `slang`. `read_slang` is built
+into the pinned Yosys executable; no plugin from a global installation is loaded.
+`--frontend verilog` explicitly selects the same Yosys binary's native diagnostic
+path. The old reference flow uses a separately prepared installation/check-out
+at the historical pins; never put both installations on PATH or share runtimes.
+
+```sh
+make frontends
+make bridge
+make representation-formal
+python3 tools/run.py formal-rtl --frontend verilog --test fifo2
+python3 tools/run.py frontends --frontend verilog
+python3 tools/run.py uvm-dpi
+```
+
+The native frontend comparison deliberately returns nonzero for unsupported
+representations; inspect each phase/result, rather than interpreting a syntax
+rejection as completed synthesis. `frontends` compares disposable production
+FIFO/CSR/statistics copies, six-profile and invalid elaborations for the selected
+recipes, heterogeneous instances, and independent memory/signed/unpacked/interface
+examples. Source paths passed to slang use checkout-relative names; whitespace
+inside source-relative paths is explicitly rejected until separately qualified.
+
+`bridge` audits actual symbolic cells, initialization, `$past`, asynchronous
+reset conversion, source labels/property counts, intended counterexamples and
+cover reachability. Complete harness assumption predicates are proved equivalent
+by mutual inclusion with shared arbitrary inputs; CSR state correspondence is
+proved as additional invariants. The miter re-encodes every assumption predicate as an output and proves mutual
+inclusion separately; production prove/cover/mutation runs retain all original
+assumptions, assertions and covers. Slang's unsupported symbolic attributes/functions retain their executed
+negative diagnostics; ordinary arbitrary top-level inputs are the accepted bridge.
+
+`representation-formal` applies richer ANSI/type-parameter declarations and a
+packed-record FIFO array only to generated copies of the real production modules.
+It reuses their unchanged formal harnesses/properties at both FIFO depths and the
+CSR proof/cover/coupling mutation. Production conversion belongs to the
+[P01 follow-up](tasks/P01-followup-representation.md). Interface acceptance does
+not itself justify changing the published packed-lane ABI or design algorithms.
+
+The optional `uvm-dpi` command exercises actual regex and HDL path/read/deposit
+services with the unmodified UVM DPI sources and explicit VPI visibility. Its
+result does not replace frontdoor/RAL behavior, which remains qualified with the
+existing no-DPI configuration. Review each service's executed status before use.
+
+Mapping uses explicit Liberty flop mapping and ABC after `synth -noabc`. The fixed
+Nangate45 typical library has ns/fF units, 1.10 V and 25 C. The capability fixture
+uses a 10 ns ideal clock, 0.05 ns uncertainty, min/max IO delays, 10 fF output load,
+and explicit input slew plus a separate driving-cell case. Error/warning checks,
+missing constrained paths and deliberately malformed inputs remain required even
+when Tcl prints a completion marker. These are pre-layout/reference-library
+checks; one typical Liberty without parasitics/variation data cannot establish
+physical, multi-corner, variation or noise closure.
+
 ## One CI preparation producer
 
 [CI](../../.github/workflows/toolchain.yml) owns PR, integrated-main push and manual triggers. It calls the existing repository and component workflows through `workflow_call`; those files no longer launch independent preparations. The repository check can run immediately. The capability matrix and every heavy component workflow have a real `needs: prepare` edge in the caller. A dependency orders jobs but does not share their files: each consumer downloads the producer's same-run installation archive, extracts it with preserved permissions (`tar --zstd -xpf`) in its checkout, and runs strict validation. Consumers never build on a missing or rejected payload.
@@ -121,11 +202,11 @@ The producer computes an exact installation key, restores a matching Actions cac
 
 Installation identity includes both dependency locks, setup scripts, setup-imported `evidence.py`, the cache-format helper, Linux OS release, architecture, glibc, Python ABI, compiler version/target, inherited compiler/linker/Make flags and the C++ runtime digest. It excludes `tools/run.py`, `tools/doctor.py` and repository HEAD. Suite registration and non-rejecting validator-only edits therefore reuse identical tools. Every restore and every consumer still executes the current validator; neither a matching key nor an old seal is acceptance.
 
-If a validator change rejects previously compatible installations, bump `CACHE_PREFIX` in `tools/toolchain_cache.py` in the same PR. The versioned generation (currently `tm-tools-v1-`) provides a new immutable key under which a successful rebuild can be saved, even when the tool binaries are unchanged. The changed validator must pass before sealing/saving; a prefix bump cannot turn a failed validation into success.
+If a validator change rejects previously compatible installations, bump `CACHE_PREFIX` in `tools/toolchain_cache.py` in the same PR. The versioned generation (currently `tm-tools-v2-`) provides a new immutable key under which a successful rebuild can be saved, even when the tool binaries are unchanged. The changed validator must pass before sealing/saving; a prefix bump cannot turn a failed validation into success.
 
-Setup embeds absolute paths, so the checkout root remains part of identity and consumers must use the same layout. Standard hosted jobs for this repository provide that layout; a custom runner must reproduce it or prepare its own compatible installation. Preserve the pinned qualified versions even if a newer runner compiler causes doctor to reject them.
+Setup embeds absolute paths, so the checkout root remains part of identity and consumers must use the same layout. Standard hosted jobs for this repository provide that layout; a custom runner must reproduce it or prepare its own compatible installation. The current doctor compiles/executes the required C++20 features; a changed compiler/runtime invalidates cache compatibility without imposing one compiler patch as a universal requirement.
 
-Hosted bootstrap checks use installed compiler/Make/Perl/curl/Git/dpkg/Python/zstd and install packages only when missing. Autoconf, Bison, Flex and help2man come from the checksum-locked sysroot, so a warm run does not require an unnecessary apt mirror refresh.
+Hosted bootstrap checks use installed compiler/Make/Perl/curl/Git/dpkg/Python/zstd and install packages only when missing. Autoconf, Automake, Bison, Flex and the scanner header come from the checksum-locked sysroot, so a warm run does not require an unnecessary apt mirror refresh.
 
 Caches are an optimization. Cache service restore/save failures do not remove the cold build path. Rejection emits a workflow warning naming the actual restored key and reason. `.build/setup-cache/preparation.json` retains `rejected_key`, `restore_rejected`, `cache_status: rejected` and `source: cold`; an Actions exact hit followed by rebuilding is not healthy cache reuse. An immutable rejected entry cannot be overwritten: bump the existing `CACHE_PREFIX` generation and commit/push the change before expecting a replacement entry. Failed setup or current validation never produces a complete seal or a cache save.
 
