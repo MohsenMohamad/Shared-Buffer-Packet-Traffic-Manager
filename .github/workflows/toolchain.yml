@@ -40,6 +40,20 @@ jobs:
             .deps/liberty.lib
       - name: Validate restored installation or build once on a cold miss
         run: python3 tools/toolchain_cache.py prepare --jobs 2
+      - name: Read validated preparation outcome
+        id: prepared
+        run: |
+          python3 - <<'PYCODE'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(Path('.build/setup-cache/preparation.json').read_text())
+          assert report['result'] == 'PASS' and report['source'] in ('cold', 'cache')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+              stream.write('source=' + report['source'] + '\n')
+          PYCODE
+      - name: Record ${{ steps.prepared.outputs.source }} preparation
+        run: cat .build/setup-cache/preparation.json
       - name: Save only a complete validated installation
         continue-on-error: true
         if: steps.cache.outputs.cache-hit != 'true'
