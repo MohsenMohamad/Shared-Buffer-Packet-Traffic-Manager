@@ -169,5 +169,13 @@
     "sha256": "b548bac48ef2452b4e09ea2945cf4b011d5f43fcf39e4799df268ee7e0769d85",
     "target": "z3",
     "archive": "zip"
+  },
+  "click": {
+    "version": "8.5.1",
+    "url": "https://files.pythonhosted.org/packages/45/37/edbf1b0707709013c0cf2e8317e03d97ed29bf4cac709fe328904ae92a38/click-8.5.1.tar.gz",
+    "sha256": "9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4",
+    "target": "click",
+    "archive": "tar",
+    "commit": "cf19179e8e2fd54c601378cec9e0d21bb12b6fb1"
   }
 }

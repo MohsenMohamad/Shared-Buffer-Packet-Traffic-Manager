@@ -122,3 +122,12 @@ CMake 4.4.5 is the current official self-contained Linux distribution, avoiding 
 The selected upstream Z3 x86-64 binary requires glibc >=2.39, met by Ubuntu 24.04 and this Debian 13 host. Compiler compatibility is checked with a compiled/executed C++20 std::format probe and full compiler/runtime cache identity, rather than an exact GCC patch rejection. Build dependencies retained from Debian are Autoconf 2.72, Automake 1.17, autotools metadata, Bison 3.8.2, Flex 2.6.4, M4 1.4.19, Tcl 8.6.16 headers/interpreter/runtime and zlib 1.3.1 headers/runtime. They have exact existing archive locks, are used by concrete source recipes, and are not a claim of a hermetic host OS. Tcl 8.6 is the selected OpenSTA runtime ABI; changing to Tcl 9 requires separate upstream compatibility qualification.
 
 Current Actions discovery confirms checkout v7.0.1 remains current; cache v6.1.0, upload v7.0.2 and download v8.0.2 replace the old majors together. Their published source commits are locked in workflow uses. Hosted execution must validate their current input/output semantics.
+
+SBY imports Click at runtime. The dependency audit therefore replaces the old
+Debian Python Click 8.1.8 package with upstream Click 8.5.1, the current release
+verified against GitHub and PyPI. Exact source archive SHA256 is
+`9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4`.
+The installed Python package and its license are inside the sealed prefix.
+Colorama is a Windows-only optional dependency of this source distribution and
+is not used by the Linux runtime. This corrects the initial candidate package
+classification before SBY qualification; it is not a passing result.

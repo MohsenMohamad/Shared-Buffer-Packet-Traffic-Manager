@@ -149,7 +149,7 @@ def main():
                ACLOCAL_PATH=str(sysroot / 'usr/share/aclocal-1.17'),
                BISON_PKGDATADIR=str(sysroot / 'usr/share/bison'),
                AUTOM4TE=str(sysroot / 'usr/bin/autom4te'), M4=str(sysroot / 'usr/bin/m4'),
-               PYTHONPATH=f'{prefix}/share/yosys/python3:{prefix}/share/yosys',
+               PYTHONPATH=f'{prefix}/share/python3:{prefix}/share/yosys/python3:{prefix}/share/yosys',
                TCL_LIBRARY=str(sysroot / 'usr/share/tcltk/tcl8.6'),
                UVM_HOME=str(src / 'uvm'),
                GIT_CEILING_DIRECTORIES=str(src),
@@ -181,6 +181,7 @@ def main():
          '-DCMAKE_DISABLE_FIND_PACKAGE_Git=TRUE', '-DYOSYS_USE_BUNDLED_LIBS=ON',
          '-DYOSYS_ENABLE_UNIT_TESTS=OFF', '-DYOSYS_WITHOUT_READLINE=ON', '-DYOSYS_WITHOUT_EDITLINE=ON',
          '-DYOSYS_WITHOUT_LIBFFI=ON', '-DYOSYS_WITHOUT_TCL=ON', '-DYOSYS_WITH_PYTHON=OFF',
+         '-DYOSYS_SLANG_REVISION=' + deps['sv_elab']['commit'], '-DSLANG_REVISION=' + deps['slang']['commit'],
          '-DSLANG_INCLUDE_TOOLS=OFF', '-DSLANG_INCLUDE_TESTS=OFF', '-DSLANG_INCLUDE_INSTALL=OFF'])
     step('yosys-build', ['cmake', '--build', str(yosys_build), '--target', 'yosys', 'yosys-abc', '-j', str(args.jobs)], timeout=7200)
     step('yosys-install', ['cmake', '--install', str(yosys_build)])
@@ -188,6 +189,9 @@ def main():
                        ('build', ['make', '-C', 'src', '-j' + str(args.jobs), 'opt']),
                        ('install', ['make', 'install-all', 'VL_INST_PUBLIC_BIN_FILES=verilator_bin verilator_coverage_bin'])]:
         step('verilator-' + name, argv, src / 'verilator')
+    shutil.copytree(src / 'click/src/click', prefix / 'share/python3/click', dirs_exist_ok=True)
+    (prefix / 'share/licenses/click').mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src / 'click/LICENSE.txt', prefix / 'share/licenses/click/LICENSE.txt')
     step('sby', ['make', 'PREFIX=' + str(prefix), 'install'], src / 'sby')
     for name in ('z3',):
         for binary in (src / name / 'bin').iterdir():
@@ -204,7 +208,7 @@ def main():
     step('cudd-install', ['make', 'install'], src / 'cudd')
     eigen_build = logs / 'eigen'
     step('eigen-configure', ['cmake', '-S', str(src / 'eigen'), '-B', str(eigen_build), *common,
-                            '-DBUILD_TESTING=OFF', '-DEIGEN_BUILD_DOC=OFF'])
+                            '-DBUILD_TESTING=OFF', '-DEIGEN_BUILD_DOC=OFF', '-DCMAKE_EXPORT_PACKAGE_REGISTRY=OFF'])
     step('eigen-install', ['cmake', '--install', str(eigen_build)])
     sta_build = logs / 'opensta'
     step('opensta-configure', ['cmake', '-S', str(src / 'opensta'), '-B', str(sta_build), *common,
