@@ -127,7 +127,7 @@ class CacheTests(unittest.TestCase):
     def test_rejected_restore_has_one_clean_producer_build(self):
         self.populate()
         cache.seal(self.identity, self.root)
-        (self.root / '.tools/install/example').write_text('corrupt')
+        (self.root / cache.MANIFEST).write_text('[]')
         def step(argv, stem, timeout, root):
             if stem == 'cold-setup':
                 self.assertFalse((self.root / '.tools').exists())
@@ -157,6 +157,9 @@ class CacheTests(unittest.TestCase):
                 self.assertNotEqual(cache.cache_key(cache.compatibility(self.root)), key, name)
                 path.write_text(name)
             path.chmod(0o644)
+            for name in cache.BUILD_FLAGS:
+                with patch.dict(os.environ, {name: 'changed-build-option'}):
+                    self.assertNotEqual(cache.cache_key(cache.compatibility(self.root)), key, name)
             runtime.write_bytes(b'ABI2')
             self.assertNotEqual(cache.cache_key(cache.compatibility(self.root)), key)
         for field in ('checkout', 'system', 'architecture', 'os_release', 'libc', 'python_abi', 'compiler'):

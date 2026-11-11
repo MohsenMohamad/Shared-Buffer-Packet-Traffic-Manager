@@ -21,6 +21,7 @@ PAYLOAD = ('.tools/install', '.tools/sysroot', '.tools/activate.sh',
            '.tools/environment.json', '.tools/setup.json', '.deps/downloads',
            '.deps/src/uvm', '.deps/liberty.lib')
 MANIFEST = '.tools/cache-manifest.json'
+BUILD_FLAGS = ('CC', 'CFLAGS', 'CXXFLAGS', 'CPPFLAGS', 'LDFLAGS', 'MAKEFLAGS')
 
 
 def command(argv):
@@ -35,6 +36,7 @@ def compatibility(root=ROOT):
                 system=platform.system(), architecture=platform.machine(),
                 os_release=sha('/etc/os-release'), libc=platform.libc_ver(),
                 python_abi=f'{sys.version_info.major}.{sys.version_info.minor}',
+                build_flags={name: os.environ.get(name) for name in BUILD_FLAGS},
                 compiler=dict(command=compiler, version=command([compiler, '--version']),
                               target=command([compiler, '-dumpmachine']),
                               libstdcxx_sha256=sha(runtime)))
@@ -103,7 +105,7 @@ def prepare(identity, jobs, root=ROOT):
         try:
             report['steps'].append(validate(identity, root))
             report['source'] = 'cache'
-        except (OSError, ValueError, KeyError, RuntimeError) as error:
+        except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:
             report['restore_rejected'] = str(error)
             # CI owns these ignored directories. Discard partial/stale build
             # trees as well as stamps, so a cold rebuild cannot reuse old objects.
