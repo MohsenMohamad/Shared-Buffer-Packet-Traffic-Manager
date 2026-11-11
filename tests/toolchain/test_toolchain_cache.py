@@ -172,7 +172,7 @@ class CacheTests(unittest.TestCase):
         key = cache.cache_key(self.identity)
         with patch.object(cache, 'CACHE_PREFIX', cache.CACHE_PREFIX + 'next-'):
             self.assertNotEqual(cache.cache_key(self.identity), key)
-            self.assertTrue(cache.cache_key(self.identity).startswith('tm-tools-v2-'))
+            self.assertTrue(cache.cache_key(self.identity).startswith('tm-tools-v3-'))
         console = io.StringIO()
         with redirect_stdout(console):
             cache.warning('bad%input\n::error::not a second command\r')

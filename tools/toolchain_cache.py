@@ -21,7 +21,7 @@ PAYLOAD = ('.tools/install', '.tools/sysroot', '.tools/activate.sh',
            '.tools/environment.json', '.tools/setup.json', '.deps/downloads',
            '.deps/src/uvm', '.deps/liberty.lib')
 MANIFEST = '.tools/cache-manifest.json'
-CACHE_PREFIX = 'tm-tools-v2-'
+CACHE_PREFIX = 'tm-tools-v3-'
 BUILD_FLAGS = ('CC', 'CFLAGS', 'CXXFLAGS', 'CPPFLAGS', 'LDFLAGS', 'MAKEFLAGS')
 
 

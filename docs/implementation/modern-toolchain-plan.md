@@ -173,3 +173,11 @@ upload actions successfully before its superseding push cancellation. This
 disproves a general action-version startup incompatibility. Retain the current
 pins; manual startup failures remain recorded separately and are not an older-pin
 justification or a completed qualification run.
+
+OpenSTA's `GetGitRevisionDescription.cmake` walks ancestor directories without
+consulting `GIT_CEILING_DIRECTORIES`. An archive build beneath a checkout can
+therefore report the parent project's SHA despite compiling the correct archive.
+Setup supplies a project-include metadata function with the checksum-verified
+OpenSTA source commit; no upstream code is patched. Doctor queries
+`sta::git_sha1` and rejects a mismatched runtime identity. Cache generation v3
+invalidates installations with the misleading metadata.

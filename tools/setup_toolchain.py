@@ -235,7 +235,16 @@ def main():
                             '-DCMAKE_EXPORT_PACKAGE_REGISTRY=OFF'])
     step('eigen-install', ['cmake', '--install', str(eigen_build)])
     sta_build = logs / 'opensta'
+    # Upstream's CMake helper walks parent directories itself, ignoring Git's
+    # ceiling setting. Supply the checksum-verified archive identity explicitly.
+    sta_identity = logs / 'opensta-source-identity.cmake'
+    sta_identity.write_text('set(__get_git_revision_description YES)\n'
+                            'function(get_git_head_revision ref hash)\n'
+                            '  set(${ref} "PINNED_SOURCE_ARCHIVE" PARENT_SCOPE)\n'
+                            '  set(${hash} "' + deps['opensta']['commit'] + '" PARENT_SCOPE)\n'
+                            'endfunction()\n')
     step('opensta-configure', ['cmake', '-S', str(src / 'opensta'), '-B', str(sta_build), *common,
+         '-DCMAKE_PROJECT_INCLUDE=' + str(sta_identity),
          '-DUSE_TCL_READLINE=OFF', '-DCUDD_DIR=' + str(prefix), '-DCUDD_LIB=' + str(prefix / 'lib/libcudd.a'),
          '-DCUDD_INCLUDE=' + str(prefix / 'include'), '-DEigen3_DIR=' + str(prefix / 'share/eigen3/cmake'),
          '-DTCL_LIBRARY=' + str(sysroot / 'usr/lib/x86_64-linux-gnu/libtcl8.6.so'),

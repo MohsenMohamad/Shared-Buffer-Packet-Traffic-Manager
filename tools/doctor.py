@@ -71,6 +71,13 @@ def qualify(run):
     except (OSError, KeyError, ValueError) as error:
         failures.append('Missing or malformed locked setup: ' + str(error))
     case.finish('TOOL_ERROR' if failures else 'PASS', '; '.join(failures) or None)
+    identity = Case(run, 'opensta-source')
+    script = identity.path / 'identity.tcl'
+    script.write_text('puts "TM_OPENSTA_SOURCE [sta::git_sha1]"\nexit\n')
+    step = identity.execute(['sta', '-no_init', '-no_splash', '-exit', str(script)])
+    expected = json.loads((ROOT / 'tools/dependencies.json').read_text())['opensta']['commit']
+    ok = step['result'] == 'PASS' and output(step).splitlines() == ['TM_OPENSTA_SOURCE ' + expected]
+    identity.finish('PASS' if ok else 'TOOL_ERROR', None if ok else 'OpenSTA source revision differs from lock')
     cxx = Case(run, 'cxx20')
     source = cxx.path / 'probe.cpp'
     source.write_text('#include <concepts>\n#include <iostream>\n#include <format>\n'

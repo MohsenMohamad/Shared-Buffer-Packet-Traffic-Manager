@@ -33,7 +33,8 @@ def audit(run, args):
         for phase in ('parse','elaborate','synthesis'):
             case=Case(run, f'frontend-{args.frontend}-{name}-{phase}')
             case.data.update(frontend=args.frontend, candidate=name, phase=phase,
-                             input_digests={str(p.relative_to(ROOT)):sha(p) for p in files})
+                             input_digests={str(p.relative_to(ROOT)):sha(p) for p in files},
+                             method='AST compilation/semantic checking without RTLIL lowering' if phase=='parse' and args.frontend=='slang' else 'deferred AST parsing' if phase=='parse' else 'RTLIL elaboration' if phase=='elaborate' else 'completed generic synthesis')
             script=case.path/'run.ys'
             command=read_sources(files,top,includes,frontend=args.frontend)
             if phase=='parse':
@@ -121,3 +122,56 @@ def representation_formal(run,args):
     proof_args.profile='E0';proof_args.test=['fifo2','fifo4','csr'];proof_args.seed=None
     proof_args.frontend='slang';proof_args.candidate_root=candidate
     formal_rtl(run,proof_args)
+
+
+def fifo_mapping(run,args):
+    """Map every payload bit of real FIFO copies, with explicit IO timing."""
+    from registry import profile
+    from run import sta_result
+    liberty=ROOT/'.deps/liberty.lib'
+    generated=run.path/'fifo-mapping-generated'
+    generate=Case(run,'fifo-mapping-generate')
+    step=generate.execute([sys.executable,str(BASE/'generate.py'),'--repo-root',str(ROOT),'--output',str(generated)])
+    generate.finish(step['result'],step['first_failure'])
+    if step['result']!='PASS':return
+    candidate=generated/'type_parameter/tm_axis_rx_fifo.sv'
+    text=candidate.read_text();target='logic [BEAT_W-1:0] storage [0:RX_FIFO_DEPTH-1];'
+    if text.count(target)!=1:raise ValueError('Ambiguous record FIFO mapping site')
+    candidate.write_text(text.replace(target,'beat_t storage [0:RX_FIFO_DEPTH-1];'))
+    top='tm_axis_rx_fifo_api'
+    for representation in ('production-vector','candidate-record'):
+        for depth in (2,4):
+            case=Case(run,f'fifo-map-{representation}-depth{depth}')
+            params=dict(profile('E0'),RX_FIFO_DEPTH=depth)
+            files=[ROOT/'rtl/common/tm_axis_rx_fifo.sv'] if representation=='production-vector' else [generated/'tm_fixed.sv',candidate]
+            netlist,stats,script=case.path/'mapped.v',case.path/'stats.json',case.path/'mapping.ys'
+            script.write_text(read_sources(files,top,[ROOT/'rtl/include'],params=params,frontend='slang')+
+                              f'synth -top {top} -noabc\ndffunmap\ndfflibmap -liberty {liberty}\nabc -liberty {liberty}\nclean\n'+
+                              f'read_liberty -lib {liberty}\ncheck -assert\nwrite_verilog -noattr {netlist}\ntee -o {stats} stat -json -liberty {liberty}\n')
+            step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=max(args.timeout,300))
+            if step['result']!='PASS':
+                case.finish(step['result'],step['first_failure']);continue
+            try:
+                data=json.loads(stats.read_text())['modules']['\\'+top]
+                cells=data['num_cells_by_type']
+                if not cells or any(n.startswith('$') for n in cells) or not any(n.startswith('DFF') for n in cells):
+                    raise ValueError('Expected fully mapped sequential/combinational FIFO')
+                case.finish('PASS',parameters=params,payload_bits=137*depth,mapped_cells=cells,area=data['area'],
+                            source_digests={str(p.relative_to(ROOT)):sha(p) for p in files},netlist_sha256=sha(netlist),
+                            scope='Actual E0 FIFO including all payload bits; representation copies only; no allocator/TM characterization')
+            except (OSError,ValueError,KeyError) as error:
+                case.finish('FAIL',str(error));continue
+            timing=Case(run,f'fifo-sta-{representation}-depth{depth}')
+            sdc=timing.path/'timing.sdc';tcl=timing.path/'timing.tcl'
+            sdc.write_text('create_clock -name clk -period 10 [get_ports clk]\nset_clock_uncertainty 0.05 [get_clocks clk]\n'+
+                           'set data_inputs [all_inputs -no_clocks]\n'+
+                           'set_input_delay -max -clock clk 1 $data_inputs\nset_input_delay -min -clock clk 0.2 $data_inputs\n'+
+                           'set_input_transition 0.05 $data_inputs\nset_output_delay -max -clock clk 1 [all_outputs]\n'+
+                           'set_output_delay -min -clock clk 0.2 [all_outputs]\nset_load 10.0 [all_outputs]\n')
+            tcl.write_text(f'read_liberty {liberty}\nread_verilog {netlist}\nlink_design {top}\nread_sdc {sdc}\n'+
+                           'report_units\ncheck_setup -verbose\nputs TM_STA_MAX_BEGIN\nreport_checks -path_delay max -format full_clock_expanded\n'+
+                           'puts TM_STA_MIN_BEGIN\nreport_checks -path_delay min -format full_clock_expanded\nputs TM_STA_DONE\nexit\n')
+            step=timing.execute(['sta','-no_init','-exit',str(tcl)],timeout=args.timeout)
+            timing.finish(*sta_result(step),slacks_ns=re.findall(r'([-+]?\d+\.\d+)\s+slack',output(step)),
+                          constraints_sha256=sha(sdc),netlist_sha256=sha(netlist),
+                          analysis='Nangate45 typical 1.10 V / 25 C; ns/fF; ideal clock; explicit IO including reset; no timing exceptions; pre-layout')
