@@ -53,9 +53,9 @@ class tm_csr_test extends uvm_test;
         repeat(3) @(negedge f.clk);
         f.rst_n=1;repeat(3) @(negedge f.clk);
     endtask
-    task pulse(trace_t events,bit output_fire=0,bit [7:0] keep=0,int q=0);
+    task pulse(trace_t events,bit output_fire=0,bit [7:0] keep=0,int q=0,bit last=1);
         @(negedge f.clk);f.events=events;f.output_fire=output_fire;
-        f.output_beat='0;f.output_beat.keep=keep;f.output_beat.user[7:0]=8'(q);f.output_beat.last=output_fire;
+        f.output_beat='0;f.output_beat.keep=keep;f.output_beat.user[7:0]=8'(q);f.output_beat.last=last;
         @(negedge f.clk);f.events='0;f.output_fire=0;f.output_beat='0;
     endtask
     task packet(int q,int nbytes=7);
@@ -71,6 +71,25 @@ class tm_csr_test extends uvm_test;
         e='0;e.cell_free.valid=1;e.cell_free.qid=Q_ID_W'(q);
         e.tx_done.valid=1;e.tx_done.qid=Q_ID_W'(q);e.tx_done.length=16'(nbytes);
         pulse(e,1,8'((1<<nbytes)-1),q);
+    endtask
+    task multi_beat_packet();
+        trace_t e='0;
+        e.rx_service.valid=1;e.rx_service.sop=1;e.rx_service.beat.keep='1;
+        e.rx_service.beat.user={24'b0,16'b0,16'd15,8'd1};
+        e.admit.valid=1;e.admit.accept=1;e.admit.qid=1;e.admit.length=15;e.admit.ncell=1;e.cell_alloc.valid=1;
+        pulse(e);
+        e='0;e.rx_service.valid=1;e.rx_service.beat.keep=8'h7f;e.rx_service.beat.last=1;
+        e.commit.valid=1;e.commit.qid=1;pulse(e);
+        e='0;e.dispatch.valid=1;e.dispatch.qid=1;pulse(e);
+        e='0;pulse(e,1,8'hff,1,0);
+        // Bytes count at every accepted beat, before packet completion. Stalled
+        // valid beats contribute zero; declared packet length is not a delta.
+        access(1,'h18,1);access(0,'h130);access(0,'h128);
+        @(negedge f.clk);f.output_stalled=1;f.busy[4]=1;
+        repeat(5) @(negedge f.clk);
+        f.output_stalled=0;f.busy[4]=0;
+        e.cell_free.valid=1;e.cell_free.qid=1;e.tx_done.valid=1;e.tx_done.qid=1;e.tx_done.length=15;
+        pulse(e,1,8'h7f,1);
     endtask
     task pending_reset(int phase_kind);
         // Raw directed channel control is confined to the idle UVM driver's
@@ -247,6 +266,7 @@ class tm_csr_test extends uvm_test;
                 e='0;e.rx_service.valid=1;e.rx_service.sop=1;e.admit.valid=1;e.admit.qid=8'(q);e.admit.reason=status_code_t'(reason);pulse(e);
             end
         end
+        multi_beat_packet();
         e='0;e.admit.valid=1;e.admit.reason=BAD_QID;e.admit.qid=255;pulse(e);
         // Count one header format drop plus another packet's abort at one edge.
         e='0;e.admit.valid=1;e.admit.accept=1;e.admit.ncell=1;pulse(e);

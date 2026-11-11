@@ -1,12 +1,40 @@
 """Production CSR/statistics UVM regression with independently driven events."""
 import os
+import fcntl
 from pathlib import Path
 import re
 import shutil
 
-from evidence import Case, ROOT, IGNORED, completed, output, sha
+from evidence import Case, ROOT, IGNORED, output, sha
 from registry import profile, sources, fingerprint
 from foundation import coverage, first_failure, run_result
+
+
+def csr_coverage(path):
+    result = coverage(path)
+    cross = {name: count for name,count in result['functional_bins'].items() if '.ordering.' in name}
+    if len(cross) != 12 or not all(cross.values()):
+        raise ValueError('Missing AW/W order x B stall x concurrent read bins')
+    owned = {}
+    for line in path.read_text().splitlines():
+        match = re.fullmatch(r"C '(.*)' (\d+)", line)
+        if not match:
+            continue
+        fields = dict(part.split('\x02',1) for part in match[1].split('\x01') if '\x02' in part)
+        filename = fields.get('f','')
+        if '/rtl/csr/' not in filename:
+            continue
+        points = owned.setdefault(Path(filename).name, {})
+        point = points.setdefault(fields.get('t'), dict(hit=0,total=0,unhit=[]))
+        count = int(match[2])
+        point['total'] += 1
+        point['hit'] += int(count > 0)
+        if not count:
+            point['unhit'].append({key: fields[key] for key in ('l','h','o') if key in fields})
+    if set(owned) != {'tm_axil_regs.sv','tm_statistics.sv'} or any(not points.get('line',{}).get('hit') for points in owned.values()):
+        raise ValueError('Missing executed production CSR line coverage')
+    result.update(production_points=owned, mandatory_cross=cross)
+    return result
 
 
 def csr(run, args):
@@ -28,6 +56,12 @@ def csr(run, args):
         # retains its own config, immutable executable and exact source digests.
         cache = ROOT/'.build/csr-objects'/f'{args.profile}-{label}'
         cache.mkdir(parents=True, exist_ok=True)
+        lock = (cache/'build.lock').open('a')
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            lock.close()
+            raise ValueError('CSR object directory already in use: '+str(cache)) from error
         for name, content in {
             'tm_bench_config.svh': ''.join(f'parameter int {k}={v};\n' for k,v in params.items())+f'parameter int CSR_COUNTER_W={width};\n',
             'tm_csr_params.svh': ','.join(f'.{k}({k})' for k in params),
@@ -65,6 +99,7 @@ def csr(run, args):
         if result == 'PASS':
             shutil.copy2(compiled, binary)
             build.data['artifacts'].update(binary=str(binary), binary_sha256=sha(binary))
+        lock.close()
         build.finish(result, why)
         case = Case(run, 'csr-'+label, seed)
         case.data.update(counter_width=width, parameters=params, source_set='csr')
@@ -87,7 +122,7 @@ def csr(run, args):
             result, why = run_result(step, 'TM_CSR_PASS')
             if result == 'PASS':
                 try:
-                    case.data['coverage'] = coverage(case.path/'coverage.dat')
+                    case.data['coverage'] = csr_coverage(case.path/'coverage.dat')
                     metrics = re.search(r'TM_CSR_PASS (.*)', output(step))
                     case.data['metrics'] = {k: int(v) for k,v in re.findall(r'(\w+)=(\d+)', metrics[1])}
                     if width < 64 and case.data['metrics'].get('rollovers', 0) == 0:

@@ -8,6 +8,10 @@ permissions:
   contents: read
 jobs:
   csr:
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [E0, F0]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -19,15 +23,18 @@ jobs:
       - name: Install checksum-locked toolchain
         run: make setup JOBS=2
       - name: Exercise production CSR with independent events and rollover
-        run: make regression RUN_ARGS='--profile E0 --test csr --seed 17'
+        run: make regression RUN_ARGS='--profile ${{ matrix.profile }} --test csr --seed 17'
       - name: Prove production CSR protocol and qualify coupling defect
+        if: matrix.profile == 'E0'
         run: make formal-rtl RUN_ARGS='--test csr --timeout 240'
       - name: Retain CSR evidence and counterexamples
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: csr-${{ github.sha }}
-          path: .build/
+          name: csr-${{ matrix.profile }}-${{ github.sha }}
+          path: |
+            .build/runs/
+            .build/setup/
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
