@@ -1,17 +1,4 @@
-// Declaration-only component APIs. These modules contain NO functional TM logic.
-module tm_axis_rx_fifo_api #(
-`include "tm_parameters.svh"
-) (clk, rst_n, enable, s_valid, s_beat, s_ready, m_valid, m_beat, m_ready, empty);
-`include "tm_types.svh"
-input logic clk, rst_n, enable;
-input logic s_valid;
-input beat_t s_beat;
-output logic s_ready, m_valid;
-output beat_t m_beat;
-input logic m_ready;
-output logic empty;
-`include "tm_validate.svh"
-endmodule
+// Remaining declaration-only component APIs. Storage APIs are implemented separately.
 
 module tm_rx_arb_api #(
 `include "tm_parameters.svh"
@@ -52,31 +39,7 @@ output logic contexts_idle;
 `include "tm_validate.svh"
 endmodule
 
-module tm_cell_pool_api #(
-`include "tm_parameters.svh"
-) (clk, rst_n, allocate, release_cell, available_id, free_count, available, invariant_error);
-`include "tm_types.svh"
-input logic clk, rst_n;
-input cell_alloc_t allocate;
-input cell_return_t release_cell;
-output cell_id_t available_id;
-output cell_count_t free_count;
-output logic available, invariant_error;
-`include "tm_validate.svh"
-endmodule
 
-module tm_desc_pool_api #(
-`include "tm_parameters.svh"
-) (clk, rst_n, admit, tx_return, abort_return, available_id, free_count, available, invariant_error);
-`include "tm_types.svh"
-input logic clk, rst_n;
-input admission_t admit;
-input desc_return_t tx_return, abort_return;
-output desc_id_t available_id;
-output desc_count_t free_count;
-output logic available, invariant_error;
-`include "tm_validate.svh"
-endmodule
 
 module tm_resource_accounting_api #(
 `include "tm_parameters.svh"

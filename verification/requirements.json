@@ -13,7 +13,13 @@
       "name": "Input FIFOs",
       "requirement": "Fill, empty, simultaneous push/pop, full-to-pop recovery and depth 2/4. Verify registered ready and absence of combinational top input-to-output paths by structure/timing review.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "component_tests": [
+        "pools",
+        "formal-rtl"
+      ],
+      "component_scope": "Local FIFO depth 2/4 handshakes, order, stalls, wrap and reset; top-level path review remains pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md"
     },
     {
       "id": "IF-03",
@@ -104,7 +110,13 @@
       "name": "Physical uniqueness",
       "requirement": "Live cells have unique owners; no free cell is also allocated; double-free detection cannot inflate capacity.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "component_tests": [
+        "pools",
+        "formal-rtl"
+      ],
+      "component_scope": "Local cell-pool free/live uniqueness and count consistency; packet/controller ownership composition remains pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md"
     },
     {
       "id": "MEM-02",
@@ -139,7 +151,13 @@
       "name": "Descriptor returns",
       "requirement": "Coincident TX completion, abort completion and new admission; two set bits and one clear bit are merged correctly.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "component_tests": [
+        "pools",
+        "formal-rtl"
+      ],
+      "component_scope": "Local descriptor allocation plus two-return merge and duplicate/invalid handling; TX/abort/admission composition remains pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md"
     },
     {
       "id": "Q-01",
@@ -272,7 +290,13 @@
       "name": "Reset state",
       "requirement": "RUN=0, all valid outputs low, empty queues and full pools; packet-memory contents need not be zero.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "component_tests": [
+        "pools",
+        "formal-rtl"
+      ],
+      "component_scope": "FIFO/pool reset only; RUN, queues and integrated packet cancellation remain pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md"
     },
     {
       "id": "RST-02",
@@ -332,7 +356,13 @@
       "contract_tests": [
         "contracts"
       ],
-      "contract_scope": "G1 checks production declarations, profile guards and type layouts only. Functional parameter regression remains NOT_IMPLEMENTED."
+      "contract_scope": "G1 checks production declarations, profile guards and type layouts only. Functional parameter regression remains NOT_IMPLEMENTED.",
+      "component_tests": [
+        "pools",
+        "formal-rtl"
+      ],
+      "component_scope": "FIFO/pool portion of all six profiles; complete TM functional parameter regression remains pending.",
+      "component_evidence": "docs/results/P02-storage-primitives.md"
     },
     {
       "id": "PERF-01",

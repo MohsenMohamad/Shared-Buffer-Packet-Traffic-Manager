@@ -120,10 +120,13 @@ class RegistrationTests(unittest.TestCase):
         self.assertEqual(profile('F0')['N_CELL'],1024)
         self.assertEqual(profile('F1')['MEM_RD_LATENCY'],2)
         self.assertEqual(set(selection('I0',None)),{'contracts'})
-        for name in ('production','synthesis','formal'):
+        for name in ('production','synthesis'):
             self.assertTrue(all(p.startswith('rtl/') for p in sources(name)['sources']))
             self.assertNotIn('dv/model/tm_monitor_types.svh',sources(name)['headers'])
         self.assertIn('dv/model/tm_monitor_types.svh',sources('simulation')['headers'])
+        self.assertIn('formal/pools/storage_formal.sv', sources('formal')['sources'])
+        self.assertFalse(any('tests/toolchain' in p for p in sources('formal')['sources']))
+        self.assertEqual(selection('E0', ['pools']), ['pools'])
 
     def test_bad_selections(self):
         for name,tests in [('unknown',['contracts']),('F0',[]),('F0',['']),
@@ -149,5 +152,31 @@ class RegistrationTests(unittest.TestCase):
                          ('regression','--seed','17','--seed','19')]:
                 self.assertNotEqual(main([*args,'--output',folder]),0)
 
+
+class StorageRoutingTests(unittest.TestCase):
+    def test_production_formal_selection_is_nonempty_and_separate(self):
+        from argparse import Namespace
+        from formal_storage import selection as formal_selection
+        specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
+        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4'})
+        for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
+                ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
+            with self.assertRaises(ValueError):
+                formal_selection(Namespace(profile=profile_name,test=tests,seed=seed))
+
+    def test_routes_production_and_fixture_independently(self):
+        from run import main
+        from evidence import Case
+        def done(run,args):
+            Case(run,'executed-selector').finish('PASS')
+        with tempfile.TemporaryDirectory() as folder, patch('doctor.qualify'):
+            with patch('formal_storage.formal_rtl', side_effect=done) as production, patch('run.formal',side_effect=done) as fixture:
+                self.assertEqual(main(['formal-rtl','--test','cell','--output',folder]),0)
+                production.assert_called_once(); fixture.assert_not_called()
+                self.assertEqual(main(['formal-smoke','--output',folder]),0)
+                fixture.assert_called_once()
+            with patch('storage.pools', side_effect=done) as storage:
+                self.assertEqual(main(['regression','--profile','I0','--test','pools','--seed','17','--output',folder]),0)
+                storage.assert_called_once()
 
 if __name__=='__main__': unittest.main()
