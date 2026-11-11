@@ -1,21 +1,27 @@
 {
   "schema_version": 1,
-  "qualification": "P00 toolchain capability suite; see docs/results/P00-toolchain.md for executed evidence",
+  "qualification": "Candidate locks; qualification pending docs/results/modern-toolchain.md. Historical P00 results refer to their original locks.",
   "verilator": {
     "version": "5.054",
     "url": "https://codeload.github.com/verilator/verilator/tar.gz/refs/tags/v5.054",
-    "sha256": "18658731b46922ef660bcb650be0aa503d751e5c17eb9d4644fdfabb11835198"
+    "sha256": "18658731b46922ef660bcb650be0aa503d751e5c17eb9d4644fdfabb11835198",
+    "target": "verilator",
+    "archive": "tar",
+    "commit": "bbb60a403932a9f695cb6ff001ceb73de6ad9234"
   },
   "uvm": {
-    "version": "2020.3.1",
-    "commit": "78c06547a2a0a29b3dc9dcafae62b75b2ff61544",
-    "url": "https://codeload.github.com/accellera-official/uvm-core/tar.gz/refs/tags/2020.3.1",
-    "sha256": "f55bdbc02cc500d4a2f41b31bad127653289eb2073f806ce156fb82662b362b8"
+    "version": "2020.3.2",
+    "url": "https://accellera.org/images/downloads/standards/uvm/1800.2-2020.3.2%20Release.gz",
+    "target": "uvm",
+    "archive": "tar",
+    "sha256": "4664ac015f23c72106dd785906aa874d70932ea63f74b85de1e32fa5339c15eb"
   },
   "formal_reference": {
-    "yosys_commit": "fee39a3284c90249e1d9684cf6944ffbbcbb8f90",
+    "yosys_commit": "28ba3cb926fe376fa05ebfc1b921747d011d4557",
     "sby_commit": "79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
-    "solver": "Z3"
+    "solver": "Z3",
+    "frontend": "slang",
+    "diagnostic_frontend": "verilog"
   },
   "liberty": {
     "name": "NangateOpenCellLibrary_typical.lib",
@@ -27,16 +33,141 @@
     "commit": "79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
     "version": "0.71",
     "url": "https://codeload.github.com/YosysHQ/sby/tar.gz/79fc9eddca5e33a28cc2f2cd19c9825efd9a7255",
-    "sha256": "683953197cef986832fe02423bfb7726b0261f2af153a09899501ba5c92052c7"
+    "sha256": "683953197cef986832fe02423bfb7726b0261f2af153a09899501ba5c92052c7",
+    "target": "sby",
+    "archive": "tar"
   },
   "qualified_versions": {
     "verilator": "5.054",
-    "uvm": "2020.3.1",
-    "yosys": "0.52",
+    "uvm": "2020.3.2",
+    "yosys": "0.70",
     "sby": "0.71",
-    "z3": "4.13.3",
-    "opensta": "2.0.17",
-    "compiler": "GCC 14.2.0 (C++20)",
-    "python": "3.11+"
+    "z3": "5.4.1",
+    "opensta": "3.2.0",
+    "compiler": "C++20 with std::format (GCC 14+)",
+    "python": "3.11+",
+    "cmake": "4.4.5",
+    "swig": "4.5.1",
+    "eigen": "5.0.1",
+    "cudd": "3.0.0"
+  },
+  "yosys": {
+    "version": "0.70",
+    "commit": "28ba3cb926fe376fa05ebfc1b921747d011d4557",
+    "url": "https://codeload.github.com/YosysHQ/yosys/tar.gz/28ba3cb926fe376fa05ebfc1b921747d011d4557",
+    "target": "yosys",
+    "archive": "tar",
+    "sha256": "6a134c366622795f98c9b3e0588dde625f96ae5b80304813f73f2c261e317602"
+  },
+  "abc": {
+    "version": "bundled",
+    "commit": "6c5104934c90eb3cdef9ea063318f7588908a185",
+    "url": "https://codeload.github.com/YosysHQ/abc/tar.gz/6c5104934c90eb3cdef9ea063318f7588908a185",
+    "target": "yosys/abc",
+    "archive": "tar",
+    "sha256": "d0448ed85efdd2a411f2ca6638122983bc3d361498a74ba5b1ecc651bac2b018"
+  },
+  "cxxopts": {
+    "version": "bundled",
+    "commit": "4bf61f08697b110d9e3991864650a405b3dd515d",
+    "url": "https://codeload.github.com/jarro2783/cxxopts/tar.gz/4bf61f08697b110d9e3991864650a405b3dd515d",
+    "target": "yosys/libs/cxxopts",
+    "archive": "tar",
+    "sha256": "6a198fdd59e95fe8d4e4ba2a5583e72e610e725192e9ccc2a06a23dfc8243a13"
+  },
+  "fmt": {
+    "version": "bundled",
+    "commit": "a00f82c6b66dcae15503ba19c1598b2733057dea",
+    "url": "https://codeload.github.com/fmtlib/fmt/tar.gz/a00f82c6b66dcae15503ba19c1598b2733057dea",
+    "target": "yosys/libs/fmt",
+    "archive": "tar",
+    "sha256": "360099778b1bf7088769d07b51b59474450dfae3cd63c333d2e3f3903d666a52"
+  },
+  "tomlplusplus": {
+    "version": "bundled",
+    "commit": "a43ad3787293f4a46b1d70c0924b5a25d10e79fc",
+    "url": "https://codeload.github.com/marzer/tomlplusplus/tar.gz/a43ad3787293f4a46b1d70c0924b5a25d10e79fc",
+    "target": "yosys/libs/tomlplusplus",
+    "archive": "tar",
+    "sha256": "46995ddc5baff656a2d527d4329a382c14412f963fa0edf418319280e8435c40"
+  },
+  "boost_regex": {
+    "version": "bundled",
+    "commit": "2b3ac0834f31086c6e3c0e0ceb8516e427d5c39d",
+    "url": "https://codeload.github.com/MikePopoloski/regex/tar.gz/2b3ac0834f31086c6e3c0e0ceb8516e427d5c39d",
+    "target": "yosys/libs/boost_regex",
+    "archive": "tar",
+    "sha256": "5674d9802e115d3ed12c9a1301716f7f0debabf46478449f1112e2a21e6eeecf"
+  },
+  "slang": {
+    "version": "bundled",
+    "commit": "545f88b2ed3a2d20325fbd17413af177a6bca72f",
+    "url": "https://codeload.github.com/MikePopoloski/slang/tar.gz/545f88b2ed3a2d20325fbd17413af177a6bca72f",
+    "target": "yosys/libs/slang",
+    "archive": "tar",
+    "sha256": "2d424f4280c879daaf05a2e78efd6928c350cc3ac086da59b872a305a277f7b8"
+  },
+  "sv_elab": {
+    "version": "2026-10-13",
+    "commit": "9dcee13ea3862347e1715dc51f63e9f845cdd222",
+    "url": "https://codeload.github.com/povik/sv-elab/tar.gz/9dcee13ea3862347e1715dc51f63e9f845cdd222",
+    "target": "yosys/frontends/slang/lib",
+    "archive": "tar",
+    "sha256": "2d54c9e186496ad192e9c77046b0571ce3fdde42a1aad5c4e63829d888331d14"
+  },
+  "symfpu": {
+    "version": "bundled",
+    "commit": "5d5e50867437fe5cabd6ab5aad3b3808ec86701f",
+    "url": "https://codeload.github.com/YosysHQ/symfpu/tar.gz/5d5e50867437fe5cabd6ab5aad3b3808ec86701f",
+    "target": "yosys/libs/symfpu",
+    "archive": "tar",
+    "sha256": "8dbddea1d26cf04d0f320c57929829847835249985ae6992b08a78b088472f6e"
+  },
+  "cudd": {
+    "version": "3.0.0",
+    "commit": "f54f533303640afd5dbe47a05ebeabb3066f2a25",
+    "url": "https://codeload.github.com/ivmai/cudd/tar.gz/f54f533303640afd5dbe47a05ebeabb3066f2a25",
+    "target": "cudd",
+    "archive": "tar",
+    "sha256": "dbe6b90f8745bf1f755953b76f1c639e07f7ee079f4abf18c871ae878f47431d"
+  },
+  "swig": {
+    "version": "4.5.1",
+    "commit": "88649f559942c29a228fa783dd01581e217bcb20",
+    "url": "https://codeload.github.com/swig/swig/tar.gz/88649f559942c29a228fa783dd01581e217bcb20",
+    "target": "swig",
+    "archive": "tar",
+    "sha256": "1f54fbbcba9224389b5ae9ede91365677e652be33b81ca3671a79221f7e2f56e"
+  },
+  "opensta": {
+    "version": "3.2.0",
+    "commit": "c7f04667369f1f7bfeb9eebb381fd8c63267bb21",
+    "url": "https://codeload.github.com/parallaxsw/OpenSTA/tar.gz/c7f04667369f1f7bfeb9eebb381fd8c63267bb21",
+    "target": "opensta",
+    "archive": "tar",
+    "sha256": "e7cb5c7750317308da920918e078e3ef669cb1aa4bb26d68a66278bc50500e6c"
+  },
+  "cmake": {
+    "version": "4.4.5",
+    "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-linux-x86_64.tar.gz",
+    "sha256": "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0",
+    "target": "cmake",
+    "archive": "tar"
+  },
+  "eigen": {
+    "version": "5.0.1",
+    "commit": "bc3b39870ecb690a623a3f49149a358b95c5781d",
+    "url": "https://gitlab.com/libeigen/eigen/-/archive/bc3b39870ecb690a623a3f49149a358b95c5781d/eigen-bc3b39870ecb690a623a3f49149a358b95c5781d.tar.gz",
+    "target": "eigen",
+    "archive": "tar",
+    "sha256": "5f6557d1aca6e959a4b955c55f2935261fd30de59c0c79e35bc6d5cbe1de22d1"
+  },
+  "z3": {
+    "version": "5.4.1",
+    "commit": "145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "url": "https://github.com/Z3Prover/z3/releases/download/z3-5.4.1/z3-5.4.1-x64-glibc-2.39.zip",
+    "sha256": "b548bac48ef2452b4e09ea2945cf4b011d5f43fcf39e4799df268ee7e0769d85",
+    "target": "z3",
+    "archive": "zip"
   }
 }

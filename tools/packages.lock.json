@@ -1,5 +1,5 @@
 {
-  "platform": "Linux x86-64; glibc >= 2.38; GCC 14 C++20; Python >= 3.11",
+  "platform": "Linux x86-64; glibc >= 2.39 (Z3 upstream binary); C++20 compiler with std::format; Python >=3.11",
   "origin": "Debian trixie main; SHA256s verified against signed InRelease package index",
   "packages": [
     {
@@ -10,32 +10,11 @@
       "url": "https://deb.debian.org/debian/pool/main/a/autoconf/autoconf_2.72-3.1_all.deb"
     },
     {
-      "file": "automake_1%3a1.17-4_all.deb",
-      "name": "automake",
-      "version": "1:1.17-4",
-      "sha256": "8d4b172d4ff8070789c54b48a95585b53e4c65faeb07a2ae52da16cb364df635",
-      "url": "https://deb.debian.org/debian/pool/main/a/automake-1.17/automake_1.17-4_all.deb"
-    },
-    {
-      "file": "autotools-dev_20240727.1_all.deb",
-      "name": "autotools-dev",
-      "version": "20240727.1",
-      "sha256": "d07d476c1fcd713ed04695f25ac290c3ae2317e6fd974ad6b2168e3be1c795c3",
-      "url": "https://deb.debian.org/debian/pool/main/a/autotools-dev/autotools-dev_20240727.1_all.deb"
-    },
-    {
       "file": "bison_2%3a3.8.2+dfsg-1+b2_amd64.deb",
       "name": "bison",
       "version": "2:3.8.2+dfsg-1+b2",
       "sha256": "ce6eb1f7aad18850e32d223a68f54bcbe756d74f138c8ec5460ad9d220f4d335",
       "url": "https://deb.debian.org/debian/pool/main/b/bison/bison_3.8.2+dfsg-1+b2_amd64.deb"
-    },
-    {
-      "file": "cmake_3.31.6-2_amd64.deb",
-      "name": "cmake",
-      "version": "3.31.6-2",
-      "sha256": "dee2fc94973325240604ffbca677a3f16b462fb6520946bd81be1ecbac770a02",
-      "url": "https://deb.debian.org/debian/pool/main/c/cmake/cmake_3.31.6-2_amd64.deb"
     },
     {
       "file": "flex_2.6.4-8.2+b4_amd64.deb",
@@ -45,139 +24,6 @@
       "url": "https://deb.debian.org/debian/pool/main/f/flex/flex_2.6.4-8.2+b4_amd64.deb"
     },
     {
-      "file": "help2man_1.49.3_amd64.deb",
-      "name": "help2man",
-      "version": "1.49.3",
-      "sha256": "9b17251751ee4e813df789ba39c25841b9e26bf44206fd53ce4d34bc2d761eed",
-      "url": "https://deb.debian.org/debian/pool/main/h/help2man/help2man_1.49.3_amd64.deb"
-    },
-    {
-      "file": "libboost-filesystem-dev_1.83.0.2+b2_amd64.deb",
-      "name": "libboost-filesystem-dev",
-      "version": "1.83.0.2+b2",
-      "sha256": "1ebc1e2635c487670f08298ee28b0077efd9783ae8f0c1c23b78bfe198a6fd3f",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost-defaults/libboost-filesystem-dev_1.83.0.2+b2_amd64.deb"
-    },
-    {
-      "file": "libboost-filesystem1.83-dev_1.83.0-4.2_amd64.deb",
-      "name": "libboost-filesystem1.83-dev",
-      "version": "1.83.0-4.2",
-      "sha256": "9a50fa4c8da94cef192a9139a9d26961689f8bc901ea4fdd5e5a912581f4a135",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-filesystem1.83-dev_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb",
-      "name": "libboost-filesystem1.83.0",
-      "version": "1.83.0-4.2",
-      "sha256": "6b587623a4fd1824613e7ee02ba35b84cd9534b520b7f3d08d15f9ed85f28cf3",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libboost-python-dev_1.83.0.2+b2_amd64.deb",
-      "name": "libboost-python-dev",
-      "version": "1.83.0.2+b2",
-      "sha256": "3eeec5683815a02cbd915fdfe8a379c1c947330e6ef15e31fc73a91bac67ab37",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost-defaults/libboost-python-dev_1.83.0.2+b2_amd64.deb"
-    },
-    {
-      "file": "libboost-python1.83-dev_1.83.0-4.2_amd64.deb",
-      "name": "libboost-python1.83-dev",
-      "version": "1.83.0-4.2",
-      "sha256": "d34f7aa36934fb53f386084d34ce8d7b8795232377744d805acb7c5d9cb6c2c5",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-python1.83-dev_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libboost-python1.83.0_1.83.0-4.2_amd64.deb",
-      "name": "libboost-python1.83.0",
-      "version": "1.83.0-4.2",
-      "sha256": "97043d6b48d768cf01e35cfe1db4df1b2d7be2d961e365ef2a318e75e3993d33",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-python1.83.0_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libboost-system-dev_1.83.0.2+b2_amd64.deb",
-      "name": "libboost-system-dev",
-      "version": "1.83.0.2+b2",
-      "sha256": "e3d51e24880e1d48c0808210cfd5ce6fc6415ba870c5f11cf7388bcd36dd8416",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost-defaults/libboost-system-dev_1.83.0.2+b2_amd64.deb"
-    },
-    {
-      "file": "libboost-system1.83-dev_1.83.0-4.2_amd64.deb",
-      "name": "libboost-system1.83-dev",
-      "version": "1.83.0-4.2",
-      "sha256": "ac60c2e1bdee779633fad66212b638bf77ddf1e99d650d06bd65ac55577e9839",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-system1.83-dev_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libboost-system1.83.0_1.83.0-4.2_amd64.deb",
-      "name": "libboost-system1.83.0",
-      "version": "1.83.0-4.2",
-      "sha256": "a453edc44ae53303495d6e123b3ea659431849dd52b075459518cfffc49ff179",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost-system1.83.0_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libboost1.83-dev_1.83.0-4.2_amd64.deb",
-      "name": "libboost1.83-dev",
-      "version": "1.83.0-4.2",
-      "sha256": "1f11fc6fb2ffe9378a0f0ebc8f2fd9223fb958b4a40bb9381c67a8857d947ca3",
-      "url": "https://deb.debian.org/debian/pool/main/b/boost1.83/libboost1.83-dev_1.83.0-4.2_amd64.deb"
-    },
-    {
-      "file": "libffi-dev_3.4.8-2_amd64.deb",
-      "name": "libffi-dev",
-      "version": "3.4.8-2",
-      "sha256": "76b2b80193a656733e1408ebec5371334be5fd48eb5f50ab99d6baf6081d0f1b",
-      "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi-dev_3.4.8-2_amd64.deb"
-    },
-    {
-      "file": "libffi8_3.4.8-2_amd64.deb",
-      "name": "libffi8",
-      "version": "3.4.8-2",
-      "sha256": "0ebdc340de33333639c3c63874cd4b15ac2e83dfa1ef3053b7eefaf4919f4f68",
-      "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi8_3.4.8-2_amd64.deb"
-    },
-    {
-      "file": "libfl-dev_2.6.4-8.2+b4_amd64.deb",
-      "name": "libfl-dev",
-      "version": "2.6.4-8.2+b4",
-      "sha256": "1b40033660656acd5c2f85d2c45a4e02bf57a0facc5e0623327474cb911b3136",
-      "url": "https://deb.debian.org/debian/pool/main/f/flex/libfl-dev_2.6.4-8.2+b4_amd64.deb"
-    },
-    {
-      "file": "libfl2_2.6.4-8.2+b4_amd64.deb",
-      "name": "libfl2",
-      "version": "2.6.4-8.2+b4",
-      "sha256": "4c6946a46df35fbf044a376f398499205d160d814806e9bec6cc7cc7cb554e77",
-      "url": "https://deb.debian.org/debian/pool/main/f/flex/libfl2_2.6.4-8.2+b4_amd64.deb"
-    },
-    {
-      "file": "libgmp-dev_2%3a6.3.0+dfsg-3_amd64.deb",
-      "name": "libgmp-dev",
-      "version": "2:6.3.0+dfsg-3",
-      "sha256": "68f392cc03f896ecc3764eb4844d2a898ff016f47dda160465f152f811152b81",
-      "url": "https://deb.debian.org/debian/pool/main/g/gmp/libgmp-dev_6.3.0+dfsg-3_amd64.deb"
-    },
-    {
-      "file": "libgmpxx4ldbl_2%3a6.3.0+dfsg-3_amd64.deb",
-      "name": "libgmpxx4ldbl",
-      "version": "2:6.3.0+dfsg-3",
-      "sha256": "344c4cc65d955ac1b0f0a390d8bf5ad288fb1fda9e9f31f86d43ea6098eae603",
-      "url": "https://deb.debian.org/debian/pool/main/g/gmp/libgmpxx4ldbl_6.3.0+dfsg-3_amd64.deb"
-    },
-    {
-      "file": "libreadline-dev_8.2-6_amd64.deb",
-      "name": "libreadline-dev",
-      "version": "8.2-6",
-      "sha256": "7ebffb08d6874dbed13665911fd43f2f7782d1ea55dd8f5399077c44a47ab123",
-      "url": "https://deb.debian.org/debian/pool/main/r/readline/libreadline-dev_8.2-6_amd64.deb"
-    },
-    {
-      "file": "libreadline8t64_8.2-6_amd64.deb",
-      "name": "libreadline8t64",
-      "version": "8.2-6",
-      "sha256": "eeadf2b5e755c9f183883feea2d9b5b28560284275d5f54d3e55d0923b1d0967",
-      "url": "https://deb.debian.org/debian/pool/main/r/readline/libreadline8t64_8.2-6_amd64.deb"
-    },
-    {
       "file": "libtcl8.6_8.6.16+dfsg-1_amd64.deb",
       "name": "libtcl8.6",
       "version": "8.6.16+dfsg-1",
@@ -185,60 +31,11 @@
       "url": "https://deb.debian.org/debian/pool/main/t/tcl8.6/libtcl8.6_8.6.16+dfsg-1_amd64.deb"
     },
     {
-      "file": "libz3-4_4.13.3-1_amd64.deb",
-      "name": "libz3-4",
-      "version": "4.13.3-1",
-      "sha256": "71383373523ef62d47eccf660cf6535c3febcbb3f88e54cb7a43124014b57359",
-      "url": "https://deb.debian.org/debian/pool/main/z/z3/libz3-4_4.13.3-1_amd64.deb"
-    },
-    {
       "file": "m4_1.4.19-8_amd64.deb",
       "name": "m4",
       "version": "1.4.19-8",
       "sha256": "221b3e224708c1da2a1a88b6824380593579b2254ae7d914afa14cbd5d343334",
       "url": "https://deb.debian.org/debian/pool/main/m/m4/m4_1.4.19-8_amd64.deb"
-    },
-    {
-      "file": "ninja-build_1.12.1-1_amd64.deb",
-      "name": "ninja-build",
-      "version": "1.12.1-1",
-      "sha256": "bc172ce9270bd6fcd6d5335a83ff9d3c7ba0d13ec624cfdfa1b5aa06901dc453",
-      "url": "https://deb.debian.org/debian/pool/main/n/ninja-build/ninja-build_1.12.1-1_amd64.deb"
-    },
-    {
-      "file": "opensta_0~20191111gitc018cb2+dfsg-1.1_amd64.deb",
-      "name": "opensta",
-      "version": "0~20191111gitc018cb2+dfsg-1.1",
-      "sha256": "070f1da9b307cc9273453ea50e7dffbadf1b95ee8712f2430f518bc7008e4e10",
-      "url": "https://deb.debian.org/debian/pool/main/o/opensta/opensta_0~20191111gitc018cb2+dfsg-1.1_amd64.deb"
-    },
-    {
-      "file": "pkg-config_1.8.1-4_amd64.deb",
-      "name": "pkg-config",
-      "version": "1.8.1-4",
-      "sha256": "385209ba52e5c97808bbdc2fc4da22aea9020f96fbab6fbfb144921c4a31d400",
-      "url": "https://deb.debian.org/debian/pool/main/p/pkgconf/pkg-config_1.8.1-4_amd64.deb"
-    },
-    {
-      "file": "python3-click_8.2.0+0.really.8.1.8-1_all.deb",
-      "name": "python3-click",
-      "version": "8.2.0+0.really.8.1.8-1",
-      "sha256": "a464c9b11930f293c8808cc5ea049830d8645a0d314bfa7e294803cb983ee15e",
-      "url": "https://deb.debian.org/debian/pool/main/p/python-click/python3-click_8.2.0+0.really.8.1.8-1_all.deb"
-    },
-    {
-      "file": "python3-colorama_0.4.6-4_all.deb",
-      "name": "python3-colorama",
-      "version": "0.4.6-4",
-      "sha256": "9b9b0991ea7a97312f9f74db9bc801c26120049ccf3f63c00c3f94025fc99fd6",
-      "url": "https://deb.debian.org/debian/pool/main/p/python-colorama/python3-colorama_0.4.6-4_all.deb"
-    },
-    {
-      "file": "tcl-dev_8.6.16_amd64.deb",
-      "name": "tcl-dev",
-      "version": "8.6.16",
-      "sha256": "f1dc61948dbb0e7e919943bb921c60d5aca882a68a66107d776485e4aad33d6c",
-      "url": "https://deb.debian.org/debian/pool/main/t/tcltk-defaults/tcl-dev_8.6.16_amd64.deb"
     },
     {
       "file": "tcl8.6-dev_8.6.16+dfsg-1_amd64.deb",
@@ -255,39 +52,32 @@
       "url": "https://deb.debian.org/debian/pool/main/t/tcl8.6/tcl8.6_8.6.16+dfsg-1_amd64.deb"
     },
     {
-      "file": "tcl_8.6.16_amd64.deb",
-      "name": "tcl",
-      "version": "8.6.16",
-      "sha256": "2e42f472e61cf34209f47d7b3649b556c0bb5e80f51a0d3ab4a5fcb1474c59fc",
-      "url": "https://deb.debian.org/debian/pool/main/t/tcltk-defaults/tcl_8.6.16_amd64.deb"
-    },
-    {
-      "file": "yosys-abc_0.52-2_amd64.deb",
-      "name": "yosys-abc",
-      "version": "0.52-2",
-      "sha256": "f54c92c5ce88959f6aedc71c7b01eaf2b39d6c8c3e5f02784b6ce24736dc50e4",
-      "url": "https://deb.debian.org/debian/pool/main/y/yosys/yosys-abc_0.52-2_amd64.deb"
-    },
-    {
-      "file": "yosys_0.52-2_amd64.deb",
-      "name": "yosys",
-      "version": "0.52-2",
-      "sha256": "c950e58a1f554546a91602e5124eb05019a92040e57b0aaa43cf33b032ee9c40",
-      "url": "https://deb.debian.org/debian/pool/main/y/yosys/yosys_0.52-2_amd64.deb"
-    },
-    {
-      "file": "z3_4.13.3-1_amd64.deb",
-      "name": "z3",
-      "version": "4.13.3-1",
-      "sha256": "4330fbffdcb23b708fa3008cde5ba00f63fe0a75bd67ac469ce16f2bd4213a1d",
-      "url": "https://deb.debian.org/debian/pool/main/z/z3/z3_4.13.3-1_amd64.deb"
-    },
-    {
       "file": "zlib1g-dev_1%3a1.3.dfsg+really1.3.1-1+b1_amd64.deb",
       "name": "zlib1g-dev",
       "version": "1:1.3.dfsg+really1.3.1-1+b1",
       "sha256": "76ed5c858e1aef38b7be93acce5910e457e77bd6271471b9d05fb42e78826224",
       "url": "https://deb.debian.org/debian/pool/main/z/zlib/zlib1g-dev_1.3.dfsg+really1.3.1-1+b1_amd64.deb"
+    },
+    {
+      "name": "zlib1g",
+      "version": "1:1.3.dfsg+really1.3.1-1+b1",
+      "file": "zlib1g_1.3.dfsg+really1.3.1-1+b1_amd64.deb",
+      "url": "https://deb.debian.org/debian/pool/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1+b1_amd64.deb",
+      "sha256": "015be740d6236ad114582dea500c1d907f29e16d6db00566ca32fb68d71ac90d"
+    },
+    {
+      "file": "automake_1%3a1.17-4_all.deb",
+      "name": "automake",
+      "version": "1:1.17-4",
+      "sha256": "8d4b172d4ff8070789c54b48a95585b53e4c65faeb07a2ae52da16cb364df635",
+      "url": "https://deb.debian.org/debian/pool/main/a/automake-1.17/automake_1.17-4_all.deb"
+    },
+    {
+      "file": "autotools-dev_20240727.1_all.deb",
+      "name": "autotools-dev",
+      "version": "20240727.1",
+      "sha256": "d07d476c1fcd713ed04695f25ac290c3ae2317e6fd974ad6b2168e3be1c795c3",
+      "url": "https://deb.debian.org/debian/pool/main/a/autotools-dev/autotools-dev_20240727.1_all.deb"
     }
   ]
 }
