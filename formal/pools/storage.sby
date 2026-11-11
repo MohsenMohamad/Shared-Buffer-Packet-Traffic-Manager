@@ -1,0 +1,22 @@
+[tasks]
+prove
+cover
+mutation
+
+[options]
+prove: mode prove
+cover: mode cover
+mutation: mode prove
+prove: depth 8
+mutation: depth 8
+cover: depth 40
+
+[engines]
+smtbmc z3
+
+[script]
+# Replaced with registered sources and a named production elaboration by runner.
+@SCRIPT@
+
+[files]
+@FILES@

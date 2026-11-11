@@ -1,1 +1,15 @@
-{"schema_version":1,"extends":"production","include_dirs":[],"sources":[],"headers":[],"scope":"No TM formal harness exists at G1; not a proof selection."}
+{
+  "schema_version": 1,
+  "extends": "production",
+  "include_dirs": [
+    "formal/pools"
+  ],
+  "sources": [
+    "formal/pools/storage_formal.sv"
+  ],
+  "headers": [
+    "formal/pools/bitmap_properties.svh",
+    "formal/pools/fifo_properties.svh"
+  ],
+  "scope": "Production storage proofs only; no capability fixtures or integrated TM ownership proof"
+}
