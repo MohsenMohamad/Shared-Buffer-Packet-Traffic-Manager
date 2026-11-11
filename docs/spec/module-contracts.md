@@ -2,6 +2,7 @@
 
 These APIs freeze component boundaries. P02 implements `tm_axis_rx_fifo_api`,
 `tm_cell_pool_api` and `tm_desc_pool_api` under `rtl/common/` and `rtl/pools/`.
+P06 implements `tm_axil_regs_api` and `tm_statistics_api` under `rtl/csr/`.
 `rtl/tm_top.sv` and the remaining APIs in `rtl/include/tm_module_ports.sv` are
 **declarations only**. Their elaboration proves frontend compatibility and
 parameter checks. Component implementations retain the `_api` names, fields and

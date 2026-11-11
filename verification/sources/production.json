@@ -9,12 +9,14 @@
     "rtl/common/tm_axis_rx_fifo.sv",
     "rtl/pools/tm_bitmap_pool.sv",
     "rtl/pools/tm_cell_pool.sv",
-    "rtl/pools/tm_desc_pool.sv"
+    "rtl/pools/tm_desc_pool.sv",
+    "rtl/csr/tm_axil_regs.sv",
+    "rtl/csr/tm_statistics.sv"
   ],
   "headers": [
     "rtl/include/tm_parameters.svh",
     "rtl/include/tm_types.svh",
     "rtl/include/tm_validate.svh"
   ],
-  "scope": "Storage APIs implemented; other APIs and top remain declarations."
+  "scope": "Storage and CSR/statistics APIs implemented; remaining APIs and top are declarations."
 }
