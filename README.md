@@ -35,3 +35,4 @@ Production CSR regression: `make regression RUN_ARGS='--profile E0 --test csr --
 The independent event fixture checks configuration and coherent statistics;
 `make formal-rtl RUN_ARGS='--test csr'` proves local protocol properties.
 Real event wiring and whole-system IDLE generation remain integration checks.
+See [P06 evidence](docs/results/P06-registers.md) for the executed component checks.

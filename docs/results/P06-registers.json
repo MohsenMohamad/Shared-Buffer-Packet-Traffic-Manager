@@ -1,0 +1,2783 @@
+{
+  "schema_version": 1,
+  "source_revision": "26bad4d0bdf52d8657b1a4cd3ea14061ab54e2cc",
+  "base_revision": "0901ad7fead69eb6e56c49c1e8a75a125d414a91",
+  "scope": "P06 production CSR/statistics with independent event fixture; no integrated datapath or real IDLE generation",
+  "tool_versions": {
+    "python": "Python 3.12.14",
+    "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111-0901ad7",
+    "verilator_coverage": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111-0901ad7",
+    "yosys": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+    "abc": "ABC command line: \"version\".\n\nUC Berkeley, ABC 1.01 (compiled May  4 2025 16:37:33)",
+    "sby": "SBY v0.71",
+    "z3": "Z3 version 4.13.3 - 64 bit",
+    "opensta": "2.0.17",
+    "compiler": "g++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "make": "GNU Make 4.4.1\nBuilt for x86_64-pc-linux-gnu\nCopyright (C) 1988-2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.",
+    "bash": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)\nCopyright (C) 2022 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\nThis is free software; you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law."
+  },
+  "source_digests": {
+    ".editorconfig": "2d8b5dd7eaec25a56b035b2d7c4d4fd6d6f32915dae03f18cfdf838a688b29d5",
+    ".gitattributes": "97e97349ddd3cf10e430e0a7b0ab2710be0e8ae84166d4a99db534a9bc3f56f0",
+    ".github/pull_request_template.md": "b7907c1234e6898baa8b22b181c4f551943edf1833f400f6020b84e066196b1a",
+    ".github/workflows/contracts.yml": "4df3a2e395e850b42808502eea90ce4b4ca151f9ab119ccaf5817af464d273ed",
+    ".github/workflows/csr.yml": "265c546c392e371c4ec24d617120a17d1ca38de37b2fb85af6fcb244669377cf",
+    ".github/workflows/repository.yml": "5343030c648256f39e059e2f47ddd321e6aa89af20db48b9510bdb2a7e71a046",
+    ".github/workflows/storage.yml": "b134865ac85825c3ebbe0bb3d6d8a907f47cb23a7628b696830f4be2eba939bc",
+    ".github/workflows/toolchain.yml": "bd7bfceaa12792b72e92b5726412d1062af4ed72fea6203b7388f681db9fc726",
+    ".github/workflows/uvm-foundation.yml": "3e5e5ee1ef531b22e09fe6864d27ac55cbc541a30d008c8f7718694d04740f92",
+    ".gitignore": "eb6d275386a13ff825369dd6da44eac7bda365729624b442a97b91f4ae306398",
+    "AGENTS.md": "7969cfc4e7b757e40899fcd3b4f2b568265ec6227e067107233b3537b76fb2be",
+    "CONTRIBUTING.md": "a9fae53f7368bd28afe10bb28f703ab466fa6144a7717496368510d1822091a8",
+    "Makefile": "fe11720dc8e7b88ce540d1ea193d9d382a590e47fdd1e32625760b21b768362d",
+    "README.md": "9bc7e2ecdd12aeb1e7afe7752ae18e83c049a9ec4c1e0b4ad7e3b582bdb1d566",
+    "docs/decisions/0001-native-toolchain.md": "1445b9f0a5b9d2fe59cad3f62b6a913a7010428c39303fa7fc656a22dc5ae832",
+    "docs/decisions/0002-module-contracts.md": "90e2bce7cd83166b40b4e31e9f4ac5b31c859c7f9efe0c24840cbcc9c1b00137",
+    "docs/decisions/0003-storage-primitives.md": "725c1cd9c745bb2ba9828c190ee6e6299e2996894e8f59529b5dbeb80644242e",
+    "docs/decisions/0004-uvm-foundation.md": "676923cb9b234faa366d76cbe577acc687605f225a08da9f7f527382a5acfcfe",
+    "docs/decisions/0005-csr-events.md": "d915d59e290954aba3abad0204783f3e4ae2efbd1844e4928045b07c3c5d5d37",
+    "docs/decisions/README.md": "e54ea159a5ec5c0a5801df3e8389d2f1fd40e3f5bcdc92ef6baa762dcff0329e",
+    "docs/documentation.md": "4433a22f0c1b0ff972ba6ccb1f0d41276a540237c3a2517053501566d4dcafca",
+    "docs/implementation/layout.md": "02279e0ea213621ff46586d9113cb8871f9da6b1374d4b76f2f6b3d7727339ae",
+    "docs/implementation/notes/README.md": "4dd112657b062cd8c4d47b4291be3740552efbd99ae4ec2204ed070cf03f1929",
+    "docs/implementation/plan.md": "d173c15341d1f96a6e294c598acd11f350ae63b20bd1007be2356a0fa347cd81",
+    "docs/implementation/tasks/P00-toolchain.md": "ef880ec63a2ac87160c2434c1d5552b862a13459afde807bebfd1640a73b48c2",
+    "docs/implementation/tasks/P01-contracts.md": "7b5385a74538c711ea3dfe96a48c7b08e3d4a30babc1947bf3b86f93b167893f",
+    "docs/implementation/tasks/P02-storage-primitives.md": "fd7dbd9ac95afccfd7d11195366553f1ae4ef4e5edcdd469c0f4869c5d9370dd",
+    "docs/implementation/tasks/P03-queues.md": "a6b65926b4ce18babf8badf7d4543e42fcec766e6026b0c3f7b9fc2f4efd7ab2",
+    "docs/implementation/tasks/P04-scheduler.md": "df312d2b515a1e69df16cb79471e3e82ec96b08f6024d16e32777caf55d60ca6",
+    "docs/implementation/tasks/P05-memory-tx.md": "6f7b58f687c98dd0b72283cd9ddc44670f341d8b7c2f641136bc6669d1326d11",
+    "docs/implementation/tasks/P06-registers.md": "a916c05079f0dfc2dc9fc7b122f13d9ba47e78fda68f5ff89f6d70f46cc950c2",
+    "docs/implementation/tasks/P07-verification-foundation.md": "d12d8937735f9d0531a820c16bf05c84a7230d50a3efb5dab4168f9dd7bf269a",
+    "docs/implementation/tasks/P08-receive-admission.md": "0c683c7d163e8291b0359d4736a16ff2fb6bbf13adf424aea2ed9d87e0f859f6",
+    "docs/implementation/tasks/P09-vertical-integration.md": "48476e465f1b1381abeeb2100208bfb9d30ab6a200d6cb29ce4714e4c89661cf",
+    "docs/implementation/tasks/P10-concurrency.md": "0260891c6af5e7464abca0489483d578ee54f663979f6afea6c9b6f36d36ae00",
+    "docs/implementation/tasks/P11A-formal-resources.md": "3375e685217a6cf8b73c177a26db606e772039b0edbca55ee758d7c1ba8d2c4c",
+    "docs/implementation/tasks/P11B-formal-interfaces.md": "a70466715faf811db3bc4ec529bd5cf37b36383c67bec93b066eaf78a98b08e9",
+    "docs/implementation/tasks/P11C-coverage.md": "a1cb8faeb1c024732083268880e68d503aaaa7af42cb4d3892c3386ce2a360c8",
+    "docs/implementation/tasks/P12-measurements.md": "7ec79f959b3c664ce45eec009273e5002ed1d49e4643ef7b2b08265b2da45002",
+    "docs/implementation/tasks/P13-diagnostics.md": "0923c4c11ebbde8dd1fefa9c2f4a55f539141a2b518de919ed7603cd1af0cd27",
+    "docs/implementation/tasks/P14-release.md": "a4ce7d01051f9c1a6dd80b49a95e0e05b4d06da62984e5d280e8862a8735345a",
+    "docs/implementation/toolchain.md": "a84676723c0a125cbf1ef18fba8d5522e0604c58de04f6b5113dc7ce4f0f14f2",
+    "docs/results/P00-toolchain.json": "7783e275eb238e15384d082822295a654c5c620798a2a07bbcf730d0a16d720e",
+    "docs/results/P00-toolchain.md": "08a4395209eb577e60ca8d8f9d85f766b80626076f35c688c3f4695d8fc96f6d",
+    "docs/results/P01-contracts.json": "49c3e7c1f05967c2a398295554d14daaa3e762e66481d5550e552dacfc397349",
+    "docs/results/P01-contracts.md": "0eb2220492688408909b84e34dbf3599c7a74886e9334d9fbdfc41a4d15248f6",
+    "docs/results/P02-storage-primitives.json": "458285a59c921b98bd0b055db8cbd6955bd5e267aebb2b83a15f4f0c3469b0d5",
+    "docs/results/P02-storage-primitives.md": "cdd5e92da0a155b777b36a43bfa877d46d1116cc23ddbae6fd60882b8b83eefb",
+    "docs/results/P07-verification-foundation.json": "2a845be037fddb514439901bc0d46d31638c9179f3a03f968aa6182377665c73",
+    "docs/results/P07-verification-foundation.md": "28b42067b40ce3e450bf1e492b0937a4fa06d521815cacafd599d8164b56a4a3",
+    "docs/results/README.md": "ce6ab3cae2fd79ebad330b5e49ab9641d0ba93833d8e2df737425f7bf079d71b",
+    "docs/spec/README.md": "014370b7329610ac5b8e3fcdb2711114ed0a8843b288671110cc19886b01bce5",
+    "docs/spec/acceptance.md": "214ec29e5c745777b9d9160beebc3b653cd0cce27221c80b0a659143b6e17304",
+    "docs/spec/architecture.md": "1d907df7d46b345796138898a4df2a637a2c8343375349cc07544edae9a3aa2c",
+    "docs/spec/automation.md": "cb889fe4802cbc90267dd81e047e49a8a7bc60cc79afefd9be8a77ff06a87db7",
+    "docs/spec/buffer-management.md": "74280da3b98aadddebd2932be0198ec49931b1438521949e23715eb8592192d6",
+    "docs/spec/formal.md": "24325f2ea11c22e83769d81e2477adea35246b0c78b5b2283a0266a8aefda27c",
+    "docs/spec/implementation.md": "ecff078d1328a98bdd0d15cc47b31df1b9b800eafa38715b9c852896c902d846",
+    "docs/spec/interfaces.md": "9c79e0385b8861caa8a8fe1993a79ce1b53f6a7b64c947495273898f1abfd986",
+    "docs/spec/module-contracts.md": "a393ecadcef46a539d3c4c0b040a10e61816a6b738be7f036475f67629e3c0f2",
+    "docs/spec/queues-and-scheduling.md": "30f9585475b0c06a2e46630dda8759f79e32d66e8d719acf900115968cb10ead",
+    "docs/spec/references.md": "d821dce7c377630c933423232382bc1338dcf95071e505e088beb3e4cfe5ac63",
+    "docs/spec/registers.md": "b646566965b5d950279988e8fa5890bea0c0aa1bcc5cb743095a93627e8017bb",
+    "docs/spec/toolchain.md": "174ae405ee6c4165d9856f03db570f1e0903dfa24d6c9f08cfe8060aa26e8238",
+    "docs/spec/triage.md": "e862465c8534c9d534f853f7299636430b6277256806def210295082f1d2b7aa",
+    "docs/spec/verification.md": "46cce7ea2edfaa38ae9d3474496ca5925bbd07a0ba66ad55f89ef44948c29dd1",
+    "docs/status.md": "ea7bf0f93bb7b43717e56fa1d2c6e215034930ddb2c426253f5f6cf2bbf07e79",
+    "dv/AGENTS.md": "d557bd19226efb684a1f572c7a1021ee25c921929fd704f1e4072c266dce8520",
+    "dv/README.md": "126ab4e47c321d8db89541225b9e94574bc1af9d97c218a104f17ec750bccf02",
+    "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+    "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+    "dv/env/tm_bench_pkg.sv": "d2b2442f5c60262ca8725c3a9f3a904ee2b919ea70d1b9214baacc949c4a7d90",
+    "dv/env/tm_csr_pkg.sv": "325bdaeb4f8b892c6a38f2816d84efe4daa90b287be9d830347ffa562f2396a4",
+    "dv/env/tm_environment.svh": "ccfae3ce048ec602c4800fbda5d009b3eeaceadbb9e33142e277d0c7d1f022b9",
+    "dv/fixtures/tm_csr_fixture.sv": "ef32aaf3af5b2f39973ccaba605f0c612aa8a0b575e1c4dc995c8b20604921bd",
+    "dv/fixtures/tm_csr_top.sv": "693a19995a9402142797825ded27d8c32eb8714c7085d16eda094b900c69148a",
+    "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+    "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+    "dv/model/events.py": "64fc73ad761df412d734e5ad20ff7d66262f03f1129c1255d6f8dd23629c42db",
+    "dv/model/tm_checkers.svh": "7c3977f272d5f3561e1751805768cba3ab76fa575aac7d45544a286a81975a18",
+    "dv/model/tm_csr_model.svh": "c7fb6548290fecc15fd648b938db4ecb7e0ce064f996dd11b73eed8f50da5717",
+    "dv/model/tm_monitor_types.svh": "f603073f9a85fda40b5dcd13ab57673226254785d64af1a3a24295bdbefa5b8c",
+    "dv/tests/tm_batch_test.svh": "883bcae2134878797682d1f463dee191a1c542565a7bf5580eebd33fc050bd5d",
+    "dv/tests/tm_csr_test.svh": "87a69141f050ab9a8e31135afebd27b25d980491a832ea1090861b8928b5109c",
+    "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+    "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+    "formal/AGENTS.md": "bd5f4b106224ac9b5473768f5a2ed0528737e4e7fd68c5d898ea6339d02869b9",
+    "formal/csr/README.md": "fbb9113205d7dd298a75839775c7d18976c123b009eb651d2d227173ab13d487",
+    "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+    "formal/csr/csr_formal.sv": "778f3b8e4acaddadefaed492aff13f759157a3721a20c95cd4c2e602d8b00186",
+    "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+    "formal/pools/README.md": "676fda5a2d4bd0dfc442c91e43fedcaf462b79e697298fe16254c03db97c352b",
+    "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+    "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+    "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+    "formal/pools/storage_formal.sv": "8741c498d77ba36de98afc5debd94d36037549c72f3182b42f8d07f1192c6a6f",
+    "rtl/AGENTS.md": "59ba68931f194e99cbf2d57eac4464c23f0530eeec4acf09fceeba4c4e4cb478",
+    "rtl/common/tm_axis_rx_fifo.sv": "13894d38711e7cd988bc39af142597d543e6758ea3f92f45dfb1e7b5d9f7587d",
+    "rtl/csr/tm_axil_regs.sv": "bafb30effab2138ca8a9b8775ccd85df89a5cccde9144e183914387a88c791b7",
+    "rtl/csr/tm_statistics.sv": "33b83d6dc4236df0df2a351d0602eca47793c34fd6a33c53ce729aba1cbe6be3",
+    "rtl/include/tm_module_ports.sv": "28b781bbc0780e67b6294dea271c20d081723b7e77bcc34fa91c8c71cb18807c",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "46b954fca4fcf041d9ceeeca6303801a66fac4e9e41ac7d4eed79bd8f8dd1f11",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "10015b5b9e4962dc5888149af272e201b1e5bc1626dad126b698dda6a22ec02c",
+    "rtl/pools/tm_desc_pool.sv": "9aa26f1907728bbcc64884026caf6c80ccbeffc6e970b8f6d6eb8c833f4895c7",
+    "rtl/tm_top.sv": "33d1c12176613c14f629d0dc9cbf09b31afb5e35854ce7fe4da9b03dc9e788f4",
+    "tests/contracts/test_contracts.py": "9981f0fad34944fe0cb8703030b4bae49389510c9f62f90fbac45970c0aa14e5",
+    "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+    "tests/toolchain/counter.sv": "8a895c2fe1e3ee2eaba5929ea917df7d72bace177f94459dd6eb0a2d167e0964",
+    "tests/toolchain/four_state.sv": "4f841fe97930d6e35eaacac4ebee9ecc03ff3d6f15a8d245267e81615eb45a8e",
+    "tests/toolchain/mapping.v": "34328fc3efa5282533ecf1c8cabce515c425936a5555a93c9e358a916c2db9dc",
+    "tests/toolchain/test_runner.py": "c27c87f3be58b408b4bde727a50c2f15cbf70679aded08aa2171443101c8a1a1",
+    "tests/toolchain/timing.sdc": "d64d496e74e5e51fb1456b9a9cd6b658fb3d32524ae3ea7f59d0f6bdac809e73",
+    "tests/toolchain/timing.tcl": "901413f701efcfc679a8de2413368831f91c20a3eb4b2ae5be2489ee72c8589c",
+    "tests/toolchain/uvm_smoke.sv": "1a3ce89d69e229353bc61b5060a05c618ce3056adfb637bc4854297b6892d08d",
+    "tools/AGENTS.md": "b6a510ca25a8955c662302699edbd673893ab138afa0699ad3b365cad5a269e1",
+    "tools/check_repository.py": "96e620b9dd7aac780cfec4400c9f9e675223dc5e0db71cebe89c3a46bcaa40ab",
+    "tools/contracts.py": "5b755a5182a2b0d1c19cc8755bd8479b783f5453b15585162119206365f611c8",
+    "tools/csr.py": "84234def046d16017a012274ec70e851adc46535ea37ad01b50a6efd8229521b",
+    "tools/dependencies.json": "ee72fb11c5b7ebeecb0d207936969810358cf6ff36b236f6d28799730397db15",
+    "tools/doctor.py": "043065b82598da11713a4b2e7f3598a64005d289094508e8b040e0cc9348c298",
+    "tools/evidence.py": "312a6180d9b1466d093709c0d1c05cb1012d7a90ac66d63c1ba6fe50dbcdd67f",
+    "tools/formal_csr.py": "c1a6a2315dcd906aad30b66fbbba072e5fe86dcdc0341f4e95d39e54384d09a9",
+    "tools/formal_storage.py": "7666e41b1401658995c2343df2332a713f77a0d38f1ecc2918686db7a33e2976",
+    "tools/foundation.py": "189bb3f53806fcf0b22fb28a79fc8bfb7097e1dd164a5c53eef425c5e87cbd3d",
+    "tools/packages.lock.json": "ec22b5d0f143c715413302386e67c49b23e138f91560590fd3f3a125ab99922a",
+    "tools/registry.py": "68677cd959c358fde2ac0a0fbfe42f89cb2c845793888943290b7b88a7a86552",
+    "tools/run.py": "8b33f1c9da7014a284fdc8a91ba5d81758e548096b8fdd9e26ca44f40efeaa7a",
+    "tools/run_uvm_capabilities.py": "114c4a4612c963d1e70babfadc716f18534f2693c808746754d9e23c8b9fa20a",
+    "tools/setup.sh": "a7ba3762c9c09bce6dcf9d0d2c55ad5b752b36396750e926f2f2a77d6e10a528",
+    "tools/setup_toolchain.py": "8556f293605819d0b648a618f33127ec0f688c1b605bcdd973e095eb1c16612a",
+    "tools/storage.py": "0a23e51503a812cc0075aa2e2cc6375ab7fbf39f31f943a553afa034b9e94408",
+    "verification/formal.json": "a5ccd05906eb200382b58d9f522930cd517e2a2ae63eea4ebbc66ef04b6878f8",
+    "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+    "verification/requirements.json": "ecc7ba798c96930a08ff39d8a81a89f156967966b96d003fe5da4b8f588d938e",
+    "verification/sources/csr.json": "602f1ffb7e91f9e7c186cf8a79b12a2e2a3c1cfb8a0ea373730c948aee6e5634",
+    "verification/sources/formal.json": "13f12aa32e19ea22ab2fcf3e3efd099c5d616ca1463c9fa09237c59fb25c12ab",
+    "verification/sources/production.json": "04b1a4abef3d5a156dcd4ae137872a17c20d403466fd1d45b097697dab8217d8",
+    "verification/sources/simulation.json": "646d8ddf5513a62a0a30d6bdcbbd8b5b20c68dc5c15cd8817b44a9d7876d00a7",
+    "verification/sources/synthesis.json": "9a4c82c9fb5f4e9e3f3a6c7cb1826c2e1d4662f826c18851b105cfccbd1c4a7d",
+    "verification/sources/uvm-foundation.json": "8fad4eb77a1295189d7c68d91459d5f39e37898a8248a995987e4c7ef262c5b2",
+    "verification/suites.json": "218d950af59e4d789a3fa5a1f9ca71dc894f5d8574f3803b38a4d9b840dfb0f7"
+  },
+  "csr": [
+    {
+      "summary": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/summary.json",
+      "summary_sha256": "e705f0a59a60fd12cd52e829d9c99a85ed0f716d55afd7efe8869430ba7c93bd",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS",
+          "seed": null,
+          "profile": "E0",
+          "start_utc": "2026-11-11T11:51:15.113583+00:00",
+          "end_utc": "2026-11-11T11:51:15.664090+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/manifest.json",
+          "manifest_sha256": "b0df07131fcc7306e918e55d16e45fea72e4a38c159f90eaad49eb19baea92eb",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.113619+00:00",
+              "end_utc": "2026-11-11T11:51:15.228215+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/verilator.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/verilator.stderr"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.228627+00:00",
+              "end_utc": "2026-11-11T11:51:15.292992+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/verilator_coverage.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/verilator_coverage.stderr"
+            },
+            {
+              "argv": [
+                "yosys",
+                "-V"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.293241+00:00",
+              "end_utc": "2026-11-11T11:51:15.301157+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/yosys.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/yosys.stderr"
+            },
+            {
+              "argv": [
+                "yosys-abc",
+                "-c",
+                "version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.301633+00:00",
+              "end_utc": "2026-11-11T11:51:15.366227+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/abc.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/abc.stderr"
+            },
+            {
+              "argv": [
+                "sby",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.366583+00:00",
+              "end_utc": "2026-11-11T11:51:15.532634+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/sby.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/sby.stderr"
+            },
+            {
+              "argv": [
+                "z3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.537281+00:00",
+              "end_utc": "2026-11-11T11:51:15.543444+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/z3.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/z3.stderr"
+            },
+            {
+              "argv": [
+                "sta",
+                "-version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.544041+00:00",
+              "end_utc": "2026-11-11T11:51:15.548676+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/opensta.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/opensta.stderr"
+            },
+            {
+              "argv": [
+                "g++",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.549896+00:00",
+              "end_utc": "2026-11-11T11:51:15.552892+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/compiler.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/compiler.stderr"
+            },
+            {
+              "argv": [
+                "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.553264+00:00",
+              "end_utc": "2026-11-11T11:51:15.558329+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/python.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/python.stderr"
+            },
+            {
+              "argv": [
+                "make",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.558910+00:00",
+              "end_utc": "2026-11-11T11:51:15.561631+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/make.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/make.stderr"
+            },
+            {
+              "argv": [
+                "bash",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.561984+00:00",
+              "end_utc": "2026-11-11T11:51:15.571744+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/bash.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/versions/bash.stderr"
+            }
+          ],
+          "artifacts": {}
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS",
+          "seed": null,
+          "profile": "E0",
+          "start_utc": "2026-11-11T11:51:15.665730+00:00",
+          "end_utc": "2026-11-11T11:51:16.470735+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/manifest.json",
+          "manifest_sha256": "56b3b117e65fe1d4d2bb7e4a5aa20fa5ec8ce117e1bdf6457a86118b8603071c",
+          "steps": [
+            {
+              "argv": [
+                "g++",
+                "-std=c++20",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/probe.cpp",
+                "-o",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:15.666056+00:00",
+              "end_utc": "2026-11-11T11:51:16.465826+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/step0.stderr"
+            },
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:16.466051+00:00",
+              "end_utc": "2026-11-11T11:51:16.470368+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/step1.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/cxx20/step1.stderr"
+            }
+          ],
+          "artifacts": {}
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS",
+          "seed": null,
+          "profile": "E0",
+          "start_utc": "2026-11-11T11:51:16.471169+00:00",
+          "end_utc": "2026-11-11T11:51:16.487242+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/solver-sat-unsat/manifest.json",
+          "manifest_sha256": "817a4e6edb26e379abbf7cb8d1bbe375b093bf551964862e47008eaa58d8d358",
+          "steps": [
+            {
+              "argv": [
+                "z3",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/solver-sat-unsat/probe.smt2"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:16.471244+00:00",
+              "end_utc": "2026-11-11T11:51:16.487118+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/solver-sat-unsat/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/solver-sat-unsat/step0.stderr"
+            }
+          ],
+          "artifacts": {}
+        },
+        {
+          "test": "csr-build-counter64",
+          "result": "PASS",
+          "seed": 17,
+          "profile": "E0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "start_utc": "2026-11-11T11:51:16.489343+00:00",
+          "end_utc": "2026-11-11T12:03:39.505210+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter64/manifest.json",
+          "manifest_sha256": "07a66ea81ac0adc71f04ef217e152bc64cb98d5f7bd4f403c9a2e8e68d298350",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "2",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/E0-counter64",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_module_ports.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/tm_top.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/common/tm_axis_rx_fifo.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_bitmap_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_cell_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_desc_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_axil_regs.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_statistics.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_csr_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_top.sv",
+                "--top-module",
+                "tm_csr_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/E0-counter64/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T11:51:16.493822+00:00",
+              "end_utc": "2026-11-11T12:03:39.299598+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter64/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter64/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "binary": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter64/Vtm_csr_top",
+            "binary_sha256": "d131d283fcabb437e661791b8326d483d0bb3bcd57e1de2e98a136dc196c3b7e"
+          }
+        },
+        {
+          "test": "csr-counter64",
+          "result": "PASS",
+          "seed": 17,
+          "profile": "E0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "metrics": {
+            "reads": 565,
+            "writes": 540,
+            "snapshots": 17,
+            "collisions": 2,
+            "clears": 2,
+            "rollovers": 0,
+            "reset_pending": 3
+          },
+          "start_utc": "2026-11-11T12:03:39.507361+00:00",
+          "end_utc": "2026-11-11T12:03:43.721201+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter64/manifest.json",
+          "manifest_sha256": "dc7cb988e24db9e5ec8f2e5ad802238d9142847cfbe869aaaa7ddcf378b1ea95",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter64/Vtm_csr_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter64",
+              "start_utc": "2026-11-11T12:03:39.507479+00:00",
+              "end_utc": "2026-11-11T12:03:42.810658+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter64/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter64/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter64/coverage.dat",
+            "transactions": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter64/transactions.jsonl"
+          },
+          "coverage": {
+            "production_points": {
+              "tm_axil_regs.sv": {
+                "line": {
+                  "hit": 42,
+                  "total": 42,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 111,
+                  "total": 115,
+                  "unhit": [
+                    {
+                      "l": "122",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((read_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "160",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "30",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((word_addr <= 32'h34)==0 && (word_addr >= 32'h100)==0 && (word_addr < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "87",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    }
+                  ]
+                },
+                "toggle": {
+                  "hit": 864,
+                  "total": 1224,
+                  "unhit_count": 360
+                },
+                "branch": {
+                  "hit": 54,
+                  "total": 54,
+                  "unhit": []
+                }
+              },
+              "tm_statistics.sv": {
+                "toggle": {
+                  "hit": 92,
+                  "total": 450,
+                  "unhit_count": 358
+                },
+                "line": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "branch": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 53,
+                  "total": 55,
+                  "unhit": [
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[0]]) <= N_CELL)==0) => 0"
+                    },
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[0]]) >= 32'sh0)==0) => 0"
+                    }
+                  ]
+                }
+              }
+            },
+            "mandatory_cross": {
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_0>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_0>": 512,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_1>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_0>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_1>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_0>": 4,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_1>": 1
+            }
+          }
+        },
+        {
+          "test": "csr-build-counter8",
+          "result": "PASS",
+          "seed": 17,
+          "profile": "E0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 8,
+          "start_utc": "2026-11-11T12:03:43.728386+00:00",
+          "end_utc": "2026-11-11T12:08:25.843780+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter8/manifest.json",
+          "manifest_sha256": "21d0d37401966e89b422e087e03e5a136c00046c5a5cd374424a9451ad887621",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "2",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/E0-counter8",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_module_ports.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/tm_top.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/common/tm_axis_rx_fifo.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_bitmap_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_cell_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_desc_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_axil_regs.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_statistics.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_csr_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_top.sv",
+                "--top-module",
+                "tm_csr_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/E0-counter8/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:03:43.741090+00:00",
+              "end_utc": "2026-11-11T12:08:25.473071+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter8/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter8/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "binary": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter8/Vtm_csr_top",
+            "binary_sha256": "fc3fdfa0c264fc7807be830d211f652c9e597570f52f2281083f1de4785e30e6"
+          }
+        },
+        {
+          "test": "csr-counter8",
+          "result": "PASS",
+          "seed": 17,
+          "profile": "E0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 8,
+          "metrics": {
+            "reads": 565,
+            "writes": 540,
+            "snapshots": 17,
+            "collisions": 2,
+            "clears": 2,
+            "rollovers": 17,
+            "reset_pending": 3
+          },
+          "start_utc": "2026-11-11T12:08:25.900207+00:00",
+          "end_utc": "2026-11-11T12:08:28.794990+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter8/manifest.json",
+          "manifest_sha256": "266d427a83ad217c991379775e396faf18ebd84bc8dc17e38b1aa4425aa0539f",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-counter8/Vtm_csr_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter8",
+              "start_utc": "2026-11-11T12:08:25.919014+00:00",
+              "end_utc": "2026-11-11T12:08:28.418968+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter8/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter8/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter8/coverage.dat",
+            "transactions": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-counter8/transactions.jsonl"
+          },
+          "coverage": {
+            "production_points": {
+              "tm_axil_regs.sv": {
+                "line": {
+                  "hit": 42,
+                  "total": 42,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 111,
+                  "total": 115,
+                  "unhit": [
+                    {
+                      "l": "122",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((read_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "160",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "30",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((word_addr <= 32'h34)==0 && (word_addr >= 32'h100)==0 && (word_addr < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "87",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    }
+                  ]
+                },
+                "toggle": {
+                  "hit": 858,
+                  "total": 1224,
+                  "unhit_count": 366
+                },
+                "branch": {
+                  "hit": 54,
+                  "total": 54,
+                  "unhit": []
+                }
+              },
+              "tm_statistics.sv": {
+                "toggle": {
+                  "hit": 328,
+                  "total": 770,
+                  "unhit_count": 442
+                },
+                "line": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "branch": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 53,
+                  "total": 55,
+                  "unhit": [
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[0]]) <= N_CELL)==0) => 0"
+                    },
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[0]]) >= 32'sh0)==0) => 0"
+                    }
+                  ]
+                }
+              }
+            },
+            "mandatory_cross": {
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_0>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_0>": 512,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_1>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_0>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_1>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_0>": 4,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_1>": 1
+            }
+          }
+        },
+        {
+          "test": "csr-build-coupled-channel",
+          "result": "PASS",
+          "seed": 17,
+          "profile": "E0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "mutation": "AWREADY requires WVALID; independently delayed W source",
+          "mutant_sha256": "a0bab106ecf9b9b70844074c93ada17bd0a8d757b11789965acde23387a40c47",
+          "start_utc": "2026-11-11T12:08:28.798456+00:00",
+          "end_utc": "2026-11-11T12:12:35.300858+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-coupled-channel/manifest.json",
+          "manifest_sha256": "6c67a1691be6697a396d9c0c89875ae7bb3b67537e8931a4d7327fe6d516e659",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "2",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/E0-coupled-channel",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_module_ports.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/tm_top.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/common/tm_axis_rx_fifo.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_bitmap_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_cell_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_desc_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-coupled-channel/tm_axil_regs.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_statistics.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_csr_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_top.sv",
+                "--top-module",
+                "tm_csr_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/E0-coupled-channel/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:08:28.804734+00:00",
+              "end_utc": "2026-11-11T12:12:35.053745+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-coupled-channel/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-coupled-channel/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "binary": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-coupled-channel/Vtm_csr_top",
+            "binary_sha256": "3f6a939b84197549e4a7ce6af793b60fa7889fe3e049617ce5ba26300b17bd84"
+          }
+        },
+        {
+          "test": "csr-coupled-channel",
+          "result": "PASS",
+          "seed": 17,
+          "profile": "E0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "observed_fatals": [
+            "CSR_AW_W_INDEPENDENCE"
+          ],
+          "start_utc": "2026-11-11T12:12:35.303290+00:00",
+          "end_utc": "2026-11-11T12:12:35.944181+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-coupled-channel/manifest.json",
+          "manifest_sha256": "98a96626288a663bc9a578bd884704ad4a3f0c6f87f2209e1264ef16d0af34f9",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-build-coupled-channel/Vtm_csr_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-coupled-channel",
+              "start_utc": "2026-11-11T12:12:35.303395+00:00",
+              "end_utc": "2026-11-11T12:12:35.932819+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-coupled-channel/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-coupled-channel/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "first_failure": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-coupled-channel/first_failure.json",
+            "waveform": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T115115.095364+0000-3ec1833b/csr-coupled-channel/wave.vcd"
+          }
+        }
+      ]
+    },
+    {
+      "summary": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/summary.json",
+      "summary_sha256": "c73cc79ec2fdb23376679d5295d79c911d458c453d8e76d18bf51148425f6ce5",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS",
+          "seed": null,
+          "profile": "F0",
+          "start_utc": "2026-11-11T12:12:36.136640+00:00",
+          "end_utc": "2026-11-11T12:12:36.745048+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/manifest.json",
+          "manifest_sha256": "5f6e787f02bdae3ec79fd96e9ae4660275980de9dcefff76608bfbd2ba67366c",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.136679+00:00",
+              "end_utc": "2026-11-11T12:12:36.251713+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/verilator.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/verilator.stderr"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.252070+00:00",
+              "end_utc": "2026-11-11T12:12:36.316597+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/verilator_coverage.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/verilator_coverage.stderr"
+            },
+            {
+              "argv": [
+                "yosys",
+                "-V"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.316789+00:00",
+              "end_utc": "2026-11-11T12:12:36.348937+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/yosys.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/yosys.stderr"
+            },
+            {
+              "argv": [
+                "yosys-abc",
+                "-c",
+                "version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.349241+00:00",
+              "end_utc": "2026-11-11T12:12:36.415073+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/abc.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/abc.stderr"
+            },
+            {
+              "argv": [
+                "sby",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.415594+00:00",
+              "end_utc": "2026-11-11T12:12:36.580314+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/sby.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/sby.stderr"
+            },
+            {
+              "argv": [
+                "z3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.580724+00:00",
+              "end_utc": "2026-11-11T12:12:36.597090+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/z3.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/z3.stderr"
+            },
+            {
+              "argv": [
+                "sta",
+                "-version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.597373+00:00",
+              "end_utc": "2026-11-11T12:12:36.605286+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/opensta.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/opensta.stderr"
+            },
+            {
+              "argv": [
+                "g++",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.605567+00:00",
+              "end_utc": "2026-11-11T12:12:36.609373+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/compiler.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/compiler.stderr"
+            },
+            {
+              "argv": [
+                "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.609583+00:00",
+              "end_utc": "2026-11-11T12:12:36.617537+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/python.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/python.stderr"
+            },
+            {
+              "argv": [
+                "make",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.617799+00:00",
+              "end_utc": "2026-11-11T12:12:36.621729+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/make.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/make.stderr"
+            },
+            {
+              "argv": [
+                "bash",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.621914+00:00",
+              "end_utc": "2026-11-11T12:12:36.625573+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/bash.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/versions/bash.stderr"
+            }
+          ],
+          "artifacts": {}
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS",
+          "seed": null,
+          "profile": "F0",
+          "start_utc": "2026-11-11T12:12:36.745812+00:00",
+          "end_utc": "2026-11-11T12:12:37.467076+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/manifest.json",
+          "manifest_sha256": "2253010071041a76ddbae3240768ebff04f87188ccf58645560b87adf5c3664a",
+          "steps": [
+            {
+              "argv": [
+                "g++",
+                "-std=c++20",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/probe.cpp",
+                "-o",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:36.746138+00:00",
+              "end_utc": "2026-11-11T12:12:37.462719+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/step0.stderr"
+            },
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:37.462912+00:00",
+              "end_utc": "2026-11-11T12:12:37.466654+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/step1.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/cxx20/step1.stderr"
+            }
+          ],
+          "artifacts": {}
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS",
+          "seed": null,
+          "profile": "F0",
+          "start_utc": "2026-11-11T12:12:37.467511+00:00",
+          "end_utc": "2026-11-11T12:12:37.532868+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/solver-sat-unsat/manifest.json",
+          "manifest_sha256": "f12763c72ac3efc3c668f42e12f77a520532550d1146c76cb57e74023ede9226",
+          "steps": [
+            {
+              "argv": [
+                "z3",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/solver-sat-unsat/probe.smt2"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:37.467587+00:00",
+              "end_utc": "2026-11-11T12:12:37.532649+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/solver-sat-unsat/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/solver-sat-unsat/step0.stderr"
+            }
+          ],
+          "artifacts": {}
+        },
+        {
+          "test": "csr-build-counter64",
+          "result": "PASS",
+          "seed": 23,
+          "profile": "F0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "start_utc": "2026-11-11T12:12:37.535040+00:00",
+          "end_utc": "2026-11-11T12:17:15.777946+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter64/manifest.json",
+          "manifest_sha256": "192867ac9d2425e353f88cc46df1aaba494975867706168444d5712664328f4d",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "2",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/F0-counter64",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_module_ports.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/tm_top.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/common/tm_axis_rx_fifo.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_bitmap_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_cell_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_desc_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_axil_regs.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_statistics.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_csr_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_top.sv",
+                "--top-module",
+                "tm_csr_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/F0-counter64/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:12:37.537982+00:00",
+              "end_utc": "2026-11-11T12:17:15.549548+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter64/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter64/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "binary": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter64/Vtm_csr_top",
+            "binary_sha256": "25b23666b117f9f99ce4ac6016cad51b9ab1d6dc286d47f558a90eaa15701424"
+          }
+        },
+        {
+          "test": "csr-counter64",
+          "result": "PASS",
+          "seed": 23,
+          "profile": "F0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "metrics": {
+            "reads": 1195,
+            "writes": 1184,
+            "snapshots": 17,
+            "collisions": 2,
+            "clears": 2,
+            "rollovers": 0,
+            "reset_pending": 3
+          },
+          "start_utc": "2026-11-11T12:17:15.781776+00:00",
+          "end_utc": "2026-11-11T12:17:22.848701+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter64/manifest.json",
+          "manifest_sha256": "b03a27786896ed9c64432b350136e6ed76f14dbc4f7a4d2cac93a56c7a521190",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter64/Vtm_csr_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter64",
+              "start_utc": "2026-11-11T12:17:15.781965+00:00",
+              "end_utc": "2026-11-11T12:17:22.368710+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter64/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter64/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter64/coverage.dat",
+            "transactions": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter64/transactions.jsonl"
+          },
+          "coverage": {
+            "production_points": {
+              "tm_axil_regs.sv": {
+                "line": {
+                  "hit": 42,
+                  "total": 42,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 111,
+                  "total": 115,
+                  "unhit": [
+                    {
+                      "l": "122",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((read_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "160",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "30",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((word_addr <= 32'h34)==0 && (word_addr >= 32'h100)==0 && (word_addr < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "87",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    }
+                  ]
+                },
+                "toggle": {
+                  "hit": 1214,
+                  "total": 1702,
+                  "unhit_count": 488
+                },
+                "branch": {
+                  "hit": 54,
+                  "total": 54,
+                  "unhit": []
+                }
+              },
+              "tm_statistics.sv": {
+                "toggle": {
+                  "hit": 162,
+                  "total": 648,
+                  "unhit_count": 486
+                },
+                "line": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "branch": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 58,
+                  "total": 60,
+                  "unhit": [
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[3:0]]) <= N_CELL)==0) => 0"
+                    },
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[3:0]]) >= 32'sh0)==0) => 0"
+                    }
+                  ]
+                }
+              }
+            },
+            "mandatory_cross": {
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_0>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_0>": 1156,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_1>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_0>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_1>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_0>": 4,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_1>": 1
+            }
+          }
+        },
+        {
+          "test": "csr-build-counter8",
+          "result": "PASS",
+          "seed": 23,
+          "profile": "F0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 8,
+          "start_utc": "2026-11-11T12:17:22.853136+00:00",
+          "end_utc": "2026-11-11T12:22:07.231517+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter8/manifest.json",
+          "manifest_sha256": "a2f00f83613fc20a1ba86f5b1637637d5ab3ab10a82cc348a88f7b2196841c57",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "2",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/F0-counter8",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_module_ports.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/tm_top.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/common/tm_axis_rx_fifo.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_bitmap_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_cell_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_desc_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_axil_regs.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_statistics.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_csr_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_top.sv",
+                "--top-module",
+                "tm_csr_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/F0-counter8/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:17:22.859497+00:00",
+              "end_utc": "2026-11-11T12:22:07.027029+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter8/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter8/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "binary": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter8/Vtm_csr_top",
+            "binary_sha256": "6bdb997429b5e06ab689a82173d067a1fbf2fd336fd085b495ad02d97dff23bf"
+          }
+        },
+        {
+          "test": "csr-counter8",
+          "result": "PASS",
+          "seed": 23,
+          "profile": "F0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 8,
+          "metrics": {
+            "reads": 1195,
+            "writes": 1184,
+            "snapshots": 17,
+            "collisions": 2,
+            "clears": 2,
+            "rollovers": 22,
+            "reset_pending": 3
+          },
+          "start_utc": "2026-11-11T12:22:07.234528+00:00",
+          "end_utc": "2026-11-11T12:22:14.039669+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter8/manifest.json",
+          "manifest_sha256": "639d34fa149063a2e0d4433e9531527e68129f41f5085db34fb79eb57e55c851",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-counter8/Vtm_csr_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter8",
+              "start_utc": "2026-11-11T12:22:07.234700+00:00",
+              "end_utc": "2026-11-11T12:22:13.604222+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter8/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter8/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter8/coverage.dat",
+            "transactions": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-counter8/transactions.jsonl"
+          },
+          "coverage": {
+            "production_points": {
+              "tm_axil_regs.sv": {
+                "line": {
+                  "hit": 42,
+                  "total": 42,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 111,
+                  "total": 115,
+                  "unhit": [
+                    {
+                      "l": "122",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((read_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "160",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "30",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((word_addr <= 32'h34)==0 && (word_addr >= 32'h100)==0 && (word_addr < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    },
+                    {
+                      "l": "87",
+                      "h": "tm_csr_top.fixture.regs",
+                      "o": "((write_word < (32'h400 + (N_Q * 32'sh40)))==0) => 0"
+                    }
+                  ]
+                },
+                "toggle": {
+                  "hit": 1214,
+                  "total": 1702,
+                  "unhit_count": 488
+                },
+                "branch": {
+                  "hit": 54,
+                  "total": 54,
+                  "unhit": []
+                }
+              },
+              "tm_statistics.sv": {
+                "toggle": {
+                  "hit": 296,
+                  "total": 808,
+                  "unhit_count": 512
+                },
+                "line": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "branch": {
+                  "hit": 18,
+                  "total": 18,
+                  "unhit": []
+                },
+                "expr": {
+                  "hit": 58,
+                  "total": 60,
+                  "unhit": [
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[3:0]]) <= N_CELL)==0) => 0"
+                    },
+                    {
+                      "l": "82",
+                      "h": "tm_csr_top.fixture.stats",
+                      "o": "(((h_after[q[3:0]]) >= 32'sh0)==0) => 0"
+                    }
+                  ]
+                }
+              }
+            },
+            "mandatory_cross": {
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_0>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<aw_first,auto_1,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_0>": 1156,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_0,auto_1>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_0>": 5,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<simultaneous,auto_1,auto_1>": 2,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_0>": 3,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_0,auto_1>": 1,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_0>": 4,
+              "tm_csr_pkg::tm_csr_model::bus_coverage.ordering.<w_first,auto_1,auto_1>": 1
+            }
+          }
+        },
+        {
+          "test": "csr-build-coupled-channel",
+          "result": "PASS",
+          "seed": 23,
+          "profile": "F0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "mutation": "AWREADY requires WVALID; independently delayed W source",
+          "mutant_sha256": "a0bab106ecf9b9b70844074c93ada17bd0a8d757b11789965acde23387a40c47",
+          "start_utc": "2026-11-11T12:22:14.043791+00:00",
+          "end_utc": "2026-11-11T12:27:27.917003+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-coupled-channel/manifest.json",
+          "manifest_sha256": "993d739721025c09c3b229cac557210043dc1c1c877ac8dbe364e81b1dd1f456",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "2",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/F0-coupled-channel",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include/tm_module_ports.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/tm_top.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/common/tm_axis_rx_fifo.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_bitmap_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_cell_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/pools/tm_desc_pool.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-coupled-channel/tm_axil_regs.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/csr/tm_statistics.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_csr_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_csr_top.sv",
+                "--top-module",
+                "tm_csr_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/csr-objects/F0-coupled-channel/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T12:22:14.052272+00:00",
+              "end_utc": "2026-11-11T12:27:27.593438+00:00",
+              "returncode": 0,
+              "result": "PASS",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-coupled-channel/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-coupled-channel/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "binary": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-coupled-channel/Vtm_csr_top",
+            "binary_sha256": "96223171b0b2687be9e5ca54812091b7fb48458785e6352a9323c52d34c9bb84"
+          }
+        },
+        {
+          "test": "csr-coupled-channel",
+          "result": "PASS",
+          "seed": 23,
+          "profile": "F0",
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "counter_width": 64,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "observed_fatals": [
+            "CSR_AW_W_INDEPENDENCE"
+          ],
+          "start_utc": "2026-11-11T12:27:27.922029+00:00",
+          "end_utc": "2026-11-11T12:27:28.860544+00:00",
+          "manifest": ".build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-coupled-channel/manifest.json",
+          "manifest_sha256": "d1bff9efa2db14b45b3460ffeed06f85aeceea45c2823296b32a0b6ce9b0e9be",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-build-coupled-channel/Vtm_csr_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-coupled-channel",
+              "start_utc": "2026-11-11T12:27:27.922290+00:00",
+              "end_utc": "2026-11-11T12:27:28.853577+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR",
+              "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-coupled-channel/step0.stdout",
+              "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-coupled-channel/step0.stderr"
+            }
+          ],
+          "artifacts": {
+            "first_failure": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-coupled-channel/first_failure.json",
+            "waveform": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-11T121236.099252+0000-3d13ef94/csr-coupled-channel/wave.vcd"
+          }
+        }
+      ]
+    }
+  ],
+  "formal": {
+    "summary": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/summary.json",
+    "summary_sha256": "ce7ff1b45474e8b7942f93d70409f947810110d9bc9f463c49c738b63b54a419",
+    "result": "PASS",
+    "cases": [
+      {
+        "test": "versions",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "start_utc": "2026-11-11T11:49:52.844810+00:00",
+        "end_utc": "2026-11-11T11:50:01.488415+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/manifest.json",
+        "manifest_sha256": "20cf3211fc7adb5075e09c6aa2ee58df4c0e726b03aef8c79a44f30a549ef01c",
+        "steps": [
+          {
+            "argv": [
+              "verilator",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:49:52.844930+00:00",
+            "end_utc": "2026-11-11T11:49:54.411508+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/verilator.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/verilator.stderr"
+          },
+          {
+            "argv": [
+              "verilator_coverage",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:49:54.436632+00:00",
+            "end_utc": "2026-11-11T11:49:56.763681+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/verilator_coverage.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/verilator_coverage.stderr"
+          },
+          {
+            "argv": [
+              "yosys",
+              "-V"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:49:56.769986+00:00",
+            "end_utc": "2026-11-11T11:49:59.609175+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/yosys.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/yosys.stderr"
+          },
+          {
+            "argv": [
+              "yosys-abc",
+              "-c",
+              "version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:49:59.610918+00:00",
+            "end_utc": "2026-11-11T11:49:59.771011+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/abc.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/abc.stderr"
+          },
+          {
+            "argv": [
+              "sby",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:49:59.771956+00:00",
+            "end_utc": "2026-11-11T11:50:00.421494+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/sby.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/sby.stderr"
+          },
+          {
+            "argv": [
+              "z3",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:00.422043+00:00",
+            "end_utc": "2026-11-11T11:50:00.442613+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/z3.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/z3.stderr"
+          },
+          {
+            "argv": [
+              "sta",
+              "-version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:00.442988+00:00",
+            "end_utc": "2026-11-11T11:50:00.461010+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/opensta.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/opensta.stderr"
+          },
+          {
+            "argv": [
+              "g++",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:00.461310+00:00",
+            "end_utc": "2026-11-11T11:50:00.465251+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/compiler.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/compiler.stderr"
+          },
+          {
+            "argv": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:00.465534+00:00",
+            "end_utc": "2026-11-11T11:50:00.473503+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/python.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/python.stderr"
+          },
+          {
+            "argv": [
+              "make",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:00.474152+00:00",
+            "end_utc": "2026-11-11T11:50:00.478304+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/make.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/make.stderr"
+          },
+          {
+            "argv": [
+              "bash",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:00.478549+00:00",
+            "end_utc": "2026-11-11T11:50:00.482519+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/bash.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/versions/bash.stderr"
+          }
+        ],
+        "artifacts": {}
+      },
+      {
+        "test": "cxx20",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "start_utc": "2026-11-11T11:50:01.491087+00:00",
+        "end_utc": "2026-11-11T11:50:03.631220+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/manifest.json",
+        "manifest_sha256": "0e0a031faeaeaa016e7b658821bd15169e66d17e1eb9b6b2349641b48dcedc1f",
+        "steps": [
+          {
+            "argv": [
+              "g++",
+              "-std=c++20",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/probe.cpp",
+              "-o",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/probe"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:01.492060+00:00",
+            "end_utc": "2026-11-11T11:50:03.621261+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/step0.stderr"
+          },
+          {
+            "argv": [
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/probe"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:03.622274+00:00",
+            "end_utc": "2026-11-11T11:50:03.630693+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/step1.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/cxx20/step1.stderr"
+          }
+        ],
+        "artifacts": {}
+      },
+      {
+        "test": "solver-sat-unsat",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "start_utc": "2026-11-11T11:50:03.631968+00:00",
+        "end_utc": "2026-11-11T11:50:03.766085+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/solver-sat-unsat/manifest.json",
+        "manifest_sha256": "d0bb8f323637abd3f53b454defde32519d81af287f9d79c5acf172d654531fa9",
+        "steps": [
+          {
+            "argv": [
+              "z3",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/solver-sat-unsat/probe.smt2"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:50:03.632126+00:00",
+            "end_utc": "2026-11-11T11:50:03.765809+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/solver-sat-unsat/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/solver-sat-unsat/step0.stderr"
+          }
+        ],
+        "artifacts": {}
+      },
+      {
+        "test": "rtl-csr-prove",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "configuration": {
+          "defines": [],
+          "top": "csr_formal",
+          "N_RX": 1,
+          "N_Q": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "CELL_BYTES": 16,
+          "MAX_PACKET_BYTES": 128
+        },
+        "method": "unbounded k-induction",
+        "assumptions": "Reset low for first two sampled edges; later resets arbitrary. AW/W/AR source fields stable while stalled. No response-ready fairness or AW/W coupling.",
+        "engine": "smtbmc z3",
+        "engine_status": "PASS",
+        "expected": "PROVE",
+        "start_utc": "2026-11-11T11:50:03.776634+00:00",
+        "end_utc": "2026-11-11T11:50:09.787818+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/manifest.json",
+        "manifest_sha256": "ac1be665e758750f8b91886e0934995f8d9c7e4f0cc724fcd534fc713cddf6eb",
+        "steps": [
+          {
+            "argv": [
+              "sby",
+              "-f",
+              "-d",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/engine",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/csr.sby",
+              "prove"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove",
+            "start_utc": "2026-11-11T11:50:03.785948+00:00",
+            "end_utc": "2026-11-11T11:50:09.787168+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/step0.stderr"
+          }
+        ],
+        "artifacts": {
+          "status": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/engine/status",
+          "traces": [],
+          "configuration": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-prove/csr.sby"
+        }
+      },
+      {
+        "test": "rtl-csr-cover",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "configuration": {
+          "defines": [],
+          "top": "csr_formal",
+          "N_RX": 1,
+          "N_Q": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "CELL_BYTES": 16,
+          "MAX_PACKET_BYTES": 128
+        },
+        "method": "bounded reachability depth 24",
+        "assumptions": "Reset low for first two sampled edges; later resets arbitrary. AW/W/AR source fields stable while stalled. No response-ready fairness or AW/W coupling.",
+        "engine": "smtbmc z3",
+        "engine_status": "PASS",
+        "expected": "COVER",
+        "start_utc": "2026-11-11T11:50:09.788258+00:00",
+        "end_utc": "2026-11-11T11:50:18.211734+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/manifest.json",
+        "manifest_sha256": "4c25bd8d1dd53fc6ed1a1ec9c8eb6afdadba9e11d9a9ce2bcc4467576f4b9563",
+        "steps": [
+          {
+            "argv": [
+              "sby",
+              "-f",
+              "-d",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/csr.sby",
+              "cover"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover",
+            "start_utc": "2026-11-11T11:50:09.790932+00:00",
+            "end_utc": "2026-11-11T11:50:18.211170+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/step0.stderr"
+          }
+        ],
+        "artifacts": {
+          "status": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/status",
+          "traces": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/engine_0/trace0.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/engine_0/trace5.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/engine_0/trace2.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/engine_0/trace3.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/engine_0/trace1.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/engine/engine_0/trace4.vcd"
+          ],
+          "configuration": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-cover/csr.sby"
+        }
+      },
+      {
+        "test": "rtl-csr-mutation",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "configuration": {
+          "defines": [],
+          "top": "csr_formal",
+          "N_RX": 1,
+          "N_Q": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "CELL_BYTES": 16,
+          "MAX_PACKET_BYTES": 128
+        },
+        "method": "unbounded k-induction",
+        "assumptions": "Reset low for first two sampled edges; later resets arbitrary. AW/W/AR source fields stable while stalled. No response-ready fairness or AW/W coupling.",
+        "engine": "smtbmc z3",
+        "engine_status": "FAIL",
+        "expected": "SEEDED_DEFECT_DETECTION",
+        "mutation": "AWREADY depends on WVALID",
+        "mutant_sha256": "a0bab106ecf9b9b70844074c93ada17bd0a8d757b11789965acde23387a40c47",
+        "start_utc": "2026-11-11T11:50:18.212337+00:00",
+        "end_utc": "2026-11-11T11:50:19.641024+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/manifest.json",
+        "manifest_sha256": "adf559e7406cfcb49852f923bd0ff0ab59189ab2cc066602b0f11895a3afd219",
+        "steps": [
+          {
+            "argv": [
+              "sby",
+              "-f",
+              "-d",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/engine",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/csr.sby",
+              "mutation"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation",
+            "start_utc": "2026-11-11T11:50:18.214949+00:00",
+            "end_utc": "2026-11-11T11:50:19.640551+00:00",
+            "returncode": 2,
+            "result": "TOOL_ERROR",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/step0.stderr"
+          }
+        ],
+        "artifacts": {
+          "status": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/engine/status",
+          "traces": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/engine/engine_0/trace.vcd"
+          ],
+          "configuration": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T114951.369341+0000-6acbdad0/rtl-csr-mutation/csr.sby"
+        }
+      }
+    ]
+  },
+  "contracts": [
+    {
+      "profile": "F0",
+      "summary": ".build/runs/regression-2026-11-11T115019.724952+0000-71d10390/summary.json",
+      "result": "PASS",
+      "cases": 59
+    },
+    {
+      "profile": "F1",
+      "summary": ".build/runs/regression-2026-11-11T115055.252905+0000-e9609509/summary.json",
+      "result": "PASS",
+      "cases": 59
+    },
+    {
+      "profile": "I0",
+      "summary": ".build/runs/regression-2026-11-11T115137.224408+0000-f86f2870/summary.json",
+      "result": "PASS",
+      "cases": 59
+    },
+    {
+      "profile": "I1",
+      "summary": ".build/runs/regression-2026-11-11T115322.929330+0000-4392b3c8/summary.json",
+      "result": "PASS",
+      "cases": 59
+    },
+    {
+      "profile": "E0",
+      "summary": ".build/runs/regression-2026-11-11T115614.155463+0000-0931da5a/summary.json",
+      "result": "PASS",
+      "cases": 59
+    },
+    {
+      "profile": "E1",
+      "summary": ".build/runs/regression-2026-11-11T115920.347829+0000-7c3a4a69/summary.json",
+      "result": "PASS",
+      "cases": 59
+    }
+  ],
+  "registration_unit": {
+    "summary": ".build/runs/p06-unit-2026-11-11T122522.440042+0000/summary.json",
+    "summary_sha256": "2c53b56b919cade3bf67b9332716c48d637257d5fa650608b3d69316c519854c",
+    "result": "PASS",
+    "cases": [
+      {
+        "test": "csr-registration-unit",
+        "result": "PASS",
+        "tests": 12,
+        "seed": null,
+        "profile": "toolchain",
+        "start_utc": "2026-11-11T12:25:22.538966+00:00",
+        "end_utc": "2026-11-11T12:25:24.872962+00:00",
+        "manifest": ".build/runs/p06-unit-2026-11-11T122522.440042+0000/csr-registration-unit/manifest.json",
+        "manifest_sha256": "92a61706277ec2fffb8b01f98becbf5800789ed494eb931145ef3b15bf3362af",
+        "steps": [
+          {
+            "argv": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests/contracts",
+              "-v"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T12:25:22.539062+00:00",
+            "end_utc": "2026-11-11T12:25:24.871949+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/p06-unit-2026-11-11T122522.440042+0000/csr-registration-unit/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/p06-unit-2026-11-11T122522.440042+0000/csr-registration-unit/step0.stderr"
+          }
+        ],
+        "artifacts": {}
+      }
+    ]
+  },
+  "runner_unit": {
+    "summary": ".build/runs/unit-2026-11-11T115743.519093+0000-d72f025b/summary.json",
+    "summary_sha256": "30a404723a33266f34947803cac8e432be535bfd428fd54e777e54baeb21a27a",
+    "result": "PASS",
+    "cases": [
+      {
+        "test": "runner-unit",
+        "result": "PASS",
+        "seed": null,
+        "profile": "toolchain",
+        "start_utc": "2026-11-11T11:57:43.662561+00:00",
+        "end_utc": "2026-11-11T11:57:55.125008+00:00",
+        "manifest": ".build/runs/unit-2026-11-11T115743.519093+0000-d72f025b/runner-unit/manifest.json",
+        "manifest_sha256": "6e58134ba1e4de34a5432b2399cd0b506e7bc7a1ab4385d76a7a91cefb5996ca",
+        "steps": [
+          {
+            "argv": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/tests/toolchain",
+              "-p",
+              "test_*.py",
+              "-v"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:57:43.662659+00:00",
+            "end_utc": "2026-11-11T11:57:55.077617+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/unit-2026-11-11T115743.519093+0000-d72f025b/runner-unit/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/unit-2026-11-11T115743.519093+0000-d72f025b/runner-unit/step0.stderr"
+          }
+        ],
+        "artifacts": {}
+      }
+    ]
+  },
+  "storage_compatibility": {
+    "summary": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/summary.json",
+    "summary_sha256": "aeef4b17e428d4a145d89490550ed514b1f63f9a61beab584feb1c5e6d987fe3",
+    "result": "PASS",
+    "cases": [
+      {
+        "test": "versions",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "start_utc": "2026-11-11T11:56:46.452899+00:00",
+        "end_utc": "2026-11-11T11:56:48.372138+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/manifest.json",
+        "manifest_sha256": "3bcafc7ec20e8bdcaa2c1155cbb5be6ebbe8ab3320f10c11430f4969f44fe42a",
+        "steps": [
+          {
+            "argv": [
+              "verilator",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:46.452941+00:00",
+            "end_utc": "2026-11-11T11:56:46.615695+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/verilator.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/verilator.stderr"
+          },
+          {
+            "argv": [
+              "verilator_coverage",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:46.618305+00:00",
+            "end_utc": "2026-11-11T11:56:46.976187+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/verilator_coverage.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/verilator_coverage.stderr"
+          },
+          {
+            "argv": [
+              "yosys",
+              "-V"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:46.977097+00:00",
+            "end_utc": "2026-11-11T11:56:47.072215+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/yosys.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/yosys.stderr"
+          },
+          {
+            "argv": [
+              "yosys-abc",
+              "-c",
+              "version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:47.072719+00:00",
+            "end_utc": "2026-11-11T11:56:47.272352+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/abc.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/abc.stderr"
+          },
+          {
+            "argv": [
+              "sby",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:47.272811+00:00",
+            "end_utc": "2026-11-11T11:56:47.979513+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/sby.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/sby.stderr"
+          },
+          {
+            "argv": [
+              "z3",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:47.979804+00:00",
+            "end_utc": "2026-11-11T11:56:48.036938+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/z3.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/z3.stderr"
+          },
+          {
+            "argv": [
+              "sta",
+              "-version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:48.037228+00:00",
+            "end_utc": "2026-11-11T11:56:48.063546+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/opensta.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/opensta.stderr"
+          },
+          {
+            "argv": [
+              "g++",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:48.063797+00:00",
+            "end_utc": "2026-11-11T11:56:48.072950+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/compiler.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/compiler.stderr"
+          },
+          {
+            "argv": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:48.073514+00:00",
+            "end_utc": "2026-11-11T11:56:48.126323+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/python.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/python.stderr"
+          },
+          {
+            "argv": [
+              "make",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:48.126610+00:00",
+            "end_utc": "2026-11-11T11:56:48.140636+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/make.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/make.stderr"
+          },
+          {
+            "argv": [
+              "bash",
+              "--version"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:48.140876+00:00",
+            "end_utc": "2026-11-11T11:56:48.146206+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/bash.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/versions/bash.stderr"
+          }
+        ],
+        "artifacts": {}
+      },
+      {
+        "test": "cxx20",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "start_utc": "2026-11-11T11:56:48.377884+00:00",
+        "end_utc": "2026-11-11T11:56:51.034132+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/manifest.json",
+        "manifest_sha256": "0e715b59ba151e45ea4ac5e2cfdf4f8094e90efaba74321ce6abbcce9818a10a",
+        "steps": [
+          {
+            "argv": [
+              "g++",
+              "-std=c++20",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/probe.cpp",
+              "-o",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/probe"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:48.378070+00:00",
+            "end_utc": "2026-11-11T11:56:51.015935+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/step0.stderr"
+          },
+          {
+            "argv": [
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/probe"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:51.016421+00:00",
+            "end_utc": "2026-11-11T11:56:51.033523+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/step1.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/cxx20/step1.stderr"
+          }
+        ],
+        "artifacts": {}
+      },
+      {
+        "test": "solver-sat-unsat",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "start_utc": "2026-11-11T11:56:51.034695+00:00",
+        "end_utc": "2026-11-11T11:56:51.166079+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/solver-sat-unsat/manifest.json",
+        "manifest_sha256": "8519ed638534e993f81a5f374ddaf87b91d817ca87df366c120645010845c862",
+        "steps": [
+          {
+            "argv": [
+              "z3",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/solver-sat-unsat/probe.smt2"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+            "start_utc": "2026-11-11T11:56:51.034773+00:00",
+            "end_utc": "2026-11-11T11:56:51.165871+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/solver-sat-unsat/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/solver-sat-unsat/step0.stderr"
+          }
+        ],
+        "artifacts": {}
+      },
+      {
+        "test": "rtl-cell-prove",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "configuration": {
+          "defines": [
+            "PROVE_CELL"
+          ],
+          "capacity": 16,
+          "id_width": 5,
+          "returns": 1
+        },
+        "method": "unbounded k-induction",
+        "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+        "engine": "smtbmc z3",
+        "engine_status": "PASS",
+        "expected": "PROVE",
+        "start_utc": "2026-11-11T11:56:51.175134+00:00",
+        "end_utc": "2026-11-11T11:57:46.471107+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/manifest.json",
+        "manifest_sha256": "8bb2b92efab28f346be9d80be9e0acff1f020b5b696ed29c1cc5befa92c26a51",
+        "steps": [
+          {
+            "argv": [
+              "sby",
+              "-f",
+              "-d",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/engine",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/storage.sby",
+              "prove"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove",
+            "start_utc": "2026-11-11T11:56:51.177581+00:00",
+            "end_utc": "2026-11-11T11:57:46.468151+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/step0.stderr"
+          }
+        ],
+        "artifacts": {
+          "status": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/engine/status",
+          "traces": [],
+          "configuration": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-prove/storage.sby"
+        }
+      },
+      {
+        "test": "rtl-cell-cover",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "configuration": {
+          "defines": [
+            "PROVE_CELL"
+          ],
+          "capacity": 16,
+          "id_width": 5,
+          "returns": 1
+        },
+        "method": "bounded reachability depth 40",
+        "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+        "engine": "smtbmc z3",
+        "engine_status": "PASS",
+        "expected": "COVER",
+        "start_utc": "2026-11-11T11:57:46.471649+00:00",
+        "end_utc": "2026-11-11T12:04:03.532638+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/manifest.json",
+        "manifest_sha256": "d33eff16ef8d4a7abbde4cc5d93bd731cdd690d8cf823004cc19655f14530001",
+        "steps": [
+          {
+            "argv": [
+              "sby",
+              "-f",
+              "-d",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/storage.sby",
+              "cover"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover",
+            "start_utc": "2026-11-11T11:57:46.478603+00:00",
+            "end_utc": "2026-11-11T12:04:03.527362+00:00",
+            "returncode": 0,
+            "result": "PASS",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/step0.stderr"
+          }
+        ],
+        "artifacts": {
+          "status": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine/status",
+          "traces": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine/engine_0/trace0.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine/engine_0/trace2.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine/engine_0/trace3.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine/engine_0/trace1.vcd",
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/engine/engine_0/trace4.vcd"
+          ],
+          "configuration": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-cover/storage.sby"
+        }
+      },
+      {
+        "test": "rtl-cell-mutation",
+        "result": "PASS",
+        "seed": null,
+        "profile": "E0",
+        "configuration": {
+          "defines": [
+            "PROVE_CELL"
+          ],
+          "capacity": 16,
+          "id_width": 5,
+          "returns": 1
+        },
+        "method": "unbounded k-induction",
+        "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+        "engine": "smtbmc z3",
+        "engine_status": "FAIL",
+        "expected": "POPULATION_COUNTEREXAMPLE",
+        "mutation": "Return adds two credits instead of one",
+        "mutant_sha256": "d609d5ee8ccfcfa37f39ebf29031746aef071c261bea085c3f6d87610783c455",
+        "start_utc": "2026-11-11T12:04:03.534392+00:00",
+        "end_utc": "2026-11-11T12:04:08.669557+00:00",
+        "manifest": ".build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/manifest.json",
+        "manifest_sha256": "218955362b54259b99dabf3dd4e899a570e953738aa2d8773d2dfefe506ecb5d",
+        "steps": [
+          {
+            "argv": [
+              "sby",
+              "-f",
+              "-d",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/engine",
+              "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/storage.sby",
+              "mutation"
+            ],
+            "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation",
+            "start_utc": "2026-11-11T12:04:03.539387+00:00",
+            "end_utc": "2026-11-11T12:04:08.668964+00:00",
+            "returncode": 2,
+            "result": "TOOL_ERROR",
+            "stdout": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/step0.stdout",
+            "stderr": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/step0.stderr"
+          }
+        ],
+        "artifacts": {
+          "status": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/engine/status",
+          "traces": [
+            "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/engine/engine_0/trace.vcd"
+          ],
+          "configuration": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-11T115646.427318+0000-a69f03c9/rtl-cell-mutation/storage.sby"
+        }
+      }
+    ]
+  }
+}
