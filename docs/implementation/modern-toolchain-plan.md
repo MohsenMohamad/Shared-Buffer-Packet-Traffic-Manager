@@ -167,3 +167,9 @@ integration, so they cannot establish a policy cause. Compare the previously
 accepted exact cache/upload/download pins while retaining the expanded modern
 capability jobs and source stack. This comparison is not yet a passing result or
 a universal incompatibility claim about the upstream actions.
+
+PR run `43100219369` subsequently executed the current cache restore and artifact
+upload actions successfully before its superseding push cancellation. This
+disproves a general action-version startup incompatibility. Retain the current
+pins; manual startup failures remain recorded separately and are not an older-pin
+justification or a completed qualification run.
