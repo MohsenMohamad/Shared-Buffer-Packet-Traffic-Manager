@@ -1,10 +1,11 @@
-# Module contracts at G1
+# Module contracts
 
-These APIs freeze component boundaries before implementation. `rtl/tm_top.sv`
-and `rtl/include/tm_module_ports.sv` are **declarations only**: their outputs
-have no behavior. Elaborating them proves frontend compatibility and parameter
-checks, not traffic-manager functionality. Component tasks replace the `_api`
-declarations with implementations using the same fields and timing. Existing
+These APIs freeze component boundaries. P02 implements `tm_axis_rx_fifo_api`,
+`tm_cell_pool_api` and `tm_desc_pool_api` under `rtl/common/` and `rtl/pools/`.
+`rtl/tm_top.sv` and the remaining APIs in `rtl/include/tm_module_ports.sv` are
+**declarations only**. Their elaboration proves frontend compatibility and
+parameter checks. Component implementations retain the `_api` names, fields and
+timing. Existing
 external semantics in [interfaces.md](interfaces.md) remain normative.
 
 ## Representation and configuration
@@ -94,8 +95,11 @@ are canceled. No component can depend on a stale array value after reset.
 
 ## Producer and consumer APIs
 
-Every signature is executable in
-[tm_module_ports.sv](../../rtl/include/tm_module_ports.sv). Signals named here
+The remaining declaration signatures are in
+[tm_module_ports.sv](../../rtl/include/tm_module_ports.sv); storage signatures are
+in their [FIFO](../../rtl/common/tm_axis_rx_fifo.sv),
+[cell pool](../../rtl/pools/tm_cell_pool.sv) and
+[descriptor pool](../../rtl/pools/tm_desc_pool.sv) implementations. Signals named here
 use exactly the record fields above. All components use the common clock and
 reset except the unreset data-only RAM and metadata arrays.
 
@@ -211,7 +215,8 @@ It demonstrates batching, not a complete policy/scheduler/byte/physical model.
 [Source registries](../../verification/sources/production.json) keep production,
 simulation, formal and synthesis purposes separate. Simulation inherits
 production and adds monitor headers. Synthesis/formal inherit production only;
-there are no TM proof harnesses or mapped synthesis targets at G1. Capability
+the formal set adds only production storage harnesses/properties from
+`formal/pools/`. No mapped TM synthesis target exists. Capability
 fixtures remain under tests/toolchain and never enter production source lists.
 Each contracts case records the selected source set, parameter values, source
 hashes and exact frontend command in the P00 evidence manifest.
@@ -222,12 +227,17 @@ compilation through Verilator, positive option variants, intentional invalid
 elaborations and the Python batching/runner tests. Repeat for F0/F1/I0/I1/E0/E1.
 Regression defaults to profile F0. No seed is required for declaration compilation; the default 17 controls replayable
 permutation traversal in the batching example. Exactly one explicit positive
-31-bit seed is accepted for this suite. Future functional suites register their
-profile/source ownership and handler in the same runner.
+31-bit seed is accepted for this suite. The `pools` suite registers FIFO/pool component tests in the same runner;
+`formal-rtl` separately selects the production storage proofs. See
+[storage proof scope](../../formal/pools/README.md) and the
+[P02 results](../results/P02-storage-primitives.md). Future functional suites
+register their profile/source ownership and handler in the same runner.
 
 P00 commands retain `toolchain`, CI `--test` gate selection and at least two
 distinct seeds for UVM replay/seed-diversity qualification. Regression suite
 selection is independent: empty, duplicate, unknown suite/profile and invalid
-seed selections fail. Other unfinished commands remain NOT_IMPLEMENTED. A
+seed selections fail. `formal-rtl` defaults to E0 and accepts distinct `cell`, `descriptor`, `fifo2`
+and `fifo4` selections; it accepts no random seed. `formal-smoke` retains the
+P00 fixture route. Other unfinished commands remain NOT_IMPLEMENTED. A
 passing declaration case is never evidence that IF/ADM/MEM/Q/SCH/CSR behavior
 exists; full PAR-01 functional regression remains for later component integration.

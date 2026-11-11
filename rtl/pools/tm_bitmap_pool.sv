@@ -16,7 +16,8 @@ module tm_bitmap_pool #(
 logic [CAPACITY-1:0] free_bitmap, next_bitmap;
 logic [RETURNS-1:0] return_ok;
 logic alloc_ok, error_now, found;
-logic signed [COUNT_W+2:0] next_count;
+localparam integer DELTA_W=COUNT_W+3;
+logic signed [DELTA_W-1:0] next_count;
 integer lane, earlier;
 generate if (CAPACITY<1 || ID_W<1 || ID_W<$clog2(CAPACITY) ||
              COUNT_W<$clog2(CAPACITY+1) || (RETURNS!=1 && RETURNS!=2)) begin : g_invalid
@@ -45,7 +46,7 @@ always_comb begin
         if (alloc_valid && !alloc_ok) error_now = 1'b1;
         if (alloc_ok) begin
             next_bitmap[int'(alloc_id)] = 1'b0;
-            next_count = next_count - 1;
+            next_count = next_count - DELTA_W'(1);
         end
         for (lane=0; lane<RETURNS; lane=lane+1) begin
             if (return_valid[lane]) begin
@@ -59,7 +60,7 @@ always_comb begin
                 end
                 if (return_ok[lane]) begin
                     next_bitmap[int'(return_id[lane*ID_W +: ID_W])] = 1'b1;
-                    next_count = next_count + 1;
+                    next_count = next_count + DELTA_W'(1);
                 end else error_now = 1'b1;
             end
         end

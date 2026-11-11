@@ -31,10 +31,10 @@ def formal_rtl(run, args):
                 if task=='mutation' and source.name=='tm_bitmap_pool.sv':
                     mutant=case.path/source.name
                     original=source.read_text()
-                    target='next_count = next_count + 1;'
+                    target="next_count = next_count + DELTA_W'(1);"
                     if original.count(target)!=1:
                         raise ValueError('Wrong-delta mutation site missing or ambiguous')
-                    mutant.write_text(original.replace(target,'next_count = next_count + 2;'))
+                    mutant.write_text(original.replace(target,"next_count = next_count + DELTA_W'(2);"))
                     source=mutant
                     case.data.update(mutation='Return adds two credits instead of one', mutant_sha256=sha(mutant))
                 files.append(source.name+' '+str(source))

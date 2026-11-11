@@ -1,4 +1,5 @@
 """P02 component execution; independent handshake and ownership models."""
+import re
 from evidence import Case, ROOT, completed, output
 from registry import profile, sources, fingerprint
 
@@ -26,6 +27,11 @@ def pools(run, args):
         command = [str(binary), '+SEED='+str(case.data['seed'])]
         step = case.execute(command, timeout=args.timeout, cwd=case.path)
         result, why = completed(step, 'TM_STORAGE_PASS')
+        if step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and 'TM_STORAGE_FAIL' in output(step):
+            result, why = 'FAIL', 'Storage assertion failed'
+        metrics=re.search(r'TM_STORAGE_PASS (.*)', output(step))
+        if metrics:
+            case.data['metrics']={k:int(v) for k,v in re.findall(r'(\w+)=(\d+)', metrics[1])}
         if result != 'PASS' and step['result']!='TIMEOUT':
             rerun = case.execute(command+['+TRACE'], timeout=args.timeout, cwd=case.path)
             case.data['artifacts'].update(rerun=rerun, waveform=str(case.path/'wave.vcd'))

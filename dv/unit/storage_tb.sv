@@ -26,6 +26,9 @@ bit cell_expected_error=0, desc_expected_error=0;
 int cycles=0, pushes=0, pops=0, simultaneous=0, blocked=0;
 int cell_allocs=0, desc_allocs=0, two_returns=0, mixed=0, invalids=0;
 bit last_push;
+ap_fifo_hold: assert property (@(posedge clk) disable iff (!rst_n)
+    m_valid && !m_ready |=> m_valid && $stable(m_beat))
+    else $fatal(1,"TM_STORAGE_FAIL held FIFO output");
 // Test inputs settle on falling edges. Models consume only sampled actions.
 task automatic tick;
     bit push, pop;
@@ -36,13 +39,13 @@ task automatic tick;
         expected.delete(); cell_owned='0; desc_owned='0;
         cell_expected_error=0; desc_expected_error=0;
         assert (!s_ready && !m_valid && !cell_available && !desc_available)
-            else $fatal(1,"reset accepted action");
+            else $fatal(1,"TM_STORAGE_FAIL reset accepted action");
     end else begin
         assert (empty == (expected.size()==0) && m_valid == (expected.size()!=0))
-            else $fatal(1,"FIFO validity");
+            else $fatal(1,"TM_STORAGE_FAIL FIFO validity");
         assert (s_ready == (enable && expected.size()<RX_FIFO_DEPTH))
-            else $fatal(1,"FIFO registered ready");
-        if (m_valid) assert (m_beat===expected[0]) else $fatal(1,"FIFO order/stall");
+            else $fatal(1,"TM_STORAGE_FAIL FIFO registered ready");
+        if (m_valid) assert (m_beat===expected[0]) else $fatal(1,"TM_STORAGE_FAIL FIFO order/stall");
         push=s_valid && s_ready; pop=m_valid && m_ready; last_push=push;
         if (pop) begin discarded=expected.pop_front(); pops++; end
         if (push) begin expected.push_back(s_beat); pushes++; end
@@ -52,9 +55,9 @@ task automatic tick;
     end
     #1;
     assert (int'(cell_count)==N_CELL-$countones(cell_owned) && cell_error==cell_expected_error)
-        else $fatal(1,"cell merged state count=%0d expected=%0d error=%0d",cell_count,N_CELL-$countones(cell_owned),cell_error);
+        else $fatal(1,"TM_STORAGE_FAIL cell merged state count=%0d expected=%0d error=%0d",cell_count,N_CELL-$countones(cell_owned),cell_error);
     assert (int'(desc_count)==N_DESC-$countones(desc_owned) && desc_error==desc_expected_error)
-        else $fatal(1,"descriptor merged state count=%0d expected=%0d",desc_count,N_DESC-$countones(desc_owned));
+        else $fatal(1,"TM_STORAGE_FAIL descriptor merged state count=%0d expected=%0d",desc_count,N_DESC-$countones(desc_owned));
     @(negedge clk);
 endtask
 task automatic check_cell;
@@ -62,10 +65,10 @@ task automatic check_cell;
     bit alloc_ok, r0_ok;
     int a, r0;
     old_owned=cell_owned;
-    assert (cell_available==($countones(old_owned)<N_CELL)) else $fatal(1,"cell availability");
+    assert (cell_available==($countones(old_owned)<N_CELL)) else $fatal(1,"TM_STORAGE_FAIL cell availability");
     if (cell_available) begin
-        assert (!old_owned[int'(cell_id)]) else $fatal(1,"live ID selected");
-        for (int i=0;i<int'(cell_id);i++) assert(old_owned[i]) else $fatal(1,"priority API");
+        assert (!old_owned[int'(cell_id)]) else $fatal(1,"TM_STORAGE_FAIL live ID selected");
+        for (int i=0;i<int'(cell_id);i++) assert(old_owned[i]) else $fatal(1,"TM_STORAGE_FAIL priority API");
     end
     a=int'(allocate.id); r0=int'(release_cell.id);
     alloc_ok=allocate.valid && cell_available && a==int'(cell_id);
@@ -84,10 +87,10 @@ task automatic check_desc;
     bit alloc_ok, r0_ok;
     int a, r0;
     old_owned=desc_owned;
-    assert (desc_available==($countones(old_owned)<N_DESC)) else $fatal(1,"desc availability");
+    assert (desc_available==($countones(old_owned)<N_DESC)) else $fatal(1,"TM_STORAGE_FAIL desc availability");
     if (desc_available) begin
-        assert (!old_owned[int'(desc_id)]) else $fatal(1,"live ID selected");
-        for (int i=0;i<int'(desc_id);i++) assert(old_owned[i]) else $fatal(1,"priority API");
+        assert (!old_owned[int'(desc_id)]) else $fatal(1,"TM_STORAGE_FAIL live ID selected");
+        for (int i=0;i<int'(desc_id);i++) assert(old_owned[i]) else $fatal(1,"TM_STORAGE_FAIL priority API");
     end
     a=int'(admit.desc); r0=int'(tx_return.desc);
     alloc_ok=(admit.valid && admit.accept) && desc_available && a==int'(desc_id);
@@ -117,7 +120,7 @@ task automatic reset_all;
     rst_n=1;
     idle_inputs();
     tick();
-    assert(empty && !m_valid && !cell_error && !desc_error) else $fatal(1,"reset recovery");
+    assert(empty && !m_valid && !cell_error && !desc_error) else $fatal(1,"TM_STORAGE_FAIL reset recovery");
 endtask
 task automatic pool_actions(input bit a, input int c, input int d,
                             input bit r0, input int c0, input int d0,
@@ -145,10 +148,10 @@ initial begin
         admit.valid=(i<N_DESC); admit.accept=1; admit.desc=desc_id;
         tick(); idle_inputs();
     end
-    assert(!cell_available && !desc_available) else $fatal(1,"exhaustion");
+    assert(!cell_available && !desc_available) else $fatal(1,"TM_STORAGE_FAIL exhaustion");
     // An owned return into an exhausted allocator cannot fund this allocation.
     pool_actions(1,0,0,1,0,0,1,1);
-    assert(cell_count==1 && desc_count==2) else $fatal(1,"same-edge bypass");
+    assert(cell_count==1 && desc_count==2) else $fatal(1,"TM_STORAGE_FAIL same-edge bypass");
     pool_actions(1,int'(cell_id),int'(desc_id),1,1,2,1,3);
     // Live allocation collides with returns of its pre-state free ID.
     pool_actions(1,int'(cell_id),int'(desc_id),1,int'(cell_id),int'(desc_id),1,int'(desc_id));
@@ -163,12 +166,23 @@ initial begin
         if(i<N_DESC && desc_owned[i]) begin tx_return.valid=1; tx_return.desc=DESC_ID_W'(i); end
         tick(); idle_inputs();
     end
-    assert(int'(cell_count)==N_CELL && int'(desc_count)==N_DESC) else $fatal(1,"recovery");
+    assert(int'(cell_count)==N_CELL && int'(desc_count)==N_DESC) else $fatal(1,"TM_STORAGE_FAIL recovery");
     // Rapid reuse, invalid allocations and arbitrary release requests.
     for(int i=0;i<1200;i++) begin
         pool_actions(1, int'(cell_id), int'(desc_id), 1, i%N_CELL, i%N_DESC, 1, (i+1)%N_DESC);
     end
     pool_actions(1,N_CELL,N_DESC,0,0,0,0,0);
+    // Non-selected free IDs are also illegal allocation requests.
+    reset_all();
+    pool_actions(1,1,1,0,0,0,0,0);
+    // Reach zero capacity again, then collide reset with attempted allocation
+    // and returns. Neither pre-reset ownership nor sticky errors may survive.
+    for(int i=0;i<N_CELL || i<N_DESC;i++) begin
+        allocate.valid=cell_available; allocate.id=cell_id;
+        admit.valid=desc_available; admit.accept=1; admit.desc=desc_id;
+        tick(); idle_inputs();
+    end
+    assert(!cell_available && !desc_available) else $fatal(1,"TM_STORAGE_FAIL reset at exhaustion");
     // Reset collides with allocation and two returns during active ownership.
     allocate.valid=1; admit.valid=1; admit.accept=1;
     release_cell.valid=1; tx_return.valid=1; abort_return.valid=1;
@@ -200,7 +214,7 @@ initial begin
     enable=0; s_valid=1; m_ready=1; repeat(RX_FIFO_DEPTH+2) tick();
     enable=1; s_valid=0; repeat(RX_FIFO_DEPTH+2) tick();
     assert(expected.size()==0 && simultaneous>0 && blocked>0 && two_returns>0 && mixed>0 && invalids>0)
-        else $fatal(1,"empty scenario selection");
+        else $fatal(1,"TM_STORAGE_FAIL empty scenario selection");
     $display("TM_STORAGE_PASS cycles=%0d pushes=%0d pops=%0d simultaneous=%0d blocked=%0d cell_allocs=%0d desc_allocs=%0d two_returns=%0d mixed=%0d invalids=%0d",cycles,pushes,pops,simultaneous,blocked,cell_allocs,desc_allocs,two_returns,mixed,invalids);
     $finish;
 end

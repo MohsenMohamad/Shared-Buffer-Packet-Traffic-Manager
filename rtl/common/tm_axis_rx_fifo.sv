@@ -11,7 +11,7 @@ input logic m_ready;
 output logic empty;
 `include "tm_validate.svh"
 
-localparam integer PTR_W=$clog2(RX_FIFO_DEPTH);
+localparam integer PTR_W=(RX_FIFO_DEPTH>1 ? $clog2(RX_FIFO_DEPTH) : 1);
 localparam integer OCC_W=$clog2(RX_FIFO_DEPTH+1);
 logic [PTR_W-1:0] rd_ptr, wr_ptr;
 logic [OCC_W-1:0] occupancy, next_occupancy;

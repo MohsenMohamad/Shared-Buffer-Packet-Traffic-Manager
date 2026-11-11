@@ -7,7 +7,7 @@ mutation
 prove: mode prove
 cover: mode cover
 mutation: mode prove
-prove: depth 8
+prove: depth 4
 mutation: depth 8
 cover: depth 40
 

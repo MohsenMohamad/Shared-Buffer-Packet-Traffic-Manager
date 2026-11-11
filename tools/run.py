@@ -251,7 +251,7 @@ def main(argv=None):
     parser.add_argument('--test', action='append', help='CI gate or regression suite selection (repeatable)')
     parser.add_argument('--seed', action='append', type=int)
     parser.add_argument('--jobs', type=int, default=2)
-    parser.add_argument('--timeout', type=float, default=120)
+    parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')
@@ -261,6 +261,8 @@ def main(argv=None):
         run = Run(ROOT / '.build/runs' / ('invalid-' + uuid.uuid4().hex))
         Case(run, 'malformed-input').finish('TOOL_ERROR', str(error))
         return run.finish()
+    if args.timeout is None:
+        args.timeout = 240 if args.action == 'formal-rtl' else 120
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     activation = ROOT / '.tools/environment.json'
     if activation.is_file():

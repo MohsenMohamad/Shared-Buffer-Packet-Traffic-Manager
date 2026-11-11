@@ -87,3 +87,21 @@ P01 adds `regression --profile E0 --test contracts --seed 17` (all six
 production profiles supported). This selects declaration elaboration and batching
 examples only. See [module contracts](../spec/module-contracts.md) for source
 ownership, seed rules and verification limits.
+
+P02 adds the `pools` component suite under all six production profiles. It runs
+both FIFO depths and cell/descriptor exhaustion/recovery, invalid requests and
+reset collisions with independent models. An extra ID encoding bit exercises
+out-of-range requests. Example:
+
+```sh
+make regression RUN_ARGS='--profile I0 --test pools --seed 19'
+make formal-rtl RUN_ARGS='--timeout 240'
+make formal-rtl RUN_ARGS='--test descriptor --test fifo4 --timeout 240'
+```
+
+The production formal route defaults to E0 with a 240-second per-task timeout
+and rejects other profiles, empty,
+duplicate or unknown family selections and seeds. It runs prove/cover tasks and
+the pool wrong-delta qualifications. See [proof scope](../../formal/pools/README.md).
+`formal-smoke` remains the P00 counter fixture. Component tests and local pool
+proofs do not establish integrated traffic-manager ownership or payload behavior.
