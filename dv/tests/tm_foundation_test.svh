@@ -115,6 +115,8 @@ class tm_foundation_sequence extends uvm_sequence;
                 e.observe.rst_n=1;e.registers.reset();
             end
         join
+        // Deliberate empty new epoch separates stale data from fresh captures.
+        repeat(16) @(negedge e.observe.clk);
         send(0,9,0,42);
         repeat(1000) @(negedge e.observe.clk);
         e.coordinator.drained();

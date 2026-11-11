@@ -44,7 +44,7 @@ module tm_foundation_fixture(
     int next_credit;
     bit duplicate_sent;
     beat_t previous_last;
-    int completed;
+    int completed,quiet_cycles;
     int reset_count=0;
     bit was_reset=0,stale_sent=0;
     int quantum;
@@ -100,7 +100,7 @@ module tm_foundation_fixture(
                 tx_valid_q=1;tx.beat=active.words[offset];
                 tx.beat.user={16'b0,8'(active.info.source),active.info.tag,active.info.length,8'(active.info.qid)};
                 if($test$plusargs("MUT_CORRUPT")) tx.beat.data[0]=!tx.beat.data[0];
-            end else if(active==null && completed>0 && !duplicate_sent && $test$plusargs("MUT_DUPLICATE")) begin
+            end else if(active==null && completed>0 && quiet_cycles>=32 && !duplicate_sent && $test$plusargs("MUT_DUPLICATE")) begin
                 tx_valid_q=1;tx.beat=previous_last;
             end
             if($test$plusargs("MUT_STALE") && reset_count>1 && !stale_sent) begin tx_valid_q=1;tx.beat=previous_last;end
@@ -160,6 +160,7 @@ module tm_foundation_fixture(
         beat_t discard;
         packet p,removed;
         int q,id;
+        bit idle_now;
         #1; // Monitors sample immutable pre-state before fixture state advances.
         if(!obs.rst_n) begin
             if(!was_reset) reset_count++;was_reset=1;
@@ -168,7 +169,7 @@ module tm_foundation_fixture(
             foreach(used_cells[ci]) used_cells[ci]=0;
             foreach(used_desc[di]) used_desc[di]=0;
             reserved.delete();active=null;cleaning=null;rr=0;cursor=0;visit=0;offset=0;cell_index=0;
-            u=N_CELL;r=0;a=0;d=N_DESC;cycle=0;completed=0;duplicate_sent=0;
+            u=N_CELL;r=0;a=0;d=N_DESC;cycle=0;completed=0;quiet_cycles=0;duplicate_sent=0;
         end else begin
             was_reset=0;cycle++;
             foreach(pending_status[port]) pending_status[port]='0;
@@ -219,6 +220,10 @@ module tm_foundation_fixture(
                 if(queues[q].packets.size()==0) begin deficit[q]=0;cursor=(q+1)%N_Q;visit=0;end
             end
             for(int port=0;port<N_RX;port++) if(capture_valid[port]) ingress[port].words.push_back(captures[port]);
+            idle_now=(active==null && cleaning==null);
+            for(int port=0;port<N_RX;port++) if(ingress[port].words.size()!=0 || receiving[port]!=null || pending_status[port].valid) idle_now=0;
+            for(int qi=0;qi<N_Q;qi++) if(queues[qi].packets.size()!=0) idle_now=0;
+            quiet_cycles=idle_now?quiet_cycles+1:0;
         end
     end
 
