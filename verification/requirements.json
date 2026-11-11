@@ -9,8 +9,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -34,8 +39,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -46,8 +56,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -58,8 +73,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -77,8 +97,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -89,8 +114,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -156,8 +186,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -202,8 +237,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -235,8 +275,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -247,8 +292,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -259,8 +309,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -271,8 +326,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -283,8 +343,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -316,8 +381,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -328,8 +398,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -381,8 +456,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -400,8 +480,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {
@@ -412,8 +497,13 @@
       "status": "NOT_IMPLEMENTED",
       "fixture_qualification": {
         "suite": "uvm-foundation",
-        "status": "NOT_RUN",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement"
+        "status": "PASS",
+        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
+        "profiles": [
+          "E0",
+          "I0"
+        ],
+        "evidence": "docs/results/P07-verification-foundation.json"
       }
     },
     {

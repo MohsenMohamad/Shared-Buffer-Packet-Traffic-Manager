@@ -26,8 +26,8 @@ cannot supply expected payload bytes or justify an admission decision.
 
 The fixture exercises duplicate tags, all source/queue lanes in each executed
 profile, partial final words, cell boundaries, source gaps/stalls, sink stalls,
-a bad qid, a sparse first-beat keep, zero-cell abort cleanup and reset with RX
-work plus a stalled AXI response. Separate model probes exercise atomic reserve,
+a bad qid, a sparse first-beat keep, zero-cell abort cleanup and reset between commit and its disposition/dispatch,
+plus a stalled AXI response. Separate model probes exercise atomic reserve,
 materialization, TX completion and abort completion with two descriptor returns.
 The negative atomic probe rejects an admission that only fits after same-cycle
 releases. The two-port atomic scenario is excluded for E0 because two simultaneous
@@ -40,10 +40,45 @@ are not substituted for execution of the UVM bench.
 
 ## Results and evidence
 
-The final run summaries and case data are recorded in the companion evidence
-file when qualification completes. Only executed fixture checks receive PASS.
-The `fixture_qualification` fields in the requirement registry do not change
-production requirement status.
+Tested bench/runner revision: `8f03323533e9fa66a44f0972c80a6a9098c303d0` (clean for both runs). The later
+results/requirement documentation commit does not change the tested bench.
+The complete source/dependency digests, commands, tools, raw artifact hashes,
+case results and functional bin counts are in the
+[curated machine-readable evidence](P07-verification-foundation.json).
+Base integration is P01 `c493b7b` plus P02 `b663f47`.
+
+| Executed check | E0 | I0 | Qualification |
+| --- | --- | --- | --- |
+| Entire registered suite | PASS (22 cases) | PASS (24 cases) | Behavioral fixture/model probes only |
+| Full UVM bench | PASS: seeds 17, replay 17, 19; small quantum 64 | PASS: seeds 23, replay 23, 25; small quantum 64 | Drivers, monitors, frontdoor RAL, predictor and three checkers execute |
+| Seeded fixture defects | PASS: 9 intended detections | PASS: 9 intended detections | Corruption, duplicate, lost, status, service, admission, schedule, stale and resource CSR faults |
+| Barrier | PASS: 128 reordered batches and 3 intended detections | PASS: same | Duplicate/missing/stale callbacks rejected |
+| Atomic resource probe | Configuration exclusion | PASS: positive and conservative-admission negative | Two descriptor returns plus new reservation/materialization |
+| Saved coverage and replay | PASS | PASS | Nonzero owned counters; same-seed repeatability and alternate-seed diversity |
+| P01 compatibility, repository and runner tests | PASS | Shared check | E0 contract regression; 12 contract/batching tests; runner unit tests |
+
+All seeded negatives stop at exactly the intended first UVM detector, return
+nonzero and save a nonempty waveform. They are expected checker qualifications,
+not naturally discovered RTL bugs.
+
+| Primary positive run | Captured beats | Serviced beats | Commits | Deliveries | Dispatches | Batches |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| E0 | 52 | 52 | 11 | 10 | 10 | 2324 |
+| I0 | 121 | 121 | 15 | 14 | 14 | 2576 |
+
+One committed packet per run is deliberately abandoned by reset before its
+disposition/dispatch. The commit/delivery difference is the specified epoch
+flush, not a lost-delivery exclusion.
+
+| Saved primary-run owned coverage | Line points | Branch points | Toggle points | Functional bins |
+| --- | ---: | ---: | ---: | ---: |
+| E0 | 244/391 | 314/640 | 904/1690 | 20/29 |
+| I0 | 244/391 | 316/640 | 827/1714 | 26/39 |
+
+These counts include owned bench/fixture code, not production RTL. Unhit bins
+and points remain visible in the JSON and raw databases; no coverage closure
+or blanket exclusion is claimed. All three named AW/W arrival-order bins
+are required nonzero by the runner.
 
 The genuine UVM report-server extension preserves error/fatal reports and stops
 with nonzero status. Accellera's default `UVM_EXIT` uses `$finish`, which can return
@@ -57,10 +92,10 @@ compiler error, crash or timeout does not qualify it.
 From the repository root:
 
 ```sh
-make setup JOBS=2
+make setup JOBS=4
 make doctor
-make regression JOBS=4 RUN_ARGS='--profile I0 --test uvm-foundation --seed 23 --output .build/p07-evidence'
-make regression JOBS=2 RUN_ARGS='--profile E0 --test uvm-foundation --seed 17 --output .build/p07-evidence'
+python3 tools/run.py regression --profile I0 --test uvm-foundation --seed 23 --jobs 3 --output .build/p07-final-evidence
+python3 tools/run.py regression --profile E0 --test uvm-foundation --seed 17 --jobs 3 --output .build/p07-final-evidence
 make regression RUN_ARGS='--profile E0 --test contracts --seed 17'
 make repo-check
 make test-unit
@@ -78,7 +113,7 @@ from a printed percentage. Negative and unexpected positive-failure reruns retai
 waveforms from the identical binary/profile/seed. `first_failure.json` links the
 logs and recent event batches for triage.
 
-Raw artifacts stay under ignored `.build/p07-evidence/`. The UVM foundation
+Raw artifacts stay under ignored `.build/p07-final-evidence/`. The UVM foundation
 workflow executes E0 and I0 and retains `.build/` for 14 days; workflow presence
 alone is not hosted execution evidence. Regenerate expired artifacts with the
 commands above and the recorded revision. See [bench reuse](../../dv/README.md)

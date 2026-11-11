@@ -1,0 +1,3345 @@
+{
+  "schema_version": 1,
+  "scope": "P07 behavioral fixture/checker qualification only; no production TM correctness or coverage closure",
+  "recorded_utc": "2026-11-11T05:57:42.514195+00:00",
+  "runs": [
+    {
+      "source_revision": "8f03323533e9fa66a44f0972c80a6a9098c303d0",
+      "dirty": false,
+      "profile": "E0",
+      "seed": 17,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "CELL_ID_W": 4,
+        "CELL_COUNT_W": 5,
+        "DESC_ID_W": 3,
+        "DESC_COUNT_W": 4,
+        "DEFICIT_W": 13
+      },
+      "dependency_digests": {
+        "tools/dependencies.json": "ee72fb11c5b7ebeecb0d207936969810358cf6ff36b236f6d28799730397db15",
+        "tools/packages.lock.json": "ec22b5d0f143c715413302386e67c49b23e138f91560590fd3f3a125ab99922a"
+      },
+      "registered_source_digests": {
+        "dv/env/tm_bench_pkg.sv": "d2b2442f5c60262ca8725c3a9f3a904ee2b919ea70d1b9214baacc949c4a7d90",
+        "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+        "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+        "rtl/include/tm_types.svh": "46b954fca4fcf041d9ceeeca6303801a66fac4e9e41ac7d4eed79bd8f8dd1f11",
+        "dv/model/tm_monitor_types.svh": "f603073f9a85fda40b5dcd13ab57673226254785d64af1a3a24295bdbefa5b8c",
+        "dv/model/tm_checkers.svh": "7c3977f272d5f3561e1751805768cba3ab76fa575aac7d45544a286a81975a18",
+        "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+        "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+        "dv/env/tm_environment.svh": "ccfae3ce048ec602c4800fbda5d009b3eeaceadbb9e33142e277d0c7d1f022b9",
+        "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+        "dv/tests/tm_batch_test.svh": "883bcae2134878797682d1f463dee191a1c542565a7bf5580eebd33fc050bd5d"
+      },
+      "runner_digests": {
+        "tools/evidence.py": "312a6180d9b1466d093709c0d1c05cb1012d7a90ac66d63c1ba6fe50dbcdd67f",
+        "tools/foundation.py": "189bb3f53806fcf0b22fb28a79fc8bfb7097e1dd164a5c53eef425c5e87cbd3d",
+        "tools/registry.py": "6e5e44461085f0e5f17901057770a9439e6a392e3500b1b06d019fc106391871",
+        "tools/run.py": "ddd8a07fc83183ae8384dcf6fa76dcf0173d4867624fc019f23f1f46c6fd307e",
+        "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+        "verification/sources/uvm-foundation.json": "8fad4eb77a1295189d7c68d91459d5f39e37898a8248a995987e4c7ef262c5b2",
+        "verification/suites.json": "eba96be2dc63bae0917cf63f4381a9cfca593d561ee950951748d6ae77d444d1"
+      },
+      "tool_versions": {
+        "python": "Python 3.12.14",
+        "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111-c493b7b",
+        "verilator_coverage": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111-c493b7b",
+        "yosys": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+        "abc": "ABC command line: \"version\".",
+        "sby": "SBY v0.71",
+        "z3": "Z3 version 4.13.3 - 64 bit",
+        "opensta": "2.0.17",
+        "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+        "make": "GNU Make 4.4.1",
+        "bash": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+      },
+      "uvm_pin": {
+        "version": "2020.3.1",
+        "commit": "78c06547a2a0a29b3dc9dcafae62b75b2ff61544",
+        "url": "https://codeload.github.com/accellera-official/uvm-core/tar.gz/refs/tags/2020.3.1",
+        "sha256": "f55bdbc02cc500d4a2f41b31bad127653289eb2073f806ce156fb82662b362b8"
+      },
+      "raw_summary": ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/summary.json",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "versions",
+          "seed": null,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:02.803105+00:00",
+          "end_utc": "2026-11-11T05:50:03.239809+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:02.803156+00:00",
+              "end_utc": "2026-11-11T05:50:02.897858+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:02.898187+00:00",
+              "end_utc": "2026-11-11T05:50:02.965681+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "yosys",
+                "-V"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:02.965886+00:00",
+              "end_utc": "2026-11-11T05:50:02.983999+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "yosys-abc",
+                "-c",
+                "version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:02.984576+00:00",
+              "end_utc": "2026-11-11T05:50:03.016530+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "sby",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.016810+00:00",
+              "end_utc": "2026-11-11T05:50:03.134301+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "z3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.134619+00:00",
+              "end_utc": "2026-11-11T05:50:03.165991+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "sta",
+                "-version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.166553+00:00",
+              "end_utc": "2026-11-11T05:50:03.171805+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "g++",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.172032+00:00",
+              "end_utc": "2026-11-11T05:50:03.173956+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.174127+00:00",
+              "end_utc": "2026-11-11T05:50:03.176911+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "make",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.177132+00:00",
+              "end_utc": "2026-11-11T05:50:03.178773+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "bash",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.179085+00:00",
+              "end_utc": "2026-11-11T05:50:03.181559+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/verilator.stdout": {
+              "bytes": 62,
+              "sha256": "36d05f47362869bfe82d28473aa75d1956cb1788987b610b9ea428338089e362"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/verilator.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/verilator_coverage.stdout": {
+              "bytes": 62,
+              "sha256": "36d05f47362869bfe82d28473aa75d1956cb1788987b610b9ea428338089e362"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/verilator_coverage.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/yosys.stdout": {
+              "bytes": 63,
+              "sha256": "239d92e36e753a9dff4e79d97878ed5d55304b675d411895ec57508bc134e28e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/yosys.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/abc.stdout": {
+              "bytes": 84,
+              "sha256": "40000b609a2a8d706832e64bd0874d8ba03323397498a03e8a724e0d80d82b56"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/abc.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/sby.stdout": {
+              "bytes": 10,
+              "sha256": "ebf5b94b00ba3061b1312d4fcd41bd463a5bc6938fd9b7906705b52af4e34b2e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/sby.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/z3.stdout": {
+              "bytes": 27,
+              "sha256": "83a4e37a6e73b423f422a89463ac246254924114f077f4edc22680e0acbafa67"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/z3.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/opensta.stdout": {
+              "bytes": 7,
+              "sha256": "8a4d165e93729e579c12f73ceb42127673c62db24e8be7d4c5dcbf6c0f08266e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/opensta.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/compiler.stdout": {
+              "bytes": 232,
+              "sha256": "5f6798e87440f1e8b88bf6822c33bebe434f83374640a7f8ba967902ee1ea098"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/compiler.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/python.stdout": {
+              "bytes": 15,
+              "sha256": "4c3569f5da09975434dd9fd9a91fadbc4367a91d8f3c3fab59e9241ab9ee4bd8"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/python.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/make.stdout": {
+              "bytes": 300,
+              "sha256": "cb84250d994234272d0a465014ce2931be76e9e0cb114b9bffa078c3c211e8eb"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/make.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/bash.stdout": {
+              "bytes": 308,
+              "sha256": "f21766c2171625ffe29bcbd9c8fa9bd89da3014e9ecc6ec15e477e8056e87209"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/versions/bash.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "cxx20",
+          "seed": null,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:03.240406+00:00",
+          "end_utc": "2026-11-11T05:50:04.422941+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "g++",
+                "-std=c++20",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/probe.cpp",
+                "-o",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.240610+00:00",
+              "end_utc": "2026-11-11T05:50:04.419002+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:04.419138+00:00",
+              "end_utc": "2026-11-11T05:50:04.422650+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/step0.stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/step1.stdout": {
+              "bytes": 14,
+              "sha256": "3b4ef5e2e668670c4bcc20eb0cb7b3b4cc91f3665557615e3f4c655acb819655"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/cxx20/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "solver-sat-unsat",
+          "seed": null,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:04.423401+00:00",
+          "end_utc": "2026-11-11T05:50:04.481948+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "z3",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/solver-sat-unsat/probe.smt2"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:04.423659+00:00",
+              "end_utc": "2026-11-11T05:50:04.481774+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/solver-sat-unsat/step0.stdout": {
+              "bytes": 10,
+              "sha256": "a542daa98f26726c754fe5835b7e5a9a723350ca71fe66795756ad454d557278"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/solver-sat-unsat/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-build",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:04.483212+00:00",
+          "end_utc": "2026-11-11T05:55:53.323610+00:00",
+          "first_failure": null,
+          "scope": "UVM foundation fixture only; not production TM correctness",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "3",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_foundation_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_foundation_top.sv",
+                "--top-module",
+                "tm_foundation_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:04.484882+00:00",
+              "end_utc": "2026-11-11T05:55:53.322815+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/step0.stdout": {
+              "bytes": 58622,
+              "sha256": "edb4ee0d4bd4771c9722aa1e9897f13edeed6616e819d44e8c203aae381bbc39"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-positive",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:55:53.324472+00:00",
+          "end_utc": "2026-11-11T05:55:56.078850+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 314,
+                "total": 640
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 63,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 9,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 50,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 52,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 3
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive",
+              "start_utc": "2026-11-11T05:55:53.324569+00:00",
+              "end_utc": "2026-11-11T05:55:55.788882+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:55:55.960845+00:00",
+              "end_utc": "2026-11-11T05:55:56.078744+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/coverage.dat": {
+              "bytes": 7602156,
+              "sha256": "1564cc92066d42bb4cc1f0198111090375a2c416cc93db4501b964753ebd46e6"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/transactions.jsonl": {
+              "bytes": 283497,
+              "sha256": "a65793e7d73c8046901a63c0c5d94071a5e480e3b14413a34b9e159a50431f67"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/step0.stdout": {
+              "bytes": 2344,
+              "sha256": "17476cb3a463b094be6761ef45f75edd30a65d461d597fa0c6dcc8c6ed07291b"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/step1.stdout": {
+              "bytes": 270,
+              "sha256": "28bf02df3125d92679a0d04f76aef2e7379699d1ad29ef19e5ebc248d8c56151"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-positive/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-replay",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:55:56.079604+00:00",
+          "end_utc": "2026-11-11T05:55:58.693113+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 314,
+                "total": 640
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 63,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 9,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 50,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 52,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 3
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay",
+              "start_utc": "2026-11-11T05:55:56.079665+00:00",
+              "end_utc": "2026-11-11T05:55:58.162705+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:55:58.578043+00:00",
+              "end_utc": "2026-11-11T05:55:58.692991+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/coverage.dat": {
+              "bytes": 7602156,
+              "sha256": "1564cc92066d42bb4cc1f0198111090375a2c416cc93db4501b964753ebd46e6"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/transactions.jsonl": {
+              "bytes": 283497,
+              "sha256": "a65793e7d73c8046901a63c0c5d94071a5e480e3b14413a34b9e159a50431f67"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/step0.stdout": {
+              "bytes": 2344,
+              "sha256": "775b407544c89c4a9fd75ca492eb26cec9e6ebf78053a4681828d4bb83636088"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/step1.stdout": {
+              "bytes": 270,
+              "sha256": "28bf02df3125d92679a0d04f76aef2e7379699d1ad29ef19e5ebc248d8c56151"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-replay/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-alternate",
+          "seed": 19,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:55:58.693852+00:00",
+          "end_utc": "2026-11-11T05:56:01.053935+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 316,
+                "total": 640
+              },
+              "expr": {
+                "hit": 183,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 906,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 63,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 9,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 50,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 52,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 3
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+19",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate",
+              "start_utc": "2026-11-11T05:55:58.693903+00:00",
+              "end_utc": "2026-11-11T05:56:00.369156+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:56:00.665962+00:00",
+              "end_utc": "2026-11-11T05:56:01.052185+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/coverage.dat": {
+              "bytes": 7602151,
+              "sha256": "7804b5776ceb35757a56b84de6126ac5315eb9bb53bd970eb0fb13e4ac6b1d03"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/transactions.jsonl": {
+              "bytes": 283482,
+              "sha256": "197bb33ccfd1034eb3a0698be799779f64ed82e80d833da8e1d510d82cf5b875"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/step0.stdout": {
+              "bytes": 2344,
+              "sha256": "7944cd0ae3359fa46391ead303e31a750cfd8198ebfa51be3ad9bcd47b5685d0"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/step1.stdout": {
+              "bytes": 270,
+              "sha256": "e1da3948fb1c2a7087dc1b38016f1718b08e24d883e87f6fe5f4956bd07ecab0"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-alternate/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-small-quantum",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:01.055657+00:00",
+          "end_utc": "2026-11-11T05:56:03.609000+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 317,
+                "total": 640
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 63,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 9,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 50,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 52,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 57,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 3
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+SMALL_QUANTUM"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum",
+              "start_utc": "2026-11-11T05:56:01.055781+00:00",
+              "end_utc": "2026-11-11T05:56:03.245197+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:56:03.440914+00:00",
+              "end_utc": "2026-11-11T05:56:03.608884+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/coverage.dat": {
+              "bytes": 7602156,
+              "sha256": "e5e2a30ec184b74c78465ae98cb2e374f6c16959380cccbe4b1aa732daf6c376"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/transactions.jsonl": {
+              "bytes": 283497,
+              "sha256": "2b1af6bb5a33ba1a1dfa31722a2bf29a07ce0aaf8ee314dd37fedce87385b272"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/step0.stdout": {
+              "bytes": 2344,
+              "sha256": "aaf7fcd3563fdd976bed265ca04e67a6f02d8f0ed68942e718b1a4fe8478fc04"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/step1.stdout": {
+              "bytes": 270,
+              "sha256": "fbfa7c58afa17ec1cc5b466b86ae585ce2afdc621a8db164767b1532223c7c7b"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-small-quantum/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-corrupt",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:03.609547+00:00",
+          "end_utc": "2026-11-11T05:56:04.228867+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_CORRUPTION",
+          "observed_fatals": [
+            "BYTE_CORRUPTION"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_CORRUPT",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-corrupt",
+              "start_utc": "2026-11-11T05:56:03.609598+00:00",
+              "end_utc": "2026-11-11T05:56:04.227050+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-corrupt/wave.vcd": {
+              "bytes": 31892,
+              "sha256": "39a3b92b04d364d19f814dde8d5b7fb48e2fc54843a9589e87ad874042c5ce6d"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-corrupt/transactions.jsonl": {
+              "bytes": 11243,
+              "sha256": "7a877c86cb931fa1c15d73521da5fb4ee9ae17290e888b35854bf8778449b1c3"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-corrupt/first_failure.json": {
+              "bytes": 5345,
+              "sha256": "d65a1819d5f98c912e1b7e031a2de3a9cb6a6a75ff99597c777b8f24dd2fac40"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-corrupt/step0.stdout": {
+              "bytes": 1834,
+              "sha256": "90e9ee312e3ffbe4f3b1cd0e49c254476e1457b1c4b3fa5f49ee2662e57b03d9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-corrupt/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-duplicate",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:04.229489+00:00",
+          "end_utc": "2026-11-11T05:56:05.191031+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_DUPLICATE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-duplicate",
+              "start_utc": "2026-11-11T05:56:04.229549+00:00",
+              "end_utc": "2026-11-11T05:56:05.190317+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-duplicate/wave.vcd": {
+              "bytes": 127992,
+              "sha256": "8a9cf4cf7fae94c2d4ffdffc5ae0c8ba6709de88d1afc61d34283d3e9184e42f"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-duplicate/transactions.jsonl": {
+              "bytes": 33735,
+              "sha256": "30b0853945e6adc426389276b56a91ebc5018a088a7d4396e14c1f7dd6b0c1fa"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-duplicate/first_failure.json": {
+              "bytes": 5381,
+              "sha256": "b94499f721ac176175f295b5eb5af6ab1d352a1e0583b4be8f5b45d1701edac1"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-duplicate/step0.stdout": {
+              "bytes": 1841,
+              "sha256": "e6040cb17683fcb342c4bc9edde51d9819adc6dcc0e58c6f9e1d6dcca6f21b05"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-duplicate/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-lost",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:05.191372+00:00",
+          "end_utc": "2026-11-11T05:56:06.057920+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_LOST",
+          "observed_fatals": [
+            "BYTE_LOST"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_LOST",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-lost",
+              "start_utc": "2026-11-11T05:56:05.191419+00:00",
+              "end_utc": "2026-11-11T05:56:06.057138+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-lost/wave.vcd": {
+              "bytes": 197795,
+              "sha256": "c881b335e1118061b4d5ea231221747484ab98aa32a0fff8e0f682db90403258"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-lost/transactions.jsonl": {
+              "bytes": 148351,
+              "sha256": "38f0756daaff0457519eb7b5a3ecd098d2739a2a737492558acb44ebcd3a6997"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-lost/first_failure.json": {
+              "bytes": 5359,
+              "sha256": "d099ec694fac0cc5f539f7d815f3c8436d18e961d206a2b2329abe508a34a7ee"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-lost/step0.stdout": {
+              "bytes": 1829,
+              "sha256": "8d2f5b5490d1689be2fe65aaaf11fa89726ff7fccd39f5989b65ec94d29393e1"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-lost/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-status",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:06.058217+00:00",
+          "end_utc": "2026-11-11T05:56:06.573965+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "STATUS_CAUSALITY",
+          "observed_fatals": [
+            "STATUS_CAUSALITY"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_STATUS",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-status",
+              "start_utc": "2026-11-11T05:56:06.058259+00:00",
+              "end_utc": "2026-11-11T05:56:06.573483+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-status/wave.vcd": {
+              "bytes": 29601,
+              "sha256": "61470b7a7e9ffdcaab419fa9ec7b8cf0e230c24ce75e8ad342f07fbf5cc3771f"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-status/transactions.jsonl": {
+              "bytes": 11001,
+              "sha256": "4c02639df70101a72dab599837b0393204809e2857de1d5bd2d1aeff7f7a3855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-status/first_failure.json": {
+              "bytes": 5345,
+              "sha256": "98c3d6799872a75f99e1cc6d677ed61e69d9bcbfd1c46779fb71cdde852945cf"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-status/step0.stdout": {
+              "bytes": 1869,
+              "sha256": "67cba9197f7040f4471a597f98341675895bf7fda1c583ab252db6522ae1d960"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-status/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-service",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:06.574266+00:00",
+          "end_utc": "2026-11-11T05:56:07.356328+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SERVICE_DATA",
+          "observed_fatals": [
+            "SERVICE_DATA"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_SERVICE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-service",
+              "start_utc": "2026-11-11T05:56:06.574308+00:00",
+              "end_utc": "2026-11-11T05:56:07.349810+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-service/wave.vcd": {
+              "bytes": 27087,
+              "sha256": "050be43c774e6bafca7f0580444966d4680dadbe4f5d111bfbbe845c5ad410ae"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-service/transactions.jsonl": {
+              "bytes": 10638,
+              "sha256": "c1cff040fe0a3ec1907568834c8862a770f0ed58a38e49bcf93ece7d7d931e32"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-service/first_failure.json": {
+              "bytes": 5339,
+              "sha256": "222a1d93375da35d61efbbc4c2c587841972265e2107b9f779922fdff54e18f7"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-service/step0.stdout": {
+              "bytes": 1840,
+              "sha256": "cdc0b859ebec0d69c0578f2d63a8f90c47ef1cc526bf29b73414d9951641bcbf"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-service/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-admission",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:07.357946+00:00",
+          "end_utc": "2026-11-11T05:56:08.090875+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "ADMISSION_PREDICATE",
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_ADMISSION",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-admission",
+              "start_utc": "2026-11-11T05:56:07.358111+00:00",
+              "end_utc": "2026-11-11T05:56:08.090224+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-admission/wave.vcd": {
+              "bytes": 27087,
+              "sha256": "79173f0cf5067232ec6d908f12992009cb2fcb952d06afcd2a42699ea8927571"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-admission/transactions.jsonl": {
+              "bytes": 10638,
+              "sha256": "c1cff040fe0a3ec1907568834c8862a770f0ed58a38e49bcf93ece7d7d931e32"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-admission/first_failure.json": {
+              "bytes": 5357,
+              "sha256": "219d83cbe6a343209376cdc939a33fa69810fcfa13fad2d5b45cafed17a2c0be"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-admission/step0.stdout": {
+              "bytes": 1875,
+              "sha256": "fc310f40db4ee9dddec7c93bd69d4d84e8c0f03d0d2da043576d2d43f871bbc9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-admission/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-schedule",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:08.091167+00:00",
+          "end_utc": "2026-11-11T05:56:08.558323+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_SCHEDULE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-schedule",
+              "start_utc": "2026-11-11T05:56:08.091207+00:00",
+              "end_utc": "2026-11-11T05:56:08.557844+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-schedule/wave.vcd": {
+              "bytes": 30366,
+              "sha256": "53d484e260da7fda2e3fca37428219af5698cf7c9e8dacd94b4eb54788f0c392"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-schedule/transactions.jsonl": {
+              "bytes": 11122,
+              "sha256": "7c4a08fe5431114dd5d09c39334d75fd2d326fffae96c8abca0bb9d1903335c5"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-schedule/first_failure.json": {
+              "bytes": 5343,
+              "sha256": "a8f5e255cc40597b14204f1eb3b5424b893bb73e1e76a8b283b7603f81db03fe"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-schedule/step0.stdout": {
+              "bytes": 1844,
+              "sha256": "7898109814f4f6615d566aec3e3b6e878bf98125678153159a3e2c9e2033e1ed"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-schedule/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-stale",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:08.558753+00:00",
+          "end_utc": "2026-11-11T05:56:09.425548+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_STALE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-stale",
+              "start_utc": "2026-11-11T05:56:08.558797+00:00",
+              "end_utc": "2026-11-11T05:56:09.424651+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-stale/wave.vcd": {
+              "bytes": 274846,
+              "sha256": "ed89d8624837b61ebb7c10800118f7a667398ed05abc3c34bc628b1c56134ad6"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-stale/transactions.jsonl": {
+              "bytes": 160218,
+              "sha256": "3941cdcd72642b968d12ba7364c131f69f337f7c3b8cb34c43c145a3a8d026d1"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-stale/first_failure.json": {
+              "bytes": 5350,
+              "sha256": "5985cea034af5ea4dc24e678afdac88a3776b4270d694e8c967fd32e7f17f968"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-stale/step0.stdout": {
+              "bytes": 1843,
+              "sha256": "ef865ed80eaf907cedaa120cf96bf4d6ae5a90b821dbaace1915fe566910f49d"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-stale/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-csr",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:09.425868+00:00",
+          "end_utc": "2026-11-11T05:56:10.066653+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "CSR_RESOURCE",
+          "observed_fatals": [
+            "CSR_RESOURCE"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+MUT_CSR",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-csr",
+              "start_utc": "2026-11-11T05:56:09.425911+00:00",
+              "end_utc": "2026-11-11T05:56:10.051686+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-csr/wave.vcd": {
+              "bytes": 47541,
+              "sha256": "b7d63fc3ef2be9a879e0574ff0b2ca6393fd221a5c37fb4bdb0513126c5520d2"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-csr/transactions.jsonl": {
+              "bytes": 13188,
+              "sha256": "bac7f7ffec991ef44fff945e91dabbc89a757e5db06f77189515fc5d1c6eadae"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-csr/first_failure.json": {
+              "bytes": 5340,
+              "sha256": "03fb15c392403aff159c065176b11519ed648e15b10d32d6fa6a27f7db9895e4"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-csr/step0.stdout": {
+              "bytes": 1857,
+              "sha256": "d99ec313a34c4f25aed7f6dd6698ae1ffe0bca05231872578e7b4402d4aae6aa"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-csr/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:10.069210+00:00",
+          "end_utc": "2026-11-11T05:56:11.431046+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier",
+              "start_utc": "2026-11-11T05:56:10.069785+00:00",
+              "end_utc": "2026-11-11T05:56:11.430633+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier/step0.stdout": {
+              "bytes": 2452,
+              "sha256": "269a423daec461e0db0afd5ec0ec1c91ca32d02e6a410c5f94294f3e0d5be649"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier-duplicate",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:11.431389+00:00",
+          "end_utc": "2026-11-11T05:56:11.846996+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_DUPLICATE",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test",
+                "+MUT_BATCH_DUPLICATE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-duplicate",
+              "start_utc": "2026-11-11T05:56:11.431476+00:00",
+              "end_utc": "2026-11-11T05:56:11.846418+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-duplicate/first_failure.json": {
+              "bytes": 5393,
+              "sha256": "b63818277356b7541ecd77114cc7722994171a08f21773d7a67b0193b2f5048c"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-duplicate/wave.vcd": {
+              "bytes": 9260,
+              "sha256": "fc3002666650d64b43c2670ce886ebcde4d5ea22eef7ea7e3a2fe498de12a548"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-duplicate/transactions.jsonl": {
+              "bytes": 15506,
+              "sha256": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-duplicate/step0.stdout": {
+              "bytes": 1987,
+              "sha256": "516a2f133463a1a54433d57fac09488412aa10340c7b78e8be3ca3d675f91b18"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-duplicate/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier-missing",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:11.847316+00:00",
+          "end_utc": "2026-11-11T05:56:12.262936+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_MISSING",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test",
+                "+MUT_BATCH_MISSING",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-missing",
+              "start_utc": "2026-11-11T05:56:11.847362+00:00",
+              "end_utc": "2026-11-11T05:56:12.262253+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-missing/first_failure.json": {
+              "bytes": 5385,
+              "sha256": "aae2934a4d0bee7bc88c41d1ec5f4b8a69398d84739427486f920496219e88a1"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-missing/wave.vcd": {
+              "bytes": 9260,
+              "sha256": "fc3002666650d64b43c2670ce886ebcde4d5ea22eef7ea7e3a2fe498de12a548"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-missing/transactions.jsonl": {
+              "bytes": 15506,
+              "sha256": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-missing/step0.stdout": {
+              "bytes": 1981,
+              "sha256": "826ee442865ee6d95127befbf4e7ec72a227fd73aeefe42702f219dde16e7110"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-missing/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier-stale",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:12.263509+00:00",
+          "end_utc": "2026-11-11T05:56:12.679048+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_STALE",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+17",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test",
+                "+MUT_BATCH_STALE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-stale",
+              "start_utc": "2026-11-11T05:56:12.263568+00:00",
+              "end_utc": "2026-11-11T05:56:12.678575+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-stale/first_failure.json": {
+              "bytes": 5377,
+              "sha256": "2946bb1ba425b4c6a7ab64fad63d4a52269111562ec00f60bcde0110378277f4"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-stale/wave.vcd": {
+              "bytes": 9260,
+              "sha256": "fc3002666650d64b43c2670ce886ebcde4d5ea22eef7ea7e3a2fe498de12a548"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-stale/transactions.jsonl": {
+              "bytes": 15506,
+              "sha256": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-stale/step0.stdout": {
+              "bytes": 1968,
+              "sha256": "4f299a5d9edfcb4a059cc2f53c1dddc2c107662869af95bd75a319d45fa3f126"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.777196+0000-27351adb/foundation-barrier-stale/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-seed-replay",
+          "seed": 17,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:12.679406+00:00",
+          "end_utc": "2026-11-11T05:56:12.679424+00:00",
+          "first_failure": null,
+          "transaction_digests": [
+            "a65793e7d73c8046901a63c0c5d94071a5e480e3b14413a34b9e159a50431f67",
+            "a65793e7d73c8046901a63c0c5d94071a5e480e3b14413a34b9e159a50431f67",
+            "197bb33ccfd1034eb3a0698be799779f64ed82e80d833da8e1d510d82cf5b875"
+          ],
+          "steps": [],
+          "artifacts": {}
+        }
+      ],
+      "exclusions": [
+        {
+          "probe": "atomic",
+          "reason": "Simultaneous independent disposition destinations require at least two RX ports; executed under I0"
+        }
+      ]
+    },
+    {
+      "source_revision": "8f03323533e9fa66a44f0972c80a6a9098c303d0",
+      "dirty": false,
+      "profile": "I0",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "CELL_ID_W": 5,
+        "CELL_COUNT_W": 6,
+        "DESC_ID_W": 4,
+        "DESC_COUNT_W": 5,
+        "DEFICIT_W": 13
+      },
+      "dependency_digests": {
+        "tools/dependencies.json": "ee72fb11c5b7ebeecb0d207936969810358cf6ff36b236f6d28799730397db15",
+        "tools/packages.lock.json": "ec22b5d0f143c715413302386e67c49b23e138f91560590fd3f3a125ab99922a"
+      },
+      "registered_source_digests": {
+        "dv/env/tm_bench_pkg.sv": "d2b2442f5c60262ca8725c3a9f3a904ee2b919ea70d1b9214baacc949c4a7d90",
+        "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+        "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+        "rtl/include/tm_types.svh": "46b954fca4fcf041d9ceeeca6303801a66fac4e9e41ac7d4eed79bd8f8dd1f11",
+        "dv/model/tm_monitor_types.svh": "f603073f9a85fda40b5dcd13ab57673226254785d64af1a3a24295bdbefa5b8c",
+        "dv/model/tm_checkers.svh": "7c3977f272d5f3561e1751805768cba3ab76fa575aac7d45544a286a81975a18",
+        "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+        "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+        "dv/env/tm_environment.svh": "ccfae3ce048ec602c4800fbda5d009b3eeaceadbb9e33142e277d0c7d1f022b9",
+        "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+        "dv/tests/tm_batch_test.svh": "883bcae2134878797682d1f463dee191a1c542565a7bf5580eebd33fc050bd5d"
+      },
+      "runner_digests": {
+        "tools/evidence.py": "312a6180d9b1466d093709c0d1c05cb1012d7a90ac66d63c1ba6fe50dbcdd67f",
+        "tools/foundation.py": "189bb3f53806fcf0b22fb28a79fc8bfb7097e1dd164a5c53eef425c5e87cbd3d",
+        "tools/registry.py": "6e5e44461085f0e5f17901057770a9439e6a392e3500b1b06d019fc106391871",
+        "tools/run.py": "ddd8a07fc83183ae8384dcf6fa76dcf0173d4867624fc019f23f1f46c6fd307e",
+        "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+        "verification/sources/uvm-foundation.json": "8fad4eb77a1295189d7c68d91459d5f39e37898a8248a995987e4c7ef262c5b2",
+        "verification/suites.json": "eba96be2dc63bae0917cf63f4381a9cfca593d561ee950951748d6ae77d444d1"
+      },
+      "tool_versions": {
+        "python": "Python 3.12.14",
+        "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111-c493b7b",
+        "verilator_coverage": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111-c493b7b",
+        "yosys": "Yosys 0.52 (git sha1 fee39a3284c90249e1d9684cf6944ffbbcbb8f90)",
+        "abc": "ABC command line: \"version\".",
+        "sby": "SBY v0.71",
+        "z3": "Z3 version 4.13.3 - 64 bit",
+        "opensta": "2.0.17",
+        "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+        "make": "GNU Make 4.4.1",
+        "bash": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+      },
+      "uvm_pin": {
+        "version": "2020.3.1",
+        "commit": "78c06547a2a0a29b3dc9dcafae62b75b2ff61544",
+        "url": "https://codeload.github.com/accellera-official/uvm-core/tar.gz/refs/tags/2020.3.1",
+        "sha256": "f55bdbc02cc500d4a2f41b31bad127653289eb2073f806ce156fb82662b362b8"
+      },
+      "raw_summary": ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/summary.json",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "versions",
+          "seed": null,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:02.813936+00:00",
+          "end_utc": "2026-11-11T05:50:03.310422+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:02.813975+00:00",
+              "end_utc": "2026-11-11T05:50:02.947914+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:02.948240+00:00",
+              "end_utc": "2026-11-11T05:50:03.065720+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "yosys",
+                "-V"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.065935+00:00",
+              "end_utc": "2026-11-11T05:50:03.071767+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "yosys-abc",
+                "-c",
+                "version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.072205+00:00",
+              "end_utc": "2026-11-11T05:50:03.104186+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "sby",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.104395+00:00",
+              "end_utc": "2026-11-11T05:50:03.268983+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "z3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.269255+00:00",
+              "end_utc": "2026-11-11T05:50:03.271502+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "sta",
+                "-version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.271684+00:00",
+              "end_utc": "2026-11-11T05:50:03.275129+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "g++",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.275310+00:00",
+              "end_utc": "2026-11-11T05:50:03.277051+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.277214+00:00",
+              "end_utc": "2026-11-11T05:50:03.280685+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "make",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.280997+00:00",
+              "end_utc": "2026-11-11T05:50:03.282214+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "bash",
+                "--version"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.282373+00:00",
+              "end_utc": "2026-11-11T05:50:03.283880+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/verilator.stdout": {
+              "bytes": 62,
+              "sha256": "36d05f47362869bfe82d28473aa75d1956cb1788987b610b9ea428338089e362"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/verilator.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/verilator_coverage.stdout": {
+              "bytes": 62,
+              "sha256": "36d05f47362869bfe82d28473aa75d1956cb1788987b610b9ea428338089e362"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/verilator_coverage.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/yosys.stdout": {
+              "bytes": 63,
+              "sha256": "239d92e36e753a9dff4e79d97878ed5d55304b675d411895ec57508bc134e28e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/yosys.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/abc.stdout": {
+              "bytes": 84,
+              "sha256": "40000b609a2a8d706832e64bd0874d8ba03323397498a03e8a724e0d80d82b56"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/abc.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/sby.stdout": {
+              "bytes": 10,
+              "sha256": "ebf5b94b00ba3061b1312d4fcd41bd463a5bc6938fd9b7906705b52af4e34b2e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/sby.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/z3.stdout": {
+              "bytes": 27,
+              "sha256": "83a4e37a6e73b423f422a89463ac246254924114f077f4edc22680e0acbafa67"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/z3.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/opensta.stdout": {
+              "bytes": 7,
+              "sha256": "8a4d165e93729e579c12f73ceb42127673c62db24e8be7d4c5dcbf6c0f08266e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/opensta.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/compiler.stdout": {
+              "bytes": 232,
+              "sha256": "5f6798e87440f1e8b88bf6822c33bebe434f83374640a7f8ba967902ee1ea098"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/compiler.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/python.stdout": {
+              "bytes": 15,
+              "sha256": "4c3569f5da09975434dd9fd9a91fadbc4367a91d8f3c3fab59e9241ab9ee4bd8"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/python.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/make.stdout": {
+              "bytes": 300,
+              "sha256": "cb84250d994234272d0a465014ce2931be76e9e0cb114b9bffa078c3c211e8eb"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/make.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/bash.stdout": {
+              "bytes": 308,
+              "sha256": "f21766c2171625ffe29bcbd9c8fa9bd89da3014e9ecc6ec15e477e8056e87209"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/versions/bash.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "cxx20",
+          "seed": null,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:03.310889+00:00",
+          "end_utc": "2026-11-11T05:50:04.624011+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "g++",
+                "-std=c++20",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/probe.cpp",
+                "-o",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:03.310998+00:00",
+              "end_utc": "2026-11-11T05:50:04.619956+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/probe"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:04.620090+00:00",
+              "end_utc": "2026-11-11T05:50:04.623720+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/step0.stdout": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/step1.stdout": {
+              "bytes": 14,
+              "sha256": "3b4ef5e2e668670c4bcc20eb0cb7b3b4cc91f3665557615e3f4c655acb819655"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/cxx20/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "solver-sat-unsat",
+          "seed": null,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:04.624336+00:00",
+          "end_utc": "2026-11-11T05:50:04.640326+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "z3",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/solver-sat-unsat/probe.smt2"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:04.624459+00:00",
+              "end_utc": "2026-11-11T05:50:04.640204+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/solver-sat-unsat/step0.stdout": {
+              "bytes": 10,
+              "sha256": "a542daa98f26726c754fe5835b7e5a9a723350ca71fe66795756ad454d557278"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/solver-sat-unsat/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-build",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:50:04.641709+00:00",
+          "end_utc": "2026-11-11T05:56:05.188178+00:00",
+          "first_failure": null,
+          "scope": "UVM foundation fixture only; not production TM correctness",
+          "steps": [
+            {
+              "argv": [
+                "verilator",
+                "--binary",
+                "--timing",
+                "--assert",
+                "--coverage",
+                "--trace-vcd",
+                "--timescale",
+                "1ns/1ps",
+                "+define+UVM_NO_DPI",
+                "--build-jobs",
+                "3",
+                "--output-groups",
+                "4",
+                "--output-split",
+                "20000",
+                "--output-split-cfuncs",
+                "500",
+                "-CFLAGS",
+                "-O0",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/rtl/include",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/agents",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/model",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env",
+                "-I/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/tests",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.deps/src/uvm/src/uvm_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/env/tm_bench_pkg.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_foundation_fixture.sv",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/dv/fixtures/tm_foundation_top.sv",
+                "--top-module",
+                "tm_foundation_top",
+                "--Mdir",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:50:04.643074+00:00",
+              "end_utc": "2026-11-11T05:56:05.186845+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/step0.stdout": {
+              "bytes": 58622,
+              "sha256": "523dae8276b18427c5580757f80181bb1f8d76b81828abc269ba64c553caa4ca"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-positive",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:05.189045+00:00",
+          "end_utc": "2026-11-11T05:56:08.028963+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 316,
+                "total": 640
+              },
+              "expr": {
+                "hit": 189,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 143,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[1]": 6,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 140,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[2]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[3]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 134,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 121,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 28,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 139,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[2]>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[3]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],invalid_q>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[0]>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[1]>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[2]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[3]>": 2
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive",
+              "start_utc": "2026-11-11T05:56:05.189100+00:00",
+              "end_utc": "2026-11-11T05:56:07.320194+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:56:07.860277+00:00",
+              "end_utc": "2026-11-11T05:56:08.028843+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/coverage.dat": {
+              "bytes": 7605492,
+              "sha256": "e556e3147cb018145af65e36e2d7f60a8e9dab2f819ea581cb43cd742dc717e6"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/transactions.jsonl": {
+              "bytes": 342948,
+              "sha256": "064a673d081a926154836742b63f0137315b60df7ee10f65f5411ef373814dc9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/step0.stdout": {
+              "bytes": 2346,
+              "sha256": "66fbb63d62f340cefa5d1dc1c45988f6be6c59cdf63ed4b5c306d302a5fb5098"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/step1.stdout": {
+              "bytes": 270,
+              "sha256": "281521b5fcbb5e1950de736b9a4f95a9aa4c7a53061258e69d2defdb772f3bbc"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-positive/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-replay",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:08.029694+00:00",
+          "end_utc": "2026-11-11T05:56:10.808416+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 316,
+                "total": 640
+              },
+              "expr": {
+                "hit": 189,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 143,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[1]": 6,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 140,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[2]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[3]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 134,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 121,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 28,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 139,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[2]>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[3]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],invalid_q>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[0]>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[1]>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[2]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[3]>": 2
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay",
+              "start_utc": "2026-11-11T05:56:08.029746+00:00",
+              "end_utc": "2026-11-11T05:56:09.853216+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:56:10.250516+00:00",
+              "end_utc": "2026-11-11T05:56:10.807247+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/coverage.dat": {
+              "bytes": 7605492,
+              "sha256": "e556e3147cb018145af65e36e2d7f60a8e9dab2f819ea581cb43cd742dc717e6"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/transactions.jsonl": {
+              "bytes": 342948,
+              "sha256": "064a673d081a926154836742b63f0137315b60df7ee10f65f5411ef373814dc9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/step0.stdout": {
+              "bytes": 2346,
+              "sha256": "f540704ad5bf7e23f207fd7790a1256a20ccbf68a4e479caa1aab4f82c30bab4"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/step1.stdout": {
+              "bytes": 270,
+              "sha256": "281521b5fcbb5e1950de736b9a4f95a9aa4c7a53061258e69d2defdb772f3bbc"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-replay/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-alternate",
+          "seed": 25,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:10.810648+00:00",
+          "end_utc": "2026-11-11T05:56:13.803246+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 316,
+                "total": 640
+              },
+              "expr": {
+                "hit": 189,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 143,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[1]": 6,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 140,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[2]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[3]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 134,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 121,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 28,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 139,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[2]>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[3]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],invalid_q>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[0]>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[1]>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[2]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[3]>": 2
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+25",
+                "+UVM_NO_RELNOTES"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate",
+              "start_utc": "2026-11-11T05:56:10.810802+00:00",
+              "end_utc": "2026-11-11T05:56:12.636175+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:56:12.943631+00:00",
+              "end_utc": "2026-11-11T05:56:13.802248+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/coverage.dat": {
+              "bytes": 7605492,
+              "sha256": "711ccc7c6e6722473e98dc9e771630e830cf63f58f601a5b6513ced3186ca32b"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/transactions.jsonl": {
+              "bytes": 342938,
+              "sha256": "4647496e44161883be7762b849c6da5cea26c868815049e4c0468c5f848317eb"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/step0.stdout": {
+              "bytes": 2346,
+              "sha256": "4864b8c3478b21d7f63003e51728faf62e0b0daed316173a5dced57cff3c3e34"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/step1.stdout": {
+              "bytes": 270,
+              "sha256": "281521b5fcbb5e1950de736b9a4f95a9aa4c7a53061258e69d2defdb772f3bbc"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-alternate/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-small-quantum",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:13.805170+00:00",
+          "end_utc": "2026-11-11T05:56:16.911955+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; not production TM",
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 319,
+                "total": 640
+              },
+              "expr": {
+                "hit": 189,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins": {
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.w_first": 3,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.simultaneous": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.arrival_order.aw_first": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_0": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.response_stall.auto_1": 6,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<aw_first,auto_1>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<simultaneous,auto_1>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_0>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::bus.order_stall.<w_first,auto_1>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[0]": 143,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source.ports[1]": 6,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[0]": 140,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[1]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[2]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.valid_q[3]": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.queue_id.invalid_q": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[0]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[1]": 11,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[2]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[3]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[4]": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[5]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[6]": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[7]": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.keep.widths[8]": 134,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_0": 121,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.backpressure.auto_1": 28,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],invalid_q>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[0]>": 139,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[1]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[2]>": 2,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[0],valid_q[3]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],invalid_q>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[0]>": 1,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[1]>": 3,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[2]>": 0,
+              "tm_bench_pkg::tm_foundation_coverage::traffic.source_queue.<ports[1],valid_q[3]>": 2
+            }
+          },
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+SMALL_QUANTUM"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum",
+              "start_utc": "2026-11-11T05:56:13.805359+00:00",
+              "end_utc": "2026-11-11T05:56:15.574535+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            },
+            {
+              "argv": [
+                "verilator_coverage",
+                "--report",
+                "summary",
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/coverage.dat"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager",
+              "start_utc": "2026-11-11T05:56:15.752409+00:00",
+              "end_utc": "2026-11-11T05:56:16.911373+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/coverage.dat": {
+              "bytes": 7605495,
+              "sha256": "709496edb39028dcfd83600f1fca4c7a2d2789572a57c37768cf1acc175640c1"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/transactions.jsonl": {
+              "bytes": 342942,
+              "sha256": "c6545a1fb20b7049014a55c2138d3ebf11b6698187ac43f11ae56c9dc9f85dac"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/step0.stdout": {
+              "bytes": 2346,
+              "sha256": "5ae9ad8bb8ead8b1d07b95ca8ed82740245137c83fc6342661006ec53f1278fb"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/step1.stdout": {
+              "bytes": 270,
+              "sha256": "e32dcc6a8dc40a9b889b9db7a74719a5c6b64dcad4e127f4d26445381f7932b7"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-small-quantum/step1.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-corrupt",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:16.913179+00:00",
+          "end_utc": "2026-11-11T05:56:17.430157+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_CORRUPTION",
+          "observed_fatals": [
+            "BYTE_CORRUPTION"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_CORRUPT",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-corrupt",
+              "start_utc": "2026-11-11T05:56:16.913273+00:00",
+              "end_utc": "2026-11-11T05:56:17.429154+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-corrupt/wave.vcd": {
+              "bytes": 35260,
+              "sha256": "a0307efcf775abdc8acb6a300e22c8110ac3e0e56cb2d810b68a55762e7c4cf7"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-corrupt/transactions.jsonl": {
+              "bytes": 12266,
+              "sha256": "6aba1b6ea8e89a055f274b5e5cf991800a3d3b13d477080d7c4f2f004c3b1c41"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-corrupt/first_failure.json": {
+              "bytes": 5697,
+              "sha256": "5126a87fb2f63e9e889377b4fe5450e73f60b3f5b8f73e7519203bf8a39ad653"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-corrupt/step0.stdout": {
+              "bytes": 1834,
+              "sha256": "90e9ee312e3ffbe4f3b1cd0e49c254476e1457b1c4b3fa5f49ee2662e57b03d9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-corrupt/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-duplicate",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:17.430493+00:00",
+          "end_utc": "2026-11-11T05:56:18.097641+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_DUPLICATE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-duplicate",
+              "start_utc": "2026-11-11T05:56:17.430548+00:00",
+              "end_utc": "2026-11-11T05:56:18.096649+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-duplicate/wave.vcd": {
+              "bytes": 288938,
+              "sha256": "7c51599af258d9f874a201f61acaeaa4cb4eb4f0a8b171671b1833904bac8278"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-duplicate/transactions.jsonl": {
+              "bytes": 63182,
+              "sha256": "4946281af8ea895def90160167f524c92ff2d70ac3c8fb799cb9883688191203"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-duplicate/first_failure.json": {
+              "bytes": 5733,
+              "sha256": "72ab9008650dbe96c2e228535c70d340384aab89a693c63274f330ec937b32a3"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-duplicate/step0.stdout": {
+              "bytes": 1841,
+              "sha256": "76c92bab6af16703478e355a2c26ba7036f17d00feacf4c6930da8203a3548c3"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-duplicate/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-lost",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:18.098071+00:00",
+          "end_utc": "2026-11-11T05:56:19.458069+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_LOST",
+          "observed_fatals": [
+            "BYTE_LOST"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_LOST",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-lost",
+              "start_utc": "2026-11-11T05:56:18.098123+00:00",
+              "end_utc": "2026-11-11T05:56:19.438126+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-lost/wave.vcd": {
+              "bytes": 337149,
+              "sha256": "a684553ed63d2c07d5a2f2409d2b412c2eed82f4d322cc5e95503052e37520b9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-lost/transactions.jsonl": {
+              "bytes": 186512,
+              "sha256": "a9767f5658009029f766dfde2140094406b76b161872c9d0cfbce4df7b824d8e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-lost/first_failure.json": {
+              "bytes": 5711,
+              "sha256": "08e182c668a430a0a9dfe30fc05fb0c85601ce1966030587ac7703b21f312148"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-lost/step0.stdout": {
+              "bytes": 1829,
+              "sha256": "9055b8dfe5f13020e79727b7737140fbe2b44264b18ae644f9387d1cfd9bb178"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-lost/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-status",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:19.461164+00:00",
+          "end_utc": "2026-11-11T05:56:20.165792+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "STATUS_CAUSALITY",
+          "observed_fatals": [
+            "STATUS_CAUSALITY"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_STATUS",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-status",
+              "start_utc": "2026-11-11T05:56:19.461899+00:00",
+              "end_utc": "2026-11-11T05:56:20.163705+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-status/wave.vcd": {
+              "bytes": 32803,
+              "sha256": "89694acf1db88f6bfd83a65dbe3d8e63556596a4d0ffd18654ab27252d24f331"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-status/transactions.jsonl": {
+              "bytes": 12002,
+              "sha256": "c2a9d0e58128c74df1a14463d284ed40574d58c960701f686e8817b186638b79"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-status/first_failure.json": {
+              "bytes": 5697,
+              "sha256": "2202a63d06a33ed5f33496cbdf550d05d9e0e30fd489ee14dee51f63c09ac141"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-status/step0.stdout": {
+              "bytes": 1869,
+              "sha256": "67cba9197f7040f4471a597f98341675895bf7fda1c583ab252db6522ae1d960"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-status/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-service",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:20.166546+00:00",
+          "end_utc": "2026-11-11T05:56:20.632599+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SERVICE_DATA",
+          "observed_fatals": [
+            "SERVICE_DATA"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_SERVICE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-service",
+              "start_utc": "2026-11-11T05:56:20.166647+00:00",
+              "end_utc": "2026-11-11T05:56:20.632053+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-service/wave.vcd": {
+              "bytes": 30055,
+              "sha256": "fb83220237c69501d33940f7d37c2ec7e08deb68911210ef6340a0185362f224"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-service/transactions.jsonl": {
+              "bytes": 11606,
+              "sha256": "3fccb672156e786c2e70b18db49c032cb61d028a57b47b8a32e28786e9f72c97"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-service/first_failure.json": {
+              "bytes": 5691,
+              "sha256": "a16946588af0709cb3b38379228393b2a1c5cbbd427f921a4172ba0ad370d690"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-service/step0.stdout": {
+              "bytes": 1840,
+              "sha256": "cdc0b859ebec0d69c0578f2d63a8f90c47ef1cc526bf29b73414d9951641bcbf"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-service/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-admission",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:20.632899+00:00",
+          "end_utc": "2026-11-11T05:56:21.098339+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "ADMISSION_PREDICATE",
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_ADMISSION",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-admission",
+              "start_utc": "2026-11-11T05:56:20.632941+00:00",
+              "end_utc": "2026-11-11T05:56:21.097874+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-admission/wave.vcd": {
+              "bytes": 30055,
+              "sha256": "c27388a1fb55c5c911b54ae6fb4109ecc4e44bcbc1bf6d6fd73b9e7d2f28563b"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-admission/transactions.jsonl": {
+              "bytes": 11606,
+              "sha256": "3fccb672156e786c2e70b18db49c032cb61d028a57b47b8a32e28786e9f72c97"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-admission/first_failure.json": {
+              "bytes": 5709,
+              "sha256": "5bab3367c985c865b89bc544693228d41313a207bba261171321b66e3983672f"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-admission/step0.stdout": {
+              "bytes": 1875,
+              "sha256": "fc310f40db4ee9dddec7c93bd69d4d84e8c0f03d0d2da043576d2d43f871bbc9"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-admission/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-schedule",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:21.098721+00:00",
+          "end_utc": "2026-11-11T05:56:21.614475+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_SCHEDULE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-schedule",
+              "start_utc": "2026-11-11T05:56:21.098766+00:00",
+              "end_utc": "2026-11-11T05:56:21.613749+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-schedule/wave.vcd": {
+              "bytes": 33642,
+              "sha256": "cb753c921011e3e10e55cb545a869cfc447875d69419914ce3b579c1a05f6038"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-schedule/transactions.jsonl": {
+              "bytes": 12134,
+              "sha256": "e7f778e080ad45df576906ed844ee3862e11b0f4ab2b37fb82401baaf5362b3a"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-schedule/first_failure.json": {
+              "bytes": 5695,
+              "sha256": "2cdbc056dffafbd63e51069841b941704d9043a5294f9c75cea32111988d1a2a"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-schedule/step0.stdout": {
+              "bytes": 1844,
+              "sha256": "7898109814f4f6615d566aec3e3b6e878bf98125678153159a3e2c9e2033e1ed"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-schedule/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-stale",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:21.614921+00:00",
+          "end_utc": "2026-11-11T05:56:23.105364+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_STALE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-stale",
+              "start_utc": "2026-11-11T05:56:21.614970+00:00",
+              "end_utc": "2026-11-11T05:56:23.101711+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-stale/wave.vcd": {
+              "bytes": 487338,
+              "sha256": "074fe7d70800a2cd5e14ce88304f1aab7b81365cc4b2425873f672a2fa4d18c3"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-stale/transactions.jsonl": {
+              "bytes": 207628,
+              "sha256": "8e04f6704238975d03ad5b9a57c0317d6f0dc13b31892e5245f9d2fc386ca498"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-stale/first_failure.json": {
+              "bytes": 5739,
+              "sha256": "d393ee373f09909791caa24df79d6937fd84c1d2aa5a2427f4c79c871da0e622"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-stale/step0.stdout": {
+              "bytes": 1843,
+              "sha256": "feed2004b219647b03ebdd7df185165aeaefe36daa16f7eff4390f87f64d9699"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-stale/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-csr",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:23.106177+00:00",
+          "end_utc": "2026-11-11T05:56:23.672916+00:00",
+          "first_failure": null,
+          "scope": "Declared behavioral fixture; expected seeded defects",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "CSR_RESOURCE",
+          "observed_fatals": [
+            "CSR_RESOURCE"
+          ],
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+MUT_CSR",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-csr",
+              "start_utc": "2026-11-11T05:56:23.106276+00:00",
+              "end_utc": "2026-11-11T05:56:23.672202+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-csr/wave.vcd": {
+              "bytes": 141345,
+              "sha256": "7ced8d230169f3922fde87f05182fc07f88f9d0f74ffc70da64dcc663139665d"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-csr/transactions.jsonl": {
+              "bytes": 30480,
+              "sha256": "3bb2de3adfdb191ba6bbd79994b3dd049171c450de7d0c82169ce6424708548e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-csr/first_failure.json": {
+              "bytes": 5715,
+              "sha256": "b56d784744eda05161b20f4783704c41a816228938857c3b21330a2ead16e5ea"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-csr/step0.stdout": {
+              "bytes": 1857,
+              "sha256": "d1d63cf7e15bd46ec9b8d412f770be6d6b129cf6f3958e25af9cc13ac986815e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-csr/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:23.673523+00:00",
+          "end_utc": "2026-11-11T05:56:25.121251+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier",
+              "start_utc": "2026-11-11T05:56:23.673570+00:00",
+              "end_utc": "2026-11-11T05:56:25.120310+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier/step0.stdout": {
+              "bytes": 2452,
+              "sha256": "8bc328c85e894f29ed7fe52d0e599263020a3ddc839fdda55891539afe4b8004"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier-duplicate",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:25.122405+00:00",
+          "end_utc": "2026-11-11T05:56:25.538386+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_DUPLICATE",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test",
+                "+MUT_BATCH_DUPLICATE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-duplicate",
+              "start_utc": "2026-11-11T05:56:25.122653+00:00",
+              "end_utc": "2026-11-11T05:56:25.537905+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-duplicate/first_failure.json": {
+              "bytes": 5745,
+              "sha256": "6fc68dd779ee636e6753744d7995ec264cda5c2fe65009ac3ff05ac5f6c8fe8e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-duplicate/wave.vcd": {
+              "bytes": 10785,
+              "sha256": "f961ad3c14e01ee5558f9ecd222ed41e9c6a8e399dd612bdd240f0e5970c9cf8"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-duplicate/transactions.jsonl": {
+              "bytes": 16914,
+              "sha256": "2ec1ccebe8c15b184cda2c7907c4cae96694fb54957fa0b33566abc302f18ae2"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-duplicate/step0.stdout": {
+              "bytes": 1987,
+              "sha256": "516a2f133463a1a54433d57fac09488412aa10340c7b78e8be3ca3d675f91b18"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-duplicate/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier-missing",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:25.538946+00:00",
+          "end_utc": "2026-11-11T05:56:25.955311+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_MISSING",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test",
+                "+MUT_BATCH_MISSING",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-missing",
+              "start_utc": "2026-11-11T05:56:25.538990+00:00",
+              "end_utc": "2026-11-11T05:56:25.953998+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-missing/first_failure.json": {
+              "bytes": 5737,
+              "sha256": "5de346077f81d5aa077e8692ed5a7c2bcdc9b4a2c2330cbc598bd02781f14139"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-missing/wave.vcd": {
+              "bytes": 10785,
+              "sha256": "f961ad3c14e01ee5558f9ecd222ed41e9c6a8e399dd612bdd240f0e5970c9cf8"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-missing/transactions.jsonl": {
+              "bytes": 16914,
+              "sha256": "2ec1ccebe8c15b184cda2c7907c4cae96694fb54957fa0b33566abc302f18ae2"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-missing/step0.stdout": {
+              "bytes": 1981,
+              "sha256": "826ee442865ee6d95127befbf4e7ec72a227fd73aeefe42702f219dde16e7110"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-missing/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-barrier-stale",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:25.956015+00:00",
+          "end_utc": "2026-11-11T05:56:26.371850+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_STALE",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_batch_test",
+                "+MUT_BATCH_STALE",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-stale",
+              "start_utc": "2026-11-11T05:56:25.956062+00:00",
+              "end_utc": "2026-11-11T05:56:26.371245+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-stale/first_failure.json": {
+              "bytes": 5729,
+              "sha256": "f38b4f7c08c0206d2265fe1a1bd2e36bd9412614271197b6b8215636e4c3cd2c"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-stale/wave.vcd": {
+              "bytes": 10785,
+              "sha256": "f961ad3c14e01ee5558f9ecd222ed41e9c6a8e399dd612bdd240f0e5970c9cf8"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-stale/transactions.jsonl": {
+              "bytes": 16914,
+              "sha256": "2ec1ccebe8c15b184cda2c7907c4cae96694fb54957fa0b33566abc302f18ae2"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-stale/step0.stdout": {
+              "bytes": 1968,
+              "sha256": "4f299a5d9edfcb4a059cc2f53c1dddc2c107662869af95bd75a319d45fa3f126"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-barrier-stale/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-atomic",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:26.372370+00:00",
+          "end_utc": "2026-11-11T05:56:27.826542+00:00",
+          "first_failure": null,
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_atomic_test"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic",
+              "start_utc": "2026-11-11T05:56:26.372419+00:00",
+              "end_utc": "2026-11-11T05:56:27.823885+00:00",
+              "returncode": 0,
+              "result": "PASS"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic/step0.stdout": {
+              "bytes": 2478,
+              "sha256": "267d486d2fd5df9b1d8277df51f37d1f86fd00cce60f34139bb8e707e82e766e"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-atomic-limit",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:27.828945+00:00",
+          "end_utc": "2026-11-11T05:56:28.245717+00:00",
+          "first_failure": null,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "ADMISSION_PREDICATE",
+          "steps": [
+            {
+              "argv": [
+                "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-build/obj/Vtm_foundation_top",
+                "+verilator+seed+23",
+                "+UVM_NO_RELNOTES",
+                "+UVM_TESTNAME=tm_atomic_test",
+                "+MUT_ATOMIC_LIMIT",
+                "+TRACE"
+              ],
+              "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic-limit",
+              "start_utc": "2026-11-11T05:56:27.829316+00:00",
+              "end_utc": "2026-11-11T05:56:28.245096+00:00",
+              "returncode": 1,
+              "result": "TOOL_ERROR"
+            }
+          ],
+          "artifacts": {
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic-limit/first_failure.json": {
+              "bytes": 561,
+              "sha256": "6b2bf8b41ae279072e6c4378c4be671c23b53e2539aa701e08bc63c0b000b0c0"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic-limit/wave.vcd": {
+              "bytes": 10785,
+              "sha256": "f961ad3c14e01ee5558f9ecd222ed41e9c6a8e399dd612bdd240f0e5970c9cf8"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic-limit/step0.stdout": {
+              "bytes": 2029,
+              "sha256": "e08a8f8f45092b724a3b8d152c9087ea3ea915680e2997d878fd9454f8c3dcab"
+            },
+            ".build/p07-final-evidence/regression-2026-11-11T055002.789087+0000-e4158dce/foundation-atomic-limit/step0.stderr": {
+              "bytes": 0,
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "test": "foundation-seed-replay",
+          "seed": 23,
+          "result": "PASS",
+          "start_utc": "2026-11-11T05:56:28.246138+00:00",
+          "end_utc": "2026-11-11T05:56:28.246197+00:00",
+          "first_failure": null,
+          "transaction_digests": [
+            "064a673d081a926154836742b63f0137315b60df7ee10f65f5411ef373814dc9",
+            "064a673d081a926154836742b63f0137315b60df7ee10f65f5411ef373814dc9",
+            "4647496e44161883be7762b849c6da5cea26c868815049e4c0468c5f848317eb"
+          ],
+          "steps": [],
+          "artifacts": {}
+        }
+      ]
+    }
+  ]
+}
