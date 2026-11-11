@@ -291,6 +291,7 @@ def main(argv=None):
         from registry import selection
         from contracts import contracts
         from storage import pools
+        from foundation import foundation
         run.scope = 'Selected contract/component suites; no integrated TM validation'
         try:
             selected = selection(args.profile, args.test)
@@ -300,7 +301,7 @@ def main(argv=None):
                 raise ValueError('Regression accepts one positive 31-bit functional seed')
             from doctor import qualify
             qualify(run)
-            handlers = {'contracts': contracts, 'pools': pools}
+            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation}
             for name in selected:
                 handlers[name](run, args)
         except (OSError, ValueError, KeyError) as error:

@@ -2,7 +2,10 @@ class tm_frame;
     int epoch,source,ordinal,qid,length,tag,desc,ncell,serviced,allocated;
     bit complete,survives,delivered,aborted,committed;
     byte unsigned bytes[$];
-    function new(); endfunction
+    function new();
+        epoch=0;source=0;ordinal=0;qid=0;length=0;tag=0;desc=0;ncell=0;serviced=0;allocated=0;
+        complete=0;survives=0;delivered=0;aborted=0;committed=0;
+    endfunction
     function string key(); return $sformatf("%0d:%0d:%0d",epoch,source,ordinal); endfunction
 endclass
 class tm_beat_fifo;
@@ -115,6 +118,7 @@ class tm_service_checker extends uvm_component;
         int p,n,reason,remaining,du,dr,da,dd,dh[N_Q];
         bit malformed,needs_cell;
         status_t st;
+        du=0;dr=0;da=0;dd=0;foreach(dh[q]) dh[q]=0;
         committed_frame=null;
         if(b.reset_asserted) begin flush(); return; end
         // Compare observations to independently reconstructed pre-state.
@@ -239,7 +243,7 @@ class tm_schedule_checker extends uvm_component;
         int q,credit;
         trace_t t=b.policy;
         if(b.reset_asserted) begin flush(); return; end
-        q=cursor;credit=deficit[q];
+        grant=0;q=cursor;credit=deficit[q];
         if(active==null && queues[q].frames.size()!=0) begin
             if(!visit) credit+=quantum;
             f=queues[q].frames[0];grant=(f.length<=credit);

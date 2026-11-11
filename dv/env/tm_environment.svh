@@ -104,9 +104,9 @@ class tm_coordinator extends uvm_component;
         endcase
         if(&seen) begin
             // No callback mutates any model before this barrier.
+            bytes_model.apply(pending);
             service_model.apply(pending,live);
             schedule_model.apply(pending,service_model.committed_frame);
-            bytes_model.apply(pending);
             sealed=new;sealed.batch=pending;sealed_batches.write(sealed);
             $fdisplay(trace_file,"{\"epoch\":%0d,\"cycle\":%0d,\"reset\":%0d,\"service\":%0d,\"admit\":%0d,\"commit\":%0d,\"dispatch\":%0d,\"output\":%0d,\"status\":\"%h\",\"U\":%0d}",pending.epoch,pending.cycle,pending.reset_asserted,pending.policy.rx_service.valid,pending.policy.admit.valid,pending.policy.commit.valid,pending.policy.dispatch.valid,pending.output_sample.valid&&pending.output_sample.ready,pending.statuses,service_model.u);
             $fflush(trace_file);

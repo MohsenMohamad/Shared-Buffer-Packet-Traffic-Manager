@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "include_dirs": [
+    "rtl/include",
+    "dv/agents",
+    "dv/model",
+    "dv/env",
+    "dv/tests"
+  ],
+  "sources": [
+    "dv/env/tm_bench_pkg.sv",
+    "dv/fixtures/tm_foundation_fixture.sv",
+    "dv/fixtures/tm_foundation_top.sv"
+  ],
+  "headers": [
+    "rtl/include/tm_types.svh",
+    "dv/model/tm_monitor_types.svh",
+    "dv/model/tm_checkers.svh",
+    "dv/agents/tm_stream_agent.svh",
+    "dv/agents/tm_axil_agent.svh",
+    "dv/env/tm_environment.svh",
+    "dv/tests/tm_foundation_test.svh"
+  ],
+  "scope": "Simulation-only behavioral fixture and UVM foundation; generated profile config is recorded by the runner"
+}

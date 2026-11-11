@@ -34,12 +34,14 @@ endclass
 class tm_bus_sequence extends uvm_sequence #(tm_axil_item);
     `uvm_object_utils(tm_bus_sequence)
     int order;
+    bit read_only;
     function new(string name="bus_sequence");super.new(name);endfunction
     task body();
         tm_axil_item x=new;
-        x.write=1;x.addr=0;x.data=32'h12345678;x.aw_delay=order==0?6:0;x.w_delay=order==2?6:0;x.response_stall=5;
-        start_item(x);finish_item(x);
-        if(x.response!=OKAY) `uvm_fatal("BUS_RESPONSE","fixture write failed")
+        tm_axil_item response;
+        x.write=!read_only;x.addr=0;x.data=32'h12345678;x.aw_delay=order==0?6:0;x.w_delay=order==2?6:0;x.response_stall=5;
+        start_item(x);finish_item(x);get_response(response);
+        if(response.response!=OKAY) `uvm_fatal("BUS_RESPONSE","fixture write failed")
     endtask
 endclass
 
@@ -64,11 +66,15 @@ class tm_foundation_sequence extends uvm_sequence;
         tm_bus_sequence bus_seq;
         tm_environment e=p_sequencer.env;
         for(int order=0;order<3;order++) begin bus_seq=new;bus_seq.order=order;bus_seq.start(e.axil.sequencer);end
-        e.registers.control.write(status,32'h0badcafe,UVM_FRONTDOOR);
+        fork
+            begin tm_bus_sequence read_seq=new;read_seq.read_only=1;read_seq.start(e.axil.sequencer);end
+            begin tm_bus_sequence write_seq=new;write_seq.order=0;write_seq.start(e.axil.sequencer);end
+        join
+        e.registers.control.write(status,64'h0badcafe,UVM_FRONTDOOR);
         if(status!=UVM_IS_OK) `uvm_fatal("RAL_WRITE","frontdoor write failed")
         e.registers.control.read(status,data,UVM_FRONTDOOR);
-        if(status!=UVM_IS_OK || data!=32'h0badcafe || e.registers.control.get_mirrored_value()!=data) `uvm_fatal("RAL_PREDICT","frontdoor read/predict mismatch")
-        e.registers.control.write(status,32'h0badcaff,UVM_FRONTDOOR);
+        if(status!=UVM_IS_OK || data!=64'h0badcafe || e.registers.control.get_mirrored_value()!=data) `uvm_fatal("RAL_PREDICT","frontdoor read/predict mismatch")
+        e.registers.control.write(status,64'h0badcaff,UVM_FRONTDOOR);
         e.registers.control.mirror(status,UVM_CHECK,UVM_FRONTDOOR);
         if(status!=UVM_IS_OK) `uvm_fatal("RAL_MIRROR","frontdoor mirror failed")
         // All ports and queues, repeated tags, partial words and cell boundaries.
