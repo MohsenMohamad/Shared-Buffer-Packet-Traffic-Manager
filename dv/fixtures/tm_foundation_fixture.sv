@@ -241,7 +241,7 @@ module tm_foundation_fixture(
                 bus.rsp.arready<=0;bus.rsp.rvalid<=1;bus.rsp.rresp<=OKAY;
                 case(bus.req.araddr)
                     0:bus.rsp.rdata<=control;
-                    'h024:bus.rsp.rdata<=32'(u);
+                    'h024:bus.rsp.rdata<=32'(u)+($test$plusargs("MUT_CSR")?32'd1:32'd0);
                     'h028:bus.rsp.rdata<=32'(r);
                     'h02c:bus.rsp.rdata<=32'(d);
                     default:begin bus.rsp.rdata<=0;bus.rsp.rresp<=DECERR;end

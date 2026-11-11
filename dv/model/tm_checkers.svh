@@ -1,9 +1,10 @@
 class tm_frame;
-    int epoch,source,ordinal,qid,length,tag,desc,ncell,serviced,allocated;
+    int epoch,source,ordinal,qid,length,tag,desc,ncell,serviced,allocated,head;
+    descriptor_t descriptor;
     bit complete,survives,delivered,aborted,committed;
     byte unsigned bytes[$];
     function new();
-        epoch=0;source=0;ordinal=0;qid=0;length=0;tag=0;desc=0;ncell=0;serviced=0;allocated=0;
+        epoch=0;source=0;ordinal=0;qid=0;length=0;tag=0;desc=0;ncell=0;serviced=0;allocated=0;head=0;descriptor='0;
         complete=0;survives=0;delivered=0;aborted=0;committed=0;
     endfunction
     function string key(); return $sformatf("%0d:%0d:%0d",epoch,source,ordinal); endfunction
@@ -111,7 +112,7 @@ class tm_service_checker extends uvm_component;
     endfunction
     function descriptor_t info(tm_frame f);
         descriptor_t v='0;
-        v.ncell=CELL_COUNT_W'(f.ncell); v.length=16'(f.length); v.qid=Q_ID_W'(f.qid); v.tag=16'(f.tag); v.source=RX_ID_W'(f.source);
+        v.head=CELL_ID_W'(f.head);v.ncell=CELL_COUNT_W'(f.ncell); v.length=16'(f.length); v.qid=Q_ID_W'(f.qid); v.tag=16'(f.tag); v.source=RX_ID_W'(f.source);
         return v;
     endfunction
     function void expect_status(tm_frame f,status_code_t code);
@@ -193,15 +194,15 @@ class tm_service_checker extends uvm_component;
                 if(needs_cell) begin
                     if(int'(t.cell_alloc.id)>=N_CELL || t.cell_alloc.desc!=DESC_ID_W'(f.desc) || cell_owned.exists(int'(t.cell_alloc.id))) `uvm_fatal("CELL_OWNERSHIP","cell allocated twice or to wrong descriptor")
                     cell_owned[int'(t.cell_alloc.id)]=1;cell_desc[int'(t.cell_alloc.id)]=f.desc;
+                    if(f.allocated==0) f.head=int'(t.cell_alloc.id);
                     f.allocated++;da++;dr--;
                 end
                 if(malformed) begin
                     if(!t.abort_mark.valid || t.abort_mark.desc!=DESC_ID_W'(f.desc) || t.abort_mark.allocated!=CELL_COUNT_W'(f.allocated) || t.abort_mark.reserved!=CELL_COUNT_W'(f.ncell)) `uvm_fatal("ABORT_CAUSALITY","malformed service without matching abort")
                     f.aborted=1;aborts++;
                 end else if(beat.last) begin
-                    if(!t.commit.valid || t.commit.desc!=DESC_ID_W'(f.desc) || t.commit.qid!=Q_ID_W'(f.qid) || {t.commit.info.ncell,t.commit.info.length,t.commit.info.qid,t.commit.info.tag,t.commit.info.source}!=
-                       {CELL_COUNT_W'(f.ncell),16'(f.length),Q_ID_W'(f.qid),16'(f.tag),RX_ID_W'(f.source)}) `uvm_fatal("COMMIT_CAUSALITY","commit does not match serviced complete frame")
-                    f.committed=1;committed_frame=f;commits++;expect_status(f,COMMITTED);
+                    if(!t.commit.valid || t.commit.desc!=DESC_ID_W'(f.desc) || t.commit.qid!=Q_ID_W'(f.qid) || t.commit.info!=info(f)) `uvm_fatal("COMMIT_CAUSALITY","commit does not match serviced complete frame")
+                    f.descriptor=info(f);f.committed=1;committed_frame=f;commits++;expect_status(f,COMMITTED);
                 end else if(t.commit.valid) `uvm_fatal("COMMIT_CAUSALITY","early commit")
             end else if(t.commit.valid || t.cell_alloc.valid || t.abort_mark.valid) `uvm_fatal("SERVICE_REJECT","actions on rejected/draining packet")
             f.serviced+=8;
@@ -276,7 +277,7 @@ class tm_schedule_checker extends uvm_component;
         end
         if(t.dispatch.valid!=grant) `uvm_fatal("SCHEDULE_GRANT","missing or illegal pre-state dispatch")
         if(grant) begin
-            if(t.dispatch.qid!=Q_ID_W'(q) || int'(t.dispatch.desc)!=f.desc || t.dispatch.info.length!=16'(f.length)) `uvm_fatal("SCHEDULE_HEAD","dispatch does not match expected queue head")
+            if(t.dispatch.qid!=Q_ID_W'(q) || int'(t.dispatch.desc)!=f.desc || t.dispatch.info!=f.descriptor) `uvm_fatal("SCHEDULE_HEAD","dispatch does not match expected queue head")
             removed=queues[q].frames.pop_front(); active=f;offset=0;deficit[q]=credit-f.length;visit=1;dispatches++;
         end else if(active==null) begin
             if(queues[q].frames.size()==0) deficit[q]=0; else deficit[q]=credit;

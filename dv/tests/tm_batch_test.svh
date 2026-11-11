@@ -66,7 +66,7 @@ class tm_atomic_test extends uvm_test;
         if(bad) b.policy.abort_mark='{1,RX_ID_W'(port),DESC_ID_W'(desc),Q_ID_W'(0),CELL_ID_W'(0),CELL_COUNT_W'(0),CELL_COUNT_W'(1)};
         else begin
             b.policy.cell_alloc='{1,CELL_ID_W'(cell_id),DESC_ID_W'(desc)};
-            b.policy.commit='{1,DESC_ID_W'(desc),Q_ID_W'(0),info(port)};
+            b.policy.commit='{1,DESC_ID_W'(desc),Q_ID_W'(0),info(port)};b.policy.commit.info.head=CELL_ID_W'(cell_id);
         end
         return b;
     endfunction

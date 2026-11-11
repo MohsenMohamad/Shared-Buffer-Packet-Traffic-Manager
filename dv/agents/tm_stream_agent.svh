@@ -33,27 +33,40 @@ class tm_stream_driver extends uvm_driver #(tm_stream_item);
     virtual tm_stream_if vif;
     bit sink;
     function new(string name, uvm_component parent); super.new(name,parent); endfunction
+    int epoch=0;
     task run_phase(uvm_phase phase);
-        tm_stream_item x;
         if(sink) vif.ready=0; else begin vif.valid=0; vif.beat='0; end
-        forever begin
-            seq_item_port.get_next_item(x);
-            if(sink) begin
-                repeat(x.stall_cycles) begin @(negedge vif.clk); vif.ready=0; end
-                repeat(x.ready_cycles) begin @(negedge vif.clk); vif.ready=vif.rst_n; end
-            end else begin
-                foreach(x.beats[i]) begin
-                    repeat(i<x.gaps.size()?x.gaps[i]:0) begin @(negedge vif.clk); vif.valid=0; end
-                    while(!vif.rst_n) @(negedge vif.clk);
-                    @(negedge vif.clk); vif.valid=1; vif.beat=x.beats[i];
-                    do @(posedge vif.clk); while(vif.rst_n && !vif.ready);
-                    @(negedge vif.clk); vif.valid=0;
-                    if(!vif.rst_n) break; // reset cancels the current item
-                end
+        fork
+            forever begin
+                @(negedge vif.rst_n);epoch++;
+                if(sink) vif.ready=0;else vif.valid=0;
             end
-            seq_item_port.item_done();
-        end
+            forever begin
+                tm_stream_item x;
+                int item_epoch;
+                seq_item_port.get_next_item(x);
+                while(!vif.rst_n) @(negedge vif.clk);
+                item_epoch=epoch;
+                if(sink) begin
+                    for(int i=0;i<x.stall_cycles && item_epoch==epoch;i++) begin @(negedge vif.clk); vif.ready=0; end
+                    for(int i=0;i<x.ready_cycles && item_epoch==epoch;i++) begin @(negedge vif.clk); vif.ready=(item_epoch==epoch && vif.rst_n); end
+                end else begin
+                    foreach(x.beats[i]) begin
+                        repeat(i<x.gaps.size()?x.gaps[i]:0) begin @(negedge vif.clk); vif.valid=0; end
+                        if(item_epoch!=epoch) break;
+                        @(negedge vif.clk);
+                        if(item_epoch!=epoch || !vif.rst_n) break;
+                        vif.valid=1; vif.beat=x.beats[i];
+                        do @(posedge vif.clk); while(item_epoch==epoch && vif.rst_n && !vif.ready);
+                        @(negedge vif.clk); vif.valid=0;
+                        if(item_epoch!=epoch || !vif.rst_n) break;
+                    end
+                end
+                seq_item_port.item_done();
+            end
+        join
     endtask
+
 endclass
 
 class tm_stream_monitor extends uvm_monitor;

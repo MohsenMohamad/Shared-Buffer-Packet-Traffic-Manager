@@ -18,6 +18,7 @@ DEFECTS = {
     'ADMISSION': 'ADMISSION_PREDICATE',
     'SCHEDULE': 'SCHEDULE_HEAD',
     'STALE': 'BYTE_UNEXPECTED',
+    'CSR': 'CSR_RESOURCE',
 }
 
 
@@ -64,8 +65,8 @@ def foundation(run, args):
     argv = ['verilator', '--binary', '--timing', '--assert', '--coverage', '--trace-vcd',
             '--timescale', '1ns/1ps', '+define+UVM_NO_DPI', '--build-jobs', str(args.jobs),
             '--output-groups', '4', '--output-split', '20000', '--output-split-cfuncs', '500',
-            '-CFLAGS', '-O0', '+incdir+'+str(uvm_src), '+incdir+'+str(build.path)]
-    argv += ['+incdir+'+str(ROOT/p) for p in registered['include_dirs']]
+            '-CFLAGS', '-O0', '-I'+str(uvm_src), '-I'+str(build.path)]
+    argv += ['-I'+str(ROOT/p) for p in registered['include_dirs']]
     argv += [str(uvm_src/'uvm_pkg.sv')] + [str(ROOT/p) for p in registered['sources']]
     argv += ['--top-module', 'tm_foundation_top', '--Mdir', str(binary.parent)]
     step = build.execute(argv, timeout=args.build_timeout)
@@ -75,7 +76,7 @@ def foundation(run, args):
     if result=='PASS' and not binary.is_file():
         result, why = 'TOOL_ERROR', 'No executable produced'
     build.finish(result, why)
-    specs = [('positive',seed,None),('replay',seed,None),('alternate',seed%2147483645+2,None)]
+    specs = [('positive',seed,None),('replay',seed,None),('alternate',seed%2147483645+2,None),('small-quantum',seed,None)]
     specs += [(name.lower(),seed,name) for name in DEFECTS]
     signatures=[]
     for name,case_seed,defect in specs:
@@ -86,6 +87,8 @@ def foundation(run, args):
             case.finish('NOT_RUN','Foundation compilation did not qualify')
             continue
         command=[str(binary),f'+verilator+seed+{case_seed}','+UVM_NO_RELNOTES']
+        if name=='small-quantum':
+            command += ['+SMALL_QUANTUM']
         if defect:
             command += ['+MUT_'+defect, '+TRACE']
         step=case.execute(command,timeout=args.timeout,cwd=case.path)
@@ -108,7 +111,8 @@ def foundation(run, args):
                     case.data['metrics']={k:int(v) for k,v in re.findall(r'(\w+)=(\d+)',metrics[1])}
                     if min(case.data['metrics'].values())<=0:
                         raise ValueError('Zero transaction/checker execution count')
-                    signatures.append(hashlib.sha256((case.path/'transactions.jsonl').read_bytes()).hexdigest())
+                    if name!='small-quantum':
+                        signatures.append(hashlib.sha256((case.path/'transactions.jsonl').read_bytes()).hexdigest())
                     report=case.execute(['verilator_coverage','--report','summary',str(case.path/'coverage.dat')],timeout=args.timeout)
                     if report['result']!='PASS':
                         status,reason=report['result'],'Coverage report generation failed'

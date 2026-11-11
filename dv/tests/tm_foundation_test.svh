@@ -95,7 +95,8 @@ class tm_foundation_sequence extends uvm_sequence;
                     tm_bus_sequence resource_read=new;resource_read.read_only=1;resource_read.address=32'h24+32'(4*i);resource_read.start(e.axil.sequencer);
                 end
             end
-        joinsend(0,CELL_BYTES,0,24);send(0,CELL_BYTES+1,0,25);
+        join
+        send(0,CELL_BYTES,0,24);send(0,CELL_BYTES+1,0,25);
         send(0,MAX_PACKET_BYTES,0,26);
         send(0,9,255,27);send(0,9,0,28,1);
         repeat(1000) @(negedge e.observe.clk);
