@@ -50,11 +50,17 @@ package tm_cap_pkg;
         endfunction
         task run_phase(uvm_phase phase);
             tm_cap_item x;
+            int random_result;
             bit [31:0] signature=0;
             phase.raise_objection(this);
             v.rst_n=0;v.s_valid=0;v.s_data=0;v.m_ready=0;
             repeat(4) @(negedge v.clk);
             v.rst_n=1;
+            x=tm_cap_item::type_id::create("unsat");
+            random_result=x.randomize() with { qid == 99; };
+            if(random_result != 0)
+                `uvm_fatal("PROBE","unsatisfiable constraints accepted")
+            `uvm_info("PROBE","TM_CAP_UNSAT_PASS",UVM_NONE)
             repeat(64) begin
                 x=tm_cap_item::type_id::create("x");
                 if(x.randomize()!=1) `uvm_fatal("PROBE","randomization failed")

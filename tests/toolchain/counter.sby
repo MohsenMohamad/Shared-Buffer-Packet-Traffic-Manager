@@ -1,0 +1,22 @@
+[tasks]
+prove
+cover
+mutation
+
+[options]
+prove: mode prove
+cover: mode cover
+mutation: mode prove
+depth 20
+
+[engines]
+smtbmc z3
+
+[script]
+prove: read -formal -sv counter.sv
+cover: read -formal -sv counter.sv
+mutation: read -formal -sv -D MUTATE counter.sv
+prep -top counter
+
+[files]
+counter.sv

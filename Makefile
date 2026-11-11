@@ -1,3 +1,10 @@
-.PHONY: repo-check
-repo-check:
-	python3 tools/check_repository.py
+PYTHON ?= python3
+JOBS ?= 2
+RUN_ARGS ?=
+
+.PHONY: setup doctor repo-check lint test-unit test-uvm-smoke formal-smoke synth-smoke ci regression coverage benchmark synthesis sta
+setup:
+	bash tools/setup.sh --jobs $(JOBS)
+
+doctor repo-check lint test-unit test-uvm-smoke formal-smoke synth-smoke ci regression coverage benchmark synthesis sta:
+	$(PYTHON) tools/run.py $@ --jobs $(JOBS) $(RUN_ARGS)
