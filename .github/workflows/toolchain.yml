@@ -7,8 +7,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ci-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}-{1}', github.run_id, github.run_attempt) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   repository:
     uses: ./.github/workflows/repository.yml
@@ -20,6 +20,7 @@ jobs:
       CXX: g++-14
     outputs:
       artifact: toolchain-${{ github.run_id }}-${{ github.run_attempt }}
+      artifact-id: ${{ steps.handoff.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Ensure native build prerequisites
@@ -39,7 +40,7 @@ jobs:
             .deps/src/uvm/
             .deps/liberty.lib
       - name: Validate restored installation or build once on a cold miss
-        run: python3 tools/toolchain_cache.py prepare --jobs 2
+        run: python3 tools/toolchain_cache.py prepare --jobs 2 --restored-key "${{ steps.cache.outputs.cache-matched-key }}"
       - name: Read validated preparation outcome
         id: prepared
         run: |
@@ -52,14 +53,15 @@ jobs:
           assert report['result'] == 'PASS' and report['source'] in ('cold', 'cache')
           with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
               stream.write('source=' + report['source'] + '\n')
+              stream.write('cache-status=' + report['cache_status'] + '\n')
               revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
               stream.write('revision=' + revision + '\n')
           PYCODE
-      - name: Record ${{ steps.prepared.outputs.source }} preparation at ${{ steps.prepared.outputs.revision }}
+      - name: Record ${{ steps.prepared.outputs.source }} (${{ steps.prepared.outputs.cache-status }}) preparation at ${{ steps.prepared.outputs.revision }}
         run: cat .build/setup-cache/preparation.json
       - name: Save only a complete validated installation
         continue-on-error: true
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: ${{ success() && steps.cache.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           key: ${{ steps.identity.outputs.key }}
@@ -72,13 +74,18 @@ jobs:
         run: |
           mkdir -p .build/toolchain-transfer
           tar --zstd -cf .build/toolchain-transfer/toolchain.tar.zst .tools .deps/downloads .deps/src/uvm .deps/liberty.lib
+      - name: Record handoff retention fallback
+        run: |
+          echo "::notice::The ephemeral toolchain handoff expires after one day if cancellation or restricted permissions prevent cleanup. Diagnostic/result artifacts keep their own retention."
+          printf '%s\n' 'Toolchain handoff: one-day retention fallback if post-consumer cleanup cannot complete; diagnostic/result artifacts are preserved.' >> "$GITHUB_STEP_SUMMARY"
       - name: Transfer prepared installation
+        id: handoff
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: toolchain-${{ github.run_id }}-${{ github.run_attempt }}
           path: .build/toolchain-transfer/toolchain.tar.zst
           compression-level: 0
-          retention-days: 2
+          retention-days: 1
           if-no-files-found: error
       - name: Retain preparation provenance and diagnostics
         if: always()
@@ -149,3 +156,26 @@ jobs:
     uses: ./.github/workflows/uvm-foundation.yml
     with:
       toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+  cleanup-handoff:
+    name: cleanup-handoff
+    if: ${{ always() }}
+    needs: [prepare, capability, contracts, storage, csr, foundation]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Delete only this run's handoff; warn on one-day fallback
+        id: cleanup
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/cleanup_toolchain_artifact.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --run-id "$GITHUB_RUN_ID" \
+            --run-attempt "$GITHUB_RUN_ATTEMPT" \
+            --artifact-id "${{ needs.prepare.outputs.artifact-id }}"
+      - name: Handoff ${{ steps.cleanup.outputs.status }}
+        run: echo "Diagnostic and result artifacts are preserved."

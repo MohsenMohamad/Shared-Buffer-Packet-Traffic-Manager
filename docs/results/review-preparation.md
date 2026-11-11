@@ -2,7 +2,35 @@
 
 This stabilization change schedules follow-up work and gives each CI run one validated toolchain preparation producer. It changes no hardware, production API, packet interface, statistics scope or existing result JSON. P03 and later hardware remain paused pending stabilization and reevaluation.
 
-## Starting state and tested sources
+## Current CI review repair
+
+Continue PR #6 on `chore/review-preparation` from `3ec8bdadc6de5aaea4f4af4dbbdbaf5f691a0715`. Main remains `a473b8c535d02b50b23604047f1bae64638c89df`. The repair preserves the qualified dependency locks/setup, accepted planning/DV/evidence guidance, production RTL and existing P01/P02 JSON.
+
+The repaired caller cancels superseded PR runs but assigns every main/manual run and attempt a distinct group, protecting both active and older pending work. Installation identity excludes current runner/doctor code while retaining setup-imported code, locks, build flags, ABI and checkout-path inputs. Current validation still gates each restored producer and consumer.
+
+The handoff retains its artifact transfer with one-day retention. Only the post-consumer `cleanup-handoff` job grants `actions: write`; workflow, preparation and consumers retain the `contents: read` default. Cleanup checks the exact artifact ID, name, run and attempt and preserves all diagnostics/results. Missing permission, API failure or cancellation leaves a visible one-day fallback. Rejected caches warn with the key/reason and remain labeled cold/rejected. The guide requires a `CACHE_PREFIX` bump in the same PR when changed validation rejects previously compatible installations.
+
+### Local repair checks
+
+| Check | Result | Boundary |
+| --- | --- | --- |
+| Unit suite | PASS: 39 tests | Includes 12 cache, eight cleanup and five workflow-policy checks plus 14 existing runner cases. |
+| Current validator under an unchanged key | PASS: expected fixture rejection | A real Python subprocess executes the edited validator and rejects its old seal; no hardware qualification is implied. |
+| Cleanup selection/fallback | PASS | Fixtures cover exact deletion, wrong run/attempt/ID, diagnostics, missing token/output, HTTP 403, network failure and already-absent artifacts. No historical artifact is deleted by these tests. |
+| Concurrency and graph | PASS | Actual workflow expression checked for shared PR and unique active/pending main/manual groups; cleanup waits for all consumers even on failure. Local policy checks are not hosted main execution. |
+| Actionlint 1.7.12, repository and whitespace | PASS | Workflow syntax/permissions and repository contracts; hardware is unchanged. |
+
+These local tests ran on `3ec8bda` plus the uncommitted repair. Unit provenance is in `.build/runs/unit-2026-11-11T162629.665216+0000-0c10482e/summary.json`; logs/build details remain ignored artifacts. Reproduce with `make test-unit`, `make repo-check`, `work/actionlint -color` and `git diff --check`.
+
+### Hosted repair evidence
+
+Cold preparation and compatible reuse at the repaired revision are NOT_RUN at this report snapshot. They require two separately identified runs; historical successes below do not qualify these repairs. New run IDs, actual checkouts, cache outcomes, consumer validation and cleanup status will be recorded after observation.
+
+## Historical evidence before the CI review repair
+
+The following measurements and run records apply to the earlier implementation, through `3ec8bda`. They remain useful provenance, not execution evidence for the current repairs.
+
+### Starting state and tested sources
 
 The workspace was clean on branch `work`. After fetching origin, `chore/review-preparation` was created from `a473b8c535d02b50b23604047f1bae64638c89df`, integrated main containing P00/P01/P02/P06/P07 (PRs #1–#5). Guidance was committed and pushed separately as `cd6b8fd8e7f19b70175df89d45b3b765409ad7fd`; CI infrastructure followed in `820a9a3cde3a06bfb9ce56a118ae634a18e258bc`. Transfer-permission and hosted-bootstrap fixes are in `a24434319cb0717d7bb59b6f24b5a863418c7f96`. [PR #6](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/6) targets main and remains unmerged.
 
@@ -10,7 +38,7 @@ The first local cold/transfer study used the initial CI helper and permission fi
 
 No prior stage branch was continued and no existing workspace edits were overwritten. Existing P01/P02 JSON remains byte-for-byte unchanged; [historical retrieval guidance](../documentation.md#historical-p01p02-retrieval) preserves tested SHAs, dirty-source qualifications and PR/workflow associations.
 
-## Local executed results
+### Historical local executed results
 
 | Check | Result | Scope and measurements |
 | --- | --- | --- |
@@ -29,7 +57,7 @@ The initial local transfer without `tar -p` was correctly rejected after restric
 
 The installation is sealed before consumers run. Consumers never save a modified installation back into the shared cache. SBY/Yosys may create additional Python bytecode during tests; the strict pristine-payload inventory detects those additions on a later local validation. Six disposable post-test bytecode files were removed and pristine validation passed again; no tool source or sealed measurement was altered.
 
-## Tools and configuration
+### Historical tools and configuration
 
 Local host: Debian 13.6, Linux x86-64, glibc 2.41, GCC 14.2.0, Python 3.12.14. Actual doctor qualified Verilator 5.054, Yosys 0.52 at `fee39a3284c90249e1d9684cf6944ffbbcbb8f90`, SBY 0.71, Z3 4.13.3 and OpenSTA 2.0.17. The source-archive Verilator build reports an ancestor-checkout build suffix; dependency provenance is the locked upstream archive hash, not that suffix.
 
@@ -41,7 +69,7 @@ Local host: Debian 13.6, Linux x86-64, glibc 2.41, GCC 14.2.0, Python 3.12.14. A
 
 The local compatibility key is `tm-tools-v1-e61116da1ecde5a3ec56b91e51db82c422a725c649fd25ec8c1c7abd7fd16e9e`. It deliberately differs from Ubuntu hosted keys because host ABI and checkout layout differ. No dependency pins or existing hardware results were changed.
 
-## Hosted observations
+### Historical hosted observations
 
 | Run | PR head / actual prepared checkout | Observed result |
 | --- | --- | --- |
@@ -56,7 +84,7 @@ Compatible reuse then passed in [43040282009](https://github.com/MohsenMohamad/S
 
 Individual live-job log/artifact downloads returned HTTP 403; completed-run logs were retrievable and inspected. The new outcome/revision step also exposes validated source and actual checkout through the jobs API. PR caches do not establish main reuse; main is not merged or tested by this task.
 
-## Reproduction and raw artifacts
+### Historical reproduction and raw artifacts
 
 Use [the toolchain guide](../implementation/toolchain.md#one-ci-preparation-producer) for cold setup, cache scope and the hosted cold/hit/invalidation/consumer procedure. Commands executed locally include:
 

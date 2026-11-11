@@ -16,11 +16,12 @@ from evidence import ROOT, execute, sha
 # in compatibility rather than pretending that the payload is relocatable.
 INPUTS = ('tools/dependencies.json', 'tools/packages.lock.json',
           'tools/setup_toolchain.py', 'tools/setup.sh', 'tools/evidence.py',
-          'tools/doctor.py', 'tools/run.py', 'tools/toolchain_cache.py')
+          'tools/toolchain_cache.py')
 PAYLOAD = ('.tools/install', '.tools/sysroot', '.tools/activate.sh',
            '.tools/environment.json', '.tools/setup.json', '.deps/downloads',
            '.deps/src/uvm', '.deps/liberty.lib')
 MANIFEST = '.tools/cache-manifest.json'
+CACHE_PREFIX = 'tm-tools-v1-'
 BUILD_FLAGS = ('CC', 'CFLAGS', 'CXXFLAGS', 'CPPFLAGS', 'LDFLAGS', 'MAKEFLAGS')
 
 
@@ -44,7 +45,7 @@ def compatibility(root=ROOT):
 
 def cache_key(identity):
     data = json.dumps(identity, sort_keys=True, separators=(',', ':')).encode()
-    return 'tm-tools-v1-' + hashlib.sha256(data).hexdigest()
+    return CACHE_PREFIX + hashlib.sha256(data).hexdigest()
 
 
 def inventory(root=ROOT):
@@ -97,16 +98,32 @@ def validate(identity, root=ROOT):
     return checked_step([sys.executable, 'tools/run.py', 'doctor'], 'restore-doctor', 300, root)
 
 
-def prepare(identity, jobs, root=ROOT):
+def warning(message):
+    escaped = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+    print('::warning::' + escaped, flush=True)
+
+
+def prepare(identity, jobs, root=ROOT, restored_key=None):
     logs = root / '.build/setup-cache'
     logs.mkdir(parents=True, exist_ok=True)
-    report = dict(key=cache_key(identity), source='cold', result='TOOL_ERROR', steps=[])
+    report = dict(key=cache_key(identity), source='cold', cache_status='miss',
+                  restored_key=restored_key or None, result='TOOL_ERROR', steps=[])
+    had_candidate = bool(restored_key) or (root / MANIFEST).exists()
     try:
         try:
+            if restored_key and restored_key != report['key']:
+                raise ValueError('Restored Actions key differs from installation identity')
             report['steps'].append(validate(identity, root))
             report['source'] = 'cache'
+            report['cache_status'] = 'accepted'
         except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:
-            report['restore_rejected'] = str(error)
+            if had_candidate:
+                report['cache_status'] = 'rejected'
+                report['rejected_key'] = restored_key or report['key']
+                report['restore_rejected'] = str(error)
+                warning(f'Rejected toolchain cache {report["rejected_key"]}: {error}. '
+                        'Rebuilding cold, not reusing this entry. If the immutable exact '
+                        'entry remains bad, bump CACHE_PREFIX before expecting healthy reuse.')
             # CI owns these ignored directories. Discard partial/stale build
             # trees as well as stamps, so a cold rebuild cannot reuse old objects.
             for name in ('.tools', '.deps'):
@@ -123,6 +140,9 @@ def prepare(identity, jobs, root=ROOT):
             seal(identity, root)
         report['result'] = 'PASS'
         print(f'Toolchain {report["source"]}: PASS ({report["key"]})', flush=True)
+    except Exception as error:
+        report['first_failure'] = str(error)
+        raise
     finally:
         (logs / 'preparation.json').write_text(json.dumps(report, indent=2) + '\n')
     return report
@@ -133,6 +153,7 @@ def main():
     parser.add_argument('action', choices=('key', 'prepare', 'validate'))
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--github-output', type=Path)
+    parser.add_argument('--restored-key', help='Actual key returned by Actions cache restore')
     args = parser.parse_args()
     if not 1 <= args.jobs <= 8:
         parser.error('--jobs must be in 1..8')
@@ -144,7 +165,7 @@ def main():
             with args.github_output.open('a') as stream:
                 stream.write('key=' + key + '\n')
     elif args.action == 'prepare':
-        prepare(identity, args.jobs)
+        prepare(identity, args.jobs, restored_key=args.restored_key)
     else:
         validate(identity)
         print('Restored toolchain integrity, compatibility and doctor: PASS')

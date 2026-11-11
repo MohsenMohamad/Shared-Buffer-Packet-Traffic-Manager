@@ -1,5 +1,7 @@
 """Reject stale/partial installations and enforce a single producer boundary."""
 import copy
+from contextlib import redirect_stdout
+import io
 import json
 import os
 import subprocess
@@ -103,6 +105,76 @@ class CacheTests(unittest.TestCase):
             self.assertEqual(cache.prepare(self.identity, 2, self.root)['source'], 'cache')
         self.assertEqual(calls, ['cold-setup', 'cold-doctor', 'restore-doctor'])
 
+    def test_current_validator_executes_without_changing_installation_key(self):
+        for name in cache.INPUTS:
+            path = self.root / name
+            path.parent.mkdir(exist_ok=True, parents=True)
+            path.write_text(name)
+        runtime = self.root / 'libstdc++.so.6'
+        runtime.write_bytes(b'ABI')
+        def command(argv):
+            return str(runtime) if argv[-1].startswith('-print-file-name') else 'qualified'
+        validator = self.root / 'tools/doctor.py'
+        runner = self.root / 'tools/run.py'
+        runner.write_text('import sys\nsys.dont_write_bytecode = True\n'
+                          'assert sys.argv[1:] == ["doctor"]\nimport doctor\n')
+        validator.write_text('from pathlib import Path\n'
+                             'Path("validator-marker").write_text("initial")\n')
+        with patch.object(cache, 'command', side_effect=command):
+            identity = cache.compatibility(self.root)
+            self.populate()
+            cache.seal(identity, self.root)
+            cache.validate(identity, self.root)
+            self.assertEqual((self.root / 'validator-marker').read_text(), 'initial')
+            runner.write_text(runner.read_text() + '# another registered suite\n')
+            validator.write_text('from pathlib import Path\n'
+                                 'Path("validator-marker").write_text("current")\n'
+                                 'raise SystemExit(9)\n')
+            self.assertEqual(cache.cache_key(cache.compatibility(self.root)),
+                             cache.cache_key(identity))
+            # The unchanged installation still passes integrity, but the current
+            # validator must run and reject it rather than trust its old seal.
+            cache.check_payload(identity, self.root)
+            with self.assertRaisesRegex(RuntimeError, 'restore-doctor: TOOL_ERROR'):
+                cache.validate(identity, self.root)
+            self.assertEqual((self.root / 'validator-marker').read_text(), 'current')
+
+    def test_exact_hit_without_manifest_warns_and_is_reported_as_cold(self):
+        key = cache.cache_key(self.identity)
+        def step(argv, stem, timeout, root):
+            if stem == 'cold-setup':
+                self.populate()
+            return {'result': 'PASS'}
+        console = io.StringIO()
+        with redirect_stdout(console), patch.object(cache, 'checked_step', side_effect=step):
+            report = cache.prepare(self.identity, 2, self.root, restored_key=key)
+        self.assertEqual((report['source'], report['cache_status']), ('cold', 'rejected'))
+        self.assertEqual(report['rejected_key'], key)
+        self.assertIn('cache-manifest.json', report['restore_rejected'])
+        self.assertIn('::warning::Rejected toolchain cache ' + key, console.getvalue())
+        self.assertIn('CACHE_PREFIX', console.getvalue())
+        cache.check_payload(self.identity, self.root)
+
+    def test_failed_build_is_never_sealed(self):
+        with patch.object(cache, 'checked_step', side_effect=RuntimeError('build failed')):
+            with self.assertRaisesRegex(RuntimeError, 'build failed'):
+                cache.prepare(self.identity, 2, self.root)
+        self.assertFalse((self.root / cache.MANIFEST).exists())
+        report = json.loads((self.root / '.build/setup-cache/preparation.json').read_text())
+        self.assertEqual(report['result'], 'TOOL_ERROR')
+        self.assertEqual(report['first_failure'], 'build failed')
+
+    def test_generation_bump_and_warning_escaping(self):
+        key = cache.cache_key(self.identity)
+        with patch.object(cache, 'CACHE_PREFIX', 'tm-tools-v2-'):
+            self.assertNotEqual(cache.cache_key(self.identity), key)
+            self.assertTrue(cache.cache_key(self.identity).startswith('tm-tools-v2-'))
+        console = io.StringIO()
+        with redirect_stdout(console):
+            cache.warning('bad%input\n::error::not a second command\r')
+        self.assertEqual(console.getvalue(),
+                         '::warning::bad%25input%0A::error::not a second command%0D\n')
+
     def test_failed_doctor_cannot_seal_and_consumer_never_builds(self):
         self.populate()
         cache.seal(self.identity, self.root)
@@ -134,7 +206,9 @@ class CacheTests(unittest.TestCase):
                 self.populate()
             return {'result': 'PASS'}
         with patch.object(cache, 'checked_step', side_effect=step) as mocked:
-            self.assertEqual(cache.prepare(self.identity, 2, self.root)['source'], 'cold')
+            report = cache.prepare(self.identity, 2, self.root)
+            self.assertEqual(report['source'], 'cold')
+            self.assertEqual(report['cache_status'], 'rejected')
             self.assertEqual(mocked.call_count, 2)
         cache.check_payload(self.identity, self.root)
 
