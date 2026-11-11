@@ -1,11 +1,22 @@
-## Behavior
+<!-- Follow ../docs/documentation.md. Remove these instructions and unused sections before posting. Adapt the structure to the size of the change. -->
 
-Describe the problem and resulting behavior. Link the work item or requirement.
+## Summary
+
+<!-- Explain the concrete problem and resulting behavior. Link the work item where relevant. -->
+
+## Changes
+
+<!-- A few focused bullets for important changes. Omit when the summary is sufficient. -->
 
 ## Validation
 
-List actual commands, profiles/seeds and outcomes. Link relevant artifacts.
+<!-- Summarize actual results by capability or behavior. Use the table when helpful; a sentence is enough for one check. Keep full commands, revisions, seeds, digests and detailed metrics in the linked results report. Label expected seeded-defect detections explicitly. -->
 
-## Limits
+| Check | Result | Essential qualification |
+| --- | --- | --- |
 
-State remaining failures, unsupported/unexecuted checks or changed assumptions.
+<!-- Link the actual supporting report or CI run. Do not leave an empty table, placeholder rows or unsupported claims. -->
+
+## Limitations
+
+<!-- State material boundaries, unsupported or unexecuted checks and outstanding failures. Omit when none apply. -->

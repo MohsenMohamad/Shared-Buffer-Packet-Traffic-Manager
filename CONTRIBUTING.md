@@ -2,7 +2,7 @@
 
 Work from the latest integrated default branch and select one ready task from the implementation plan. Use a short-lived topic branch. Confirm its dependencies and relevant contracts before coding. Deliver one cohesive change with appropriate tests and current documentation.
 
-PR descriptions state the concrete behavior changed, why it is needed, commands/configurations exercised, their actual outcomes and remaining limits. Report unsupported or unexecuted cases explicitly. A reviewer evaluates the diff and evidence against the contract. Fix consequential findings and rerun affected checks before integration.
+PR descriptions lead with the concrete problem and resulting behavior. Summarize important changes and validation outcomes, keep essential qualifications visible, and link to the supporting results report for exact commands, configurations and execution evidence. Report unsupported or unexecuted cases explicitly. Follow the [documentation conventions](docs/documentation.md) and the PR template. A reviewer evaluates the diff and evidence against the contract. Fix consequential findings and rerun affected checks before integration.
 
 Keep durable decisions in `docs/decisions/` only when an important alternative, trade-off or compatibility boundary needs preservation. Use an issue or a compact task handoff for a reproducible unresolved problem. Raw tool logs and development transcripts do not belong in the permanent documentation.
 

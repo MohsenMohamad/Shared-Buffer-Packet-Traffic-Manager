@@ -11,7 +11,7 @@ Implement the traffic-manager contracts in `docs/spec/`. Use `docs/spec/README.m
 
 ## Verification and delivery
 
-Run checks appropriate to the changed behavior and report exact commands, profile/seed and result. `make repo-check` checks the repository contract only; it does not validate hardware. A missing executable, empty test selection, ignored construct, timeout or unavailable capability is not PASS. Keep production RTL, testbench, formal and synthesis source lists separate.
+Run checks appropriate to the changed behavior. Record exact commands, profiles/seeds and results in the supporting results report; summarize outcomes and essential qualifications in the PR. `make repo-check` checks the repository contract only; it does not validate hardware. A missing executable, empty test selection, ignored construct, timeout or unavailable capability is not PASS. Keep production RTL, testbench, formal and synthesis source lists separate.
 
 Keep build outputs in ignored directories. Preserve important decisions in a short topic-specific decision record; put a reproducible bug/test/fix summary in the PR or issue. Add a compact task handoff only when work actually remains, naming the current revision, known facts, blockers and next command. Do not accumulate conversation transcripts or per-agent diaries.
 
@@ -24,3 +24,9 @@ Do not push directly to the default branch, merge PRs, rewrite shared history or
 - Review reservation/physical ownership and simultaneous updates against pre-state admission plus merged deltas; flag leaks, double frees and premature reuse.
 - Check that reference data originate from observed handshakes and that trace/status assertions are independently cross-checked.
 - Check the actual scope of verification evidence. Local proofs, two-state simulation and positive pre-layout slack must not be reported as broader validation.
+
+## Documentation and PR presentation
+
+Follow [documentation conventions](docs/documentation.md) for repository documents, PR bodies and delivery summaries. Lead with the behavior or result; give each paragraph, bullet or table row one purpose. Keep summaries, contracts, reproduction instructions and raw evidence separate.
+
+Use the PR template as a default. Keep validation concise, link to a focused report for full commands, revisions, seeds, digests and measurements, and keep material qualifications beside the result. Label expected seeded-defect detections explicitly. Preserve precise requirements and proof boundaries; never shorten by omitting necessary behavior or limitations. Check Markdown structure and links before delivery. Do not accumulate debugging chronology or duplicate evidence across documents.
