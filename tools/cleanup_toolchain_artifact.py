@@ -47,10 +47,9 @@ def cleanup(repository, run_id, attempt, artifact_id, token):
         api_request('DELETE', path, token)
         report.update(status='deleted', reason='Deleted only this run/attempt handoff; diagnostics retained.')
     except HTTPError as error:
-        if error.code == 404:
-            report.update(status='already-absent', reason='Selected handoff is already absent.')
-        else:
-            report['reason'] = f'GitHub API HTTP {error.code}; cleanup not confirmed'
+        # GitHub can conceal inaccessible private resources behind HTTP 404.
+        # Do not turn unavailable metadata into a successful-deletion claim.
+        report['reason'] = f'GitHub API HTTP {error.code}; cleanup not confirmed'
     except (OSError, URLError, ValueError) as error:
         report['reason'] = f'Cleanup not confirmed: {error}'
     return report

@@ -82,10 +82,10 @@ class CleanupTests(unittest.TestCase):
             self.assertEqual(self.clean(artifact_id='../100')['status'], 'retention-fallback')
             api.assert_not_called()
 
-    def test_already_absent_is_an_idempotent_noop(self):
+    def test_404_does_not_claim_absence_when_access_may_be_restricted(self):
         with patch.object(handoff, 'api_request', side_effect=HTTPError(
                 'https://api.github.com', 404, 'Not Found', {}, None)) as api:
-            self.assertEqual(self.clean()['status'], 'already-absent')
+            self.assertEqual(self.clean()['status'], 'retention-fallback')
             self.assertEqual(api.call_count, 1)
 
     def test_summary_and_output_record_fallback(self):
