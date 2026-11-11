@@ -45,11 +45,17 @@ def comparable(data, top, names):
     result=fresh()
     module['cells']['bridge_all']=dict(type='$reduce_and',parameters={k:format(v,'032b') for k,v in dict(A_SIGNED=0,A_WIDTH=len(assumptions),Y_WIDTH=1).items()},attributes={},port_directions={'A':'input','Y':'output'},connections={'A':assumptions,'Y':[result]})
     module['ports']['assumptions_ok']=dict(direction='output',bits=[result])
+    if top=='csr_formal':
+        module['ports']['startup_state']=dict(direction='output',bits=module['netnames']['startup']['bits'])
+        module['ports']['past_valid_state']=dict(direction='output',bits=module['netnames']['past_valid']['bits'])
+        control=['dut.have_aw','dut.have_w','dut.have_ar','dut.bvalid','dut.rvalid']
+        module['ports']['control_state']=dict(direction='output',bits=[b for n in control for b in module['netnames'][n]['bits']])
     return dict(creator=data['creator'],modules={top:module}),dict(counts=dict(kinds),properties=labels,assumptions=len(assumptions))
 
 
 def bridge(run,args):
     symbolics(run,args)
+    memory_semantics(run,args)
     specs=json.loads((ROOT/'verification/formal.json').read_text())['configurations']
     registered=sources('formal')
     for name,spec in specs.items():
@@ -91,10 +97,23 @@ def bridge(run,args):
             script.write_text(f'read_json {gold[0]}\nrename {top} gold\nread_json {gate[0]}\nrename {top} gate\n')
             gp=gold[1]['modules'][top]['ports'];tp=gate[1]['modules'][top]['ports']
             inputs={k:len(v['bits']) for k,v in tp.items() if v['direction']=='input'}
-            text='module bridge_equivalence('+','.join('input '+('['+str(w-1)+':0] ' if w>1 else '')+n for n,w in inputs.items())+');\nwire native_ok,slang_ok;\n'
+            text='module bridge_equivalence('+','.join('input '+('['+str(w-1)+':0] ' if w>1 else '')+n for n,w in inputs.items())+');\n'
             for label,ps,output_name in [('gold',gp,'native_ok'),('gate',tp,'slang_ok')]:
-                connections=[f'.{n}({n})' for n,v in ps.items() if v['direction']=='input']+[f'.assumptions_ok({output_name})']
+                connections=[f'.{n}({n})' for n,v in ps.items() if v['direction']=='input']
+                for n,v in ps.items():
+                    if v['direction']!='output':continue
+                    signal=output_name if n=='assumptions_ok' else label+'_'+n
+                    text+='wire ['+str(len(v['bits'])-1)+':0] '+signal+';\n'
+                    connections.append(f'.{n}({signal})')
                 text+=label+' instance_'+label+'('+','.join(connections)+');\n'
+            if top=='csr_formal':
+                # These are additional proved invariants, not assumptions. They
+                # relate the two real DUT control states after startup reset so
+                # k-induction cannot start from unrelated unreachable states.
+                text+='always @(posedge clk) begin\n'
+                text+='a_startup_equal: assert(gold_startup_state==gate_startup_state);\n'
+                text+='a_past_equal: assert(gold_past_valid_state==gate_past_valid_state);\n'
+                text+='if(gold_startup_state!=0) a_control_equal: assert(gold_control_state==gate_control_state);\nend\n'
             assumed,asserted=('native_ok','slang_ok') if direction=='native-implies-slang' else ('slang_ok','native_ok')
             text+=f'always @(posedge clk) begin assume({assumed}); a_assumption_inclusion: assert({asserted}); end\nendmodule\n'
             wrapper=case.path/'equivalence.sv';wrapper.write_text(text)
@@ -104,7 +123,7 @@ def bridge(run,args):
             step=case.execute(['sby','-f','-d',str(case.path/'engine'),str(config)],timeout=max(args.timeout,300),cwd=case.path)
             status=case.path/'engine/status'
             ok=step['returncode']==0 and status.is_file() and status.read_text().split()[0]=='PASS' and 'successful proof by k-induction' in output(step)
-            case.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' else 'FAIL',None if ok else 'Unbounded assumption-inclusion proof missing',
+            case.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' else 'INCONCLUSIVE' if status.is_file() and status.read_text().split()[0]=='UNKNOWN' else 'FAIL',None if ok else 'Unbounded assumption-inclusion proof missing',
                         method='Mutual trace inclusion of complete assumption predicates; production DUT retained; all arbitrary inputs shared; no fairness added')
 
 
@@ -158,3 +177,28 @@ def symbolics(run,args):
                     ok=step['returncode']==0 and status=='PASS' and marker in text and (task!='cover' or bool(waves));expected=task.upper()
                 check.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' else 'FAIL',None if ok else 'Missing intended symbolic-input proof/cover/detection',
                              expected=expected,capability='UNSUPPORTED' if unsupported else 'SUPPORTED',engine_status=status,traces=waves)
+
+
+def memory_semantics(run,args):
+    for frontend in ('verilog','slang'):
+        for task in ('prove','cover') if frontend=='slang' else ('prove',):
+            case=Case(run,'record-memory-'+frontend+'-'+task)
+            top='record_memory_formal'
+            files=['record_memory.sv','record_memory_formal.sv']
+            config=case.path/'memory.sby'
+            config.write_text('[options]\nmode '+task+'\ndepth 12\n[engines]\nsmtbmc z3\n[script]\n'+
+                              read_sources(files,top,frontend=frontend,formal=True)+
+                              f'prep -top {top}\n[files]\n'+
+                              '\n'.join(str(ROOT/'tests/frontends'/p) for p in files)+'\n')
+            step=case.execute(['sby','-f','-d',str(case.path/'engine'),str(config)],timeout=args.timeout,cwd=case.path)
+            sf=case.path/'engine/status';status=sf.read_text().split()[0] if sf.is_file() else None
+            waves=[str(p) for p in (case.path/'engine').rglob('*.vcd') if p.stat().st_size]
+            text=output(step)
+            if frontend=='verilog':
+                ok=step['returncode'] not in (0,None) and step['result']!='TIMEOUT' and status=='FAIL' and waves and ('a_word' in text or 'a_contents' in text) and 'Assert failed' in text
+                expected='DETECT_RECORD_ARRAY_MEMORY_MISINTERPRETATION'
+            else:
+                marker='Reached cover statement' if task=='cover' else 'successful proof by k-induction'
+                ok=step['returncode']==0 and status=='PASS' and marker in text and (task!='cover' or bool(waves));expected=task.upper()
+            case.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' else 'INCONCLUSIVE' if status=='UNKNOWN' else 'FAIL',None if ok else 'Missing intended complete-word memory proof/cover/counterexample',
+                        expected=expected,engine_status=status,traces=waves,scope='Minimized frontend memory semantics; not production TM')

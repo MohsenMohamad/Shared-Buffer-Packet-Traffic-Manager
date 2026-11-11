@@ -67,6 +67,24 @@ def audit(run, args):
                 case.finish('FAIL' if bad else 'PASS','Unexpected latch/memory structure' if bad else None,**fields)
             else:
                 case.finish('PASS')
+    if args.frontend=='slang':
+        from registry import profile
+        from contracts import INVALID
+        for name in ('type_parameter','named_widths'):
+            files=[generated/'tm_fixed.sv']+[generated/p for p in manifest[name]]+[generated/name/'probe_unit.sv']
+            configurations=[(p,profile(p),False) for p in ('F0','F1','I0','I1','E0','E1')]
+            configurations += [('invalid-'+n,dict(profile('E0'),**delta),True) for n,delta in INVALID.items()]
+            for label,params,invalid in configurations:
+                case=Case(run,'representation-'+name+'-'+label)
+                case.data.update(parameters=params,scope='Disposable production FIFO/CSR/statistics profile elaboration; no integrated TM')
+                script=case.path/'elaboration.ys'
+                script.write_text(read_sources(files,'probe_unit',[generated,ROOT/'rtl/include'],params=params,frontend='slang'))
+                step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=args.timeout)
+                if invalid:
+                    ok=step['returncode'] not in (0,None) and step['result']!='TIMEOUT' and 'TM_INVALID_CONFIGURATION' in output(step)
+                    case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing intended invalid representation configuration rejection',expected='INVALID_ELABORATION')
+                else:
+                    case.finish(step['result'],step['first_failure'])
     # Run the actual production-derived behavior on two heterogeneous instances.
     for name in ('ansi_vectors','type_parameter','named_widths','features'):
         case=Case(run,'frontend-simulation-'+name)
@@ -83,3 +101,23 @@ def audit(run, args):
             case.finish(step['result'] if step['result']!='PASS' else 'TOOL_ERROR','Missing frontend behavior executable')
         else:
             case.finish(*completed(case.execute([str(binary)],cwd=case.path,timeout=args.timeout),marker))
+
+
+def representation_formal(run,args):
+    """Exercise richer headers/types on copies of the real production modules."""
+    from copy import copy
+    from formal_storage import formal_rtl
+    case=Case(run,'representation-generate')
+    generated=run.path/'generated'
+    step=case.execute([sys.executable,str(BASE/'generate.py'),'--repo-root',str(ROOT),'--output',str(generated)])
+    case.finish(step['result'],step['first_failure'])
+    if step['result']!='PASS':return
+    candidate=generated/'type_parameter'
+    fifo=candidate/'tm_axis_rx_fifo.sv'
+    text=fifo.read_text();target='logic [BEAT_W-1:0] storage [0:RX_FIFO_DEPTH-1];'
+    if text.count(target)!=1:raise ValueError('Ambiguous FIFO record-memory transformation')
+    fifo.write_text(text.replace(target,'beat_t storage [0:RX_FIFO_DEPTH-1];'))
+    proof_args=copy(args)
+    proof_args.profile='E0';proof_args.test=['fifo2','fifo4','csr'];proof_args.seed=None
+    proof_args.frontend='slang';proof_args.candidate_root=candidate
+    formal_rtl(run,proof_args)

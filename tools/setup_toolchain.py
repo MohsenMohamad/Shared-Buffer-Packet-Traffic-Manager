@@ -106,7 +106,7 @@ def main():
     # Relocate only packaged build-tool metadata, retaining license/doc files.
     mappings = {'/usr/share/autoconf': str(sysroot / 'usr/share/autoconf'),
                 '/usr/share/automake-1.17': str(sysroot / 'usr/share/automake-1.17'),
-                '/usr/share/aclocal-1.17': str(sysroot / 'usr/share/aclocal-1.17')}
+                '/usr/share/aclocal-': str(sysroot / 'usr/share/aclocal-')}
     for directory in ('usr/bin', 'usr/share/autoconf', 'usr/share/automake-1.17'):
         for path in (sysroot / directory).rglob('*'):
             if path.is_file() and not path.is_symlink():
@@ -162,6 +162,12 @@ def main():
                GIT_CEILING_DIRECTORIES=str(src),
                PKG_CONFIG_LIBDIR=str(sysroot / 'usr/lib/x86_64-linux-gnu/pkgconfig'),
                PKG_CONFIG_SYSROOT_DIR=str(sysroot))
+    for key, tool in {'AUTOCONF':'autoconf', 'AUTOHEADER':'autoheader', 'AUTORECONF':'autoreconf'}.items():
+        env[key] = str(sysroot / 'usr/bin' / tool)
+    env['ACLOCAL'] = str(prefix / 'bin/aclocal')
+    env['AUTOMAKE'] = str(prefix / 'bin/automake')
+    env['CPLUS_INCLUDE_PATH'] = str(sysroot / 'usr/include')
+    env['C_INCLUDE_PATH'] = str(sysroot / 'usr/include')
     env['CC'] = shutil.which(env.get('CC', 'gcc'), path=host_path) or env.get('CC', 'gcc')
     env['CXX'] = shutil.which(env.get('CXX', 'g++'), path=host_path) or env.get('CXX', 'g++')
     records = []
@@ -190,11 +196,11 @@ def main():
          '-DYOSYS_WITHOUT_LIBFFI=ON', '-DYOSYS_WITHOUT_TCL=ON', '-DYOSYS_WITH_PYTHON=OFF',
          '-DYOSYS_SLANG_REVISION=' + deps['sv_elab']['commit'], '-DSLANG_REVISION=' + deps['slang']['commit'],
          '-DSLANG_INCLUDE_TOOLS=OFF', '-DSLANG_INCLUDE_TESTS=OFF', '-DSLANG_INCLUDE_INSTALL=OFF'])
-    step('yosys-build', ['cmake', '--build', str(yosys_build), '--target', 'yosys', 'yosys-abc', '-j', str(args.jobs)], timeout=7200)
+    step('yosys-build', ['cmake', '--build', str(yosys_build), '--target', 'yosys', 'yosys-abc', 'yosys-filterlib', '-j', str(args.jobs)], timeout=7200)
     step('yosys-install', ['cmake', '--install', str(yosys_build)])
     for name, argv in [('autoconf', ['autoconf']), ('configure', ['./configure', '--prefix=' + str(prefix)]),
                        ('build', ['make', '-C', 'src', '-j' + str(args.jobs), 'opt']),
-                       ('install', ['make', 'install-all', 'VL_INST_PUBLIC_BIN_FILES=verilator_bin verilator_coverage_bin'])]:
+                       ('install', ['make', 'installbin', 'installredirect', 'installdata', 'VL_INST_PUBLIC_BIN_FILES=verilator_bin verilator_coverage_bin'])]:
         step('verilator-' + name, argv, src / 'verilator')
     shutil.copytree(src / 'click/src/click', prefix / 'share/python3/click', dirs_exist_ok=True)
     (prefix / 'share/licenses/click').mkdir(parents=True, exist_ok=True)
@@ -215,7 +221,9 @@ def main():
     step('cudd-install', ['make', 'install'], src / 'cudd')
     eigen_build = logs / 'eigen'
     step('eigen-configure', ['cmake', '-S', str(src / 'eigen'), '-B', str(eigen_build), *common,
-                            '-DBUILD_TESTING=OFF', '-DEIGEN_BUILD_DOC=OFF', '-DCMAKE_EXPORT_PACKAGE_REGISTRY=OFF'])
+                            '-DBUILD_TESTING=OFF', '-DEIGEN_BUILD_TESTING=OFF', '-DEIGEN_BUILD_DOC=OFF',
+                            '-DEIGEN_BUILD_BLAS=OFF', '-DEIGEN_BUILD_LAPACK=OFF', '-DEIGEN_BUILD_DEMOS=OFF',
+                            '-DCMAKE_EXPORT_PACKAGE_REGISTRY=OFF'])
     step('eigen-install', ['cmake', '--install', str(eigen_build)])
     sta_build = logs / 'opensta'
     step('opensta-configure', ['cmake', '-S', str(src / 'opensta'), '-B', str(sta_build), *common,
@@ -223,6 +231,8 @@ def main():
          '-DCUDD_INCLUDE=' + str(prefix / 'include'), '-DEigen3_DIR=' + str(prefix / 'share/eigen3/cmake'),
          '-DTCL_LIBRARY=' + str(sysroot / 'usr/lib/x86_64-linux-gnu/libtcl8.6.so'),
          '-DTCL_INCLUDE_PATH=' + str(sysroot / 'usr/include/tcl8.6'),
+         '-DTCL_HEADER=' + str(sysroot / 'usr/include/tcl8.6/tcl.h'),
+         '-DFLEX_INCLUDE_DIR=' + str(sysroot / 'usr/include'),
          '-DTCL_TCLSH=' + str(sysroot / 'usr/bin/tclsh8.6'),
          '-DZLIB_LIBRARY=' + str(sysroot / 'usr/lib/x86_64-linux-gnu/libz.so.1'),
          '-DZLIB_INCLUDE_DIR=' + str(sysroot / 'usr/include')])
