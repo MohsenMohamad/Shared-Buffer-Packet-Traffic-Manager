@@ -16,15 +16,23 @@ The handoff retains its artifact transfer with one-day retention. Only the post-
 | --- | --- | --- |
 | Unit suite | PASS: 39 tests | Includes 12 cache, eight cleanup and five workflow-policy checks plus 14 existing runner cases. |
 | Current validator under an unchanged key | PASS: expected fixture rejection | A real Python subprocess executes the edited validator and rejects its old seal; no hardware qualification is implied. |
-| Cleanup selection/fallback | PASS | Fixtures cover exact deletion, wrong run/attempt/ID, diagnostics, missing token/output, HTTP 403, network failure and already-absent artifacts. No historical artifact is deleted by these tests. |
+| Cleanup selection/fallback | PASS | Fixtures cover exact deletion, wrong run/attempt/ID, diagnostics, missing token/output, HTTP 403/404 and network failure. An inaccessible artifact is not claimed absent. No historical artifact is deleted by these tests. |
 | Concurrency and graph | PASS | Actual workflow expression checked for shared PR and unique active/pending main/manual groups; cleanup waits for all consumers even on failure. Local policy checks are not hosted main execution. |
 | Actionlint 1.7.12, repository and whitespace | PASS | Workflow syntax/permissions and repository contracts; hardware is unchanged. |
 
-These local tests ran on `3ec8bda` plus the uncommitted repair. Unit provenance is in `.build/runs/unit-2026-11-11T162629.665216+0000-0c10482e/summary.json`; logs/build details remain ignored artifacts. Reproduce with `make test-unit`, `make repo-check`, `work/actionlint -color` and `git diff --check`.
+The final local 39-test suite ran on `3f29870f0fa81c25ebd95beee5c936713d21e9c3` with the results-report edit dirty, after the conservative HTTP 404 refinement. Unit provenance is in `.build/runs/unit-2026-11-11T164429.702164+0000-e39c7e34/summary.json`; logs/build details remain ignored artifacts. Reproduce with `make test-unit`, `make repo-check`, `work/actionlint -color` and `git diff --check`.
 
 ### Hosted repair evidence
 
-Cold preparation and compatible reuse at the repaired revision are NOT_RUN at this report snapshot. They require two separately identified runs; historical successes below do not qualify these repairs. New run IDs, actual checkouts, cache outcomes, consumer validation and cleanup status will be recorded after observation.
+| Run | PR head / actual prepared checkout | Observed result |
+| --- | --- | --- |
+| Cold [43059337631](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43059337631) | Head `9099f29a4eac183dd7ce3ce06d9a74ba5f0c04db`; checkout `df1bfc08bce1fce8303819527e85e2f6ec0a59e3` | PASS: all 11 jobs, cold/miss preparation, all eight consumer validations and scoped cleanup. |
+
+The producer completed in 280 seconds and saved `tm-tools-v1-ef4ae20c7122a9f78378ae3323566cf85738c3847bd85a741fd3115b79145846`. The tested checkout tree `488e0ab738c80b28e071ce1bfbf5e22db9a9c446` equals the PR head tree. Current production runner/doctor validation code is unchanged; the installation-identity change, not a tool upgrade, forced this cold miss.
+
+Before cleanup, GitHub metadata identified handoff `13872922733` as `toolchain-43059337631-1` with one-day expiry. After all consumers settled, cleanup job `130666703844` reported `Handoff deleted`. The run's artifact list no longer contains that handoff and retains all nine preparation/result artifacts, including preparation `13872393375`, with 14-day expiry. Historical handoff `13863779897` from run `43040782624` remains present with its original expiry; it was not swept.
+
+A separate compatible-reuse run is NOT_RUN at this snapshot. It must be identified independently; this cold run and historical successes below cannot demonstrate current reuse. The next run also includes the HTTP 404 fallback refinement from `3f29870f0fa81c25ebd95beee5c936713d21e9c3`; installation inputs and current production validator files are byte-identical to the cold run. Main/manual queue isolation and restricted-token cleanup behavior are covered by focused local policy/failure fixtures; hosted main/manual queueing and a deliberately restricted-token run are not claimed.
 
 ## Historical evidence before the CI review repair
 
