@@ -338,7 +338,7 @@ def main(argv=None):
     from doctor import qualify
     from formal_bridge import bridge
     from frontend_qualification import audit as frontend_audit
-    gates = dict(bridge=bridge, frontends=frontend_audit, doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth)
+    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge)
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
     error = None

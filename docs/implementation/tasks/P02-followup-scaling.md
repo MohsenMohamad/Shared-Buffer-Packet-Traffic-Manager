@@ -2,7 +2,7 @@
 
 ## Objective and prerequisites
 
-Characterize the actual integrated P02 allocator now, completing this follow-up before P08. Dependencies: [P02](P02-storage-primitives.md). Preserve the allocator and production APIs during this investigation; propose any replacement as separate reviewed work.
+Characterize the actual integrated P02 allocator now, completing this follow-up before P08. Dependencies: [P02](P02-storage-primitives.md) and the [qualified representation follow-up](P01-followup-representation.md), after the [P00 refresh](P00-followup-modern-toolchain.md). Preserve the allocator and production APIs during this investigation; propose any replacement as separate reviewed work.
 
 ## Execution sequence
 
