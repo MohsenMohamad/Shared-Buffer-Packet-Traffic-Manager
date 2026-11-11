@@ -2,10 +2,11 @@
 import os
 from pathlib import Path
 import re
+import shutil
 
 from evidence import Case, ROOT, IGNORED, completed, output, sha
 from registry import profile, sources, fingerprint
-from foundation import coverage, first_failure
+from foundation import coverage, first_failure, run_result
 
 
 def csr(run, args):
@@ -23,8 +24,17 @@ def csr(run, args):
         build.data.update(parameters=params, counter_width=width, source_set='csr',
                           registered_source_digests=fingerprint('csr'),
                           scope='Production CSR/statistics; independent event and busy-context fixture')
-        (build.path/'tm_bench_config.svh').write_text(''.join(f'parameter int {k}={v};\n' for k,v in params.items())+f'parameter int CSR_COUNTER_W={width};\n')
-        (build.path/'tm_csr_params.svh').write_text(','.join(f'.{k}({k})' for k in params))
+        # Reuse compiler objects during a focused edit/test loop. Each case
+        # retains its own config, immutable executable and exact source digests.
+        cache = ROOT/'.build/csr-objects'/f'{args.profile}-{label}'
+        cache.mkdir(parents=True, exist_ok=True)
+        for name, content in {
+            'tm_bench_config.svh': ''.join(f'parameter int {k}={v};\n' for k,v in params.items())+f'parameter int CSR_COUNTER_W={width};\n',
+            'tm_csr_params.svh': ','.join(f'.{k}({k})' for k in params),
+        }.items():
+            (build.path/name).write_text(content)
+            if not (cache/name).is_file() or (cache/name).read_text() != content:
+                (cache/name).write_text(content)
         paths = [ROOT/p for p in registered['sources']]
         if mutation:
             original = ROOT/'rtl/csr/tm_axil_regs.sv'
@@ -37,20 +47,24 @@ def csr(run, args):
             paths = [mutant if p == original else p for p in paths]
             build.data.update(mutation='AWREADY requires WVALID; independently delayed W source', mutant_sha256=sha(mutant))
         uvm = Path(os.environ['UVM_HOME'])/'src'
-        binary = build.path/'obj/Vtm_csr_top'
+        compiled = cache/'obj/Vtm_csr_top'
+        binary = build.path/'Vtm_csr_top'
         argv = ['verilator', '--binary', '--timing', '--assert', '--coverage', '--trace-vcd',
                 '--timescale', '1ns/1ps', '+define+UVM_NO_DPI', '--build-jobs', str(args.jobs),
                 '--output-groups', '4', '--output-split', '20000', '--output-split-cfuncs', '500',
-                '-CFLAGS', '-O0', '-I'+str(uvm), '-I'+str(build.path)]
+                '-CFLAGS', '-O0', '-I'+str(uvm), '-I'+str(cache)]
         argv += ['-I'+str(ROOT/p) for p in registered['include_dirs']]
         argv += [str(uvm/'uvm_pkg.sv')] + list(map(str, paths))
-        argv += ['--top-module', 'tm_csr_top', '--Mdir', str(binary.parent)]
+        argv += ['--top-module', 'tm_csr_top', '--Mdir', str(compiled.parent)]
         step = build.execute(argv, timeout=args.build_timeout)
         result, why = step['result'], step['first_failure']
         if IGNORED.search(output(step)):
             result, why = 'UNSUPPORTED', 'Required construct ignored or unsupported'
-        if result == 'PASS' and not binary.is_file():
+        if result == 'PASS' and not compiled.is_file():
             result, why = 'TOOL_ERROR', 'No CSR executable produced'
+        if result == 'PASS':
+            shutil.copy2(compiled, binary)
+            build.data['artifacts'].update(binary=str(binary), binary_sha256=sha(binary))
         build.finish(result, why)
         case = Case(run, 'csr-'+label, seed)
         case.data.update(counter_width=width, parameters=params, source_set='csr')
@@ -70,7 +84,7 @@ def csr(run, args):
             case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended independence detector missing',
                         expected='SEEDED_DEFECT_DETECTION', observed_fatals=fatals)
         else:
-            result, why = completed(step, 'TM_CSR_PASS')
+            result, why = run_result(step, 'TM_CSR_PASS')
             if result == 'PASS':
                 try:
                     case.data['coverage'] = coverage(case.path/'coverage.dat')

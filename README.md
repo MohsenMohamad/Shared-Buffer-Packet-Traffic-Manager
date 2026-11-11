@@ -6,7 +6,7 @@ Default configuration: four 64-bit packet inputs, sixteen logical queues, one ou
 
 ## Project state
 
-This repository contains the implementation specification, executable toolchain capability gates, and G1 module/type/event contracts. The registered FIFO and cell/descriptor pools are implemented; the top and other component APIs remain declarations. Integrated traffic-manager behavior and subsystem verification remain pending. Track integration gates in [docs/status.md](docs/status.md).
+This repository contains the implementation specification, executable toolchain capability gates, and G1 module/type/event contracts. The registered FIFO, cell/descriptor pools and CSR/statistics APIs are implemented; the top and remaining component APIs are declarations. Integrated traffic-manager behavior and subsystem verification remain pending. Track integration gates in [docs/status.md](docs/status.md).
 
 ## Documentation
 
@@ -30,3 +30,8 @@ The [UVM foundation](dv/README.md) runs independently of full TM integration:
 `make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'`.
 Its behavioral fixture qualifies the bench and checkers; production verification
 remains tracked separately.
+
+Production CSR regression: `make regression RUN_ARGS='--profile E0 --test csr --seed 17'`.
+The independent event fixture checks configuration and coherent statistics;
+`make formal-rtl RUN_ARGS='--test csr'` proves local protocol properties.
+Real event wiring and whole-system IDLE generation remain integration checks.

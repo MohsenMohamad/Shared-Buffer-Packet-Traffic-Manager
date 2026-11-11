@@ -53,6 +53,18 @@ module tm_csr_fixture(input logic clk, tm_axil_if bus, tm_csr_fixture_if f);
             f.initialized<=0;
         end else begin resources<=next_resources;f.initialized<=1;end
     end
+    always @(posedge clk) if(f.rst_n) begin : fixture_bounds
+        integer total_owned;
+        total_owned=0;
+        for(int q=0;q<N_Q;q++) begin
+            total_owned+=h[q];
+            assert(h[q]>=0 && h[q]<=N_CELL && queued[q]>=0 && queued[q]<=N_DESC)
+                else $fatal(1,"TM_CSR_FIXTURE_QUEUE_BOUNDS");
+        end
+        assert(u>=0 && r>=0 && a>=0 && d>=0 && d<=N_DESC &&
+            u+r+a==N_CELL && u+total_owned==N_CELL)
+            else $fatal(1,"TM_CSR_FIXTURE_RESOURCE_BOUNDS");
+    end
     tm_axil_regs_api #(`include "tm_csr_params.svh"
     ) regs(.clk(clk),.rst_n(f.rst_n),.initialized(f.initialized),.bus_req(bus.req),.bus_rsp(bus.rsp),
         .live(f.live),.live_stats(f.live_stats),.shadow_stats(f.shadow_stats),.cfg(f.cfg),.stats_command(f.command));

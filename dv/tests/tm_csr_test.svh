@@ -142,6 +142,24 @@ class tm_csr_test extends uvm_test;
         end
         access(1,'h18,1);access(0,'h414);
     endtask
+    task abort_release_collision();
+        trace_t e='0;
+        e.admit.valid=1;e.admit.accept=1;e.admit.ncell=2;pulse(e);
+        e='0;e.cell_alloc.valid=1;pulse(e);
+        e='0;e.abort_mark.valid=1;e.abort_mark.allocated=1;e.abort_mark.reserved=2;pulse(e);
+        // A physical abort return preserves H. A new reservation on this edge
+        // must still raise high-water from two to three.
+        e='0;e.cell_free.valid=1;e.cell_free.abort_source=1;
+        e.admit.valid=1;e.admit.accept=1;e.admit.ncell=1;e.admit.desc=1;pulse(e);
+        e='0;e.abort_done.valid=1;e.abort_done.ncell=2;pulse(e);
+        e='0;e.abort_mark.valid=1;e.abort_mark.desc=1;e.abort_mark.reserved=1;pulse(e);
+        // New admission and completion merge before high-water comparison;
+        // there is no transient four-cell peak from applying admission first.
+        e='0;e.admit.valid=1;e.admit.accept=1;e.admit.ncell=3;
+        e.abort_done.valid=1;e.abort_done.desc=1;e.abort_done.ncell=1;pulse(e);
+        e='0;e.abort_mark.valid=1;e.abort_mark.reserved=3;pulse(e);
+        e='0;e.abort_done.valid=1;e.abort_done.ncell=3;pulse(e);
+    endtask
     task run_phase(uvm_phase phase);
         uvm_status_e status;
         uvm_reg_data_t data;
@@ -198,7 +216,7 @@ class tm_csr_test extends uvm_test;
             access(1,32'('h404+q*64),64,1,SLVERR);
             access(1,32'('h404+q*64),64);access(1,32'('h404+q*64),63,15,SLVERR);
             for(int lane=0;lane<4;lane++) begin
-                access(1,32'('h404+q*64),32'hffffffff,4'(1<<lane),SLVERR);
+                access(1,32'('h404+q*64),(lane==0)?32'd0:32'hffffffff,4'(1<<lane),SLVERR);
                 access(1,32'('h404+q*64),64,4'(1<<lane));
             end
             access(1,32'('h404+q*64),32'(MAX_PACKET_BYTES));
@@ -213,6 +231,8 @@ class tm_csr_test extends uvm_test;
         for(int context_bit=0;context_bit<6;context_bit++) begin
             @(negedge f.clk);f.busy=6'(1<<context_bit);
             access(0,'h14);access(1,'h10,0,15,SLVERR);access(0,'h10);
+            access(1,'h10,0,0);access(1,'h10,0,2);
+            access(1,'h400,0,0);access(1,'h14,'1,0);
         end
         @(negedge f.clk);f.busy=0;
         // A reservation also rejects disable without a committed queue.
@@ -254,6 +274,7 @@ class tm_csr_test extends uvm_test;
         @(negedge f.clk);f.invariant_error=0;
         access(1,'h1c,1);access(0,'h14); // Clear cannot clear invariant sticky bit.
         access(1,'h10,1);
+        abort_release_collision();
         // Reduced width runs wrap actual production counter arithmetic; ABI
         // remains 64 bits. Full-width runs use the same event sequence.
         for(int i=0;i<280;i++) begin
@@ -261,6 +282,11 @@ class tm_csr_test extends uvm_test;
             if(i%31==0) access(1,'h18,1,15,OKAY,i%3,i%5);
         end
         access(1,'h18,1);
+        packet(0);
+        fork
+            access(0,'h108,0,15,OKAY,1,32);
+            begin repeat(5) @(negedge f.clk);access(1,'h18,1);end
+        join
         for(int k=0;k<20;k++) access(0,32'('h100+4*k));
         for(q=0;q<N_Q;q++) for(int offset=8;offset<64;offset+=4) access(0,32'('h400+q*64+offset));
         if(CSR_COUNTER_W<64 && model.rollovers==0) `uvm_fatal("CSR_ROLLOVER","rollover not exercised")

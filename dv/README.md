@@ -53,3 +53,21 @@ abort traversal, statistics snapshots, packet-RR variant or resource WAIT traffi
 These remain production integration checks under their original requirements.
 See [the decision](../docs/decisions/0004-uvm-foundation.md) and
 [executed results](../docs/results/P07-verification-foundation.md).
+
+## Production CSR component bench
+
+`make regression RUN_ARGS='--profile E0 --test csr --seed 17'` reuses the AXI
+agent, bus interface SVA, production RAL map and passive predictor with the real
+register/statistics modules. The separate `tm_csr_model` derives requests from
+observed handshakes and statistics from independently driven P01 events, output
+retirement and stall samples. It compares complete live/shadow state on every
+clock and checks CSR read responses against the authoritative map.
+
+The fixture represents ingress, RX, drain, cleanup, TX and outstanding-read
+activity explicitly, in addition to resource/queue bookkeeping. Empty queues
+alone cannot make its IDLE true. It does not validate packet processing or
+production ownership. The suite tests normal 64-bit counters and reduced 8-bit
+rollover with an unchanged 64-bit register ABI, then compiles a disposable
+coupled-AW/W production defect. See the
+[execution decision](../docs/decisions/0005-csr-events.md) and
+[local proof boundary](../formal/csr/README.md).
