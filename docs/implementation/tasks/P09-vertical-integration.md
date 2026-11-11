@@ -1,31 +1,53 @@
-# P09: Single-packet end-to-end vertical integration
+# P09: Single-flow end-to-end vertical integration
 
-## Dependencies
+## Objective and prerequisites
 
-P04, P05, P06, P07, P08
+Establish the first genuine input-to-output path through allocated shared cells, queue scheduling, TX and the real control plane. One active flow is a test restriction, not a reduced fake top.
 
-## Relevant contracts
+Dependencies: [P04](P04-scheduler.md), [P05](P05-memory-tx.md), [P06](P06-registers.md), [P07](P07-verification-foundation.md), [P08](P08-receive-admission.md)
 
-- [ architecture.md ](../../spec/architecture.md)
-- [ interfaces.md ](../../spec/interfaces.md)
-- [ buffer-management.md ](../../spec/buffer-management.md)
-- [ queues-and-scheduling.md ](../../spec/queues-and-scheduling.md)
-- [ verification.md ](../../spec/verification.md)
+## Sources and work boundary
 
-## Scope and primary paths
+- [architecture.md](../../spec/architecture.md)
+- [interfaces.md](../../spec/interfaces.md)
+- [buffer-management.md](../../spec/buffer-management.md)
+- [queues-and-scheduling.md](../../spec/queues-and-scheduling.md)
+- [registers.md](../../spec/registers.md)
+- [verification.md](../../spec/verification.md)
 
-rtl/tm_top.sv; integration source lists; dv/env/; dv/tests/vertical/; integration trace bindings
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-## Deliverable
+`rtl/tm_top.sv`, production integration/source lists, actual `dv/env/` wiring, `dv/tests/vertical/`, assertion/trace bindings and subsystem CI.
 
-Connect the actual production modules and real UVM bench. Begin with one active input/queue inside a supported profile; do not replace shared storage or queue control with a convenience FIFO. Integrate trace events, status and statistics. Keep all top-level ports and the full elaborated profile intact.
+## Execution sequence
 
-## Validation
+1. Compare the integrated component port lists and semantics against P01 module-contracts before wiring. Check reset, field widths, handshake events, RAM latency, return ports, array ownership, configuration/event direction and trace timing. Resolve concrete discrepancies in the affected component/API rather than inserting unchecked adapters.
 
-Input monitor to output scoreboard through actual allocated cells, one/multi-cell payloads, partial final bytes, output stalls, read latency 1/2, reset and correct final resource state. Confirm assertions and coverage collectors executed.
+2. Instantiate the real FIFOs, RX/admission/reclaimer, pools, store/metadata, queue controller, scheduler, TX and AXI4-Lite registers. Preserve the full supported profile's top-level interface. Do not replace shared storage/queues with a stand-in packet FIFO.
 
-## Exit condition
+3. Wire the actual control/configuration, statistics and invariant-error signals. Derive IDLE from FIFO/context/queue/TX/read/ownership state; an empty committed queue alone must not permit reconfiguration.
 
-G3. Single-active-flow testing is an integration milestone, not the final concurrency claim.
+4. Bind the P07 UVM environment to actual ports/trace events. Cross-check service, commit, status and dispatch observations with external monitor data and resource state. Remove fixture-specific assumptions from production checking.
 
-Deliver one cohesive reviewable change. If the card is larger than a safe single change, split it along tested component boundaries and record what remains. State actual executed commands/results and unresolved limits in the PR. Update a compact handoff only when unfinished work needs continuation.
+5. Bring up reset/default register reads, enable RUN via AXI4-Lite, and send one valid single-beat packet on one input/queue. Check exact bytes/user/keep/last, disposition, counters and final ownership.
+
+6. Extend to multi-cell and partial-final-byte packets, gaps and sink stalls. Exercise corresponding latency-one/two supported profiles. Reset during a pending read/stall and confirm no old-epoch delivery; test a malformed packet followed by resource recovery.
+
+7. Inject a disposable output-byte corruption in the actual integration path and require the black-box scoreboard to reject it. Confirm bound SVA and coverage collectors execute rather than merely compile.
+
+8. Register the `vertical` suite through the common regression runner and add a real subsystem smoke job to CI using that command. Retain G0 fixture jobs and the documented distinction between capability and hardware results.
+
+## Required checks
+
+| Area | Evidence required |
+| --- | --- |
+| Real path | Allocated cell writes, commit, scheduler dispatch and actual read/output with exact monitored bytes, metadata, ordering and status. |
+| Control/recovery | Real CSR RUN/IDLE/statistics wiring, final full pools, malformed cleanup and reset with pending read/output stall. |
+| Latencies/lengths | Single beat, multiple cells, partial final keep and read latency 1/2 in supported fully elaborated profiles. |
+| Checker/CI | Actual-path corruption detection, active assertions/coverage and hosted vertical smoke on the candidate executable revision when accessible. |
+
+## Completion
+
+G3: an exercised genuine UVM/production-RTL vertical path, a runnable subsystem smoke entry point and correct final resource/control state. This does not yet establish all-input/all-queue concurrency.
+
+Requirement focus: `IF-01`, `IF-03`, `LEN-01`, `LEN-02`, `LEN-03`, `Q-01`, `MEM-02`, `MEM-03`, `MEM-04`, `MEM-05`, `FMT-06`, `RST-01`, `RST-02`, `CSR-05`, `CSR-06`

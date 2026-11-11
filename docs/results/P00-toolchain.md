@@ -169,11 +169,21 @@ python3 tools/run.py regression
 python3 tools/run.py ci --jobs invalid
 ```
 
-## Documentation cleanup checks
+## Documentation and main synchronization checks
 
-Newly executed for this presentation-only cleanup: `make repo-check`,
-Markdown structure/link/table/code-fence checks, and `git diff --check`.
-Recorded qualification inputs and the evidence JSON were checked for
-consistency and left unchanged. Toolchain installation, UVM, formal and
-STA qualification were not rerun for the prose changes; the hosted results
-above remain tied to their recorded revision.
+The presentation cleanup and subsequent merge of `main` change documentation
+only. The merge combines candidate
+`2c86376cfa8f972f903187dae32fb1f7d4121dde` with the implementation-instruction
+update at `91bd45ecac600e707832f964638a4176c2061559`, preserving both histories.
+The incoming instructions are retained as committed on `main`.
+
+Newly executed on the combined candidate: `make repo-check`, Markdown
+structure/link/table/code-fence checks, and `git diff --check`. Tree comparisons
+confirm that every non-Markdown file, including executable inputs, dependency
+locks, CI configuration and the evidence JSON, matches the pre-merge candidate.
+The combined diff was inspected against both parents and the updated PR base.
+
+Toolchain installation, UVM, formal and STA qualification were not rerun because
+their executable inputs did not change. Their actual tested revisions remain
+in the evidence table above. This updated candidate requires a fresh review
+and maintainer integration before P01 begins.

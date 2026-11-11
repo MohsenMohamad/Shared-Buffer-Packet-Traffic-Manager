@@ -1,31 +1,52 @@
 # P05: Finite-port packet store and transmit engine
 
-## Dependencies
+## Objective and prerequisites
 
-P03
+Implement the actual finite-port store and a transmit engine whose prefetch cannot overwrite output data or release live cells.
 
-## Relevant contracts
+Dependencies: [P03](P03-queues.md)
 
-- [ interfaces.md ](../../spec/interfaces.md)
-- [ buffer-management.md ](../../spec/buffer-management.md)
-- [ queues-and-scheduling.md ](../../spec/queues-and-scheduling.md)
-- [ formal.md ](../../spec/formal.md)
-- [ implementation.md ](../../spec/implementation.md)
+## Sources and work boundary
 
-## Scope and primary paths
+- [interfaces.md](../../spec/interfaces.md)
+- [buffer-management.md](../../spec/buffer-management.md)
+- [queues-and-scheduling.md](../../spec/queues-and-scheduling.md)
+- [formal.md](../../spec/formal.md)
+- [implementation.md](../../spec/implementation.md)
 
-rtl/memory/; rtl/tx/; unit tests; formal/tx/
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-## Deliverable
+`rtl/memory/`, `rtl/tx/`, memory/TX benches, `formal/tx/` and memory-TX suite registration.
 
-Implement 1R1W payload storage with fixed one/two-cycle responses and a transmit engine with bounded buffered+outstanding credits. Separate prefetch from retirement state. Carry cell/packet boundaries with responses or equivalent checked cursors. Free cells only at their last accepted output beat and descriptor at packet completion. Capture next links before reuse.
+## Execution sequence
 
-## Validation
+1. Use P01 RAM/descriptor/link contracts and P03 dispatch ownership. Implement the logical 64-bit 1R1W payload interface with fixed one/two-cycle responses and no response backpressure.
 
-Byte patterns across all boundaries, partial cells, long output stalls, pending reads at reset, exact capacity credit boundaries and rapid cell reuse. Compare one/two-cycle memory paths at equal contents/latency-aware checking. Prove bounded response occupancy and exactly-once retirement on reduced production RTL.
+2. Define bounded buffered-plus-outstanding accounting before issuing reads. Include simultaneous response arrival and output handshake in the credit update, preventing overissue at exact capacity.
 
-## Exit condition
+3. Separate read/prefetch progress from external retirement. Carry cell/packet boundary metadata with responses or use independently checked cursors; do not free whichever cell the prefetch cursor currently names.
 
-G2 memory/TX evidence. Do not infer extra memory ports.
+4. Generate exact output bytes, keep/last/user and preserve them under stalls. Capture the next-cell link before reuse. Return a cell only on its last externally accepted beat and the descriptor only at final packet completion.
 
-Deliver one cohesive reviewable change. If the card is larger than a safe single change, split it along tested component boundaries and record what remains. State actual executed commands/results and unresolved limits in the PR. Update a compact handoff only when unfinished work needs continuation.
+5. Flush pending response tags, FIFO entries and TX state on reset without clearing payload RAM. A pre-reset response must never validate post-reset data.
+
+6. Test both latencies at matched contents using distinct byte patterns over word/cell boundaries, partial final cells and rapid reuse. State metadata link-read ports/latency rather than inventing unlimited RAM ports.
+
+7. Check dispatch-to-first-valid and steady multi-beat behavior under an always-ready sink. Diagnose cell-boundary bubbles against the specified bound rather than hiding them in throughput averages.
+
+8. Register `memory-tx` simulation/proof suites. Prove reduced production read-credit and retirement safety with arbitrary sink stalls; reach stalled-pending-read covers and detect omission of outstanding-read credits. Physical banked comparison work is completed in P12; a delayed behavioral read alone does not establish it.
+
+## Required checks
+
+| Area | Evidence required |
+| --- | --- |
+| Data and timing | Partial words/cells, multi-cell patterns, fixed read latencies 1/2, exact FIFO credit boundaries and long immediate stalls. |
+| Ownership/reset | Correct cell/descriptor retirement, captured next link, rapid reuse, pending responses at reset and no stale output. |
+| Port/performance | At most 1R1W, no ownership-forbidden collision, specified first-valid bound and measured within-packet/cell-boundary behavior. |
+| Proof/checker | Production credit/retirement properties, reachable pressure, and intended outstanding-credit mutation detection. |
+
+## Completion
+
+The memory/TX portion of G2 has real byte/latency/ownership checks for both response latencies and scoped safety evidence. Any missed specified timing/performance bound is identified before dependent integration.
+
+Requirement focus: `IF-01`, `LEN-01`, `LEN-02`, `MEM-03`, `MEM-04`, `MEM-05`, `RST-02`, `PERF-01`

@@ -1,31 +1,54 @@
-# P08: Interleaved receive admission and abort cleanup
+# P08: Interleaved receive, admission and abort cleanup
 
-## Dependencies
+## Objective and prerequisites
 
-P02, P03, P05, P07
+Implement per-input receive/drain state and atomic packet reservations so malformed or competing inputs cannot corrupt or strand shared resources.
 
-## Relevant contracts
+Dependencies: [P02](P02-storage-primitives.md), [P03](P03-queues.md), [P05](P05-memory-tx.md), [P07](P07-verification-foundation.md)
 
-- [ interfaces.md ](../../spec/interfaces.md)
-- [ buffer-management.md ](../../spec/buffer-management.md)
-- [ registers.md ](../../spec/registers.md)
-- [ verification.md ](../../spec/verification.md)
-- [ formal.md ](../../spec/formal.md)
+## Sources and work boundary
 
-## Scope and primary paths
+- [interfaces.md](../../spec/interfaces.md)
+- [buffer-management.md](../../spec/buffer-management.md)
+- [registers.md](../../spec/registers.md)
+- [verification.md](../../spec/verification.md)
+- [formal.md](../../spec/formal.md)
 
-rtl/rx/; rtl/admission/; rtl/reclaim/; component tests; formal/credit/
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-## Deliverable
+`rtl/rx/`, `rtl/admission/`, `rtl/reclaim/`, component integration with real pools/store/queues, receive UVM tests and `formal/credit/`.
 
-Implement beat-level RR over input FIFOs, per-input receive/drain contexts, full-packet cell/descriptor reservations, queue caps, reason priority and DROP/WAIT. Reject permanently impossible queue-cap requests in either mode. Handle first-beat errors without same-edge descriptor return, zero-cell cleanup and fair abort reclamation under TX-return priority. Publish only complete valid packets.
+## Execution sequence
 
-## Validation
+1. Connect actual P02 pools, P03 queue publication and P05 store/return contracts. Drive static configuration through P01 APIs in the component bench; P06 CSR hardware is wired at P09, not duplicated here.
 
-Exact credit and descriptor boundaries, four simultaneous headers, source gaps, all malformed cases, multi-abort/TX-return/admission collisions, complete cleanup, status timing and reset. Check all accounting equations after merged events and selected reduced ownership/conservation properties.
+2. Implement rotating beat-level RR across eligible ingress FIFO heads. Advance on actual service, not capture; input gaps, temporary WAIT shortages or a malformed draining source must not block other eligible inputs.
 
-## Exit condition
+3. Validate qid before indexing and declared length before computing/reserving a budget. Evaluate admission against pre-cycle U/free-descriptor/H and merge all simultaneous deltas once, with widened arithmetic.
 
-G2 receive/resource evidence. A captured beat is not admission or commit.
+4. Implement DROP/WAIT and reason priority. In WAIT mode leave temporary shortages unserviced, but reject a packet whose cell budget exceeds its static queue cap. Reserve the complete cell budget and one descriptor atomically.
 
-Deliver one cohesive reviewable change. If the card is larger than a safe single change, split it along tested component boundaries and record what remains. State actual executed commands/results and unresolved limits in the PR. Update a compact handoff only when unfinished work needs continuation.
+5. Allocate physical cells only for well-formed beats that require them. Update chain metadata with explicit ports. Handle admission plus single-beat EOF using valid newly allocated metadata; publish only after the final valid write.
+
+6. On malformed framing stop writes before the invalid beat, mark abort and drain. For a first-beat format error reserve/count admission but allocate no payload cell; defer descriptor cleanup until at least the next edge.
+
+7. Implement fair abort-context rotation under TX cell-return priority, at most one physical cell return per cycle and up to two descriptor returns. Release the full logical reservation exactly once at abort completion. Never follow a zero-cell head or a stale reclaimed link.
+
+8. Implement status timing and per-input reuse gating: rejected-header status need not wait for drain, whereas FRAME_ERROR waits for cleanup; an aborted input starts a new packet only after drain and cleanup both complete.
+
+9. Run real receive-component tests through the P07 agents/checkers. Assert every accounting equation after combined event batches and begin reduced production ownership/credit proofs; P11A closes the composition.
+
+## Required checks
+
+| Area | Evidence required |
+| --- | --- |
+| Admission | U=n/n-1, exact/over queue caps, descriptor exhaustion, reason collisions, four captured headers and conservative same-cycle release. |
+| Framing | Bad metadata, sparse/partial keep, early/missing/late TLAST, single-beat success, first-beat zero-cell abort and source gaps. |
+| Cleanup/concurrency | Several aborts with TX returns/new reservations, exact status timing, no descriptor same-edge allocate/free, complete recovery and reset. |
+| Accounting | A+F=N, F=U+R, U+sum(H)=N, unique ownership and independently checked service/admission/status causality. |
+
+## Completion
+
+The receive/resource portion of G2 exercises real storage/queue/pool boundaries with executable independent checking. All required admission/format cases are represented; captured data are never mislabeled as admission or commit.
+
+Requirement focus: `ADM-01`, `ADM-02`, `ADM-03`, `ADM-04`, `ADM-05`, `ADM-06`, `ADM-07`, `ADM-08`, `FMT-01`, `FMT-02`, `FMT-03`, `FMT-04`, `FMT-05`, `FMT-06`, `LEN-03`, `MEM-02`, `MEM-06`, `RST-02`

@@ -1,29 +1,47 @@
 # P04: Deficit round robin and packet-RR comparison
 
-## Dependencies
+## Objective and prerequisites
 
-P03
+Implement the specified byte-aware visit policy, including its interaction with merged queue updates and exclusive TX ownership.
 
-## Relevant contracts
+Dependencies: [P03](P03-queues.md)
 
-- [ queues-and-scheduling.md ](../../spec/queues-and-scheduling.md)
-- [ verification.md ](../../spec/verification.md)
-- [ formal.md ](../../spec/formal.md)
+## Sources and work boundary
 
-## Scope and primary paths
+- [queues-and-scheduling.md](../../spec/queues-and-scheduling.md)
+- [verification.md](../../spec/verification.md)
+- [formal.md](../../spec/formal.md)
 
-rtl/scheduler/; scheduler model/tests; formal/scheduler/
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-## Deliverable
+`rtl/scheduler/`, independent scheduling model/tests, `formal/scheduler/` and scheduler-suite registration.
 
-Implement one-quantum-per-visit byte accounting, carry-over, true-empty credit clearing and scheduler freezing during TX ownership. Honor merged enqueue/dequeue empty semantics. Implement packet RR as a separate comparison mode. Use explicit bounded widths.
+## Execution sequence
 
-## Validation
+1. Use the P03 pre-state head/query and dispatch events. Implement cursor/visit/deficit state against the canonical DRR policy; do not base policy decisions on external input capture or output EOF alone.
 
-Mixed short/long packets, unequal quanta, quantum smaller than packet, reactivation, simultaneous replacement, output stalls and finite endpoint accounting. Independent dispatch-policy checks plus grant/credit safety properties and covers.
+2. Add one quantum on entering a nonempty visit; subtract packet bytes once at accepted dispatch. Continue an existing visit without another addition when the next head fits. Retain credit across insufficient-credit visits.
 
-## Exit condition
+3. Use merged enqueue/dequeue count for true-empty closure. Clear credit only when genuinely empty; a singleton replaced on the dispatch edge remains nonempty. Later reactivation must not inherit idle credit.
 
-G2 scheduler evidence. No credit growth per stalled cycle or per packet within a continuing visit.
+4. Freeze scanning/credit additions while TX owns a packet. A fitting head waits for TX availability. Resume no earlier than the cycle after TX final handshake, preserving whether the visit continues.
 
-Deliver one cohesive reviewable change. If the card is larger than a safe single change, split it along tested component boundaries and record what remains. State actual executed commands/results and unresolved limits in the PR. Update a compact handoff only when unfinished work needs continuation.
+5. Implement packet RR as the separate elaboration comparison mode. Size deficit arithmetic to hold QUANTUM_MAX+MAX_PACKET_BYTES-1 and assert/check bounds.
+
+6. Build the dispatch-policy reference from packet lengths, queue events and visit state, not the RTL state-machine structure. Measure complete visits or include initial/final deficits and in-flight packets in finite accounting.
+
+7. Register the `scheduler` suite. Check grant eligibility, add/debit discipline and bounds on production RTL; reach reactivation/collision cases and detect a quantum-per-packet mutation.
+
+## Required checks
+
+| Area | Evidence required |
+| --- | --- |
+| Visit arithmetic | Several packets in one visit, quantum smaller than packet, unequal quanta, maximum quantum/length and bounded credit. |
+| Races | Empty/reactivation, singleton replacement, longer queue updates, TX busy/stalls and next-cycle commit visibility. |
+| Policy/checker | Independent dispatch matching, packet-RR distinction, complete-visit byte equation, grant/credit properties and intended extra-quantum detection. |
+
+## Completion
+
+The scheduler portion of G2 implements both modes and passes independent policy checks without credit growth per stalled cycle or per packet in a continuing visit. System-level fairness measurements are completed in P12.
+
+Requirement focus: `SCH-01`, `SCH-02`, `SCH-03`, `SCH-04`, `SCH-05`, `SCH-06`, `PERF-02`

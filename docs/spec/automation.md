@@ -21,7 +21,7 @@ Waveforms should be generated on a failing rerun with the identical revision/see
 
 ## Stable command interface
 
-P00 establishes `make doctor`, `make repo-check`, `make lint`, `make test-unit`, `make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke` and `make ci`. Later tasks add `make regression`, `make coverage`, `make benchmark`, `make synthesis` and `make sta`. Commands take explicit configuration/test/seed options through the common Python runner. Until implemented, a command fails with NOT_IMPLEMENTED; it never reports an empty PASS.
+P00 establishes `make doctor`, `make repo-check`, `make lint`, `make test-unit`, `make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke` and `make ci`. P01 adds functional `make regression` selection. P02 adds `make formal-rtl` for production-module proofs; `make formal-smoke` retains its capability-fixture meaning. Later tasks add `make coverage`, `make benchmark`, `make synthesis` and `make sta`. Commands take explicit configuration/test/seed options through the common Python runner. Until implemented, a command fails with NOT_IMPLEMENTED; it never reports an empty PASS.
 
 The bootstrap `make repo-check` validates repository documents and requirement data only. It is not a hardware check. The bootstrap workflow is named accordingly. P00 adds real tool-capability jobs; subsystem jobs are added as their implementations land. Final CI must exercise the implemented RTL and UVM environment.
 
