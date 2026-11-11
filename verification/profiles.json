@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "profiles": {
+    "F0": {"N_RX":4,"N_Q":16,"N_CELL":1024,"CELL_BYTES":64,"N_DESC":256,"MAX_PACKET_BYTES":1536,"MEM_RD_LATENCY":1},
+    "F1": {"N_RX":4,"N_Q":16,"N_CELL":1024,"CELL_BYTES":64,"N_DESC":256,"MAX_PACKET_BYTES":1536,"MEM_RD_LATENCY":2},
+    "I0": {"N_RX":2,"N_Q":4,"N_CELL":32,"CELL_BYTES":16,"N_DESC":16,"MAX_PACKET_BYTES":256,"MEM_RD_LATENCY":1},
+    "I1": {"N_RX":2,"N_Q":4,"N_CELL":32,"CELL_BYTES":16,"N_DESC":16,"MAX_PACKET_BYTES":256,"MEM_RD_LATENCY":2},
+    "E0": {"N_RX":1,"N_Q":2,"N_CELL":16,"CELL_BYTES":16,"N_DESC":8,"MAX_PACKET_BYTES":128,"MEM_RD_LATENCY":1},
+    "E1": {"N_RX":4,"N_Q":8,"N_CELL":64,"CELL_BYTES":32,"N_DESC":32,"MAX_PACKET_BYTES":512,"MEM_RD_LATENCY":2}
+  },
+  "defaults": {"DATA_W":64,"RX_FIFO_DEPTH":2,"TX_FIFO_DEPTH":4,"SCHED_MODE":1,"TRACE_ENABLE":1},
+  "scope": "Production profiles only; reduced formal kernels require separate named configurations."
+}

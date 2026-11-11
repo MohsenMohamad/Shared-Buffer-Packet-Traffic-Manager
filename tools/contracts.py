@@ -1,0 +1,109 @@
+"""G1 checks production declarations, never functional traffic-manager behavior."""
+import re
+import os
+import sys
+from evidence import Case, ROOT, completed, output
+from registry import profile, sources, fingerprint
+
+PARAMETERS = ('DATA_W N_RX N_Q CELL_BYTES N_CELL N_DESC MAX_PACKET_BYTES RX_FIFO_DEPTH '
+              'MEM_RD_LATENCY TX_FIFO_DEPTH SCHED_MODE QUANTUM_DEFAULT TRACE_ENABLE '
+              'CELL_ID_W DESC_ID_W CELL_COUNT_W DESC_COUNT_W DEFICIT_W').split()
+# Each rejection isolates a supported-range/width/credit rule.
+INVALID = {
+    'data-width': {'DATA_W':32}, 'rx-count': {'N_RX':3}, 'queue-count': {'N_Q':3},
+    'cell-size': {'CELL_BYTES':8}, 'cell-power': {'N_CELL':24},
+    'cell-min': {'N_CELL':8}, 'cell-max': {'N_CELL':2048},
+    'desc-power': {'N_DESC':12}, 'desc-min': {'N_DESC':4}, 'desc-max': {'N_DESC':512},
+    'length-min': {'MAX_PACKET_BYTES':63}, 'length-max': {'MAX_PACKET_BYTES':1537},
+    'capacity': {'MAX_PACKET_BYTES':257,'N_CELL':16,'CELL_BYTES':16},
+    'rx-depth': {'RX_FIFO_DEPTH':1}, 'read-latency': {'MEM_RD_LATENCY':3},
+    'read-credit': {'MEM_RD_LATENCY':2,'TX_FIFO_DEPTH':3},
+    'scheduler': {'SCHED_MODE':2}, 'quantum-min': {'QUANTUM_DEFAULT':63},
+    'quantum-max': {'QUANTUM_DEFAULT':4097}, 'trace': {'TRACE_ENABLE':2},
+    'cell-index': {'CELL_ID_W':1}, 'desc-index': {'DESC_ID_W':1},
+    'cell-count': {'CELL_COUNT_W':1}, 'desc-count': {'DESC_COUNT_W':1},
+    'deficit': {'DEFICIT_W':12},
+}
+
+
+def wrapper(path, monitor=False):
+    # Derive from the production declarations themselves; no copied port list.
+    declarations = (ROOT / 'rtl/include/tm_module_ports.sv').read_text()
+    modules = ['tm_top'] + re.findall(r'^module (\w+)', declarations, re.M)
+    text = 'module tm_contract_elab #(\n`include "tm_parameters.svh"\n) ();\n'
+    text += '`include "tm_types.svh"\n'
+    if monitor:
+        text += '`include "tm_monitor_types.svh"\n'
+    for index, name in enumerate(modules):
+        text += name + ' #(' + ','.join(f'.{p}({p})' for p in PARAMETERS) + f') api{index}();\n'
+    # Literal widths catch layout drift; parameter guard separately rejects invalids.
+    text += '''input_user_t input_probe; output_user_t output_probe;
+status_t status_probe; beat_t beat_probe; descriptor_t info_probe;
+generate if (STATUS_W!=45 || $bits(input_probe.qid)!=8 || $bits(output_probe.source)!=8 || $bits(input_probe)!=64 || $bits(output_probe)!=64 ||
+        $bits(status_probe)!=STATUS_W || $bits(beat_probe)!=BEAT_W || $bits(info_probe)!=DESC_INFO_W)
+        begin : g_layout TM_INVALID_LAYOUT invalid_layout(); end endgenerate
+endmodule
+'''
+    path.write_text(text)
+
+
+def frontend(run, args, tool, name, params, invalid=False, monitor=False):
+    case = Case(run, tool + '-' + name, (args.seed or [17])[0])
+    source_set = 'simulation' if monitor else 'synthesis' if tool == 'yosys' else 'production'
+    registered = sources(source_set)
+    case.data.update(scope='Declaration elaboration only; no functional RTL',
+                     parameters=params, source_set=source_set,
+                     registered_source_digests=fingerprint(source_set))
+    harness = case.path / 'tm_contract_elab.sv'
+    wrapper(harness, monitor)
+    includes = [str(ROOT / p) for p in registered['include_dirs']]
+    files = [str(ROOT / p) for p in registered['sources']] + [str(harness)]
+    if tool == 'verilator':
+        # PINMISSING is confined to the elaboration harness's intentionally open
+        # declarations. No behavioral lint or unconnected-net qualification.
+        argv = ['verilator', '--lint-only', '-Wno-PINMISSING', '--top-module', 'tm_contract_elab',
+                '--Mdir', str(case.path / 'obj')] + ['-I'+p for p in includes]
+        argv += [f'-G{k}={v}' for k, v in params.items()] + files
+    else:
+        script = case.path / 'elaborate.ys'
+        script.write_text('read_verilog -sv ' + ' '.join('-I'+p for p in includes) + ' ' +
+                          ' '.join(files) + '\nhierarchy -check -top tm_contract_elab ' +
+                          ' '.join(f'-chparam {k} {v}' for k, v in params.items()) + '\n')
+        argv = ['yosys', '-s', str(script)]
+    step = case.execute(argv, timeout=args.timeout)
+    text = output(step)
+    if invalid:
+        ok = (step['result']=='TOOL_ERROR' and step['returncode'] not in (None, 0)
+              and 'TM_INVALID_CONFIGURATION' in text and
+              ('%Error' in text if tool == 'verilator' else 'ERROR:' in text))
+        case.finish('PASS' if ok else step['result'] if step['result']=='TIMEOUT' or step['returncode'] is None else 'FAIL',
+                    None if ok else 'Missing intended configuration elaboration rejection',
+                    expected='INVALID_ELABORATION')
+    else:
+        marker = 'End of script.' if tool == 'yosys' else 'Verilator: Walltime'
+        case.finish(*completed(step, marker))
+
+
+def contracts(run, args):
+    params = profile(args.profile)
+    for tool in ('verilator', 'yosys'):
+        frontend(run, args, tool, args.profile, params)
+        # Exercise portable monitor records in simulation only.
+        if tool == 'verilator':
+            frontend(run, args, tool, args.profile+'-monitor', params, monitor=True)
+        for name, delta in INVALID.items():
+            # Deficit width 12 is invalid even in the smallest production profile.
+            frontend(run, args, tool, 'invalid-'+name, dict(params, **delta), invalid=True)
+        frontend(run, args, tool, 'options', dict(params, RX_FIFO_DEPTH=4, TX_FIFO_DEPTH=8,
+                 SCHED_MODE=0, QUANTUM_DEFAULT=4096, TRACE_ENABLE=0))
+    case = Case(run, 'independent-event-batching', (args.seed or [17])[0])
+    os.environ['TM_CONTRACT_SEED'] = str((args.seed or [17])[0])
+    step = case.execute([sys.executable, '-m', 'unittest', 'discover', '-s',
+                        str(ROOT / 'tests/contracts'), '-p', 'test_*.py', '-v'], timeout=args.timeout)
+    match = re.search(r'Ran (\d+) tests?', output(step))
+    ok = step['result']=='PASS' and match and int(match[1])>0 and re.search(r'(?m)^OK$', output(step))
+    digests = re.findall(r'TM_BATCH_ORDERS seed=([0-9]+) digest=([0-9a-f]{64})', output(step))
+    ok = ok and len(digests)==4 and len(set(digests))==1 and digests[0][0]==os.environ['TM_CONTRACT_SEED']
+    case.finish('PASS' if ok else step['result'] if step['result']!='PASS' else 'FAIL',
+                None if ok else 'Contract tests failed, zero tests, or missing callback-order replay digest',
+                callback_permutations=720, permutation_digest=digests[0][1] if digests else None)

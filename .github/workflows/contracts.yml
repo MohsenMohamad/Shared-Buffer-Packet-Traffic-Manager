@@ -1,0 +1,38 @@
+name: G1 contracts
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Bootstrap native build prerequisites
+        run: sudo apt-get update && sudo apt-get install -y g++-14 make perl curl autoconf bison flex help2man
+      - name: Install checksum-locked toolchain
+        run: make setup JOBS=2
+      - name: Check declarations and independent batching for every production profile
+        shell: bash
+        run: |
+          set -euo pipefail
+          make repo-check
+          make test-unit
+          for profile in F0 F1 I0 I1 E0 E1; do
+            make regression RUN_ARGS="--profile $profile --test contracts --seed 17"
+          done
+      - name: Retain declaration and batching evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: contracts-${{ github.sha }}
+          path: .build/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error

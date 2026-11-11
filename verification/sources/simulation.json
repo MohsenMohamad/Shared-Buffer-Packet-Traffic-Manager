@@ -1,0 +1,1 @@
+{"schema_version":1,"extends":"production","include_dirs":["dv/model"],"sources":[],"headers":["dv/model/tm_monitor_types.svh"],"scope":"Independent monitor records; UVM components arrive in P07."}

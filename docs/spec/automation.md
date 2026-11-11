@@ -30,3 +30,10 @@ Each case writes a JSON manifest containing schema version, UTC times, test/seed
 Use a separate build directory per tool/profile/feature-set. A passing cache from another source revision or feature set is not evidence. Bound subprocess timeouts and parallel compilation. Retain stdout/stderr and transaction traces; collect FST/VCD on failing reruns with the same revision, seed and profile.
 
 GitHub Actions may run the same open-source commands on hosted Linux runners. Core commands must also run in the cloud development workspace. CI does not require an LLM key, a hardware server, a GUI or a container daemon. Retain routine raw artifacts for a finite configured period, and curate the evidence needed for release results. Build outputs are not committed to source control.
+
+G1 implements `regression --profile F0 --test contracts --seed 17`, with
+F0/F1/I0/I1/E0/E1 registered separately. This suite compiles declarations and
+checks independent event batching; it does not execute a TM datapath. Suite and
+source registration, seed/replay rules and case scope are defined in
+[module-contracts.md](module-contracts.md). Capability CI selectors remain
+separate from regression suite selectors.

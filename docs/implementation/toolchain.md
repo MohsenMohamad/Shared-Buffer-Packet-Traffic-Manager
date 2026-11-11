@@ -36,7 +36,7 @@ in independent jobs, each with its doctor and orchestration checks. Routine
 artifacts are retained for 14 days. Hosted execution status belongs in the
 PR; adding a workflow is not evidence that it executed successfully.
 
-The only implemented profile is `toolchain`. UVM defaults to seeds 17 and 19,
+P00 capability commands use the `toolchain` profile. UVM defaults to seeds 17 and 19,
 plus an identical seed-17 replay and a held-data mutation. For example:
 
 ```sh
@@ -49,7 +49,7 @@ seconds, UVM compilation to 1200; both are configurable up to 3600 seconds.
 Timeout kills the process group, including compiler and solver children.
 Unknown/empty selections, duplicate selections, incompatible versions,
 failed compilation, missing completion evidence and zero unit tests fail.
-`regression`, `coverage`, `benchmark`, `synthesis` and `sta` remain
+`coverage`, `benchmark`, `synthesis` and `sta` remain
 `NOT_IMPLEMENTED`, exiting nonzero until their hardware tasks land.
 
 Each invocation creates a unique directory under `.build/runs` (`--output`
@@ -82,3 +82,8 @@ should print `TM_FOUR_STATE_PASS`; Verilator instead reaches
 `TM_FOUR_STATE_UNSUPPORTED`. That executed case has `UNSUPPORTED` status
 and exits nonzero. It is kept outside the required two-state capability
 suite, with its limitation retained in the results.
+
+P01 adds `regression --profile E0 --test contracts --seed 17` (all six
+production profiles supported). This selects declaration elaboration and batching
+examples only. See [module contracts](../spec/module-contracts.md) for source
+ownership, seed rules and verification limits.

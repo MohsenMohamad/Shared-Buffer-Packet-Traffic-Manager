@@ -120,7 +120,7 @@ class Run:
         result = next((state for state in ('TIMEOUT', 'TOOL_ERROR', 'FAIL', 'UNSUPPORTED',
                       'INCONCLUSIVE', 'NOT_IMPLEMENTED', 'NOT_RUN') if state in states),
                       'PASS' if self.cases else 'TOOL_ERROR')
-        summary = dict(schema_version=1, result=result, scope='Toolchain capability fixtures only',
+        summary = dict(schema_version=1, result=result, scope=getattr(self, 'scope', 'Toolchain capability fixtures only'),
                        cases=[dict(test=c.data['test'], result=c.data['result'],
                                    manifest=str(c.path / 'manifest.json')) for c in self.cases])
         (self.path / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
