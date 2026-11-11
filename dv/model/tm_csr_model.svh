@@ -29,6 +29,7 @@ class tm_csr_model extends uvm_component;
     function void reset_model();
         run=0;wait_mode=0;sticky=0;aw=0;w=0;ar=0;b_sent=0;r_sent=0;
         aw_age=0;w_age=0;read_age=0;write_age=0;prior_bstall=0;prior_rstall=0;
+        aw_cycle=0;w_cycle=0;write_stalled=0;write_overlap=0;
         foreach(limits[q]) begin limits[q]=N_CELL;quantum[q]=MAX_PACKET_BYTES;high[q]=0;shadow_high[q]=0;end
         foreach(g[k]) begin g[k]=0;sg[k]=0;end
         foreach(qstats[q,k]) begin qstats[q][k]=0;sq[q][k]=0;end
@@ -83,7 +84,7 @@ class tm_csr_model extends uvm_component;
             return OKAY;
         end
         case(a)
-            16:begin if(!merged[0] && !f.live.idle) return SLVERR;run=merged[0];end
+            16:begin if(strb[0] && !merged[0] && !f.live.idle) return SLVERR;run=merged[0];end
             24:snapshot=merged[0];
             28:begin
                 if(merged[0] && (run || !f.live.idle)) return SLVERR;

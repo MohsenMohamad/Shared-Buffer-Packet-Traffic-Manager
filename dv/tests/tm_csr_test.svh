@@ -289,6 +289,7 @@ class tm_csr_test extends uvm_test;
         fork access(1,'h18,1);access(0,'h100);join
         access(1,'h10,0);access(1,'h1c,1);
         @(negedge f.clk);f.busy=1;
+        access(1,'h10,'1,2);access(1,'h10,0,1,SLVERR);access(0,'h10);
         access(1,'h20,1,15,SLVERR);access(1,'h404,64,15,SLVERR);access(1,'h1c,1,15,SLVERR);
         @(negedge f.clk);f.busy=0;f.invariant_error=1;
         @(negedge f.clk);f.invariant_error=0;

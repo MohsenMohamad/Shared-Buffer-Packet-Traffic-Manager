@@ -76,7 +76,7 @@ always_comb begin
     else if (wstrb == 0) begin end // Mapped zero-strobe writes include RO words.
     else begin
         case (write_word)
-            32'h010: if (!merged_word[0] && !live.idle) write_response = SLVERR;
+            32'h010: if (wstrb[0] && !merged_word[0] && !live.idle) write_response = SLVERR;
             32'h018: stats_command.snapshot = write_execute && merged_word[0];
             32'h01c: begin
                 if (merged_word[0] && (run_q || !live.idle)) write_response = SLVERR;
@@ -155,7 +155,7 @@ always_ff @(posedge clk or negedge rst_n) begin
             bvalid <= 1;
             bresp <= write_response;
             if (write_response == OKAY && wstrb != 0) begin
-                if (write_word == 32'h010) run_q <= merged_word[0];
+                if (write_word == 32'h010 && wstrb[0]) run_q <= merged_word[0];
                 if (write_word == 32'h020) wait_q <= merged_word[0];
                 if (write_word >= 32'h400 && write_word < 32'h400 + 32'(N_Q*64)) begin
                     if (write_word[5:0] == 0) limits[write_q*CELL_COUNT_W +: CELL_COUNT_W] <= CELL_COUNT_W'(merged_word);
