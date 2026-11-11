@@ -4,7 +4,7 @@
 
 Implement per-input receive/drain state and atomic packet reservations so malformed or competing inputs cannot corrupt or strand shared resources.
 
-Dependencies: [P02](P02-storage-primitives.md), [P03](P03-queues.md), [P05](P05-memory-tx.md), [P07](P07-verification-foundation.md)
+Dependencies: [P02](P02-storage-primitives.md), [P03](P03-queues.md), [P05](P05-memory-tx.md), [P07](P07-verification-foundation.md), [P02 scaling follow-up](P02-followup-scaling.md), [P07 stimulus follow-up](P07-followup-stimulus.md)
 
 ## Sources and work boundary
 
