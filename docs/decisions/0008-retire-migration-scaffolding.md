@@ -25,6 +25,6 @@ The two converted harness files are byte-identical to the previous adapter's
 output. Their assumptions, assertions, covers, reset behavior and mutation sites
 are unchanged. Harness-source generation is removed from production execution.
 
-Removed check names are `capability (bridge)`, `capability (representation-formal)`
-and `capability (fifo-mapping)`. If configured as required in branch protection,
+Removed check names are `capability-bridge`, `capability-representation-formal`
+and `capability-fifo-mapping`. If configured as required in branch protection,
 remove those entries. Keep existing production and retained capability checks.
