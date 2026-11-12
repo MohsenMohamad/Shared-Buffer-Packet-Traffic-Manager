@@ -45,3 +45,16 @@ Use immediate assertions and explicit monitor state where required by the formal
 Proof tasks target production modules. A feasibility example or reference-model proof cannot substitute for the corresponding production-module proof. Save each task's configuration, source revision, assumptions, engine status and elapsed time. Reachability covers and selected defect mutations qualify the checker. Distinguish expected mutation failures from unexpected failures.
 
 Selected conservation, ownership, occupancy and queue-order safety claims require passing unbounded results at documented reduced configurations. Additional integrated symbolic payload tracking is a stretch task. A timeout remains inconclusive; do not change the property into a weaker statement just to obtain PASS.
+
+## Selected frontend and arbitrary inputs
+
+Use the frontend registered in `verification/sources/formal.json`. The pinned
+`read_slang` flow does not preserve native `anyseq`/`anyconst` declarations as
+symbolic cells. `tools/frontend.py` exposes the unchanged production harness's
+arbitrary internals as free top-level inputs; it preserves every expression,
+assumption, assertion, cover and state update. Do not apply it to DUT state.
+`make bridge` compares property inventories/source locations and proves mutual
+inclusion of the complete assumption predicates against the native control,
+including startup reset and arbitrary later resets. Its additional control-state
+equalities are proved invariants, not new environmental assumptions. Retain
+production unbounded/cover/mutation checks; bridge equivalence alone is insufficient.

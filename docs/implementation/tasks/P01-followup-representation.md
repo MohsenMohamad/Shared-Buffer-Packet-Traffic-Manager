@@ -33,3 +33,22 @@ Completion supplies an integrated readable representation with no behavior or
 verification regression. The [P02 scaling study](P02-followup-scaling.md) then
 measures that actual production source under precommitted matched conditions.
 It must not characterize a temporary duplicate or change allocator semantics.
+
+## Executable accepted recipe
+
+`tests/frontends/generate.py` generates `type_parameter` and `named_widths`
+copies from the real FIFO/CSR/statistics sources. Use `type_parameter` where
+parameter-dependent named records improve readability: ANSI vector ports with
+record-derived default type parameters declared before use, fixed shared package
+imports, and guarded scalar/index widths. `make representation-formal` additionally
+changes the FIFO storage element to `beat_t`, retaining its full width and
+bitwise behavior. Both depth-2/depth-4 FIFO proofs/covers and CSR proof/cover/
+mutation pass on those copies; `make fifo-mapping` includes every payload bit.
+`make frontends` checks all six profiles, invalid contracts and two heterogeneous
+instances. Rerun these commands on the converted registered production sources.
+
+Keep the explicit symbolic-input harness adapter. Native `read_verilog` still
+fails the richer forms and mislowers the minimized record-array fixture; it is
+a diagnostic control, not a portability veto. No parameterized packages or
+forward-referenced typedefs are part of the recipe. Source-relative filenames
+containing whitespace remain unqualified by the current Yosys command adapter.

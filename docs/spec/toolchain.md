@@ -4,15 +4,15 @@ All required build and verification workflows use command-line open-source tools
 
 | Purpose | Tool and qualification |
 |---|---|
-| SV/UVM simulation and RTL lint | Verilator 5.054 candidate baseline, pinned source; use timing, assertions and coverage explicitly |
-| UVM library | Accellera UVM 2020.3.1 pinned source; this version is explicitly supported by the simulator project |
+| SV/UVM simulation and RTL lint | Verilator 5.054 qualified source baseline, pinned source; use timing, assertions and coverage explicitly |
+| UVM library | Accellera UVM 2020.3.2 checksum-locked official distribution |
 | Constrained randomization | Z3; qualify successful and unsatisfiable randomization and seed replay |
 | Functional formal | SymbiYosys + Yosys + Z3, mutually qualified pinned versions |
 | Standard-cell mapping | Yosys + ABC, explicit Liberty library and mapping constraints |
 | Static timing | OpenSTA, Liberty/netlist/SDC inputs, max/min reports |
 | Orchestration | Python 3.11+, Bash, Make; C++20-capable compiler for generated simulation code |
 
-`tools/dependencies.json` records initial source pins. P00 installs the tools, records the exact qualified versions and adds reproducible setup/doctor commands. Qualify the toolchain as a combination, not a list of installed executables. Use source builds or compatible pinned distributions; do not copy a binary built for a newer libc into an older base image.
+`tools/dependencies.json` records exact source/archive pins. The [modern refresh report](../results/modern-toolchain.md) records executed qualification, and the [operational guide](../implementation/toolchain.md) defines setup/doctor/cache commands. Qualify the toolchain as a combination, not a list of installed executables. Use source builds or compatible pinned distributions; do not copy a binary built for a newer libc into an older base image.
 
 ## Capability tests
 
@@ -26,7 +26,7 @@ Verilator supports modern UVM but does not implement every SystemVerilog semanti
 
 `--coverage` instruments supported code/functional coverage. Explicitly write and collect the resulting database and inspect its nonzero point/bin counts. A printed coverage percentage without a saved database is insufficient. Build a tiny harness with the actual coverage options before assuming collection works.
 
-Formal code uses the supported free frontend, with monitor-state translations where concurrent SVA is unavailable. Keep an explicit property mapping between simulation and formal. Equivalence, bounded checking and unbounded proof retain separate statuses.
+Formal and synthesis use the registered `read_slang` frontend in Yosys 0.70; `read_verilog` remains an explicit diagnostic control for its supported subset. Formal harnesses expose equivalent arbitrary input ports through the checked source adapter; symbolic attributes must not silently become X constants. Preserve monitor-state translations where concurrent SVA is unavailable. Keep an explicit property mapping between simulation and formal. Equivalence, bounded checking and unbounded proof retain separate statuses.
 
 ## Dependency handling
 
@@ -34,4 +34,4 @@ Download pinned external sources to ignored `.deps/` and build to ignored `.tool
 
 Use the public Nangate45 reference Liberty pinned in dependencies.json for the initial implementation study. It is a reference analysis platform. Include actual payload storage in the small mapped profiles and state every abstraction used for larger profiles.
 
-Upstream references: [Verilator support tracking](https://github.com/verilator/verilator/issues/1538), [release history](https://verilator.org/guide/latest/changes.html), [language support](https://verilator.org/guide/latest/languages.html), [coverage](https://verilator.org/guide/latest/simulating.html), [UVM reference library](https://github.com/accellera-official/uvm-core), [SBY](https://yosyshq.readthedocs.io/projects/sby/en/stable/), [Yosys](https://yosyshq.readthedocs.io/projects/yosys/en/latest/), [OpenSTA](https://github.com/The-OpenROAD-Project/OpenSTA).
+Upstream references: [Verilator support tracking](https://github.com/verilator/verilator/issues/1538), [release history](https://verilator.org/guide/latest/changes.html), [language support](https://verilator.org/guide/latest/languages.html), [coverage](https://verilator.org/guide/latest/simulating.html), [UVM reference library](https://github.com/accellera-official/uvm-core), [SBY](https://yosyshq.readthedocs.io/projects/sby/en/stable/), [Yosys](https://yosyshq.readthedocs.io/projects/yosys/en/latest/), [OpenSTA](https://github.com/parallaxsw/OpenSTA).

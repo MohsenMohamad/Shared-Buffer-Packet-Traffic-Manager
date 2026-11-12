@@ -13,6 +13,21 @@ def comparable(data, top, names):
     kinds=Counter(c['type'] for c in module['cells'].values())
     labels={n: c.get('attributes',{}).get('src','') for n,c in module['cells'].items()
             if c['type'] in ('$assert','$assume','$cover')}
+    # Columns use inclusive/exclusive end conventions in the two frontends.
+    # Compare type/file/start-line for every property in unchanged includes;
+    # harness lines move when free input declarations expand the header.
+    locations=Counter()
+    named={}
+    for name,cell in module['cells'].items():
+        if cell['type'] not in ('$assert','$assume','$cover'):
+            continue
+        src=cell.get('attributes',{}).get('src','')
+        location=re.search(r'(formal/[^:]+):(\d+)\.',src)
+        if location:
+            key=cell['type']+':'+location[1]+':'+location[2]
+            locations[key]+=1
+            if re.search(r'(?:^|\.)(?:a_|c_)',name):
+                named[name]=key
     bits=[b for n in module['netnames'].values() for b in n['bits'] if isinstance(b,int)]
     next_bit=max(bits+[1])+1
     def fresh():
@@ -50,7 +65,8 @@ def comparable(data, top, names):
         module['ports']['past_valid_state']=dict(direction='output',bits=module['netnames']['past_valid']['bits'])
         control=['dut.have_aw','dut.have_w','dut.have_ar','dut.bvalid','dut.rvalid']
         module['ports']['control_state']=dict(direction='output',bits=[b for n in control for b in module['netnames'][n]['bits']])
-    return dict(creator=data['creator'],modules={top:module}),dict(counts=dict(kinds),properties=labels,assumptions=len(assumptions))
+    return dict(creator=data['creator'],modules={top:module}),dict(counts=dict(kinds),properties=labels,
+        property_locations=dict(locations),named_properties=named,assumptions=len(assumptions))
 
 
 def bridge(run,args):
@@ -90,7 +106,11 @@ def bridge(run,args):
         expected={k:v for k,v in gold[2]['counts'].items() if k in ('$assert','$assume','$cover')}
         observed={k:v for k,v in gate[2]['counts'].items() if k in ('$assert','$assume','$cover')}
         count=Case(run,'bridge-'+name+'-property-counts')
-        count.finish('PASS' if observed==expected else 'FAIL',None if observed==expected else 'Formal property inventory changed',native=expected,slang=observed)
+        identities_match=all(gold[2][key]==gate[2][key] for key in ('property_locations','named_properties'))
+        ok=observed==expected and identities_match and bool(gold[2]['named_properties'])
+        count.finish('PASS' if ok else 'FAIL',None if ok else 'Formal property counts, labels or source locations changed',
+                     native=expected,slang=observed,named_properties=gold[2]['named_properties'],
+                     property_locations=gold[2]['property_locations'])
         for direction in ('native-implies-slang','slang-implies-native'):
             case=Case(run,'bridge-'+name+'-'+direction)
             script=case.path/'equivalence.ys'

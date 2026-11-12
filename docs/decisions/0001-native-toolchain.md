@@ -1,5 +1,9 @@
 # Native toolchain qualification
 
+Historical decision: current tool/frontend restrictions and their dispositions
+are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+and behavioral choices below remain historical records.
+
 P00 uses checksum-locked Debian trixie packages for Yosys 0.52-2, ABC, Z3
 4.13.3 and OpenSTA 2.0.17. The packaged Yosys reports the exact specification
 commit `fee39a3284c90249e1d9684cf6944ffbbcbb8f90`. SBY v0.71 and Verilator

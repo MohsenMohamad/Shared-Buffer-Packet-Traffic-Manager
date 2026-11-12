@@ -1,5 +1,9 @@
 # UVM foundation uses signal observations and a declared fixture
 
+Historical decision: current tool/frontend restrictions and their dispositions
+are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+and behavioral choices below remain historical records.
+
 P07 supplies reusable UVM agents and independent models before the complete
 traffic manager exists. The behavioral fixture is owned by the
 `uvm-foundation` simulation source registry; production, synthesis and formal

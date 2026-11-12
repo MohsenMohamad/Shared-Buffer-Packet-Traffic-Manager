@@ -14,6 +14,7 @@ This repository contains the implementation specification, executable toolchain 
 - [Implementation plan](docs/implementation/plan.md)
 - [Contribution and validation workflow](CONTRIBUTING.md)
 - [Dependencies](tools/dependencies.json)
+- [Modern toolchain qualification](docs/results/modern-toolchain.md)
 - [Toolchain setup and commands](docs/implementation/toolchain.md)
 
 `make setup` installs the pinned native tools. `make ci` exercises UVM/randomization/assertions/saved coverage, formal prove/cover/mutation, and mapped synthesis/max/min STA on independent fixtures. `make repo-check` validates documents and requirement data only. Executed results identify their source revision, profile and tool versions.
