@@ -2682,18 +2682,51 @@
     "actual_tested_merge_revision": "56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
     "source_comparison": "PASS: fetched actual merge object; RTL, formal, dv, verification, experiment definition, frontend and dependency/package locks identical to local tested revision; runner differs only in scope metadata",
     "command": "make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test allocator-scaling'",
-    "measurement_comparison": "NOT_RUN: hosted archive retrieval blocked; numerical tables remain local measurements",
+    "measurement_comparison": "PASS: all eight mapping measurement sets and sixteen STA measurement sets match local records exactly; raw mapping statistics/netlist digests validated and all STA stdout/stderr reparsed with the strict local parser",
     "artifact": {
       "id": 13944132446,
       "name": "toolchain-allocator-scaling-56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
       "size_bytes": 1805959,
       "sha256_from_github_metadata": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
-      "archive_digest_verified": false,
-      "retrieval_result": "TOOL_ERROR",
-      "retrieval_reason": "GitHub API returned artifact redirect; inherited environment proxy rejected CONNECT to productionresultssa6.blob.core.windows.net with 403 Forbidden. gh and independent urllib request failed.",
-      "retention_days": 14
+      "archive_digest_verified": true,
+      "retrieval_result": "PASS",
+      "retention_days": 14,
+      "retrieval_method": "GitHub connector Actions artifact download and independently uploaded ZIP; both archives are byte-for-byte identical, match GitHub SHA256/size and pass ZIP CRC checks",
+      "verified_sha256": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
+      "direct_download_limitation": "Workspace gh/urllib HTTP clients received proxy CONNECT 403 for productionresultssa6.blob.core.windows.net; GitHub connector artifact download succeeds",
+      "connector_download": {
+        "result": "PASS",
+        "artifact_id": 13944132446,
+        "verified_sha256": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
+        "size_bytes": 1805959,
+        "matches_uploaded_archive_byte_for_byte": true
+      }
     },
     "workflow_result": "PASS",
-    "successful_jobs": 21
+    "successful_jobs": 21,
+    "archive_cross_check": {
+      "result": "PASS",
+      "hosted_source_revision": "56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
+      "dirty": false,
+      "summary_sha256": "a74541c96805d913bbfc5843c012f7859bb8df1f88b3ddec3fe63f4f31606044",
+      "summary_cases_passed": 32,
+      "mapped_designs_compared": 8,
+      "timing_analyses_compared": 16,
+      "compared_fields": [
+        "complete mapping measurement dictionaries (area/cells/state/buffers/ports/fanout)",
+        "complete timing measurement dictionaries (every reported max/min group path, endpoints/arrival/slack, electrical checks)",
+        "definition digests",
+        "Liberty digest",
+        "netlist digests"
+      ],
+      "raw_evidence_validation": [
+        "eight netlists match their manifest digests",
+        "eight mapped JSON/statistics files reproduce recorded integrity/area measurements",
+        "sixteen raw STA stdout/stderr pairs reparse without diagnostics or missing paths",
+        "all 24 allocator case manifests identify the same clean hosted source revision"
+      ],
+      "numerical_differences": 0,
+      "decision_change": false
+    }
   }
 }

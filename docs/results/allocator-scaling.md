@@ -250,10 +250,57 @@ identical RTL, verification sources, experiment scripts/constraints, frontend an
 locks to the local measured revision; the runner only adds scope metadata.
 This does not replace the local tested SHA or imply execution on later metadata.
 
-GitHub reports artifact `13944132446`, size 1,805,959 bytes; its name and supplied
-SHA256 are in the JSON. The environment proxy rejects the redirected Azure Blob
-host with HTTP CONNECT 403 even though environment settings report unrestricted
-networking. The archive was **not retrieved or digest-verified**, and hosted
-numbers were **not cross-compared**. The numerical tables remain the committed
-local measurements. Job PASS and artifact metadata are verified through GitHub;
-archive verification is a separate unavailable check, not an inferred PASS.
+Artifact `13944132446` is **digest-verified and cross-compared: PASS**. The
+GitHub connector download and independently supplied ZIP are byte-for-byte
+identical, 1,805,959 bytes, and match GitHub's SHA256
+`0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91`;
+ZIP CRC checks pass. Workspace HTTP clients encounter proxy CONNECT 403 at the
+redirected storage host; the GitHub connector successfully retrieves the archive
+and provides an available download route.
+
+All 32 archived case statuses pass. All **eight mapping** and **sixteen timing**
+measurement sets match the local records **exactly**, including area, cells,
+state, buffers, ports, fanout, path endpoints/arrival/slack, electrical checks,
+definition/library digests and netlist digests. Raw mapped JSON/statistics and
+netlists independently reproduce their recorded measurements/digests; raw STA
+stdout/stderr reparses with the strict local checker. Every allocator case names
+the same clean hosted merge SHA. The JSON records the verified archive and
+summary hashes, comparison scope and counts. No numbers, criteria or conclusions
+changed: successful measurement reproduction does not establish timing closure.
+
+To repeat the archive-to-local comparison, save the ZIP as
+`.build/allocator-hosted/allocator.zip` and retain the original local run below
+(or substitute the regenerated run directory). This reads archived data without
+executing archived scripts:
+
+```sh
+python3 - <<'PYCODE'
+import hashlib, json, sys, zipfile
+from pathlib import Path
+sys.path.insert(0, 'tools')
+from allocator_scaling import timing_measurements
+artifact = Path('.build/allocator-hosted/allocator.zip')
+local = Path('.build/runs/allocator-scaling-2026-11-12T121457.361321+0000-1dda634d')
+assert hashlib.sha256(artifact.read_bytes()).hexdigest() == '0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91'
+compared = 0
+with zipfile.ZipFile(artifact) as archive:
+    assert archive.testzip() is None
+    for name in archive.namelist():
+        if '/allocator-' not in name or not name.endswith('/manifest.json'):
+            continue
+        hosted = json.loads(archive.read(name))
+        original = json.loads((local / Path(name).parent.name / 'manifest.json').read_text())
+        assert hosted['source_revision'] == '56d75b44e07e2e7f9cc429c73de5024cbcfd95e3' and not hosted['dirty']
+        for field in ('measurements', 'definition_digests', 'liberty_sha256', 'netlist_sha256'):
+            assert hosted.get(field) == original.get(field), (name, field)
+        parent = str(Path(name).parent)
+        if Path(parent).name.startswith('allocator-sta-'):
+            raw = archive.read(parent + '/sta.stdout') + archive.read(parent + '/sta.stderr')
+            assert timing_measurements(raw.decode()) == hosted['measurements']
+        else:
+            assert hashlib.sha256(archive.read(parent + '/mapped.v')).hexdigest() == hosted['netlist_sha256']
+        compared += 1
+assert compared == 24
+print('PASS: eight mappings and sixteen STA measurement sets match exactly')
+PYCODE
+```
