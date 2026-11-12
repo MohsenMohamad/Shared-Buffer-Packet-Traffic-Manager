@@ -4,6 +4,7 @@
     "rtl/include"
   ],
   "sources": [
+    "rtl/include/tm_fixed.sv",
     "rtl/include/tm_module_ports.sv",
     "rtl/tm_top.sv",
     "rtl/common/tm_axis_rx_fifo.sv",
