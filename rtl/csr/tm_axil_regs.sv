@@ -1,15 +1,22 @@
-module tm_axil_regs_api #(
+module tm_axil_regs_api import tm_fixed::*; #(
 `include "tm_parameters.svh"
-) (clk, rst_n, initialized, bus_req, bus_rsp, live, live_stats, shadow_stats, cfg, stats_command);
+,
+`define TM_ANSI_TYPES
 `include "tm_types.svh"
-input logic clk, rst_n, initialized;
-input axil_request_t bus_req;
-output axil_response_t bus_rsp;
-input live_t live;
-// Retained P01 port. All statistics reads deliberately select shadow_stats.
-input statistics_t live_stats, shadow_stats;
-output config_t cfg;
-output stats_command_t stats_command;
+`undef TM_ANSI_TYPES
+) (
+    input logic clk,
+    input logic rst_n,
+    input logic initialized,
+    input axil_request_t bus_req,
+    output axil_response_t bus_rsp,
+    input live_t live,
+    // Retained P01 input; statistics reads select shadow_stats.
+    input statistics_t live_stats,
+    input statistics_t shadow_stats,
+    output config_t cfg,
+    output stats_command_t stats_command
+);
 `include "tm_validate.svh"
 
 logic have_aw, have_w, have_ar, bvalid, rvalid;
