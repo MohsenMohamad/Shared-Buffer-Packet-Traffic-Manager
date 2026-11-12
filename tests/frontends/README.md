@@ -8,6 +8,5 @@ and record-memory formal proof and reachability checks.
 missing-stability negative, plus the production source-policy tests.
 
 Production formal harnesses use explicit input ports and run directly through
-`formal-rtl`. Historical parser comparisons, production snapshots and generated
-harness adapters are removed. These fixtures establish frontend capabilities,
+`formal-rtl`. These fixtures establish frontend capabilities,
 not production traffic-manager correctness.

@@ -16,7 +16,7 @@ Dependencies: Initial specification seed. Preserve an existing P00 implementatio
 
 ## Execution sequence
 
-1. Check whether P00 is already integrated. If it is, use its setup guide, lockfiles and evidence; use the [explicit refresh follow-up](P00-followup-modern-toolchain.md) for authorized upgrades, or investigate a demonstrated missing capability. If it is still on a candidate branch, have that candidate reviewed and integrated by the maintainer before P01 rather than building a second toolchain.
+1. Check whether P00 is already integrated. If it is, use its setup guide, lockfiles and evidence; use the [explicit refresh follow-up](P00-followup-toolchain.md) for authorized upgrades, or investigate a demonstrated missing capability. If it is still on a candidate branch, have that candidate reviewed and integrated by the maintainer before P01 rather than building a second toolchain.
 
 2. For a unimplemented P00, install and lock the simulator/UVM/solver/formal/synthesis/STA combination. Verify source integrity and host ABI/compiler compatibility. Keep setup separate from test execution and prove that repeat installation reuses verified inputs.
 

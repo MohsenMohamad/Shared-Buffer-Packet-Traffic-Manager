@@ -1,15 +1,16 @@
 # Integration status
 
-PRs #1-#10 are integrated through `c32b3f1b79ac3412532e0564e038983aa2862112`.
-The modern toolchain, ANSI/type migration, allocator characterization and P07
+Main includes P00/P01/P02/P03/P06/P07, F01 and C01 through
+`eccb9fb4cac71dd36b60a2b9d7e7f0836485b7a7` (PR #14).
+The qualified toolchain, ANSI declarations and shared types, allocator characterization and P07
 constrained-stimulus/readability follow-up are merged. The top and unimplemented
 components remain declarations; complete traffic-manager behavior is pending.
 
 | Gate | Current scope | Evidence / owner |
 | --- | --- | --- |
-| G0 | Qualified toolchain fixtures and selected frontend | [Modern qualification](results/modern-toolchain.md) |
-| G1 | Qualified declarations/configurations; representation migrated | [P01](results/P01-contracts.md), [migration](results/rtl-representation.md) |
-| G2 | Partial: FIFOs/pools, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P03/P04/P05/P08 pending |
+| G0 | Qualified toolchain fixtures and selected frontend | [Toolchain qualification](results/modern-toolchain.md) |
+| G1 | Qualified declarations/configurations; qualified types and declarations | [P01](results/P01-contracts.md), [RTL representation](results/rtl-representation.md) |
+| G2 | Partial: FIFOs/pools, descriptor queues, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P03](results/P03-queues.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P04/P05/P08 pending |
 | G3 | Pending real vertical path | P09 |
 | G4 | Pending integrated concurrency/profile evidence | P10 |
 | G5 | Pending composition proofs and coverage closure | P11A/P11B/P11C |

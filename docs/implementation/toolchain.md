@@ -21,14 +21,13 @@ make ci JOBS=2
 The selected locks are Yosys 0.70 with its integrated slang frontend and
 ABC gitlinks, Verilator 5.054, UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative
 OpenSTA 3.2.0 source. CMake 4.4.5, SWIG 4.5.1, Eigen 5.0.1, CUDD 3.0.0 and Click
-8.5.1 are explicit dependencies. See the [inventory and source identities](modern-toolchain-plan.md)
-and [current qualification status](../results/modern-toolchain.md); active pins do
-not imply all required qualification has completed.
+8.5.1 are explicit dependencies. See the [inventory and source identities](toolchain-qualification-plan.md)
+and [current qualification status](../results/modern-toolchain.md); the selected combination has completed its documented qualification.
+Capability results retain the scope stated in each report.
 
 `setup` verifies every cached/downloaded archive, extracts the audited build and
 Tcl/zlib packages into `.tools/sysroot`, builds to `.tools/install`, and retains
-external source/licenses under `.deps`. It does not depend on an old toolchain
-installation, a container, system package installation or mutable upstream
+external source/licenses under `.deps`. It does not require another installation or a container, system package installation or mutable upstream
 branches. The upstream Z3 binary requires glibc 2.39; C++ language/runtime
 compatibility is tested by compilation/execution, rather than rejecting every
 compiler patch different from 14.2.0.
@@ -155,8 +154,7 @@ interface and heterogeneous-instance fixtures through parsing, elaboration,
 synthesis and simulation. Record-memory prove/cover tasks check complete-word
 semantics. `formal-symbols` checks the explicit-input recipe and its deliberate
 missing-stability negative. Production proofs execute the committed harnesses
-without generated adapters. The source guard applies uniformly to all harnesses.
-There is no old/new implementation gate or historical source staging.
+directly. The source guard applies uniformly to all harnesses.
 Source-relative filenames containing whitespace remain unqualified.
 
 The optional `uvm-dpi` command exercises actual regex and HDL path/read/deposit

@@ -220,7 +220,7 @@ def synth(run, args):
     slacks = re.findall(r'([-+]?\d+\.\d+)\s+slack', text)
     sta.finish(result, reason, analysis='Nangate45 typical 1.10 V / 25 C; ns, fF; 10 fF load; ideal-clock pre-layout fixture', slacks_ns=slacks)
     timing_rejections(run, args, liberty, netlist)
-    api = Case(run, 'sta-modern-api')
+    api = Case(run, 'sta-api-capabilities')
     step = api.execute(['sta', '-no_init', '-exit', str(FIXTURES / 'sta_api.tcl')], timeout=args.timeout)
     result, reason = completed(step, 'TM_STA_API_PASS')
     if re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:', output(step)):

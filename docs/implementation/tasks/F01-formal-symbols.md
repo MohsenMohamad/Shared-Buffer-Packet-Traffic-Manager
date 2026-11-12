@@ -5,7 +5,7 @@
 Close the formal-frontend prerequisite for P03 without changing production RTL,
 tool versions or the required property set. Consume the selected Slang frontend
 and [formal rules](../../spec/formal.md). All production harnesses now use
-explicit arbitrary-input ports; no adapter or source-policy exception remains.
+explicit arbitrary-input ports and follow one source policy.
 
 ## Work
 
@@ -40,6 +40,5 @@ F01 blocks P03; writing this card or its example alone does not close the gate.
 Complete at the configurations and limits in the [F01 results](../../results/F01-formal-symbols.md).
 Run `make formal-symbols RUN_ARGS='--timeout 120'` for the width-1/width-4
 recipe, named missing-assumption detection, distinct-value and later-reset
-covers, and source/registry guard checks. Historical native/decorated controls
-and comparison runners are retired. The recipe remains ready for production
+covers, and source/registry guard checks. The recipe is qualified for production
 harnesses; this fixture does not establish FP-QUEUE or FP-ORDER.

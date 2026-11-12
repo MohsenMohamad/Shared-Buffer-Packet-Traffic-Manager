@@ -92,9 +92,8 @@ across all conditional branches, including multiline/comment/escaped-name
 variants. Slang formal command defines are checked too. Comments and string literals do not introduce symbols. Macro includes,
 missing/external headers and token concatenation fail closed because their
 source expansion is unqualified. This is a source-policy checker, not an RTL
-translator. There are no path-based exceptions or generated harness adapters.
+translator. The source guard applies uniformly.
 Storage, CSR and queue harnesses are committed with explicit arbitrary-input
-ports. Production proofs run those files directly. Historical frontend and
-representation comparisons are retired; no historical checkout is required.
+ports. Production proofs run those files directly.
 Current-stack source guards, fixed-witness negatives, memory-semantics checks
 and all production prove/cover/mutation tasks remain required.

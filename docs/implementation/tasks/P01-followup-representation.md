@@ -1,7 +1,7 @@
 # P01 follow-up: Qualified RTL representation
 
 Improve production declaration/type readability using the exact frontend
-combination qualified by the [P00 refresh](P00-followup-modern-toolchain.md).
+combination qualified by the [P00 refresh](P00-followup-toolchain.md).
 Complete this representation change before allocator characterization, preserving
 external behavior, finite ports, source ownership and proof/checker strength.
 
@@ -21,7 +21,7 @@ until the planned stabilization review. This is a separate PR from tool selectio
    operations need not acquire redundant typed aliases. Do not add interfaces,
    abstraction layers or algorithms merely because parsing succeeds.
 4. Convert registered production and verification callers together; retain the
-   qualified production frontend. Migration validation must retain arbitrary streams, initialization, two-edge startup reset,
+   qualified production frontend. Validation must retain arbitrary streams, initialization, two-edge startup reset,
    later reset freedom, all assumptions/assertions/covers and intended mutations.
 5. Recheck all six profiles/invalid elaborations, heterogeneous instances,
    independent FIFO/CSR/statistics behavior, P02/P06 formal and P07 fixture
@@ -41,8 +41,6 @@ probe and production checks qualify `localparam type` in ANSI/body/package scope
 shared separators avoid mirrored declarations. The FIFO remains a generic vector
 boundary because it only copies complete beats. See [decision 0007](../../decisions/0007-rtl-representation.md).
 
-The representation migration is complete. Historical comparison runners,
-source staging and harness adapters have been retired. Current capability tests,
+Complete. Use the qualified ANSI/type recipe above. Current capability tests,
 production proofs/covers/mutations, six-profile contracts and CSR/statistics
-regressions remain the acceptance paths. No pre-migration Git object is needed.
-See [the retirement decision](../../decisions/0008-retire-migration-scaffolding.md).
+regressions are the acceptance paths.

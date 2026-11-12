@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "qualification": "Candidate locks; qualification pending docs/results/modern-toolchain.md. Historical P00 results refer to their original locks.",
+  "qualification": "Qualified selected toolchain; executed scope and source identities are recorded in docs/results/modern-toolchain.md. Current setup, doctor and capability checks enforce the selected combination.",
   "verilator": {
     "version": "5.054",
     "url": "https://codeload.github.com/verilator/verilator/tar.gz/refs/tags/v5.054",

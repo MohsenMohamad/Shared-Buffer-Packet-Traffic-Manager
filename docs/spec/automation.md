@@ -46,7 +46,6 @@ Frontend selection is explicit in the formal/synthesis registries; only the
 selected Slang frontend is executable. `make formal-symbols` qualifies explicit
 fixed/time-varying inputs, source guards and missing-stability negative controls.
 `make frontends` qualifies independent current-stack language and memory checks.
-Historical native/Slang and old/current representation comparisons are removed.
 Consumers validate the shared installation and never invoke setup. See the
 [operational guide](../implementation/toolchain.md) for capability commands.
 

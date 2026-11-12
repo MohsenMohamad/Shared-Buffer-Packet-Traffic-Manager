@@ -36,7 +36,6 @@ and [current evidence](../results/rtl-representation.md).
 
 Production formal/synthesis reads registered sources directly with Slang.
 Every formal harness declares arbitrary stimulus as explicit input ports.
-No generated harness adapter or historical implementation comparison is required.
 Current production properties, covers, mutations and source-policy guards remain
 mandatory; frontend fixtures do not substitute for those proofs.
 
