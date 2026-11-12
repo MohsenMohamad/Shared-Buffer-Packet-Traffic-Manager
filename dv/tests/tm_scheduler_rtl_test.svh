@@ -226,7 +226,10 @@ class tm_scheduler_rtl_test extends uvm_test;
         reset_case(4096,4096);
         step(0,1,0);
         repeat((4096/MAX_PACKET_BYTES+1)*3) begin
-            until_eligible(); step(0,MAX_PACKET_BYTES);
+            until_eligible();
+            if(SCHED_MODE==1 && model.deficit[0]+(model.visit ? 0 : model.quanta[0])==4096+MAX_PACKET_BYTES-1)
+                repeat(2) step(-1,1,1,1,0); // Hold the inclusive bound in real RTL state.
+            step(0,MAX_PACKET_BYTES);
             finish_tx();
         end
         drain();
