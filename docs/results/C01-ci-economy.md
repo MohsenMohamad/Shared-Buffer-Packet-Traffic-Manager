@@ -3,8 +3,9 @@
 The light/full policy preserves the existing hardware suites and pinned dependencies.
 Local structural tests qualify event selection and summary failure behavior; they
 are not hosted hardware results. Base: `eb99f7e7152b1880c2e2aafa0d0a77602a68ec42`.
-The executable maintenance revision is identified by this PR's implementation
-commit; subsequent report-only updates do not imply rerunning hardware.
+Tested implementation: `511ccb51adacba26a08e2c756cc49c5f4917b3c7`, clean detached
+worktree without `.tools` or `.deps`; Python 3.12. Subsequent documentation updates
+do not imply rerunning hardware.
 
 | Event / complete PR diff | Full requested | Evidence |
 | --- | --- | --- |
@@ -32,6 +33,11 @@ actionlint -version
 actionlint
 git diff --check
 ```
+
+Local checks passed: 63 unit tests; 34 Python, 23 JSON and one shell source
+syntax checks; repository contracts (52 requirements); actionlint and diff checks.
+A real `toolchain_cache.py validate` invocation in the clean worktree exited 1,
+printed the missing-manifest recovery instructions and emitted no traceback.
 
 Actionlint 1.7.11 was downloaded from its official release for local validation;
 no repository dependency versions changed. Python/JSON/shell syntax and all
@@ -71,7 +77,14 @@ in [automation](../spec/automation.md#maintainer-setup).
 
 ## Hosted observations
 
-Hosted draft and ready-request results will be linked here after the maintenance
-branch is pushed. The event truth table above remains structural evidence unless
-an actual run is explicitly cited. Main/manual and each skip variant will not
-receive separate expensive matrices solely for demonstration.
+[PR #12](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/12)
+opened as draft. Its [opened-event run 43281763248](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43281763248)
+at `511ccb51adacba26a08e2c756cc49c5f4917b3c7` completed successfully: repository
+contracts, Python unit/syntax and policy passed; preparation, every consumer and
+cleanup were actually skipped. The summary log reported `NOT_REQUESTED: light
+checks succeeded; full qualification did not execute`.
+
+A single ready-for-review request follows the evidence update. Its live status
+and run link are recorded in PR #12's validation table; a pending run is not full
+qualification. The other event rows remain structural checks. Main/manual and
+each skip variant do not receive separate expensive matrices solely for demonstration.

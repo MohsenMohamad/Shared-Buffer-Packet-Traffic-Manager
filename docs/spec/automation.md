@@ -92,10 +92,11 @@ existing verified-artifact deletion and one-day fallback remain in effect.
 Create the repository label `full-ci` (exact spelling) if label requests are
 wanted; until then, marking ready requests full CI. This change does not create
 labels or edit branch protection/rulesets. Maintainers should inspect their
-current required checks: per-suite checks cannot be the sole iteration signal
-when intentionally skipped. Keep the existing hardware/integration requirements;
-use the stable `full-ci-summary` together with the light checks as appropriate,
-and require a requested, completed full run before merging implementation work.
+current required checks. The stable names to require for this policy are
+`repository / repository-contracts`, `repository / python-unit-syntax` and
+`full-ci-summary`. Keep the existing hardware/integration requirements; per-suite
+checks alone cannot distinguish an intentional skip from completed qualification.
+Require a requested, completed full run before merging implementation work.
 A green summary containing `NOT_REQUESTED` establishes only light qualification.
 Do not weaken branch rules to accept an unfinished requested run. Check names
 for existing consumer suites are unchanged.
