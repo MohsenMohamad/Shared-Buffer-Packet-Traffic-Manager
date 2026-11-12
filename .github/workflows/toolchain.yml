@@ -124,7 +124,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gate: [uvm, uvm-dpi, formal, synth, frontends, bridge, representation-formal, fifo-mapping, allocator-scaling]
+        gate: [uvm, uvm-dpi, formal, synth, frontends, bridge, formal-symbols, representation-formal, fifo-mapping, allocator-scaling]
     env:
       CXX: g++-14
     steps:

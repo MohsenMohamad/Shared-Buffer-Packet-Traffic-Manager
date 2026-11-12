@@ -42,5 +42,19 @@
       "MAX_PACKET_BYTES": 128
     }
   },
-  "scope": "Local production storage APIs at E0 dimensions; extended pool ID widths exercise invalid encodings. No RX/queue/TX ownership composition. CSR targets production register slave with arbitrary live/shadow inputs and response backpressure."
+  "scope": "Local production storage APIs at E0 dimensions; extended pool ID widths exercise invalid encodings. No RX/queue/TX ownership composition. CSR targets production register slave with arbitrary live/shadow inputs and response backpressure.",
+  "symbolic_qualification": {
+    "handler": "formal-symbols",
+    "top": "symbolic_inputs",
+    "source": "formal/symbolic/symbolic_inputs.sv",
+    "header": "formal/symbolic/symbolic_checks.svh",
+    "diagnostic_control": "tests/frontends/anyconst_control.sv",
+    "widths": [
+      1,
+      4
+    ],
+    "depth": 12,
+    "engine": "smtbmc z3",
+    "scope": "Frontend recipe qualification only; no production DUT proof"
+  }
 }

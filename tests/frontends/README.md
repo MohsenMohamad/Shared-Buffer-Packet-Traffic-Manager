@@ -22,3 +22,12 @@ used by the `production` parse/elaboration/synthesis/profile/heterogeneous cases
 `representation-formal` runs actual registered proofs and supplementary old/new
 sequential equivalence; `fifo-mapping` also checks the current record-array
 alternative. See [migration evidence](../../docs/results/rtl-representation.md).
+
+`make formal-symbols RUN_ARGS='--timeout 120'` executes the small F01 recipe
+qualification registered in `verification/formal.json`. The production-source
+example is [symbolic_inputs.sv](../../formal/symbolic/symbolic_inputs.sv);
+[results and negative identities](../../docs/results/F01-formal-symbols.md)
+distinguish native fixedness, rejected Slang decoration, missing-assumption
+counterexamples and frontend rejection. `anyconst_control.sv`,
+`symbolic_attributes.sv` and `symbolic_functions.sv` are diagnostic fixtures;
+the formal source registry cannot exempt or admit them as production harnesses.

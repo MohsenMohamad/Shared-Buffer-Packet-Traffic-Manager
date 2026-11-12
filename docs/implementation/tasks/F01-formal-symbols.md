@@ -38,3 +38,13 @@ The recipe has actual prove/cover/negative evidence on the selected stack, the
 guard rejects an unsupported new harness, and documentation identifies executable
 commands and source scope. New harnesses consume the qualified recipe directly.
 F01 blocks P03; writing this card or its example alone does not close the gate.
+
+## Qualified result
+
+Complete at the configurations and limits in the [F01 results](../../results/F01-formal-symbols.md).
+Run `make formal-symbols RUN_ARGS='--timeout 120'` for the width-1/width-4
+recipe, rejected decoration, named missing-assumption detection, distinct-value
+and later-reset covers, frontend diagnostic and source/registry guard checks.
+`make bridge RUN_ARGS='--timeout 900'` retains the five legacy inventories and
+mutual assumption-inclusion proofs. The rule's recipe is ready for P03; this
+fixture does not establish FP-QUEUE or FP-ORDER on a queue controller.

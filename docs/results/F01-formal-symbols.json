@@ -1,0 +1,481 @@
+{
+  "schema_version": 1,
+  "scope": "F01 pinned frontend/input/monitor qualification, not a production DUT proof",
+  "tested": {
+    "source_revision": "6b7d556179924b80b98bcb7855ec123120257896",
+    "dirty": true,
+    "source_digests": {
+      "formal/symbolic/symbolic_checks.svh": "6c0a3a76b97ab8828383decc8c3a7b16b50dee1bbc43eed04b59f8ee917949b2",
+      "formal/symbolic/symbolic_inputs.sv": "a8889c49a03570a8dfd8c161127c277cf3ceaf0e4ae41c256f150c04c3f1cf95",
+      "tests/frontends/anyconst_control.sv": "005f5bdfea19f2f06f0b0e23d4588bda34509c09749c4c0edf560f967efb3a71",
+      "tests/toolchain/test_formal_symbols.py": "ad69d5e4badac702711162b54c7ccc9c222cae301ffd1a223b9f0025e9a251c2",
+      "tools/formal_symbols.py": "8ac2ef8857a7ef1a184539835d8f878a9e4ee60634d0e4d40683c045c56d3e0f",
+      "tools/symbolic_qualification.py": "90d0c6a992ec0d0e6e4bd9cfa4115489c61ba025bb9805cdc81978a42c6fd596",
+      ".github/workflows/toolchain.yml": "7cef172b70aaad7e12a63bff57d34739cf3dfc3b50e219f11a484b0c60e3b9f9",
+      "formal/AGENTS.md": "bd5f4b106224ac9b5473768f5a2ed0528737e4e7fd68c5d898ea6339d02869b9",
+      "formal/csr/README.md": "fbb9113205d7dd298a75839775c7d18976c123b009eb651d2d227173ab13d487",
+      "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+      "formal/csr/csr_formal.sv": "778f3b8e4acaddadefaed492aff13f759157a3721a20c95cd4c2e602d8b00186",
+      "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+      "formal/pools/README.md": "676fda5a2d4bd0dfc442c91e43fedcaf462b79e697298fe16254c03db97c352b",
+      "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+      "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+      "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+      "formal/pools/storage_formal.sv": "8741c498d77ba36de98afc5debd94d36037549c72f3182b42f8d07f1192c6a6f",
+      "tests/frontends/symbolic_functions.sv": "bcff3c5a06ab8941a3503a09198fa680c4ffccb1168a1098b9e41956af0a23cf",
+      "tools/AGENTS.md": "b6a510ca25a8955c662302699edbd673893ab138afa0699ad3b365cad5a269e1",
+      "tools/allocator_scaling.py": "c24601f3e316e94939cef27d80162312bdd4e8bf9c5cf4c3a3e4f3c29a388e25",
+      "tools/check_light.py": "c606f9ee5216ee79288dbe49bab6040a258e48352e1f3f42d0f5e5fe6346070d",
+      "tools/check_repository.py": "75dbcb835e759545d70669e44d1c61e2ce65588646f0366fa0b01796ff6bd43d",
+      "tools/ci_policy.py": "19ac85abf43ac14b8c22c680fc97be8c3d6be6fbc6be877efc95f49bc457ed6f",
+      "tools/cleanup_toolchain_artifact.py": "4279c0c63bc047f9e96edb9238e6151f1543f12c8ee2ab56ad24890008fbf50f",
+      "tools/contracts.py": "182beed08e56c6a8b5811beeefa38eeaa643be53fd6987b93f2372d2df7107c1",
+      "tools/csr.py": "84234def046d16017a012274ec70e851adc46535ea37ad01b50a6efd8229521b",
+      "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+      "tools/doctor.py": "11a70e94db96f4348b394f9fc307bd602f22af24c3054236b4521f19b6298aa8",
+      "tools/evidence.py": "312a6180d9b1466d093709c0d1c05cb1012d7a90ac66d63c1ba6fe50dbcdd67f",
+      "tools/formal_bridge.py": "254c4377ce4733ecce0d2398bc9423bdf28357eaeaea5cdde8ea0d066900e0b7",
+      "tools/formal_csr.py": "034219a838171aab13aca2cdb352cdb84c8b34e3466bc8ef9086e9fd97b235f7",
+      "tools/formal_storage.py": "b91722124d5e5703a4d558a40443e323ac77f3813643c5269878e5861a8a3411",
+      "tools/foundation.py": "431beeb6268a7334091bd26307d3b2ff76d2cd0b3d0fcc4795659ae4e2e97b72",
+      "tools/frontend.py": "27ec14b6ca94637168ed44729b8ce8aae7ec9fb648bf9d2d33e4ddcc48b07119",
+      "tools/frontend_qualification.py": "d52bdb0a68b982e9d8b4bd476a1fde8073410bc05f937d7d9b83e15c37da2e3c",
+      "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996",
+      "tools/packet_stimulus.py": "7565709ca9ebc76047245b40aa73b8e23680cf7fc01572f6d3b06f1684cac562",
+      "tools/registry.py": "04c75aa8ce041dfc7fc8230c3828e4d1e084b6a9226c0d3de0c8f6b759cf1d28",
+      "tools/representation.py": "798140e6c87b4f046c81e8899a3fd26e30df4de5ae8afc570e610af74f8b999c",
+      "tools/run.py": "35a30a8edf4639c4c4e4b3ef1f2cba79b669697243b03cc5860a9fc514257b85",
+      "tools/run_uvm_capabilities.py": "114c4a4612c963d1e70babfadc716f18534f2693c808746754d9e23c8b9fa20a",
+      "tools/setup.sh": "a7ba3762c9c09bce6dcf9d0d2c55ad5b752b36396750e926f2f2a77d6e10a528",
+      "tools/setup_toolchain.py": "5299746bf0ca03dfed83104b644eeb241d634f096e5db8e962f1ea269498b7e5",
+      "tools/storage.py": "0a23e51503a812cc0075aa2e2cc6375ab7fbf39f31f943a553afa034b9e94408",
+      "tools/toolchain_cache.py": "e585f23530cabb62f2b4071bc72d7a37a193b5ac045d78d97972c97349bb2508",
+      "verification/formal.json": "f249ff42f5f7be3b7722b2768a7e8de4ab2f079a794db939a09b1fb4e828370e",
+      "verification/sources/formal.json": "74e0de502d311d9c35495ff592c3c23047da7bbcf537532ea49fec0795ff02f0"
+    },
+    "dependency_digests": {
+      "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+      "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+    },
+    "constraint_digests": {
+      "experiments/allocator-scaling/timing.sdc": "f829bf3133ad3b358e9465db4ca7e24b0d4a848f0648835814d6b1c97081527b",
+      "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+      "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+      "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+      "tests/toolchain/timing.sdc": "034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824"
+    }
+  },
+  "tools": {
+    "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "sby": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+    "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "slang_revision": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --\nsv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222\nslang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+  },
+  "configuration": {
+    "handler": "formal-symbols",
+    "top": "symbolic_inputs",
+    "source": "formal/symbolic/symbolic_inputs.sv",
+    "header": "formal/symbolic/symbolic_checks.svh",
+    "diagnostic_control": "tests/frontends/anyconst_control.sv",
+    "widths": [
+      1,
+      4
+    ],
+    "depth": 12,
+    "engine": "smtbmc z3",
+    "scope": "Frontend recipe qualification only; no production DUT proof"
+  },
+  "commands": [
+    "make ci RUN_ARGS='--test formal-symbols --test unit --test repo --timeout 120'",
+    "make bridge RUN_ARGS='--timeout 900'"
+  ],
+  "runs": [
+    {
+      "run": "ci-2026-11-12T190305.108151+0000-16ad0a55",
+      "result": "PASS",
+      "cases": 30,
+      "source_revision": "6b7d556179924b80b98bcb7855ec123120257896",
+      "dirty": true
+    },
+    {
+      "run": "bridge-2026-11-12T190318.857470+0000-5eda1f12",
+      "result": "PASS",
+      "cases": 49,
+      "source_revision": "6b7d556179924b80b98bcb7855ec123120257896",
+      "dirty": true
+    }
+  ],
+  "cases": [
+    {
+      "test": "symbolic-source-guards",
+      "result": "PASS"
+    },
+    {
+      "test": "symbolic-unsupported-functions",
+      "result": "PASS",
+      "expected": "UNKNOWN_SYSTEM_ANYSEQ_AND_ANYCONST",
+      "observed": "FRONTEND_REJECTION"
+    },
+    {
+      "test": "symbolic-native-w1-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "PROVED",
+      "observed": "PROVED",
+      "property_identities": [
+        "a_constant",
+        "a_reset_constant"
+      ]
+    },
+    {
+      "test": "symbolic-native-w1-change",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "UNREACHED",
+      "observed": "UNREACHED_WITHIN_DEPTH",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-native-w1-reach",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_zero",
+        "c_witness_ones",
+        "c_stimulus_change",
+        "c_later_reset"
+      ]
+    },
+    {
+      "test": "symbolic-decorated-w1-prove",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "ASSERT_FAIL",
+      "observed": "ASSERT_FAIL",
+      "property_identities": [
+        "a_constant"
+      ]
+    },
+    {
+      "test": "symbolic-decorated-w1-change",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-recipe-w1-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "PROVED",
+      "observed": "PROVED",
+      "property_identities": [
+        "a_constant",
+        "a_reset_constant"
+      ]
+    },
+    {
+      "test": "symbolic-recipe-w1-change",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "UNREACHED",
+      "observed": "UNREACHED_WITHIN_DEPTH",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-recipe-w1-reach",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_zero",
+        "c_witness_ones",
+        "c_stimulus_change",
+        "c_later_reset"
+      ]
+    },
+    {
+      "test": "symbolic-missing-assumption-w1-prove",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "ASSERT_FAIL",
+      "observed": "ASSERT_FAIL",
+      "property_identities": [
+        "a_constant"
+      ]
+    },
+    {
+      "test": "symbolic-missing-assumption-w1-change",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-missing-assumption-w1-reach",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_zero",
+        "c_witness_ones",
+        "c_stimulus_change",
+        "c_later_reset"
+      ]
+    },
+    {
+      "test": "symbolic-native-w4-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "PROVED",
+      "observed": "PROVED",
+      "property_identities": [
+        "a_constant",
+        "a_reset_constant"
+      ]
+    },
+    {
+      "test": "symbolic-native-w4-change",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "UNREACHED",
+      "observed": "UNREACHED_WITHIN_DEPTH",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-native-w4-reach",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_zero",
+        "c_witness_ones",
+        "c_stimulus_change",
+        "c_later_reset"
+      ]
+    },
+    {
+      "test": "symbolic-decorated-w4-prove",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "ASSERT_FAIL",
+      "observed": "ASSERT_FAIL",
+      "property_identities": [
+        "a_constant"
+      ]
+    },
+    {
+      "test": "symbolic-decorated-w4-change",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-recipe-w4-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "PROVED",
+      "observed": "PROVED",
+      "property_identities": [
+        "a_constant",
+        "a_reset_constant"
+      ]
+    },
+    {
+      "test": "symbolic-recipe-w4-change",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "UNREACHED",
+      "observed": "UNREACHED_WITHIN_DEPTH",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-recipe-w4-reach",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_zero",
+        "c_witness_ones",
+        "c_stimulus_change",
+        "c_later_reset"
+      ]
+    },
+    {
+      "test": "symbolic-missing-assumption-w4-prove",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "expected": "ASSERT_FAIL",
+      "observed": "ASSERT_FAIL",
+      "property_identities": [
+        "a_constant"
+      ]
+    },
+    {
+      "test": "symbolic-missing-assumption-w4-change",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_change"
+      ]
+    },
+    {
+      "test": "symbolic-missing-assumption-w4-reach",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "expected": "REACHED",
+      "observed": "REACHED",
+      "property_identities": [
+        "c_witness_zero",
+        "c_witness_ones",
+        "c_stimulus_change",
+        "c_later_reset"
+      ]
+    }
+  ],
+  "inventory_rules": {
+    "assertions_prove": 2,
+    "covers_change": 1,
+    "covers_reach": 4,
+    "assumptions_recipe": 2,
+    "assumptions_other": 1,
+    "anyconst_native": 1,
+    "anyconst_other": 0,
+    "anyseq_all": 0
+  },
+  "legacy_inventories": {
+    "bridge-cell-property-counts": {
+      "result": "PASS",
+      "native": {
+        "$assume": 1,
+        "$assert": 25,
+        "$cover": 5
+      },
+      "slang": {
+        "$assume": 1,
+        "$assert": 25,
+        "$cover": 5
+      },
+      "named_properties": 14
+    },
+    "bridge-descriptor-property-counts": {
+      "result": "PASS",
+      "native": {
+        "$assume": 1,
+        "$assert": 17,
+        "$cover": 8
+      },
+      "slang": {
+        "$assume": 1,
+        "$assert": 17,
+        "$cover": 8
+      },
+      "named_properties": 17
+    },
+    "bridge-fifo2-property-counts": {
+      "result": "PASS",
+      "native": {
+        "$assume": 1,
+        "$assert": 11,
+        "$cover": 6
+      },
+      "slang": {
+        "$assume": 1,
+        "$assert": 11,
+        "$cover": 6
+      },
+      "named_properties": 15
+    },
+    "bridge-fifo4-property-counts": {
+      "result": "PASS",
+      "native": {
+        "$assume": 1,
+        "$assert": 13,
+        "$cover": 6
+      },
+      "slang": {
+        "$assume": 1,
+        "$assert": 13,
+        "$cover": 6
+      },
+      "named_properties": 15
+    },
+    "bridge-csr-property-counts": {
+      "result": "PASS",
+      "native": {
+        "$assume": 7,
+        "$assert": 17,
+        "$cover": 7
+      },
+      "slang": {
+        "$assume": 7,
+        "$assert": 17,
+        "$cover": 7
+      },
+      "named_properties": 24
+    }
+  },
+  "reused": {
+    "report": "rtl-representation.json",
+    "hosted_run": 43210080611,
+    "tested_revision": "e64d6dea9002a1d44fcc5548865b22498abfd286",
+    "compared_unchanged_files": {
+      "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+      "formal/csr/csr_formal.sv": "778f3b8e4acaddadefaed492aff13f759157a3721a20c95cd4c2e602d8b00186",
+      "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+      "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+      "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+      "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+      "formal/pools/storage_formal.sv": "8741c498d77ba36de98afc5debd94d36037549c72f3182b42f8d07f1192c6a6f",
+      "rtl/common/tm_axis_rx_fifo.sv": "7720db1148c4be2c608bbb1a29bf66b798c970c88ac00e2180d2ecc5794492d1",
+      "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+      "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+      "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+      "rtl/include/tm_module_ports.sv": "84e3129c73a6ec611041b0c39d7bca18be73a3d1330ef5cd7a43384360816b3d",
+      "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+      "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+      "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+      "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+      "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+      "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+      "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+      "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+      "tools/formal_bridge.py": "254c4377ce4733ecce0d2398bc9423bdf28357eaeaea5cdde8ea0d066900e0b7",
+      "tools/formal_csr.py": "034219a838171aab13aca2cdb352cdb84c8b34e3466bc8ef9086e9fd97b235f7",
+      "tools/formal_storage.py": "b91722124d5e5703a4d558a40443e323ac77f3813643c5269878e5861a8a3411",
+      "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996",
+      "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+      "verification/representation.json": "97b84c6670f0a3a6d4fe151716fa5842449b82e2d4a3ca0350f386ddaee13f63"
+    },
+    "boundary": "Prior hardware proofs/covers/mutations and unrelated studies retained; no new execution claim"
+  },
+  "artifacts": ".build/runs/<run>/ holds manifests, exact argv, stdout/stderr, SBY files, inventories and traces; not committed",
+  "hosted": "NOT_RUN for this change"
+}
