@@ -109,7 +109,7 @@ class tm_coordinator extends uvm_component;
             service_model.apply(pending,live);
             schedule_model.apply(pending,service_model.committed_frame);
             sealed=new;sealed.batch=pending;sealed_batches.write(sealed);
-            $fdisplay(trace_file,"{\"epoch\":%0d,\"cycle\":%0d,\"reset\":%0d,\"service\":%0d,\"admit\":%0d,\"commit\":%0d,\"dispatch\":%0d,\"output\":%0d,\"status\":\"%h\",\"U\":%0d}",pending.epoch,pending.cycle,pending.reset_asserted,pending.policy.rx_service.valid,pending.policy.admit.valid,pending.policy.commit.valid,pending.policy.dispatch.valid,pending.output_sample.valid&&pending.output_sample.ready,pending.statuses,service_model.u);
+            $fdisplay(trace_file,"{\"epoch\":%0d,\"cycle\":%0d,\"reset\":%0d,\"service\":%0d,\"admit\":%0d,\"commit\":%0d,\"dispatch\":%0d,\"output\":%0d,\"status\":\"%h\",\"U\":%0d}",pending.epoch,pending.cycle,pending.reset_asserted,pending.policy.rx_service.valid,pending.policy.admit.valid,pending.policy.commit.valid,pending.policy.dispatch.valid,pending.output_sample.valid&&pending.output_sample.ready,pending.statuses,service_model.unreserved_cells);
             $fflush(trace_file);
             batches++;seen='0;last_epoch=pending.epoch;last_cycle=pending.cycle;have_last=1;
         end
