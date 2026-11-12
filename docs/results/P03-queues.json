@@ -746,5 +746,27 @@
     "P05 instantiate same descriptor-link child once in metadata wrapper; immutable information and TX final-return timing",
     "P09/P10/P11A legal RX-owned complete commits, not already queued, no FREE/TX/ABORT alias, actual P02 pool/accounting/reset composition",
     "Commit-to-output payload order and global ownership/conservation remain unproved"
-  ]
+  ],
+  "ci_followup": {
+    "original_head": "f89fcfbbed0f507721da100750c3215e0ea3ed65",
+    "original_failed_run": 43296011706,
+    "failed_job": "capability-bridge",
+    "cause": "Legacy bridge iterated all production configurations and attempted the queues entry as storage_formal, raising KeyError: defines.",
+    "fix": "Select exactly the five qualified historical bridge configurations; preserve all new production proof selections.",
+    "tested_revision": "f89fcfbbed0f507721da100750c3215e0ea3ed65",
+    "tested_dirty": true,
+    "source_digests": {
+      "tools/formal_bridge.py": "26d2e6be787e1c2886046e3f729ff73dd0e3afcec4e91095275835865f0bf2d1",
+      "tests/toolchain/test_formal_symbols.py": "3f8a482c2b6514ad67435de208d679d18d1b81401a745a6110184e2fa8f1d11a"
+    },
+    "command": "make bridge RUN_ARGS='--timeout 900'",
+    "run": "bridge-2026-11-12T200632.564845+0000-0f9e403b",
+    "result": "PASS",
+    "cases": 49,
+    "light_checks": {
+      "result": "PASS",
+      "unit_tests": 74
+    },
+    "hosted_result": "PENDING"
+  }
 }

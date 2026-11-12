@@ -126,3 +126,20 @@ are registered through the common runner. The existing full-CI storage job runs
 `pools` and `queues` across all profiles and the default production proof set now
 includes `queues`. The scheduler, metadata wrapper and integrated packet FIFO
 were not implemented as part of P03.
+
+## CI registration correction
+
+The first full hosted run ([43296011706](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43296011706))
+failed in `capability-bridge`. The legacy bridge iterated the expanded production
+proof registry and tried to process `queues` as an old storage harness, raising
+`KeyError: defines`. The same failure was reproduced locally on `f89fcfb`.
+
+The bridge now selects exactly its five qualified historical configurations.
+All production selections, including the separate queue proof, remain registered.
+A regression checks that new explicit-input proofs cannot extend the bridge and
+that losing any historical configuration still fails. After the correction,
+`make bridge RUN_ARGS='--timeout 900'` passes all 49 cases, including property
+inventories and both assumption-inclusion directions. `python3 tools/check_light.py`
+passes all 74 unit tests; repository and whitespace checks also pass. The compact
+record retains the tested dirty inputs separately from the original RTL results.
+Hosted qualification of the correction is pending.

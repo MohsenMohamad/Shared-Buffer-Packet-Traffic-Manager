@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 from evidence import Case, ROOT, output, sha
 from frontend import read_sources, expose_symbolic_inputs
-from registry import sources
+from registry import sources, read
 from representation import stage_baseline, baseline_revision
 
 
@@ -70,10 +70,22 @@ def comparable(data, top, names):
         property_locations=dict(locations),named_properties=named,assumptions=len(assumptions))
 
 
+def legacy_configurations():
+    """Only the five qualified native/Slang controls have historical harnesses.
+
+    New production proofs use explicit input ports and have no native-symbolic
+    counterpart. Their registration must not extend the legacy adapter's scope.
+    Missing legacy entries still fail rather than silently reducing coverage.
+    """
+    configurations = read('formal.json')['configurations']
+    names = ('cell', 'descriptor', 'fifo2', 'fifo4', 'csr')
+    return {name: configurations[name] for name in names}
+
+
 def bridge(run,args):
     symbolics(run,args)
     memory_semantics(run,args)
-    specs=json.loads((ROOT/'verification/formal.json').read_text())['configurations']
+    specs=legacy_configurations()
     registered=sources('formal')
     for name,spec in specs.items():
         top='csr_formal' if name=='csr' else 'storage_formal'
