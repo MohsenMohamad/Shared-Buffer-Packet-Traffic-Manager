@@ -61,27 +61,28 @@ endmodule
     path.write_text(text)
 
 
-def frontend(run, args, tool, name, params, invalid=False, monitor=False):
+def frontend(run, args, tool, name, params, invalid=False, monitor=False, component=None):
     case = Case(run, tool + '-' + name, (args.seed or [17])[0])
     source_set = 'simulation' if monitor else 'synthesis' if tool == 'yosys' else 'production'
     registered = sources(source_set)
-    case.data.update(scope='Declaration elaboration only; no functional RTL',
+    case.data.update(scope='Declaration/parameter elaboration only; no functional verification',
                      parameters=params, source_set=source_set,
                      registered_source_digests=fingerprint(source_set))
     harness = case.path / 'tm_contract_elab.sv'
     wrapper(harness, monitor)
+    top = component or 'tm_contract_elab'
     includes = [str(ROOT / p) for p in registered['include_dirs']]
-    files = [str(ROOT / p) for p in registered['sources']] + [str(harness)]
+    files = [str(ROOT / p) for p in registered['sources']] + ([] if component else [str(harness)])
     if tool == 'verilator':
         # PINMISSING is confined to the elaboration harness's intentionally open
         # declarations. No behavioral lint or unconnected-net qualification.
-        argv = ['verilator', '--lint-only', '-Wno-PINMISSING', '--top-module', 'tm_contract_elab',
+        argv = ['verilator', '--lint-only', '-Wno-PINMISSING', '--top-module', top,
                 '--Mdir', str(case.path / 'obj')] + ['-I'+p for p in includes]
         argv += [f'-G{k}={v}' for k, v in params.items()] + files
     else:
         script = case.path / 'elaborate.ys'
         case.data['frontend'] = selected(args)
-        script.write_text(read_sources(files, 'tm_contract_elab', includes, params=params, frontend=selected(args)))
+        script.write_text(read_sources(files, top, includes, params=params, frontend=selected(args)))
         argv = ['yosys', '-s', str(script)]
     step = case.execute(argv, timeout=args.timeout)
     text = output(step)
@@ -109,6 +110,21 @@ def contracts(run, args):
             frontend(run, args, tool, 'invalid-'+name, dict(params, **delta), invalid=True)
         frontend(run, args, tool, 'options', dict(params, RX_FIFO_DEPTH=4, TX_FIFO_DEPTH=8,
                  SCHED_MODE=0, QUANTUM_DEFAULT=4096, TRACE_ENABLE=0))
+        # Component-specific guards are not part of the common profile wrapper.
+        invalid_components = [
+            ('counter-zero', 'tm_statistics_api', dict(COUNTER_W=0)),
+            ('counter-wide', 'tm_statistics_api', dict(COUNTER_W=65)),
+            ('bitmap-capacity', 'tm_bitmap_pool', dict(CAPACITY=0)),
+            ('bitmap-id-zero', 'tm_bitmap_pool', dict(ID_W=0)),
+            ('bitmap-id-small', 'tm_bitmap_pool', dict(ID_W=3)),
+            ('bitmap-count', 'tm_bitmap_pool', dict(COUNT_W=4)),
+            ('bitmap-returns-zero', 'tm_bitmap_pool', dict(RETURNS=0)),
+            ('bitmap-returns-three', 'tm_bitmap_pool', dict(RETURNS=3)),
+        ]
+        for name, component, overrides in invalid_components:
+            frontend(run, args, tool, 'invalid-'+name, overrides,
+                     invalid=True, component=component)
+
     case = Case(run, 'independent-event-batching', (args.seed or [17])[0])
     os.environ['TM_CONTRACT_SEED'] = str((args.seed or [17])[0])
     step = case.execute([sys.executable, '-m', 'unittest', 'discover', '-s',
