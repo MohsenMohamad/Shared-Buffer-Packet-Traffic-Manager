@@ -1,0 +1,1704 @@
+{
+  "schema_version": 1,
+  "task": "P04",
+  "base_revision": "0c65e26cfd81f4f4111e1da00ada2aaa022f2ab0",
+  "scope": "Production scheduler with actual P03 queues/links; local metadata and TX endpoint. Reduced FP-SCHED safety only; no integrated payload or P12 fairness qualification.",
+  "tool_versions": {
+    "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "sby": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+    "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "opensta": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sta: 3.2.0",
+    "compiler": "/usr/bin/g++-14: g++-14 (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+    "frontend_revisions": [
+      "sv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222",
+      "slang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+    ]
+  },
+  "dependency_digests": {
+    "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+  },
+  "configuration_digests": {
+    "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+    "verification/formal.json": "c982035ef23825dd61faf852038cca24b2a2815f81cb52ca00d67325983bb2e9",
+    "verification/suites.json": "f02b9cc0154fd6636c2d8d672fe049c11bac4e0164f73a4b6bc1660c02096d56",
+    "verification/sources/scheduler.json": "bf2a6a25d88aeb9061f44a32e8a6a0cf5a67167d79508aefe1574d81480c3bb4",
+    "verification/sources/formal.json": "423e60cc265582bd333dd99eadad9a97763710f0eb32351c1cdef4a600b1ee64",
+    "tools/run.py": "36c1dfe961b8e48f7a5a2eb099ddc6a2b0176d6d92e5bbdd7b62cbde9ef12676",
+    "tools/scheduler.py": "e66c797f046eaf06396d037d36071287307aec0f7b0e1261e0e6c06f0935a313",
+    "tools/formal_scheduler.py": "1b479f39425e97d3078bec30cc26c8b38cb4956b9f25cc74fa676a5b7d927ff0",
+    "tools/registry.py": "33c0e5ade2a7622d4055beb5ecc1693e270347163620ff7320669f1894288fbd"
+  },
+  "constraint_digests": {
+    "experiments/allocator-scaling/timing.sdc": "f829bf3133ad3b358e9465db4ca7e24b0d4a848f0648835814d6b1c97081527b",
+    "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+    "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+    "formal/queue/queue.sby": "744a8b44b99b0651703d3cf3533e07b1e893b7c3d26c733f77118eca73e726c1",
+    "formal/scheduler/scheduler.sby": "744a8b44b99b0651703d3cf3533e07b1e893b7c3d26c733f77118eca73e726c1",
+    "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+    "tests/toolchain/timing.sdc": "034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824"
+  },
+  "source_sets": {
+    "scheduler": [
+      "rtl/include/tm_fixed.sv",
+      "dv/env/tm_bench_pkg.sv",
+      "rtl/queue/tm_queue_ctrl.sv",
+      "rtl/queue/tm_desc_links.sv",
+      "rtl/scheduler/tm_drr.sv",
+      "dv/fixtures/tm_scheduler_top.sv",
+      "rtl/include/tm_types.svh",
+      "dv/model/tm_monitor_types.svh",
+      "dv/model/tm_checkers.svh",
+      "dv/agents/tm_stream_agent.svh",
+      "dv/agents/tm_axil_agent.svh",
+      "dv/env/tm_environment.svh",
+      "dv/tests/tm_foundation_test.svh",
+      "dv/tests/tm_batch_test.svh",
+      "dv/agents/tm_packet.svh",
+      "dv/model/tm_handshake_recorder.svh",
+      "dv/tests/tm_packet_test.svh",
+      "dv/tests/tm_schedule_test.svh",
+      "rtl/include/tm_parameters.svh",
+      "rtl/include/tm_validate.svh",
+      "dv/tests/tm_scheduler_rtl_test.svh"
+    ],
+    "formal": [
+      "rtl/include/tm_fixed.sv",
+      "rtl/include/tm_module_ports.sv",
+      "rtl/tm_top.sv",
+      "rtl/common/tm_axis_rx_fifo.sv",
+      "rtl/pools/tm_bitmap_pool.sv",
+      "rtl/pools/tm_cell_pool.sv",
+      "rtl/pools/tm_desc_pool.sv",
+      "rtl/csr/tm_axil_regs.sv",
+      "rtl/csr/tm_statistics.sv",
+      "rtl/queue/tm_queue_ctrl.sv",
+      "rtl/queue/tm_desc_links.sv",
+      "rtl/scheduler/tm_drr.sv",
+      "formal/pools/storage_formal.sv",
+      "formal/csr/csr_formal.sv",
+      "formal/symbolic/symbolic_inputs.sv",
+      "formal/queue/queue_formal.sv",
+      "formal/scheduler/scheduler_formal.sv",
+      "rtl/include/tm_parameters.svh",
+      "rtl/include/tm_types.svh",
+      "rtl/include/tm_validate.svh",
+      "formal/pools/bitmap_properties.svh",
+      "formal/pools/fifo_properties.svh",
+      "formal/csr/csr_properties.svh",
+      "formal/symbolic/symbolic_checks.svh"
+    ],
+    "production": [
+      "rtl/include/tm_fixed.sv",
+      "rtl/include/tm_module_ports.sv",
+      "rtl/tm_top.sv",
+      "rtl/common/tm_axis_rx_fifo.sv",
+      "rtl/pools/tm_bitmap_pool.sv",
+      "rtl/pools/tm_cell_pool.sv",
+      "rtl/pools/tm_desc_pool.sv",
+      "rtl/csr/tm_axil_regs.sv",
+      "rtl/csr/tm_statistics.sv",
+      "rtl/queue/tm_queue_ctrl.sv",
+      "rtl/queue/tm_desc_links.sv",
+      "rtl/scheduler/tm_drr.sv",
+      "rtl/include/tm_parameters.svh",
+      "rtl/include/tm_types.svh",
+      "rtl/include/tm_validate.svh"
+    ],
+    "simulation": [
+      "rtl/include/tm_fixed.sv",
+      "rtl/include/tm_module_ports.sv",
+      "rtl/tm_top.sv",
+      "rtl/common/tm_axis_rx_fifo.sv",
+      "rtl/pools/tm_bitmap_pool.sv",
+      "rtl/pools/tm_cell_pool.sv",
+      "rtl/pools/tm_desc_pool.sv",
+      "rtl/csr/tm_axil_regs.sv",
+      "rtl/csr/tm_statistics.sv",
+      "rtl/queue/tm_queue_ctrl.sv",
+      "rtl/queue/tm_desc_links.sv",
+      "rtl/scheduler/tm_drr.sv",
+      "dv/unit/storage_tb.sv",
+      "rtl/include/tm_parameters.svh",
+      "rtl/include/tm_types.svh",
+      "rtl/include/tm_validate.svh",
+      "dv/model/tm_monitor_types.svh"
+    ],
+    "synthesis": [
+      "rtl/include/tm_fixed.sv",
+      "rtl/include/tm_module_ports.sv",
+      "rtl/tm_top.sv",
+      "rtl/common/tm_axis_rx_fifo.sv",
+      "rtl/pools/tm_bitmap_pool.sv",
+      "rtl/pools/tm_cell_pool.sv",
+      "rtl/pools/tm_desc_pool.sv",
+      "rtl/csr/tm_axil_regs.sv",
+      "rtl/csr/tm_statistics.sv",
+      "rtl/queue/tm_queue_ctrl.sv",
+      "rtl/queue/tm_desc_links.sv",
+      "rtl/scheduler/tm_drr.sv",
+      "rtl/include/tm_parameters.svh",
+      "rtl/include/tm_types.svh",
+      "rtl/include/tm_validate.svh"
+    ],
+    "uvm-foundation": [
+      "rtl/include/tm_fixed.sv",
+      "dv/env/tm_bench_pkg.sv",
+      "dv/fixtures/tm_foundation_fixture.sv",
+      "dv/fixtures/tm_foundation_top.sv",
+      "rtl/include/tm_types.svh",
+      "dv/model/tm_monitor_types.svh",
+      "dv/model/tm_checkers.svh",
+      "dv/agents/tm_stream_agent.svh",
+      "dv/agents/tm_axil_agent.svh",
+      "dv/env/tm_environment.svh",
+      "dv/tests/tm_foundation_test.svh",
+      "dv/tests/tm_batch_test.svh",
+      "dv/agents/tm_packet.svh",
+      "dv/model/tm_handshake_recorder.svh",
+      "dv/tests/tm_packet_test.svh",
+      "dv/tests/tm_schedule_test.svh"
+    ]
+  },
+  "runs": [
+    {
+      "run": "regression-2026-11-12T225400.039866+0000-429f1ac5",
+      "source_revision": "2d11b3d25bab931ebcd280a47e12251b8225560a",
+      "dirty": false,
+      "profile": "E0",
+      "result": "PASS",
+      "case_count": 16,
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS"
+        },
+        {
+          "test": "scheduler-mode1-build",
+          "result": "PASS",
+          "seed": 17,
+          "sched_mode": 1
+        },
+        {
+          "test": "scheduler-mode1",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "mode": 1,
+            "grants": 440,
+            "replacement": 420,
+            "longer": 1,
+            "different": 1,
+            "stalls": 7,
+            "waiting": 10,
+            "reactivation": 4,
+            "continuing": 158,
+            "max_credit": 4223,
+            "bound_hits": 9,
+            "qids": 2,
+            "cycles": 6121
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 128,
+              "quantum1": 128,
+              "dispatch0": 6848,
+              "dispatch1": 6784,
+              "delivered0": 6784,
+              "delivered1": 6784,
+              "deficit0": 64,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 53,
+              "visits1": 53
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 10240,
+              "delivered0": 5120,
+              "delivered1": 10112,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 128,
+              "visits0": 80,
+              "visits1": 79
+            }
+          ],
+          "coverage": {
+            "owned_points": {
+              "toggle": {
+                "hit": 258,
+                "total": 750
+              },
+              "branch": {
+                "hit": 18,
+                "total": 18
+              },
+              "expr": {
+                "hit": 18,
+                "total": 18
+              },
+              "line": {
+                "hit": 4,
+                "total": 4
+              }
+            },
+            "functional_bins": {
+              "update_kind.different": 1,
+              "update_kind.none": 5699,
+              "update_kind.singleton": 420,
+              "update_kind.longer": 1,
+              "tx_busy.auto_0": 751,
+              "tx_busy.auto_1": 5370,
+              "activated.auto_0": 6117,
+              "activated.auto_1": 4,
+              "fit.insufficient": 3660,
+              "fit.equal": 723,
+              "fit.surplus": 1738,
+              "replacement_busy.<different,auto_0>": 1,
+              "replacement_busy.<different,auto_1>": 0,
+              "replacement_busy.<longer,auto_0>": 1,
+              "replacement_busy.<longer,auto_1>": 0,
+              "replacement_busy.<none,auto_0>": 329,
+              "replacement_busy.<none,auto_1>": 5370,
+              "replacement_busy.<singleton,auto_0>": 420,
+              "replacement_busy.<singleton,auto_1>": 0,
+              "reactivation_fit.<auto_0,equal>": 722,
+              "reactivation_fit.<auto_0,insufficient>": 3658,
+              "reactivation_fit.<auto_0,surplus>": 1737,
+              "reactivation_fit.<auto_1,equal>": 1,
+              "reactivation_fit.<auto_1,insufficient>": 2,
+              "reactivation_fit.<auto_1,surplus>": 1
+            },
+            "exclusions": {
+              "replacement_busy.<singleton,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<longer,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<different,auto_1>": "Dispatch collisions require free pre-state TX"
+            },
+            "mandatory_hit": 22,
+            "mandatory_total": 22
+          },
+          "sched_mode": 1
+        },
+        {
+          "test": "scheduler-checker-positive",
+          "result": "PASS",
+          "seed": 17
+        },
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-build",
+          "result": "PASS",
+          "seed": 17,
+          "sched_mode": 0
+        },
+        {
+          "test": "scheduler-mode0",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "mode": 0,
+            "grants": 440,
+            "replacement": 420,
+            "longer": 1,
+            "different": 1,
+            "stalls": 7,
+            "waiting": 4,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 2,
+            "cycles": 6152
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 128,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 10240,
+              "delivered0": 5120,
+              "delivered1": 10112,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 128,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 10240,
+              "delivered0": 5120,
+              "delivered1": 10112,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 128,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "coverage": {
+            "owned_points": {
+              "toggle": {
+                "hit": 166,
+                "total": 750
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              },
+              "expr": {
+                "hit": 13,
+                "total": 13
+              },
+              "line": {
+                "hit": 4,
+                "total": 4
+              }
+            },
+            "functional_bins": {
+              "update_kind.different": 1,
+              "update_kind.none": 5730,
+              "update_kind.singleton": 420,
+              "update_kind.longer": 1,
+              "tx_busy.auto_0": 566,
+              "tx_busy.auto_1": 5586,
+              "activated.auto_0": 6149,
+              "activated.auto_1": 3,
+              "fit.insufficient": 1824,
+              "fit.equal": 2821,
+              "fit.surplus": 1507,
+              "replacement_busy.<different,auto_0>": 1,
+              "replacement_busy.<different,auto_1>": 0,
+              "replacement_busy.<longer,auto_0>": 1,
+              "replacement_busy.<longer,auto_1>": 0,
+              "replacement_busy.<none,auto_0>": 144,
+              "replacement_busy.<none,auto_1>": 5586,
+              "replacement_busy.<singleton,auto_0>": 420,
+              "replacement_busy.<singleton,auto_1>": 0,
+              "reactivation_fit.<auto_0,equal>": 2820,
+              "reactivation_fit.<auto_0,insufficient>": 1823,
+              "reactivation_fit.<auto_0,surplus>": 1506,
+              "reactivation_fit.<auto_1,equal>": 1,
+              "reactivation_fit.<auto_1,insufficient>": 1,
+              "reactivation_fit.<auto_1,surplus>": 1
+            },
+            "exclusions": {
+              "replacement_busy.<singleton,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<longer,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<different,auto_1>": "Dispatch collisions require free pre-state TX",
+              "reactivation_fit.<auto_1,insufficient>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_1,surplus>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_0,surplus>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_1,equal>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_0,equal>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_0,insufficient>": "Byte credit is absent in packet RR",
+              "fit.insufficient": "Byte credit is absent in packet RR",
+              "fit.equal": "Byte credit is absent in packet RR",
+              "fit.surplus": "Byte credit is absent in packet RR"
+            },
+            "mandatory_hit": 13,
+            "mandatory_total": 13
+          },
+          "sched_mode": 0
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum-build",
+          "result": "PASS",
+          "seed": 17,
+          "mutation": "Add quantum on a fitting continuing packet dispatch",
+          "mutant_sha256": "9f100d3cb689bb86ddb330467162e05c94a8bbbdb0ee9bce467175b5f9ed70d1",
+          "sched_mode": 1
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ],
+          "sched_mode": 1
+        }
+      ]
+    },
+    {
+      "run": "regression-2026-11-12T225401.365362+0000-11f66389",
+      "source_revision": "2d11b3d25bab931ebcd280a47e12251b8225560a",
+      "dirty": false,
+      "profile": "F0",
+      "result": "PASS",
+      "case_count": 16,
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS"
+        },
+        {
+          "test": "scheduler-mode1-build",
+          "result": "PASS",
+          "seed": 17,
+          "sched_mode": 1
+        },
+        {
+          "test": "scheduler-mode1",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "mode": 1,
+            "grants": 364,
+            "replacement": 330,
+            "longer": 1,
+            "different": 1,
+            "stalls": 7,
+            "waiting": 6,
+            "reactivation": 4,
+            "continuing": 160,
+            "max_credit": 5631,
+            "bound_hits": 3,
+            "qids": 16,
+            "cycles": 12699
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 1536,
+              "quantum1": 1536,
+              "dispatch0": 9856,
+              "dispatch1": 9216,
+              "delivered0": 9792,
+              "delivered1": 9216,
+              "deficit0": 896,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 6,
+              "visits1": 6
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 9472,
+              "dispatch1": 18432,
+              "delivered0": 9408,
+              "delivered1": 18432,
+              "deficit0": 0,
+              "deficit1": 384,
+              "inflight": 64,
+              "visits0": 147,
+              "visits1": 147
+            }
+          ],
+          "coverage": {
+            "owned_points": {
+              "branch": {
+                "hit": 18,
+                "total": 18
+              },
+              "toggle": {
+                "hit": 962,
+                "total": 1900
+              },
+              "expr": {
+                "hit": 18,
+                "total": 18
+              },
+              "line": {
+                "hit": 4,
+                "total": 4
+              }
+            },
+            "functional_bins": {
+              "update_kind.different": 1,
+              "update_kind.none": 12367,
+              "update_kind.singleton": 330,
+              "update_kind.longer": 1,
+              "tx_busy.auto_0": 3867,
+              "tx_busy.auto_1": 8832,
+              "activated.auto_0": 12695,
+              "activated.auto_1": 4,
+              "fit.insufficient": 9930,
+              "fit.equal": 236,
+              "fit.surplus": 2533,
+              "replacement_busy.<different,auto_0>": 1,
+              "replacement_busy.<different,auto_1>": 0,
+              "replacement_busy.<longer,auto_0>": 1,
+              "replacement_busy.<longer,auto_1>": 0,
+              "replacement_busy.<none,auto_0>": 3535,
+              "replacement_busy.<none,auto_1>": 8832,
+              "replacement_busy.<singleton,auto_0>": 330,
+              "replacement_busy.<singleton,auto_1>": 0,
+              "reactivation_fit.<auto_0,equal>": 235,
+              "reactivation_fit.<auto_0,insufficient>": 9928,
+              "reactivation_fit.<auto_0,surplus>": 2532,
+              "reactivation_fit.<auto_1,equal>": 1,
+              "reactivation_fit.<auto_1,insufficient>": 2,
+              "reactivation_fit.<auto_1,surplus>": 1
+            },
+            "exclusions": {
+              "replacement_busy.<singleton,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<longer,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<different,auto_1>": "Dispatch collisions require free pre-state TX"
+            },
+            "mandatory_hit": 22,
+            "mandatory_total": 22
+          },
+          "sched_mode": 1
+        },
+        {
+          "test": "scheduler-checker-positive",
+          "result": "PASS",
+          "seed": 17
+        },
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-build",
+          "result": "PASS",
+          "seed": 17,
+          "sched_mode": 0
+        },
+        {
+          "test": "scheduler-mode0",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "mode": 0,
+            "grants": 364,
+            "replacement": 330,
+            "longer": 1,
+            "different": 1,
+            "stalls": 7,
+            "waiting": 4,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 16,
+            "cycles": 37850
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 1536,
+              "quantum1": 1536,
+              "dispatch0": 5120,
+              "dispatch1": 122880,
+              "delivered0": 5120,
+              "delivered1": 121344,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 1536,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 122880,
+              "delivered0": 5120,
+              "delivered1": 121344,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 1536,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "coverage": {
+            "owned_points": {
+              "branch": {
+                "hit": 12,
+                "total": 12
+              },
+              "toggle": {
+                "hit": 451,
+                "total": 1900
+              },
+              "expr": {
+                "hit": 13,
+                "total": 13
+              },
+              "line": {
+                "hit": 4,
+                "total": 4
+              }
+            },
+            "functional_bins": {
+              "update_kind.different": 1,
+              "update_kind.none": 37518,
+              "update_kind.singleton": 330,
+              "update_kind.longer": 1,
+              "tx_busy.auto_0": 2890,
+              "tx_busy.auto_1": 34960,
+              "activated.auto_0": 37847,
+              "activated.auto_1": 3,
+              "fit.insufficient": 36684,
+              "fit.equal": 1005,
+              "fit.surplus": 161,
+              "replacement_busy.<different,auto_0>": 1,
+              "replacement_busy.<different,auto_1>": 0,
+              "replacement_busy.<longer,auto_0>": 1,
+              "replacement_busy.<longer,auto_1>": 0,
+              "replacement_busy.<none,auto_0>": 2558,
+              "replacement_busy.<none,auto_1>": 34960,
+              "replacement_busy.<singleton,auto_0>": 330,
+              "replacement_busy.<singleton,auto_1>": 0,
+              "reactivation_fit.<auto_0,equal>": 1004,
+              "reactivation_fit.<auto_0,insufficient>": 36683,
+              "reactivation_fit.<auto_0,surplus>": 160,
+              "reactivation_fit.<auto_1,equal>": 1,
+              "reactivation_fit.<auto_1,insufficient>": 1,
+              "reactivation_fit.<auto_1,surplus>": 1
+            },
+            "exclusions": {
+              "replacement_busy.<singleton,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<longer,auto_1>": "Dispatch collisions require free pre-state TX",
+              "replacement_busy.<different,auto_1>": "Dispatch collisions require free pre-state TX",
+              "reactivation_fit.<auto_1,insufficient>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_1,surplus>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_1,equal>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_0,equal>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_0,surplus>": "Byte credit is absent in packet RR",
+              "reactivation_fit.<auto_0,insufficient>": "Byte credit is absent in packet RR",
+              "fit.insufficient": "Byte credit is absent in packet RR",
+              "fit.equal": "Byte credit is absent in packet RR",
+              "fit.surplus": "Byte credit is absent in packet RR"
+            },
+            "mandatory_hit": 13,
+            "mandatory_total": 13
+          },
+          "sched_mode": 0
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum-build",
+          "result": "PASS",
+          "seed": 17,
+          "mutation": "Add quantum on a fitting continuing packet dispatch",
+          "mutant_sha256": "9f100d3cb689bb86ddb330467162e05c94a8bbbdb0ee9bce467175b5f9ed70d1",
+          "sched_mode": 1
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "seed": 17,
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ],
+          "sched_mode": 1
+        }
+      ]
+    },
+    {
+      "run": "formal-rtl-2026-11-12T225221.195807+0000-492694d0",
+      "source_revision": "ccf85c2ac782843cc09d677e3786f220caee93c4",
+      "dirty": false,
+      "profile": "E0",
+      "result": "PASS",
+      "case_count": 9,
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS"
+        },
+        {
+          "test": "rtl-scheduler-mode1-prove",
+          "result": "PASS",
+          "seed": null,
+          "method": "unbounded k-induction",
+          "engine": "smtbmc z3",
+          "engine_status": "PASS",
+          "expected": "PROVE",
+          "cover_steps": {},
+          "detected_properties": [],
+          "sched_mode": 1
+        },
+        {
+          "test": "rtl-scheduler-mode1-cover",
+          "result": "PASS",
+          "seed": null,
+          "method": "bounded reachability depth 16",
+          "engine": "smtbmc z3",
+          "engine_status": "PASS",
+          "expected": "COVER",
+          "cover_steps": {
+            "c_wait": 4,
+            "c_different": 4,
+            "c_long": 5,
+            "c_continue": 5,
+            "c_reactivate": 5,
+            "c_replace": 6,
+            "c_carry": 6
+          },
+          "detected_properties": [],
+          "sched_mode": 1
+        },
+        {
+          "test": "rtl-scheduler-mode1-mutation",
+          "result": "PASS",
+          "seed": null,
+          "method": "unbounded k-induction",
+          "engine": "smtbmc z3",
+          "engine_status": "FAIL",
+          "expected": "CREDIT_COUNTEREXAMPLE",
+          "mutation": "Quantum also added for a continuing packet visit",
+          "mutant_sha256": "9f100d3cb689bb86ddb330467162e05c94a8bbbdb0ee9bce467175b5f9ed70d1",
+          "cover_steps": {},
+          "detected_properties": [
+            "g_credit[0].a_bounds",
+            "g_credit[0].a_credit"
+          ],
+          "sched_mode": 1
+        },
+        {
+          "test": "rtl-scheduler-mode0-prove",
+          "result": "PASS",
+          "seed": null,
+          "method": "unbounded k-induction",
+          "engine": "smtbmc z3",
+          "engine_status": "PASS",
+          "expected": "PROVE",
+          "cover_steps": {},
+          "detected_properties": [],
+          "sched_mode": 0
+        },
+        {
+          "test": "rtl-scheduler-mode0-cover",
+          "result": "PASS",
+          "seed": null,
+          "method": "bounded reachability depth 16",
+          "engine": "smtbmc z3",
+          "engine_status": "PASS",
+          "expected": "COVER",
+          "cover_steps": {
+            "c_different": 4,
+            "c_wait": 4,
+            "c_long": 5,
+            "c_reactivate": 5,
+            "c_replace": 6
+          },
+          "detected_properties": [],
+          "sched_mode": 0
+        }
+      ]
+    },
+    {
+      "run": "regression-2026-11-12T225402.702732+0000-680481a0",
+      "source_revision": "2d11b3d25bab931ebcd280a47e12251b8225560a",
+      "dirty": false,
+      "profile": "E0",
+      "result": "PASS",
+      "case_count": 76,
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS"
+        },
+        {
+          "test": "verilator-E0",
+          "result": "PASS"
+        },
+        {
+          "test": "verilator-E0-monitor",
+          "result": "PASS"
+        },
+        {
+          "test": "verilator-invalid-data-width",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-rx-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-queue-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-cell-size",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-cell-power",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-cell-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-cell-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-desc-power",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-desc-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-desc-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-length-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-length-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-capacity",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-rx-depth",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-read-latency",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-read-credit",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-scheduler",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-quantum-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-quantum-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-trace",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-cell-index",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-desc-index",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-cell-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-desc-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-deficit",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-options",
+          "result": "PASS"
+        },
+        {
+          "test": "verilator-invalid-counter-zero",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-counter-wide",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-bitmap-capacity",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-bitmap-id-zero",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-bitmap-id-small",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-bitmap-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-bitmap-returns-zero",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "verilator-invalid-bitmap-returns-three",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-E0",
+          "result": "PASS"
+        },
+        {
+          "test": "yosys-invalid-data-width",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-rx-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-queue-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-cell-size",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-cell-power",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-cell-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-cell-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-desc-power",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-desc-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-desc-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-length-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-length-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-capacity",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-rx-depth",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-read-latency",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-read-credit",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-scheduler",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-quantum-min",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-quantum-max",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-trace",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-cell-index",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-desc-index",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-cell-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-desc-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-deficit",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-options",
+          "result": "PASS"
+        },
+        {
+          "test": "yosys-invalid-counter-zero",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-counter-wide",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-bitmap-capacity",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-bitmap-id-zero",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-bitmap-id-small",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-bitmap-count",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-bitmap-returns-zero",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "yosys-invalid-bitmap-returns-three",
+          "result": "PASS",
+          "expected": "INVALID_ELABORATION"
+        },
+        {
+          "test": "independent-event-batching",
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "run": "regression-2026-11-12T230012.514365+0000-98851efa",
+      "source_revision": "2d11b3d25bab931ebcd280a47e12251b8225560a",
+      "dirty": false,
+      "profile": "E0",
+      "result": "PASS",
+      "case_count": 36,
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-build",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-positive",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-replay",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-alternate",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-small-quantum",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-corrupt",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_CORRUPTION",
+          "observed_fatals": [
+            "BYTE_CORRUPTION"
+          ]
+        },
+        {
+          "test": "foundation-duplicate",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ]
+        },
+        {
+          "test": "foundation-lost",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_LOST",
+          "observed_fatals": [
+            "BYTE_LOST"
+          ]
+        },
+        {
+          "test": "foundation-status",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "STATUS_CAUSALITY",
+          "observed_fatals": [
+            "STATUS_CAUSALITY"
+          ]
+        },
+        {
+          "test": "foundation-service",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SERVICE_DATA",
+          "observed_fatals": [
+            "SERVICE_DATA"
+          ]
+        },
+        {
+          "test": "foundation-admission",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "ADMISSION_PREDICATE",
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ]
+        },
+        {
+          "test": "foundation-schedule",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "foundation-stale",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ]
+        },
+        {
+          "test": "foundation-csr",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "CSR_RESOURCE",
+          "observed_fatals": [
+            "CSR_RESOURCE"
+          ]
+        },
+        {
+          "test": "foundation-barrier",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-barrier-duplicate",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_DUPLICATE"
+        },
+        {
+          "test": "foundation-barrier-missing",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_MISSING"
+        },
+        {
+          "test": "foundation-barrier-stale",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "BATCH_STALE"
+        },
+        {
+          "test": "foundation-seed-replay",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-packet-constraints",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-schedule-policy",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-schedule-bypass",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "foundation-schedule-credit",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "foundation-schedule-missing",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "foundation-schedule-head",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "foundation-schedule-busy",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "foundation-packet-randomize-failure",
+          "result": "PASS",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "detector": "PACKET_RANDOMIZE",
+          "observed_fatals": [
+            "PACKET_RANDOMIZE"
+          ]
+        },
+        {
+          "test": "foundation-packets-positive",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-packets-replay",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-packets-alternate",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-packets-small-quantum",
+          "result": "PASS"
+        },
+        {
+          "test": "foundation-packets-seed-replay",
+          "result": "PASS"
+        }
+      ]
+    }
+  ],
+  "local_environment": {
+    "doctor": "PASS",
+    "fresh_setup": "TOOL_ERROR: compiler-path cache reset lost local CMake install prefix; installed qualified binaries remained unchanged",
+    "provenance_revalidation": {
+      "prior_revision": "fb3cd3fd7e2c73379617f11a82c8418e1a590d24",
+      "prior_successful_doctor_sha256": "ddecc19ead3b619e12a756715f73699555c3d3d45cbcabf04986b67cce3f5748",
+      "executable_recipe_ast_equal": true,
+      "only_dependency_change": "qualification prose",
+      "verified_archives": {
+        "verilator": "18658731b46922ef660bcb650be0aa503d751e5c17eb9d4644fdfabb11835198",
+        "uvm": "4664ac015f23c72106dd785906aa874d70932ea63f74b85de1e32fa5339c15eb",
+        "liberty": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+        "sby": "683953197cef986832fe02423bfb7726b0261f2af153a09899501ba5c92052c7",
+        "yosys": "6a134c366622795f98c9b3e0588dde625f96ae5b80304813f73f2c261e317602",
+        "abc": "d0448ed85efdd2a411f2ca6638122983bc3d361498a74ba5b1ecc651bac2b018",
+        "cxxopts": "6a198fdd59e95fe8d4e4ba2a5583e72e610e725192e9ccc2a06a23dfc8243a13",
+        "fmt": "360099778b1bf7088769d07b51b59474450dfae3cd63c333d2e3f3903d666a52",
+        "tomlplusplus": "46995ddc5baff656a2d527d4329a382c14412f963fa0edf418319280e8435c40",
+        "boost_regex": "5674d9802e115d3ed12c9a1301716f7f0debabf46478449f1112e2a21e6eeecf",
+        "slang": "2d424f4280c879daaf05a2e78efd6928c350cc3ac086da59b872a305a277f7b8",
+        "sv_elab": "2d54c9e186496ad192e9c77046b0571ce3fdde42a1aad5c4e63829d888331d14",
+        "symfpu": "8dbddea1d26cf04d0f320c57929829847835249985ae6992b08a78b088472f6e",
+        "cudd": "dbe6b90f8745bf1f755953b76f1c639e07f7ee079f4abf18c871ae878f47431d",
+        "swig": "1f54fbbcba9224389b5ae9ede91365677e652be33b81ca3671a79221f7e2f56e",
+        "opensta": "e7cb5c7750317308da920918e078e3ef669cb1aa4bb26d68a66278bc50500e6c",
+        "cmake": "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0",
+        "eigen": "5f6557d1aca6e959a4b955c55f2935261fd30de59c0c79e35bc6d5cbe1de22d1",
+        "z3": "b548bac48ef2452b4e09ea2945cf4b011d5f43fcf39e4799df268ee7e0769d85",
+        "click": "9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4"
+      },
+      "verified_packages": 12,
+      "verified_uvm_files": 186,
+      "failed_setup_log": "work/setup.log",
+      "fresh_build_claimed": false,
+      "installed_binary_sha256": {
+        "verilator_bin": "90e30cd314efdfc2c111749b57ad974b11635d55d276869c807bd76f3b866146",
+        "verilator_coverage_bin": "becaff0380f25a1f741508356a9efc1c17f9d08c8a7cef61678c1aad58ba84fc",
+        "yosys": "1a19c368ed02e0b50a0f9a72b8a4e7c104b0f2639b1270b034d101b78bccfaf2",
+        "yosys-abc": "377acb58c8ca48b44421428745be2ac81ac156fda0bee70034a9f86d30d32275",
+        "yosys-filterlib": "345365490620338bc05af8e5f32274d485e2ece32f8873bc7058bf92807437ae",
+        "sby": "4a908cc33b1eeb5f4065986ab6863a0399b64db2a9e4e94e5407037184f0c45f",
+        "z3": "2bb3e9e79cf9e256ac703f5c7cfb5e68958bdb74a372275ecd59828446f4a59e",
+        "sta": "e1b9cace8688ad4b003ccc41efe28f4db3066bce7974ecdbce581d1afbb0744a"
+      }
+    }
+  },
+  "commands": [
+    "CXX=g++-14 python3 tools/run.py doctor",
+    "CXX=g++-14 python3 tools/run.py regression --profile E0 --test scheduler --seed 17 --jobs 2 --timeout 120",
+    "CXX=g++-14 python3 tools/run.py regression --profile F0 --test scheduler --seed 17 --jobs 2 --timeout 120",
+    "CXX=g++-14 python3 tools/run.py formal-rtl --test scheduler --timeout 240",
+    "CXX=g++-14 python3 tools/run.py regression --profile E0 --test contracts --seed 17 --jobs 2 --timeout 120",
+    "CXX=g++-14 python3 tools/run.py regression --profile E0 --test uvm-foundation --seed 17 --jobs 1 --timeout 120",
+    "CXX=g++-14 python3 tools/check_light.py",
+    "python3 tools/check_repository.py",
+    "git diff --check"
+  ],
+  "hosted": {
+    "pr": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/16",
+    "final_full_ci": "PENDING; no hosted PASS claimed for the final head"
+  },
+  "mutation_observation": {
+    "configuration": "E0 quantum=64, two one-byte packets; second dispatch plus singleton replacement after TX completion",
+    "expected_remaining_credit": 62,
+    "observed_mutant_credit": 126,
+    "trace_credit_transitions": [
+      0,
+      63,
+      126
+    ],
+    "detector": "SCHEDULE_CREDIT"
+  },
+  "profile_parameters": {
+    "E0": {
+      "DATA_W": 64,
+      "RX_FIFO_DEPTH": 2,
+      "TX_FIFO_DEPTH": 4,
+      "TRACE_ENABLE": 1,
+      "N_RX": 1,
+      "N_Q": 2,
+      "N_CELL": 16,
+      "CELL_BYTES": 16,
+      "N_DESC": 8,
+      "MAX_PACKET_BYTES": 128,
+      "MEM_RD_LATENCY": 1,
+      "CELL_ID_W": 4,
+      "CELL_COUNT_W": 5,
+      "DESC_ID_W": 3,
+      "DESC_COUNT_W": 4,
+      "DEFICIT_W": 13
+    },
+    "F0": {
+      "DATA_W": 64,
+      "RX_FIFO_DEPTH": 2,
+      "TX_FIFO_DEPTH": 4,
+      "TRACE_ENABLE": 1,
+      "N_RX": 4,
+      "N_Q": 16,
+      "N_CELL": 1024,
+      "CELL_BYTES": 64,
+      "N_DESC": 256,
+      "MAX_PACKET_BYTES": 1536,
+      "MEM_RD_LATENCY": 1,
+      "CELL_ID_W": 10,
+      "CELL_COUNT_W": 11,
+      "DESC_ID_W": 8,
+      "DESC_COUNT_W": 9,
+      "DEFICIT_W": 13
+    }
+  },
+  "formal_configuration": {
+    "top": "scheduler_formal",
+    "N_RX": 1,
+    "N_Q": 2,
+    "N_CELL": 16,
+    "N_DESC": 8,
+    "CELL_BYTES": 16,
+    "MAX_PACKET_BYTES": 128,
+    "families": [
+      "FP-SCHED"
+    ]
+  },
+  "source_file_sha256": {
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "dv/env/tm_bench_pkg.sv": "c292cb32f8e5742556a8d916e9d5c4849685c26da4637c1f0b8f17df9175e222",
+    "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+    "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+    "rtl/scheduler/tm_drr.sv": "f93079f4875a48e7de6f7a2336d8c9436d3de332767f0802d136a3a2fa84149a",
+    "dv/fixtures/tm_scheduler_top.sv": "8f66731a6612969561cbfc51316ca788e7a660ef80a915aefe84f0d1b40f794e",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+    "dv/model/tm_checkers.svh": "287573bf0c99b7f558b677d0cad3d815b9d4905ba0717c2084d0187eb89513c9",
+    "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+    "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+    "dv/env/tm_environment.svh": "881b05f662c00e9f8c55f01c819ad38af3adb3b96165b05a9c8ed13c68ec34ce",
+    "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+    "dv/tests/tm_batch_test.svh": "83e4b8b30ff8c18a0f8ec8df5ecc398edb821a7bc2a925d61973f5f9a9bec5c8",
+    "dv/agents/tm_packet.svh": "76191c6614105a072967da23ef81693fddff9a176bfa76745843fb7b581390ca",
+    "dv/model/tm_handshake_recorder.svh": "1428185814aa0fc59ab3ab7e599cd5e26a69e33de0a224a92e6678fb17678860",
+    "dv/tests/tm_packet_test.svh": "79409504006e96794c0c8198a45d7b58a87b5245acf29f4123c7b52f8c8934f4",
+    "dv/tests/tm_schedule_test.svh": "cec5f26622a2a90d4d862b5c43ea9cc42736b2fe7cbcbebc0a5b572b80454b32",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "dv/tests/tm_scheduler_rtl_test.svh": "96fbe3ff49c9f2009a969e1cb88fe050de01d9f5558d6164c9de75db421c9331",
+    "rtl/include/tm_module_ports.sv": "9115b422f8fc58a5c37789736dde59acb95aa3c2b40f37000f01657eb2d5a0f9",
+    "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+    "rtl/common/tm_axis_rx_fifo.sv": "40627938a5beb46fdbfe40054d6a16e2e7f1594e21749de8605493dfa5f24507",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+    "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+    "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+    "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+    "formal/pools/storage_formal.sv": "21d7fd921b002bad7ca45f2c41ef8203f2435024f67e5fca7a2ac59266e7ce1b",
+    "formal/csr/csr_formal.sv": "b8a0bd3ad2ff2ae4ab61c3c8883db68e03ce62f13952d06fbc53ec2c67651495",
+    "formal/symbolic/symbolic_inputs.sv": "a8889c49a03570a8dfd8c161127c277cf3ceaf0e4ae41c256f150c04c3f1cf95",
+    "formal/queue/queue_formal.sv": "a25f26fd5ce08a7118ea9ade8ccf744d66d3c6e1c980dcc3a614c148b8ac0c91",
+    "formal/scheduler/scheduler_formal.sv": "04e328115455b477bda7cf7a5d100fc9777a2e9faf2b23e4f26879f960acccc5",
+    "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+    "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+    "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+    "formal/symbolic/symbolic_checks.svh": "6c0a3a76b97ab8828383decc8c3a7b16b50dee1bbc43eed04b59f8ee917949b2",
+    "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+    "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+    "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7"
+  }
+}

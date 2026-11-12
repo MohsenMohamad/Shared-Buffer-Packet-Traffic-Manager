@@ -25,8 +25,9 @@ flowchart TD
 ```
 
 This is the target architecture. FIFOs, bitmap pools, CSR/statistics and the UVM
-foundation are implemented and locally verified. Queue, scheduler, memory/TX,
-receive/admission and production top integration are the remaining hardware work.
+foundation, descriptor queues and the DRR/packet-RR scheduler are implemented
+and locally verified at their documented component scopes. Memory/TX,
+receive/admission and production top integration remain hardware work.
 Declaration elaboration and bench fixtures do not establish an integrated TM.
 [Current status](docs/status.md) and the [implementation plan](docs/implementation/plan.md)
 identify the exact completed scope and next prerequisites.

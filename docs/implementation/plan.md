@@ -14,12 +14,13 @@ tested revisions and scopes remain in the linked reports. The main run
 [43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
 completed successfully. This statement records that hosted result, not a new local run.
 
-P03 is merged in PR #14 with [queue component results](../results/P03-queues.md); P04/P05
-remain the next hardware stages and P11A owns caller composition. [F01](tasks/F01-formal-symbols.md) closes
+P03 is merged in PR #14 with [queue component results](../results/P03-queues.md).
+P04 is component-qualified in this branch with [scheduler results](../results/P04-scheduler.md).
+P05 remains the next hardware stage and P11A owns caller composition. [F01](tasks/F01-formal-symbols.md) closes
 its symbolic-input prerequisite with [executed recipe evidence](../results/F01-formal-symbols.md). [R01](tasks/R01-reset-timing.md) owns reset
 constraint interpretation before new allocator/P08 studies. [A01](tasks/A01-allocator-selection.md)
 owns measured allocator alternatives and a reviewed disposition before P08.
-[C01](tasks/C01-ci-economy.md) is integrated. Continue with P04/P05;
+[C01](tasks/C01-ci-economy.md) is integrated. Continue with P05;
 R01 and A01 remain prerequisites for P08.
 
 ## Dependencies and owners
@@ -31,7 +32,7 @@ R01 and A01 remain prerequisites for P08.
 | C01 | [CI iteration economy](tasks/C01-ci-economy.md) | Integrated; preserve all full suites |
 | F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Integrated; applies to every harness |
 | P03 | [Descriptor queues](tasks/P03-queues.md) | Integrated in PR #14 |
-| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | P03 |
+| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | Component-qualified in this branch; P09/P11B own composition |
 | P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | P03 |
 | R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
 | A01 | [Allocator evaluation/disposition](tasks/A01-allocator-selection.md) | Existing characterization + R01; before P08 |
@@ -45,10 +46,10 @@ R01 and A01 remain prerequisites for P08.
 | P13 | [Checked failure diagnostics](tasks/P13-diagnostics.md) | P10; secondary to core RTL/DV |
 | P14 | [Independent release audit](tasks/P14-release.md) | P12/P13 and current integrated evidence |
 
-The remaining serial route is P04, P05, R01, A01, P08, P09, P10,
+The remaining serial route is P05, R01, A01, P08, P09, P10,
 P11A, P11B, P11C, P12, P13, P14. C01 and independent analysis can run alongside
-hardware work when shared file ownership is explicit. P04/P05, P11A/P11B and
-P12/P13 remain possible independent waves; serial work is simpler by default.
+hardware work when shared file ownership is explicit. P11A/P11B and P12/P13
+remain possible independent waves; serial work is simpler by default.
 
 ## Active tool and representation contract
 
