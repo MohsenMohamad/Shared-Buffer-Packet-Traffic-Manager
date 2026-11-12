@@ -19,8 +19,8 @@ def scheduler_coverage(path, mode):
             point = points.setdefault(fields['t'], dict(hit=0, total=0))
             point['total'] += 1
             point['hit'] += int(count>0)
-        if fields.get('t')=='covergroup' and '.policy_cg.' in fields.get('h', ''):
-            bins[fields['h'].split('.policy_cg.')[1]] = count
+        if fields.get('t')=='covergroup' and 'policy_cg.' in fields.get('h', ''):
+            bins[fields['h'].split('policy_cg.')[1]] = count
     expected = {'update_kind.'+name for name in ('none','singleton','longer','different')}
     expected |= {point+'.auto_'+str(value) for point in ('tx_busy','activated') for value in (0,1)}
     expected |= {'fit.'+name for name in ('insufficient','equal','surplus')}
