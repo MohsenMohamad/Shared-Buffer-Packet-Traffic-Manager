@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "include_dirs": [
+    "rtl/include",
+    "dv/agents",
+    "dv/model",
+    "dv/env",
+    "dv/tests"
+  ],
+  "sources": [
+    "rtl/include/tm_fixed.sv",
+    "dv/env/tm_bench_pkg.sv",
+    "rtl/queue/tm_queue_ctrl.sv",
+    "rtl/queue/tm_desc_links.sv",
+    "rtl/scheduler/tm_drr.sv",
+    "dv/fixtures/tm_scheduler_top.sv"
+  ],
+  "headers": [
+    "rtl/include/tm_types.svh",
+    "dv/model/tm_monitor_types.svh",
+    "dv/model/tm_checkers.svh",
+    "dv/agents/tm_stream_agent.svh",
+    "dv/agents/tm_axil_agent.svh",
+    "dv/env/tm_environment.svh",
+    "dv/tests/tm_foundation_test.svh",
+    "dv/tests/tm_batch_test.svh",
+    "dv/agents/tm_packet.svh",
+    "dv/model/tm_handshake_recorder.svh",
+    "dv/tests/tm_packet_test.svh",
+    "dv/tests/tm_schedule_test.svh",
+    "rtl/include/tm_parameters.svh",
+    "rtl/include/tm_validate.svh",
+    "dv/tests/tm_scheduler_rtl_test.svh"
+  ],
+  "scope": "Production scheduler/queue/link with UVM independent event/packet-length policy model; fixture metadata and TX endpoint, no payload engine."
+}

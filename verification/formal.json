@@ -53,6 +53,18 @@
         "FP-QUEUE",
         "FP-ORDER"
       ]
+    },
+    "scheduler": {
+      "top": "scheduler_formal",
+      "N_RX": 1,
+      "N_Q": 2,
+      "N_CELL": 16,
+      "N_DESC": 8,
+      "CELL_BYTES": 16,
+      "MAX_PACKET_BYTES": 128,
+      "families": [
+        "FP-SCHED"
+      ]
     }
   },
   "scope": "Local production storage, queue/link and CSR APIs at named reduced configurations. No integrated RX/TX ownership or payload-path composition.",

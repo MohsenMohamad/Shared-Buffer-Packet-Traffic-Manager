@@ -77,6 +77,21 @@
         "queues"
       ],
       "scope": "Local production queue/link component; actual P02 descriptor pool; no scheduler, payload or integrated ownership proof."
+    },
+    "scheduler": {
+      "handler": "scheduler",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "scheduler"
+      ],
+      "scope": "Production DRR and packet RR with real P03 queues and independent P07 policy/timing checker; local TX endpoint, no payload proof."
     }
   }
 }

@@ -1,4 +1,4 @@
-name: Storage and queue components
+name: Storage, queues and scheduler components
 on:
   workflow_call:
     inputs:
@@ -31,9 +31,9 @@ jobs:
         run: |
           set -euo pipefail
           for profile in F0 F1 I0 I1 E0 E1; do
-            make regression RUN_ARGS="--profile $profile --test pools --test queues --seed 17"
+            make regression RUN_ARGS="--profile $profile --test pools --test queues --test scheduler --seed 17"
           done
-      - name: Prove production storage/queues and qualify seeded defect detection
+      - name: Prove production storage/queues/scheduler and qualify seeded defect detection
         run: make formal-rtl RUN_ARGS='--timeout 240'
       - name: Preserve independent formal fixture route
         run: make formal-smoke

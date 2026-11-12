@@ -525,6 +525,8 @@ class tm_schedule_checker extends uvm_component;
     tm_frame active;
     tm_baseline_schedule_timing baseline_timing;
     int cursor, deficit[N_Q], quantum = MAX_PACKET_BYTES, dispatches, offset;
+    int quanta[N_Q], mode = 1;
+    longint added[N_Q], dispatched_bytes[N_Q], delivered_bytes[N_Q], cleared[N_Q];
     bit visit;
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -537,13 +539,17 @@ class tm_schedule_checker extends uvm_component;
         foreach(queues[q]) begin
             queues[q].frames.delete();
             deficit[q] = 0;
+            added[q] = 0;
+            dispatched_bytes[q] = 0;
+            delivered_bytes[q] = 0;
+            cleared[q] = 0;
         end
         active = null;
         cursor = 0;
         visit = 0;
         offset = 0;
     endfunction
-    function void apply(monitor_batch_t b, tm_frame committed_frame);
+    function void apply(monitor_batch_t b, tm_frame committed_frame, bit run=1, bit tx_ready=1);
         tm_frame f;
         bit grant;
         int q, credit;
@@ -555,15 +561,19 @@ class tm_schedule_checker extends uvm_component;
         grant = 0;
         q = cursor;
         credit = deficit[q];
-        if(baseline_timing.inspect_queue(active != null) && queues[q].frames.size()!=0) begin
-            if(!visit) credit+=quantum;
+        if(run && baseline_timing.inspect_queue(active != null) && queues[q].frames.size()!=0) begin
+            if(mode==1 && !visit) begin
+                credit+=(quanta[q]==0 ? quantum : quanta[q]);
+                added[q]+=(quanta[q]==0 ? quantum : quanta[q]);
+            end
             f = queues[q].frames[0];
-            grant = (f.length<=credit);
+            grant = tx_ready && (mode==0 || f.length<=credit);
         end
         check_dispatch_policy(t, grant, q, f);
         baseline_timing.check_dispatch_presence(t.dispatch.valid, grant);
-        merge_queue_changes(committed_frame, grant, q, credit, f);
+        merge_queue_changes(committed_frame, grant, q, credit, f, run, tx_ready);
         check_retirement(b, grant);
+        check_accounting();
     endfunction
     function void check_dispatch_policy(trace_t t, bit grant, int q, tm_frame f);
         // Legality, credit and head identity are checked even before timing.
@@ -576,7 +586,7 @@ class tm_schedule_checker extends uvm_component;
                 `uvm_fatal("SCHEDULE_HEAD","dispatch does not match expected queue head")
         end
     endfunction
-    function void merge_queue_changes(tm_frame committed_frame, bit grant, int q, int credit, tm_frame f);
+    function void merge_queue_changes(tm_frame committed_frame, bit grant, int q, int credit, tm_frame f, bit run, bit tx_ready);
         tm_frame removed;
         // Commit is appended only after deciding from the old head. Empty
         // closure uses the merged count, preserving last-pop/commit credit.
@@ -584,17 +594,27 @@ class tm_schedule_checker extends uvm_component;
             removed = queues[q].frames.pop_front();
             active = f;
             offset = 0;
-            deficit[q] = credit-f.length;
-            visit = 1;
+            dispatched_bytes[q]+=f.length;
+            deficit[q] = mode==1 ? credit-f.length : 0;
+            visit = mode==1;
+            if(mode==0) cursor = (q+1)%N_Q;
             dispatches++;
-        end else if(active==null) begin
-            if(queues[q].frames.size()==0) deficit[q] = 0;
-            else deficit[q] = credit;
-            cursor = (q+1)%N_Q;
-            visit = 0;
+        end else if(active==null && run) begin
+            if(queues[q].frames.size()==0) begin
+                cleared[q]+=deficit[q];
+                deficit[q] = 0;
+                cursor = (q+1)%N_Q;
+                visit = 0;
+            end else if(mode==1) begin
+                deficit[q] = credit;
+                // Readiness cannot end a visit whose head fits.
+                visit = queues[q].frames[0].length<=credit;
+                if(!visit) cursor = (q+1)%N_Q;
+            end else if(tx_ready) cursor = (q+1)%N_Q;
         end
         if(committed_frame!=null) queues[committed_frame.qid].frames.push_back(committed_frame);
         if(grant && queues[q].frames.size()==0) begin
+            cleared[q]+=deficit[q];
             deficit[q] = 0;
             visit = 0;
             cursor = (q+1)%N_Q;
@@ -615,9 +635,27 @@ class tm_schedule_checker extends uvm_component;
                 `uvm_fatal("SCHEDULE_RETIRE","incorrect cell retirement boundary")
             if(t.tx_done.valid!=b.output_sample.beat.last)
                 `uvm_fatal("SCHEDULE_DONE","missing or premature completion")
-            if(b.output_sample.beat.last) active = null;
+            delivered_bytes[active.qid]+=$countones(b.output_sample.beat.keep);
+            if(b.output_sample.beat.last) begin
+                if(offset!=active.length) `uvm_fatal("SCHEDULE_DONE", "completion length mismatch")
+                active = null;
+            end
         end else if(t.tx_done.valid)
             `uvm_fatal("SCHEDULE_DONE","completion without output")
+    endfunction
+    // Finite endpoints include the unretired bytes of the TX-owned packet.
+    // Clearing idle credit is recorded explicitly; backlogged intervals have
+    // cleared=0 and reduce to the complete-visit byte equation.
+    function void check_accounting();
+        longint inflight;
+        foreach(deficit[q]) begin
+            inflight = active!=null && active.qid==q ? active.length-offset : 0;
+            if(dispatched_bytes[q]!=delivered_bytes[q]+inflight)
+                `uvm_fatal("SCHEDULE_ACCOUNTING", "dispatch/delivery endpoint mismatch")
+            if(mode==1 && (added[q]!=dispatched_bytes[q]+deficit[q]+cleared[q] ||
+                          deficit[q]<0 || deficit[q]>4096+MAX_PACKET_BYTES-1))
+                `uvm_fatal("SCHEDULE_ACCOUNTING", "byte credit equation or bounds failed")
+        end
     endfunction
     function void drained();
         if(active!=null)

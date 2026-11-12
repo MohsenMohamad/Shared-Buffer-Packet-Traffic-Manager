@@ -397,6 +397,7 @@ def main(argv=None):
         from foundation import foundation
         from csr import csr
         from queues import queues
+        from scheduler import scheduler
         run.scope = 'Selected contract/component suites; no integrated TM validation'
         try:
             selected = selection(args.profile, args.test)
@@ -406,7 +407,7 @@ def main(argv=None):
                 raise ValueError('Regression accepts one positive 31-bit functional seed')
             from doctor import qualify
             qualify(run)
-            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues}
+            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler}
             for name in selected:
                 handlers[name](run, args)
         except (OSError, ValueError, KeyError) as error:

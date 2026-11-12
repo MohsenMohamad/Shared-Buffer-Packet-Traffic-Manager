@@ -14,7 +14,8 @@
     "rtl/csr/tm_axil_regs.sv",
     "rtl/csr/tm_statistics.sv",
     "rtl/queue/tm_queue_ctrl.sv",
-    "rtl/queue/tm_desc_links.sv"
+    "rtl/queue/tm_desc_links.sv",
+    "rtl/scheduler/tm_drr.sv"
   ],
   "headers": [
     "rtl/include/tm_parameters.svh",

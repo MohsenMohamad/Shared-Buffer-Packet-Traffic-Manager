@@ -99,28 +99,6 @@ module tm_metadata_api import tm_fixed::*; #(
 `include "tm_validate.svh"
 endmodule
 
-module tm_drr_api import tm_fixed::*; #(
-`include "tm_parameters.svh"
-,
-`define TM_ANSI_TYPES
-`include "tm_types.svh"
-`undef TM_ANSI_TYPES
-) (
-    input logic clk,
-    input logic rst_n,
-    input config_t cfg,
-    input logic [N_Q*DESC_ID_W-1:0] heads,
-    input logic [N_Q*DESC_COUNT_W-1:0] counts,
-    input logic [N_Q*DESC_INFO_W-1:0] head_info,
-    input commit_t commit,
-    input logic tx_ready,
-    input tx_done_t tx_done,
-    output dispatch_t dispatch,
-    output logic [N_Q*DEFICIT_W-1:0] deficits
-);
-`include "tm_validate.svh"
-endmodule
-
 module tm_packet_ram_api import tm_fixed::*; #(
 `include "tm_parameters.svh"
 ,
