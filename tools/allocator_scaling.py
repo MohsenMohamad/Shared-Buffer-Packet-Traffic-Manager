@@ -97,6 +97,7 @@ def mapping_measurements(module, expected_state):
 
 
 def characterize(run, args):
+    run.scope = 'Standalone production allocator characterization; measurement success is not timing closure'
     definition = json.loads((EXPERIMENT / 'config.json').read_text())
     deps = json.loads((ROOT / 'tools/dependencies.json').read_text())
     liberty = ROOT / '.deps/liberty.lib'

@@ -27,4 +27,7 @@ The [modern toolchain refresh](results/modern-toolchain.md) requalifies these
 merged components on the selected source stack; it does not advance integrated
 traffic-manager gates. The [representation follow-up](implementation/tasks/P01-followup-representation.md)
 is recorded in [its migration report](results/rtl-representation.md) and
-precedes allocator characterization. P03+ remains paused.
+precedes [allocator characterization](results/allocator-scaling.md). The standalone
+allocator study calls for investigation of 1024-cell selection depth and reset
+timing/fanout; it changes no hardware and closes no integrated gate. P08 retains
+the actual consumer-path recheck, including 1024 cells. P03+ remains paused.
