@@ -38,7 +38,7 @@ def outcome(step, status, text, waves, expected, labels):
 
 def qualify(run, args):
     if args.frontend != 'slang':
-        raise ValueError('formal-symbols qualifies the registered Slang recipe with explicit native controls')
+        raise ValueError('formal-symbols qualifies the registered Slang recipe with explicit arbitrary inputs')
     registered = sources('formal')  # Executes the source/header policy first.
     spec = json.loads((ROOT/'verification/formal.json').read_text())['symbolic_qualification']
     if spec['handler'] != 'formal-symbols' or spec['source'] not in registered['sources'] or spec['header'] not in registered['headers']:
@@ -51,38 +51,20 @@ def qualify(run, args):
     ok = step['result'] == 'PASS' and match and int(match[1]) > 0 and re.search(r'(?m)^OK$', text)
     case.finish('PASS' if ok else step['result'] if step['result'] != 'PASS' else 'FAIL',
                 None if ok else 'Source policy/negative classification checks failed')
-    # This exact diagnostic fixture is outside production registration. A parser
-    # rejection is recorded independently from an executed assertion failure.
-    case = Case(run, 'symbolic-unsupported-functions')
-    diagnostic = ROOT/'tests/frontends/symbolic_functions.sv'
-    script = case.path/'diagnostic.ys'
-    script.write_text(read_sources([diagnostic], 'symbolic_functions', frontend='slang', formal=True))
-    step = case.execute(['yosys', '-Q', '-T', '-s', str(script)], timeout=args.timeout)
-    text = output(step)
-    ok = step['returncode'] not in (0, None) and step['result'] != 'TIMEOUT' and all(
-        "unknown system name '" + name + "'" in text for name in ('$anyseq', '$anyconst'))
-    case.finish('PASS' if ok else step['result'] if step['result'] == 'TIMEOUT' else 'TOOL_ERROR',
-                None if ok else 'Missing exact unsupported-function frontend diagnostics',
-                observed='FRONTEND_REJECTION', capability='UNSUPPORTED',
-                expected='UNKNOWN_SYSTEM_ANYSEQ_AND_ANYCONST', source_sha256=sha(diagnostic))
     for width in spec['widths']:
-        for variant, frontend in (('native', 'verilog'), ('decorated', 'slang'),
-                                  ('recipe', 'slang'), ('missing-assumption', 'slang')):
-            control = variant in ('native', 'decorated')
-            source = ROOT / spec['diagnostic_control' if control else 'source']
-            top = 'anyconst_control' if control else spec['top']
+        for variant in ('recipe', 'missing-assumption'):
+            frontend = 'slang'
+            source = ROOT/spec['source']
+            top = spec['top']
             for task in ('prove', 'change', 'reach'):
-                # Rejected decoration has no meaningful distinct-value recipe.
-                if variant == 'decorated' and task == 'reach':
-                    continue
                 mode = 'prove' if task == 'prove' else 'cover'
                 defines = ['OMIT_STABILITY'] if variant == 'missing-assumption' else []
                 defines += ['CHANGE_COVER'] if task == 'change' else ['REACH_COVERS'] if task == 'reach' else []
                 if task == 'prove':
-                    expected = 'ASSERT_FAIL' if variant in ('decorated', 'missing-assumption') else 'PROVED'
+                    expected = 'ASSERT_FAIL' if variant == 'missing-assumption' else 'PROVED'
                     labels = ['a_constant'] if expected == 'ASSERT_FAIL' else ['a_constant', 'a_reset_constant']
                 elif task == 'change':
-                    expected = 'REACHED' if variant in ('decorated', 'missing-assumption') else 'UNREACHED'
+                    expected = 'REACHED' if variant == 'missing-assumption' else 'UNREACHED'
                     labels = ['c_witness_change']
                 else:
                     expected = 'REACHED'
@@ -92,7 +74,7 @@ def qualify(run, args):
                 case.data.update(configuration=dict(spec, width=width), frontend=frontend,
                                  input_digests={str(p.relative_to(ROOT)): sha(p) for p in (source, header)},
                                  expected=expected, property_identities=labels,
-                                 capability='REJECTED_SEMANTICS' if variant == 'decorated' else 'QUALIFICATION',
+                                 capability='QUALIFICATION',
                                  assumptions='Two low startup samples; later reset and stimulus arbitrary; witness held after first sample only in recipe',
                                  method='unbounded k-induction' if task == 'prove' else f'bounded reachability depth {spec["depth"]}')
                 config = case.path/'symbolic.sby'
@@ -114,8 +96,8 @@ def qualify(run, args):
                     assumptions = 2 if variant == 'recipe' else 1
                     wanted = {'$assert': 2 if task == 'prove' else 0, '$assume': assumptions,
                               '$cover': 1 if task == 'change' else 4 if task == 'reach' else 0,
-                              '$anyconst': 1 if variant == 'native' else 0, '$anyseq': 0}
-                    ports = {'clk', 'rst_n', 'stimulus'} | (set() if control else {'witness'})
+                              '$anyconst': 0, '$anyseq': 0}
+                    ports = {'clk', 'rst_n', 'stimulus'} | {'witness'}
                     properties = {n for n, c in module['cells'].items() if c['type'] in ('$assert', '$cover')}
                     wanted_properties = {'a_constant', 'a_reset_constant'} if task == 'prove' else set(labels)
                     if inventory != wanted or set(module['ports']) != ports or properties != wanted_properties:

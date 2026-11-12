@@ -8,7 +8,7 @@ module record_memory_formal(input clk,we,input [1:0] wa,ra,input [9:0] wd);
     reg [3:0] written=0;
     reg read_known=0;
     reg [9:0] expected;
-    // Explicit labels avoid the native frontend's generated-label collision.
+    // Explicit labels identify each memory property independently.
     always @(posedge clk) begin
         if(written[0]) a_contents0: assert(contents[0 +:10]==reference[0]);
         if(written[1]) a_contents1: assert(contents[10+:10]==reference[1]);

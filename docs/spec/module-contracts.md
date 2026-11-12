@@ -34,11 +34,10 @@ remaining APIs and top use ANSI declarations while retaining their original
 implementation/declaration boundary. See [decision 0007](../decisions/0007-rtl-representation.md)
 and [current evidence](../results/rtl-representation.md).
 
-Production formal/synthesis reads the registered sources directly with Slang;
-the formal adapter changes only arbitrary-input harness declarations. Native
-`read_verilog` remains a diagnostic on the supported historical subset, never a
-reason to flatten the current types. Immutable baseline comparisons preserve
-property/assumption checks and supplementary sequential equivalence.
+Production formal/synthesis reads registered sources directly with Slang.
+Every formal harness declares arbitrary stimulus as explicit input ports.
+Current production properties, covers, mutations and source-policy guards remain
+mandatory; frontend fixtures do not substitute for those proofs.
 
 The six production profiles and defaults are owned by
 [profiles.json](../../verification/profiles.json), matching architecture.md.

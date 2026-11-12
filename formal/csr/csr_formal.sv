@@ -1,13 +1,14 @@
-module csr_formal(input clk);
+module csr_formal(clk,rst_n,initialized,bus_req,live,live_stats,shadow_stats);
+input clk;
 localparam integer DATA_W=64,N_RX=1,N_Q=2,CELL_BYTES=16,N_CELL=16,N_DESC=8,
     MAX_PACKET_BYTES=128,RX_FIFO_DEPTH=2,MEM_RD_LATENCY=1,TX_FIFO_DEPTH=4,
     SCHED_MODE=1,QUANTUM_DEFAULT=128,TRACE_ENABLE=1,CELL_ID_W=4,
     DESC_ID_W=3,CELL_COUNT_W=5,DESC_COUNT_W=4,DEFICIT_W=13;
 `include "tm_types.svh"
-(* anyseq *) logic rst_n,initialized;
-(* anyseq *) axil_request_t bus_req;
-(* anyseq *) live_t live;
-(* anyseq *) statistics_t live_stats,shadow_stats;
+input logic rst_n,initialized;
+input axil_request_t bus_req;
+input live_t live;
+input statistics_t live_stats,shadow_stats;
 axil_response_t bus_rsp;
 logic [1:0] startup=0;
 logic past_valid=0;

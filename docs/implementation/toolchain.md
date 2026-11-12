@@ -15,22 +15,19 @@ make uvm-dpi JOBS=2
 make formal-smoke
 make synth-smoke
 make frontends
-make bridge
-make representation-formal
 make ci JOBS=2
 ```
 
 The selected locks are Yosys 0.70 with its integrated slang frontend and
 ABC gitlinks, Verilator 5.054, UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative
 OpenSTA 3.2.0 source. CMake 4.4.5, SWIG 4.5.1, Eigen 5.0.1, CUDD 3.0.0 and Click
-8.5.1 are explicit dependencies. See the [inventory and source identities](modern-toolchain-plan.md)
-and [current qualification status](../results/modern-toolchain.md); active pins do
-not imply all required qualification has completed.
+8.5.1 are explicit dependencies. See the [inventory and source identities](toolchain-qualification-plan.md)
+and [current qualification status](../results/modern-toolchain.md); the selected combination has completed its documented qualification.
+Capability results retain the scope stated in each report.
 
 `setup` verifies every cached/downloaded archive, extracts the audited build and
 Tcl/zlib packages into `.tools/sysroot`, builds to `.tools/install`, and retains
-external source/licenses under `.deps`. It does not depend on an old toolchain
-installation, a container, system package installation or mutable upstream
+external source/licenses under `.deps`. It does not require another installation or a container, system package installation or mutable upstream
 branches. The upstream Z3 binary requires glibc 2.39; C++ language/runtime
 compatibility is tested by compilation/execution, rather than rejecting every
 compiler patch different from 14.2.0.
@@ -58,7 +55,7 @@ No external credential, GUI or container daemon is needed.
 
 `make ci` runs doctor, repository contracts, runner tests, fixture lint and
 compiler-error rejection, UVM, formal and mapping/STA in sequence, continuing
-independent gates after failures. GitHub Actions runs UVM/formal/synthesis/frontend/bridge/representation checks
+independent gates after failures. GitHub Actions runs UVM/formal/synthesis/frontend checks
 in dependent consumer jobs after one shared preparation, each with its doctor and orchestration checks. Routine
 artifacts are retained for 14 days. Hosted execution status belongs in the
 PR; adding a workflow is not evidence that it executed successfully.
@@ -140,48 +137,25 @@ fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
 This route is separate from production TM requirements and the P00 tool fixture.
 See [P07 results](../results/P07-verification-foundation.md).
 
-## Registered frontend and representation checks
+## Current frontend checks
 
-The formal and synthesis source registries select `slang`. `read_slang` is built
-into the pinned Yosys executable; no plugin from a global installation is loaded.
-`--frontend verilog` explicitly selects the same Yosys binary's native diagnostic
-path. The old reference flow uses a separately prepared installation/check-out
-at the historical pins; never put both installations on PATH or share runtimes.
+The formal and synthesis source registries select `slang`, built into the pinned
+Yosys executable. The runner accepts only that selected frontend.
 
 ```sh
 make frontends
-make bridge
-make representation-formal
-python3 tools/run.py formal-rtl --frontend verilog --test fifo2
-python3 tools/run.py frontends --frontend verilog
+make formal-symbols
+python3 tools/run.py formal-rtl
 python3 tools/run.py uvm-dpi
 ```
 
-The native frontend comparison deliberately returns nonzero for unsupported
-representations; inspect each phase/result, rather than interpreting a syntax
-rejection as completed synthesis. `frontends` compares historical disposable FIFO/CSR/statistics copies and current registered production, six-profile and invalid elaborations for the selected
-recipes, heterogeneous instances, and independent memory/signed/unpacked/interface
-examples. Source paths passed to slang use checkout-relative names; whitespace
-inside source-relative paths is explicitly rejected until separately qualified.
-
-`bridge` audits actual symbolic cells, initialization, `$past`, asynchronous
-reset conversion, source labels/property counts, intended counterexamples and
-cover reachability. Complete harness assumption predicates are proved equivalent
-against the native-supported pre-migration Git baseline by mutual inclusion with shared arbitrary inputs; CSR state correspondence is
-proved as additional invariants. The miter re-encodes every assumption predicate as an output and proves mutual
-inclusion separately; production prove/cover/mutation runs retain all original
-assumptions, assertions and covers. Slang's unsupported symbolic attributes/functions retain their executed
-negative diagnostics; ordinary arbitrary top-level inputs are the accepted bridge.
-
-`representation-formal` checks the current registered FIFO/CSR with unchanged
-properties and performs supplementary baseline/current sequential equivalence
-for FIFO/pools/CSR/statistics across all six profiles. `fifo-mapping` compares
-actual baseline/current and record-array FIFO inference and complete payload
-mapping. See the [integrated recipe](tasks/P01-followup-representation.md) and
-[migration evidence](../results/rtl-representation.md). The old disposable
-candidates remain historical controls; `frontends` also tests current registered
-production explicitly. Checkouts must contain the immutable baseline Git object
-in `verification/representation.json` (`git fetch origin` with full history in CI).
+`frontends` checks independent current-stack packed-record memory, unpacked-port,
+interface and heterogeneous-instance fixtures through parsing, elaboration,
+synthesis and simulation. Record-memory prove/cover tasks check complete-word
+semantics. `formal-symbols` checks the explicit-input recipe and its deliberate
+missing-stability negative. Production proofs execute the committed harnesses
+directly. The source guard applies uniformly to all harnesses.
+Source-relative filenames containing whitespace remain unqualified.
 
 The optional `uvm-dpi` command exercises actual regex and HDL path/read/deposit
 services with the unmodified UVM DPI sources and explicit VPI visibility. Its

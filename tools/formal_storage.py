@@ -3,7 +3,7 @@ import json
 import re
 from evidence import Case, ROOT, output, sha
 from registry import sources, fingerprint
-from frontend import read_sources, selected as selected_frontend, expose_symbolic_inputs
+from frontend import read_sources, selected as selected_frontend
 
 
 def selection(args):
@@ -29,7 +29,7 @@ def formal_rtl(run, args):
             formal_csr(run, args, specs[name])
             continue
         for task in ('prove','cover','mutation') if name in ('cell','descriptor') else ('prove','cover'):
-            case = Case(run, getattr(args,'representation_label','')+'rtl-'+name+'-'+task)
+            case = Case(run, 'rtl-'+name+'-'+task)
             case.data.update(configuration=specs[name], source_set='formal',
                              registered_source_digests=fingerprint('formal'),
                              assumptions='Reset low at first two sampled edges; later resets and every action input arbitrary',
@@ -37,10 +37,6 @@ def formal_rtl(run, args):
             files=[]
             for path in registered['sources']+registered['headers']:
                 source=ROOT/path
-                candidate = getattr(args, 'candidate_root', None)
-                if candidate is not None and (candidate/source.name).is_file():
-                    source = candidate/source.name
-                    case.data.setdefault('candidate_sources', {})[path] = sha(source)
                 if task=='mutation' and source.name=='tm_bitmap_pool.sv':
                     mutant=case.path/source.name
                     original=source.read_text()
@@ -50,12 +46,6 @@ def formal_rtl(run, args):
                     mutant.write_text(original.replace(target,"next_count = next_count + DELTA_W'(2);"))
                     source=mutant
                     case.data.update(mutation='Return adds two credits instead of one', mutant_sha256=sha(mutant))
-                if source.name == 'storage_formal.sv' and selected_frontend(args, 'formal') == 'slang':
-                    text, ports = expose_symbolic_inputs(source)
-                    source = case.path / source.name
-                    source.write_text(text)
-                    case.data.update(symbolic_inputs=ports, harness_sha256=sha(source),
-                                     symbolic_representation='arbitrary top-level inputs; assumptions/properties unchanged')
                 files.append(source.name+' '+str(source))
             case.data['frontend'] = selected_frontend(args, 'formal')
             script=read_sources([(ROOT/p).name for p in registered['sources']], 'storage_formal', defines=specs[name]['defines'], frontend=selected_frontend(args, 'formal'), formal=True)

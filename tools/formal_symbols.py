@@ -4,8 +4,6 @@ import re
 
 from evidence import ROOT
 
-LEGACY = frozenset((ROOT / p).resolve() for p in (
-    'formal/pools/storage_formal.sv', 'formal/csr/csr_formal.sv'))
 # Preserve strings while removing comments so commented includes cannot add files.
 LEXEMES = re.compile(r'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"', re.S)
 SYMBOL = re.compile(r'(?<![\w$])(?:\$|\\)?(?:anyseq|anyconst|allseq|allconst)(?!\w)')
@@ -29,14 +27,13 @@ def check_text(text, source):
         raise ValueError('Unqualified formal token concatenation in ' + str(source))
 
 
-def check_sources(files, includes=(), *, legacy=False):
+def check_sources(files, includes=()):
     """Check all listed sources/headers and their transitive literal includes.
 
     Inspect all preprocessor branches. Macro includes, missing headers and source
-    escapes fail closed. Only the two canonical legacy paths may use the existing
-    adapter; headers and same-named copies receive no exception.
+    escapes fail closed. All production harnesses and headers follow the same policy; there are no
+    path-based exceptions.
     """
-    from frontend import expose_symbolic_inputs
     visited = set()
     include_dirs = [Path(p).resolve() for p in includes]
 
@@ -46,11 +43,7 @@ def check_sources(files, includes=(), *, legacy=False):
             return
         visited.add(source)
         text = source.read_text()
-        if legacy and source in LEGACY:
-            adapted, _ = expose_symbolic_inputs(source)
-            check_text(adapted, source)
-        else:
-            check_text(text, source)
+        check_text(text, source)
         code = uncomment(text)
         for match in re.finditer(r'"(?:\\.|[^"\\])*"|`include\b([^\n]*)', code):
             if match[1] is None:  # A string literal containing directive text.

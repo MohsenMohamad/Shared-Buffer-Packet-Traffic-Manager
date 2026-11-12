@@ -155,7 +155,7 @@ def main():
             unpack(archive, target, reuse=True)
     shutil.copyfile(cache / 'liberty.lib', ROOT / '.deps/liberty.lib')
     env = os.environ.copy()
-    # Do not inherit an activated old installation's PATH, Python or shared libraries.
+    # Do not inherit another activated installation's PATH, Python or shared libraries.
     host_path = '/usr/local/bin:/usr/bin:/bin'
     env.update(PATH=f'{prefix}/bin:{src}/cmake/bin:{sysroot}/usr/bin:{host_path}',
                LD_LIBRARY_PATH=f'{prefix}/lib:{sysroot}/usr/lib/x86_64-linux-gnu',

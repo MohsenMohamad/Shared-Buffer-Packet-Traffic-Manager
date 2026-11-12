@@ -12,7 +12,7 @@ All required build and verification workflows use command-line open-source tools
 | Static timing | OpenSTA, Liberty/netlist/SDC inputs, max/min reports |
 | Orchestration | Python 3.11+, Bash, Make; C++20-capable compiler for generated simulation code |
 
-`tools/dependencies.json` records exact source/archive pins. The [modern refresh report](../results/modern-toolchain.md) records executed qualification, and the [operational guide](../implementation/toolchain.md) defines setup/doctor/cache commands. Qualify the toolchain as a combination, not a list of installed executables. Use source builds or compatible pinned distributions; do not copy a binary built for a newer libc into an older base image.
+`tools/dependencies.json` records exact source/archive pins. The [toolchain qualification report](../results/modern-toolchain.md) records executed qualification, and the [operational guide](../implementation/toolchain.md) defines setup/doctor/cache commands. Qualify the toolchain as a combination, not a list of installed executables. Use source builds or compatible pinned distributions; do not copy a binary built for a newer libc into an older base image.
 
 ## Capability tests
 
@@ -22,11 +22,11 @@ Extend focused capability tests when introducing sequencer/driver APIs, analysis
 
 The production frontdoor baseline uses the unmodified library with `UVM_NO_DPI`. Agents use interface transactions and frontdoor register accesses. The refresh separately qualifies DPI positive/negative regular expressions and HDL path/read/deposit with explicit visibility of the probed variable. Those services are available; the no-DPI frontdoor setting remains a sufficient chosen configuration. A production backdoor path must register its visibility and service-specific checks. Force/release, polling and four-state backdoor semantics are not qualified by this probe. No UVM sources or warnings are suppressed for the DPI test.
 
-Verilator supports modern UVM but does not implement every SystemVerilog semantic or assertion feature. It is primarily a two-state simulator. Do not claim X/Z propagation coverage from it. Treat ignored constraint/coverage/assertion constructs as errors for owned code; do not use black-box-unsupported simulation options or silently disable assertions. Narrow external-library warnings require a documented waiver.
+Verilator supports UVM but does not implement every SystemVerilog semantic or assertion feature. It is primarily a two-state simulator. Do not claim X/Z propagation coverage from it. Treat ignored constraint/coverage/assertion constructs as errors for owned code; do not use black-box-unsupported simulation options or silently disable assertions. Narrow external-library warnings require a documented waiver.
 
 `--coverage` instruments supported code/functional coverage. Explicitly write and collect the resulting database and inspect its nonzero point/bin counts. A printed coverage percentage without a saved database is insufficient. Build a tiny harness with the actual coverage options before assuming collection works.
 
-Formal and synthesis use the registered `read_slang` frontend in Yosys 0.70; `read_verilog` remains an explicit diagnostic control for its supported subset. New formal harnesses use the [qualified explicit-input recipe](formal.md#selected-frontend-and-arbitrary-inputs); the checked anyseq source adapter is restricted to two legacy harnesses. Symbolic attributes must not silently become X constants. Preserve monitor-state translations where concurrent SVA is unavailable. Keep an explicit property mapping between simulation and formal. Equivalence, bounded checking and unbounded proof retain separate statuses.
+Formal and synthesis use the registered `read_slang` frontend in Yosys 0.70. All formal harnesses use the [qualified explicit-input recipe](formal.md#selected-frontend-and-arbitrary-inputs), without adapters or source-policy exceptions. Symbolic attributes must not silently become X constants. Preserve monitor-state translations where concurrent SVA is unavailable. Keep an explicit property mapping between simulation and formal. Equivalence, bounded checking and unbounded proof retain separate statuses.
 
 ## Dependency handling
 

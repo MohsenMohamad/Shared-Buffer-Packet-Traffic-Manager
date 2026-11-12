@@ -82,7 +82,7 @@ outside the qualified two-state flow. New fixed formal witnesses require
 ## Results and navigation
 
 - [Normative specifications](docs/spec/README.md) and [module contracts](docs/spec/module-contracts.md)
-- [Modern toolchain qualification](docs/results/modern-toolchain.md) and [representation migration](docs/results/rtl-representation.md)
+- [Toolchain qualification](docs/results/modern-toolchain.md) and [RTL representation](docs/results/rtl-representation.md)
 - [Allocator scaling](docs/results/allocator-scaling.md): established F0 selection-depth risk; alternatives and real-consumer timing are assigned work
 - [P07 stimulus/checker qualification](docs/results/P07-followup-stimulus.md)
 - [Verification requirements](verification/requirements.json), [acceptance gates](docs/spec/acceptance.md) and [contribution workflow](CONTRIBUTING.md)

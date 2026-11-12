@@ -53,10 +53,10 @@ Requirement focus: `PAR-01`
 
 ## Representation follow-up
 
-Consume the [current frontend qualification](P00-followup-modern-toolchain.md),
+Consume the [current frontend qualification](P00-followup-toolchain.md),
 then complete [the focused representation change](P01-followup-representation.md)
 before allocator characterization. Existing API/parameter/ownership contracts
-remain normative; old frontend limitations are reassessed by executable evidence.
+remain normative; additional constructs require focused executable qualification.
 
 The [representation migration report](../../results/rtl-representation.md) records
 the ANSI/shared-type conversion and new checks. Original behavioral acceptance

@@ -59,22 +59,21 @@ class SymbolicPolicyTests(unittest.TestCase):
             path.write_text('// `include "missing.svh"\n/* `include `H */\ninitial $display("`include `H");')
             self.assertEqual(check_sources([path]), [path])
 
-    def test_legacy_adapter_exception_is_canonical_and_anyseq_only(self):
+    def test_all_production_sources_follow_one_policy(self):
         registered = sources('formal')
-        self.assertIn('formal/symbolic/symbolic_inputs.sv', registered['sources'])
+        checked = check_sources([ROOT/p for p in registered['sources'] + registered['headers']],
+                                [ROOT/p for p in registered['include_dirs']])
+        self.assertIn((ROOT/'formal/pools/storage_formal.sv').resolve(), checked)
+        self.assertIn((ROOT/'formal/csr/csr_formal.sv').resolve(), checked)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'storage_formal.sv'
-            path.write_text((ROOT/'formal/pools/storage_formal.sv').read_text())
+            path.write_text('module storage_formal(input clk); (* anyseq *) logic x; endmodule')
             with self.assertRaisesRegex(ValueError, 'Unqualified symbolic'):
-                check_sources([path], legacy=True)
-        from frontend import expose_symbolic_inputs
-        with patch.object(Path, 'read_text', return_value='module storage_formal(input clk);\n(* anyseq *) logic a;\n(* anyconst *) logic b;\nendmodule'):
-            with self.assertRaisesRegex(ValueError, 'Unqualified symbolic'):
-                expose_symbolic_inputs(ROOT/'formal/pools/storage_formal.sv')
+                check_sources([path])
 
     def test_registry_cannot_exempt_diagnostic_fixture(self):
         original = read('sources/formal.json')
-        for fixture in ('symbolic_attributes.sv', 'symbolic_functions.sv', 'anyconst_control.sv'):
+        for fixture in ('features.sv', 'unpacked.sv', 'interface.sv'):
             data = dict(original, sources=original['sources']+['tests/frontends/'+fixture],
                         symbolic_exceptions=['tests/frontends/'+fixture])
             with patch('registry.read', side_effect=lambda name: data if name == 'sources/formal.json' else read(name)):
@@ -91,25 +90,6 @@ class SymbolicPolicyTests(unittest.TestCase):
                 with patch('registry.read', side_effect=lambda name: data if name == 'sources/formal.json' else read(name)):
                     with self.assertRaisesRegex(ValueError, 'Unqualified symbolic'):
                         sources('formal')
-
-    def test_legacy_bridge_keeps_all_controls_when_new_proofs_are_registered(self):
-        from formal_bridge import legacy_configurations
-        configurations = read('formal.json')['configurations']
-        expected = {'cell', 'descriptor', 'fifo2', 'fifo4', 'csr'}
-        self.assertIn('queues', configurations)
-        # A future explicit-input proof has no native defines or old harness.
-        expanded = dict(configurations, future_explicit_input={'top': 'future'})
-        with patch('formal_bridge.read', return_value={'configurations': expanded}):
-            selected = legacy_configurations()
-        self.assertEqual(set(selected), expected)
-        for name in expected:
-            self.assertIs(selected[name], configurations[name])
-        for missing in expected:
-            incomplete = {k: v for k, v in expanded.items() if k != missing}
-            with self.subTest(missing=missing), patch('formal_bridge.read',
-                    return_value={'configurations': incomplete}):
-                with self.assertRaises(KeyError):
-                    legacy_configurations()
 
     def test_crash_and_wrong_assertion_cannot_detect_negative(self):
         for status in (None, 'ERROR', 'UNKNOWN', 'FAIL'):

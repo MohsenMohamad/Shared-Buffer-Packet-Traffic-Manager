@@ -4,33 +4,33 @@ Task cards define assignments; [specifications](../spec/README.md) define behavi
 Use the committed working/documentation rules and the actual current source tree.
 Completion of a fixture or local proof does not close an integrated gate.
 
-## Integrated baseline and remaining entry condition
+## Integrated baseline and remaining work
 
 At `c32b3f1b79ac3412532e0564e038983aa2862112`, PRs #1-#10 integrate P00/P01/P02/
-P06/P07, shared CI/evidence work, modern toolchain qualification, the RTL
-representation migration, allocator characterization and the P07 stimulus/checker
+P06/P07, shared CI/evidence work, toolchain qualification, the RTL
+RTL representation, allocator characterization and the P07 stimulus/checker
 follow-up. These stabilization implementation steps are complete. Their original
 tested revisions and scopes remain in the linked reports. The main run
 [43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
 completed successfully. This statement records that hosted result, not a new local run.
 
-P03 has [local queue component results](../results/P03-queues.md); P04/P05
+P03 is merged in PR #14 with [queue component results](../results/P03-queues.md); P04/P05
 remain the next hardware stages and P11A owns caller composition. [F01](tasks/F01-formal-symbols.md) closes
 its symbolic-input prerequisite with [executed recipe evidence](../results/F01-formal-symbols.md). [R01](tasks/R01-reset-timing.md) owns reset
 constraint interpretation before new allocator/P08 studies. [A01](tasks/A01-allocator-selection.md)
 owns measured allocator alternatives and a reviewed disposition before P08.
-[C01](tasks/C01-ci-economy.md) reduces hosted iteration cost and is useful early;
-it does not block queue implementation.
+[C01](tasks/C01-ci-economy.md) is integrated. Continue with P04/P05;
+R01 and A01 remain prerequisites for P08.
 
 ## Dependencies and owners
 
 | Work | Assignment | Entry / current state |
 | --- | --- | --- |
 | P00/P01/P02/P06/P07 | Toolchain, contracts, storage, CSR and bench foundation | Integrated with component/fixture boundaries |
-| Stabilization | [Toolchain refresh](tasks/P00-followup-modern-toolchain.md), [representation](tasks/P01-followup-representation.md), [scaling](tasks/P02-followup-scaling.md), [stimulus](tasks/P07-followup-stimulus.md) | Integrated; consume results, do not recreate |
-| C01 | [CI iteration economy](tasks/C01-ci-economy.md) | Early maintenance; preserve all full suites |
-| F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Before P03 and new harnesses |
-| P03 | [Descriptor queues](tasks/P03-queues.md) | P02 + F01 |
+| Stabilization | [Toolchain refresh](tasks/P00-followup-toolchain.md), [representation](tasks/P01-followup-representation.md), [scaling](tasks/P02-followup-scaling.md), [stimulus](tasks/P07-followup-stimulus.md) | Integrated; consume results, do not recreate |
+| C01 | [CI iteration economy](tasks/C01-ci-economy.md) | Integrated; preserve all full suites |
+| F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Integrated; applies to every harness |
+| P03 | [Descriptor queues](tasks/P03-queues.md) | Integrated in PR #14 |
 | P04 | [DRR and packet RR](tasks/P04-scheduler.md) | P03 |
 | P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | P03 |
 | R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
@@ -45,7 +45,7 @@ it does not block queue implementation.
 | P13 | [Checked failure diagnostics](tasks/P13-diagnostics.md) | P10; secondary to core RTL/DV |
 | P14 | [Independent release audit](tasks/P14-release.md) | P12/P13 and current integrated evidence |
 
-A practical serial route is C01/F01, P03, P04, P05, R01, A01, P08, P09, P10,
+The remaining serial route is P04, P05, R01, A01, P08, P09, P10,
 P11A, P11B, P11C, P12, P13, P14. C01 and independent analysis can run alongside
 hardware work when shared file ownership is explicit. P04/P05, P11A/P11B and
 P12/P13 remain possible independent waves; serial work is simpler by default.
@@ -63,11 +63,10 @@ guarded widths and registered source lists. Preserve packed public lane order
 and intentional generic vector FIFO/pool boundaries. The separator macro avoids
 duplicate dependent records; it is not an invitation to create a macro framework.
 Qualify a useful new language/library construct once before depending on it.
-Do not flatten current types to satisfy the historical native frontend or assume
-that richer design syntax implies full temporal-SVA/four-state support.
+Use the qualified types and declarations. Richer design syntax does not imply
+full temporal-SVA/four-state support.
 
-Use F01's explicit-input recipe in new formal harnesses. Legacy bridge results
-retain their narrower scope. UVM agents, passive models, constrained packet
+Use F01's explicit-input recipe in all formal harnesses. UVM agents, passive models, constrained packet
 objects and RAL already exist; extend them onto real RTL without another bench
 or runner. Frontdoor/no-DPI remains a valid tested choice; use qualified DPI
 only for a concrete need, not to replace external checking.
