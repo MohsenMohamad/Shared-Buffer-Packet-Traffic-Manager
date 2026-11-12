@@ -1,5 +1,0 @@
-{
-  "schema_version": 1,
-  "baseline_revision": "fb3cd3fd7e2c73379617f11a82c8418e1a590d24",
-  "scope": "Immutable pre-migration Git sources for frontend controls, inference/mapping and supplementary sequential equivalence. Never a production replacement."
-}

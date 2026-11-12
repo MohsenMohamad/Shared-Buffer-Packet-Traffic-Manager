@@ -20,7 +20,7 @@ localparam integer OCC_W=$clog2(RX_FIFO_DEPTH+1);
 logic [PTR_W-1:0] rd_ptr, wr_ptr;
 logic [OCC_W-1:0] occupancy, next_occupancy;
 // Whole-beat bit copies need no field/type adaptation. Record arrays also infer
-// correctly on the selected stack; fifo-mapping compares both against baseline.
+// correctly on the selected stack.
 logic [BEAT_W-1:0] storage [0:RX_FIFO_DEPTH-1];
 logic ready_q, push, pop;
 // enable is a registered RUN/initialized query at integration. Neither ready

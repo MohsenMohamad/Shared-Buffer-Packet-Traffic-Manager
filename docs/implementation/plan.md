@@ -66,8 +66,8 @@ Qualify a useful new language/library construct once before depending on it.
 Do not flatten current types to satisfy the historical native frontend or assume
 that richer design syntax implies full temporal-SVA/four-state support.
 
-Use F01's explicit-input recipe in new formal harnesses. Legacy bridge results
-retain their narrower scope. UVM agents, passive models, constrained packet
+Use F01's explicit-input recipe in all formal harnesses. Completed migration
+scaffolding is retired per [decision 0008](../decisions/0008-retire-migration-scaffolding.md). UVM agents, passive models, constrained packet
 objects and RAL already exist; extend them onto real RTL without another bench
 or runner. Frontdoor/no-DPI remains a valid tested choice; use qualified DPI
 only for a concrete need, not to replace external checking.

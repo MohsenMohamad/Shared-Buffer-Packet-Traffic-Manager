@@ -42,14 +42,13 @@ separate from regression suite selectors.
 
 For new work, follow [the durable evidence policy](../documentation.md#durable-evidence-for-new-work): Git stores compact tested-revision/configuration/tool/result/measurement and reproduction records; artifacts store bulky execution details, logs, waves and databases. Existing result JSON files are preserved unchanged. Record the actual tested SHA with PR/workflow references where available; integrated-main metadata never substitutes for tested-source provenance.
 
-Frontend selection is explicit in the formal/synthesis source registries and
-`--frontend {slang,verilog}` runner option.
-`make formal-symbols RUN_ARGS='--timeout 120'` qualifies F01's fixed/time-varying
-input recipe and source guards, with explicit native and rejected diagnostic controls. `make frontends`, `make bridge`,
-`make representation-formal` and `make fifo-mapping` qualify disposable richer
-representations without converting production RTL. Consumers validate the shared
-installation and never invoke setup. See the [operational guide](../implementation/toolchain.md)
-for cache identity, exact-restore rejection, cold setup and capability commands.
+Frontend selection is explicit in the formal/synthesis registries; only the
+selected Slang frontend is executable. `make formal-symbols` qualifies explicit
+fixed/time-varying inputs, source guards and missing-stability negative controls.
+`make frontends` qualifies independent current-stack language and memory checks.
+Historical native/Slang and old/current representation comparisons are removed.
+Consumers validate the shared installation and never invoke setup. See the
+[operational guide](../implementation/toolchain.md) for capability commands.
 
 
 ## Hosted iteration policy

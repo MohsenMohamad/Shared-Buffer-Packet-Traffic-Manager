@@ -5,6 +5,5 @@
   "sources": [],
   "headers": [],
   "scope": "Production declarations only, excluding monitor records and fixtures; no mapping claim.",
-  "frontend": "slang",
-  "diagnostic_frontend": "verilog"
+  "frontend": "slang"
 }

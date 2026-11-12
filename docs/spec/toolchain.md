@@ -26,7 +26,7 @@ Verilator supports modern UVM but does not implement every SystemVerilog semanti
 
 `--coverage` instruments supported code/functional coverage. Explicitly write and collect the resulting database and inspect its nonzero point/bin counts. A printed coverage percentage without a saved database is insufficient. Build a tiny harness with the actual coverage options before assuming collection works.
 
-Formal and synthesis use the registered `read_slang` frontend in Yosys 0.70; `read_verilog` remains an explicit diagnostic control for its supported subset. New formal harnesses use the [qualified explicit-input recipe](formal.md#selected-frontend-and-arbitrary-inputs); the checked anyseq source adapter is restricted to two legacy harnesses. Symbolic attributes must not silently become X constants. Preserve monitor-state translations where concurrent SVA is unavailable. Keep an explicit property mapping between simulation and formal. Equivalence, bounded checking and unbounded proof retain separate statuses.
+Formal and synthesis use the registered `read_slang` frontend in Yosys 0.70. All formal harnesses use the [qualified explicit-input recipe](formal.md#selected-frontend-and-arbitrary-inputs), without adapters or source-policy exceptions. Symbolic attributes must not silently become X constants. Preserve monitor-state translations where concurrent SVA is unavailable. Keep an explicit property mapping between simulation and formal. Equivalence, bounded checking and unbounded proof retain separate statuses.
 
 ## Dependency handling
 

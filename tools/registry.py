@@ -34,7 +34,7 @@ def sources(name, seen=()):
         from formal_symbols import check_sources
         # No registry-provided exception list: diagnostic fixtures cannot opt in.
         check_sources([ROOT / p for p in result['sources'] + result['headers']],
-                      [ROOT / p for p in result['include_dirs']], legacy=True)
+                      [ROOT / p for p in result['include_dirs']])
     return result
 
 

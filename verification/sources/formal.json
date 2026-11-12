@@ -19,6 +19,5 @@
     "formal/symbolic/symbolic_checks.svh"
   ],
   "scope": "Local production storage, queue/controller-link and CSR protocol proofs; no integrated TM ownership or datapath proof.",
-  "frontend": "slang",
-  "diagnostic_frontend": "verilog"
+  "frontend": "slang"
 }
