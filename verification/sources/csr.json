@@ -23,7 +23,11 @@
     "dv/tests/tm_foundation_test.svh",
     "dv/tests/tm_batch_test.svh",
     "dv/model/tm_csr_model.svh",
-    "dv/tests/tm_csr_test.svh"
+    "dv/tests/tm_csr_test.svh",
+    "dv/agents/tm_packet.svh",
+    "dv/model/tm_handshake_recorder.svh",
+    "dv/tests/tm_packet_test.svh",
+    "dv/tests/tm_schedule_test.svh"
   ],
   "scope": "Production CSR and statistics with independent architectural-event/resource fixture; no packet datapath.",
   "extends": "production"

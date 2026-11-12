@@ -86,7 +86,7 @@ class tm_atomic_test extends uvm_test;
         b.policy.tx_done='{1,DESC_ID_W'(0),Q_ID_W'(0),16'd1};
         b.policy.abort_done='{1,RX_ID_W'(1),DESC_ID_W'(1),Q_ID_W'(0),CELL_COUNT_W'(1)};
         step(b,2,1,1,2);
-        if(model.u!=N_CELL-1 || model.r!=0 || model.a!=1 || model.d!=N_DESC-1 || model.h[0]!=1) `uvm_fatal("ATOMIC_DELTA","simultaneous deltas were overwritten")
+        if(model.unreserved_cells!=N_CELL-1 || model.reserved_cells!=0 || model.assigned_cells!=1 || model.free_descriptors!=N_DESC-1 || model.queue_owned_cells[0]!=1) `uvm_fatal("ATOMIC_DELTA","simultaneous deltas were overwritten")
         b='0;b.statuses[0+:STATUS_W]={1'b1,4'(COMMITTED),16'd7,8'd0,16'd1};b.statuses[(N_RX>1?STATUS_W:0)+:STATUS_W]={1'b1,4'(FRAME_ERROR),16'd7,8'd0,16'd1};step(b,1,1,0,1);
         b='0;b.output_sample='{1,1,word()};b.policy.cell_free='{1,CELL_ID_W'(1),0,Q_ID_W'(0),DESC_ID_W'(2)};b.policy.tx_done='{1,DESC_ID_W'(2),Q_ID_W'(0),16'd1};step(b,1,1,0,1);
         b='0;step(b,0,0,0,0);model.drained();

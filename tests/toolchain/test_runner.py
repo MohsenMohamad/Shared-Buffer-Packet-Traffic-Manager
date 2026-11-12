@@ -17,6 +17,15 @@ from run import assertion_result, inspect_coverage, unit
 from setup_toolchain import fetch
 
 
+def process_stopped(pid):
+    """A vanished /proc entry and an unreaped zombie are both stopped."""
+    try:
+        return Path(f'/proc/{pid}/stat').read_text().split()[2] == 'Z'
+    except (FileNotFoundError, ProcessLookupError):
+        # The kernel can remove the process before opening or during the read.
+        return True
+
+
 class RunnerTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
@@ -82,14 +91,27 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(pidfile.is_file(), 'Timeout fixture did not start its child within five seconds')
         pid = int(pidfile.read_text())
         # An unreaped zombie is stopped; it cannot continue compiling or solving.
-        status = Path(f'/proc/{pid}/stat')
         for _ in range(20):
-            if not status.exists() or status.read_text().split()[2] == 'Z':
+            if process_stopped(pid):
                 break
             time.sleep(0.01)
         else:
-            os.kill(pid, signal.SIGKILL)
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except ProcessLookupError:
+                return  # The process exited between the last read and cleanup.
             self.fail('Child survived process-group timeout')
+
+    def test_timeout_proc_read_handles_disappearance_without_hiding_live_children(self):
+        for error in (FileNotFoundError, ProcessLookupError):
+            with self.subTest(error=error), patch.object(Path, 'read_text', side_effect=error):
+                self.assertTrue(process_stopped(123))
+        for state in ('S', 'R', 'Z'):
+            with self.subTest(state=state), patch.object(Path, 'read_text', return_value=f'123 (sleep) {state}'):
+                self.assertEqual(process_stopped(123), state == 'Z')
+        with patch.object(Path, 'read_text', side_effect=PermissionError):
+            with self.assertRaises(PermissionError):
+                process_stopped(123)
 
     def test_empty_run_cannot_pass(self):
         run = Run(self.path / 'empty')

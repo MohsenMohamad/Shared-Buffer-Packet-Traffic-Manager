@@ -50,6 +50,10 @@ An executable UVM foundation with qualified models/checkers is available to P08/
 
 Requirement focus: `IF-01`, `IF-03`, `LEN-01`, `Q-01`, `CSR-02`, `CSR-03`, `RST-02`
 
-## Scheduled follow-up
+## Qualified follow-up
 
-Complete [checker readability and constrained packet stimulus](P07-followup-stimulus.md) before P08. Keep behavior-preserving cleanup in separate commits ahead of new generator functionality; existing fixture qualifications remain applicable.
+The [checker readability and constrained packet stimulus follow-up](P07-followup-stimulus.md)
+is qualified on its candidate branch before P08. Cleanup precedes generator
+functionality in separate commits; the [follow-up record](../../results/P07-followup-stimulus.md)
+retains exact positive/negative, coverage and replay evidence. This fixture
+qualification does not close production integration requirements.

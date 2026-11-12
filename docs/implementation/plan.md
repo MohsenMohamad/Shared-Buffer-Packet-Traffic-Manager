@@ -37,7 +37,7 @@ P00, P01, P02, P06 and P07 are integrated at `a473b8c535d02b50b23604047f1bae6463
 1. Complete the [P00 toolchain refresh](tasks/P00-followup-modern-toolchain.md), retaining shared CI preparation and the durable evidence policy.
 2. Complete [P01 representation](tasks/P01-followup-representation.md) with the tested recipe before allocator characterization.
 3. Complete the focused [P02 allocator-scaling follow-up](tasks/P02-followup-scaling.md) now, before P08. Commit and push constraints and decision criteria before experiments; review measured findings without presupposing replacement.
-4. Complete the [P07 readability and constrained-stimulus follow-up](tasks/P07-followup-stimulus.md) before P08.
+4. The [P07 readability and constrained-stimulus follow-up](tasks/P07-followup-stimulus.md) is qualified on its candidate branch before P08; see [executed evidence](../results/P07-followup-stimulus.md).
 5. Reevaluate stabilization results. P03 remains the next new implementation stage; completed stages and hardware scope are unchanged.
 6. Measure basic packet rate in P09, expand diagnosis in P10, and explicitly accept the measured baseline or propose optimization after P10 before P11 closure. P12 retains the full benchmark study.
 

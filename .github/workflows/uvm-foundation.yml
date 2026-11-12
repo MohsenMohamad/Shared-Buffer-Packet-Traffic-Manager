@@ -30,6 +30,8 @@ jobs:
         run: |
           make regression RUN_ARGS='--profile E0 --test uvm-foundation --seed 17'
           make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'
+          make regression RUN_ARGS='--profile E1 --test uvm-foundation --seed 29'
+          make regression RUN_ARGS='--profile F0 --test uvm-foundation --seed 31'
       - name: Retain logs, raw coverage, manifests and failing waveforms
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

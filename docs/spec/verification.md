@@ -25,6 +25,21 @@ The admission checker reconstructs U, free descriptors and H[q] from independent
 
 The scheduler model consumes committed packet lengths and static quanta. It checks the dispatch policy at the architectural dispatch event; checking only output EOFs cannot reconstruct exact dispatch timing under source arrivals and output stalls. The byte scoreboard separately checks that actual output follows those commitments.
 
+Legal packet stimulus uses a packet-level SV object with checked `randomize()`
+results, profile bounds, weighted length classes and consistent beat/cell/final
+keep constraints. Conversion supplies raw items to the existing stream agents.
+Directed framing/header/keep errors remain separate raw-item controls. Neither
+packet objects nor their records supply UVM checker expectations. Qualification
+compares saved generated beats with passive handshakes, saved boundary/port/queue/
+keep bins, actual random distributions and same-stack seed replay/diversity.
+
+The P07 policy checker derives queue heads, DRR credit, order and TX ownership
+independently. Its explicit baseline timing contract inspects one queue on each
+free-TX edge and requires an eligible dispatch on that edge. Illegal policy and
+missing baseline dispatches have separate detectors. No timing-disabling or
+observed-grant-following mode is qualified. A future optimized timing contract
+requires its own tests while retaining the independent policy checks.
+
 Reset creates a new scoreboard epoch: abandon pre-reset expected deliveries/statuses, clear model resource state and reject any stale post-reset output. This is the specified flush policy; preservation across reset is not required.
 
 ## Requirement and directed test matrix
