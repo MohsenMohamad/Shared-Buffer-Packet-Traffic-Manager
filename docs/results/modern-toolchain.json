@@ -5,9 +5,8 @@
   "pr": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/7",
   "boundary": "Tool/frontend qualification, production component verification and disposable representation copies; no integrated TM or physical signoff",
   "source_catalog": {
-    "baseline_sha256": "bb8cab5d5e4491b9a0acecb0fc6871e0a67dc58b82a41cc8d29cfa156944a795",
+    "baseline_sha256": "8596b54b14c923efced2788f04e7eaa7f544f717117fcffd9c8c8fa092251b1f",
     "files": {
-      "tests/frontends/compare_native.py": "eea7cdbe0b308d3881743b5936e62f71a046e7f58cdf70c8cede9ea2c099c05a",
       "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
       "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
       "dv/env/tm_bench_pkg.sv": "d2b2442f5c60262ca8725c3a9f3a904ee2b919ea70d1b9214baacc949c4a7d90",
@@ -44,6 +43,7 @@
       "rtl/pools/tm_desc_pool.sv": "9aa26f1907728bbcc64884026caf6c80ccbeffc6e970b8f6d6eb8c833f4895c7",
       "rtl/tm_top.sv": "33d1c12176613c14f629d0dc9cbf09b31afb5e35854ce7fe4da9b03dc9e788f4",
       "tests/contracts/test_contracts.py": "9981f0fad34944fe0cb8703030b4bae49389510c9f62f90fbac45970c0aa14e5",
+      "tests/frontends/compare_native.py": "eea7cdbe0b308d3881743b5936e62f71a046e7f58cdf70c8cede9ea2c099c05a",
       "tests/frontends/features.sv": "aa16821f0e5964fe901cc12548eeb001c6f63ef11759835df3e93acd183960f1",
       "tests/frontends/features_tb.sv": "6352b33281ed35920d39fcb5f01b6b60fbdf6e1032911f7c80b6b8064f367e52",
       "tests/frontends/fixtures/bits_type.sv": "7acf2905f9886358b1ef6e8a3625c52ea1fa6b4af165c66e7aecb9d119c2ed2f",
@@ -87,7 +87,7 @@
       "tools/frontend_qualification.py": "70c33f4114179f7b4c055df29a9236b253729a9dba10a21415eacf4bdf88d7b0",
       "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996",
       "tools/registry.py": "68677cd959c358fde2ac0a0fbfe42f89cb2c845793888943290b7b88a7a86552",
-      "tools/run.py": "30110829eac46b1796143029244e04058b74f726d9026e623b68a5b9fbfb4032",
+      "tools/run.py": "2840d104d186317a5255351d400ce572cc43ba74d25371344a71ae0564e7db40",
       "tools/run_uvm_capabilities.py": "114c4a4612c963d1e70babfadc716f18534f2693c808746754d9e23c8b9fa20a",
       "tools/setup.sh": "a7ba3762c9c09bce6dcf9d0d2c55ad5b752b36396750e926f2f2a77d6e10a528",
       "tools/setup_toolchain.py": "5299746bf0ca03dfed83104b644eeb241d634f096e5db8e962f1ea269498b7e5",
@@ -3087,6 +3087,24 @@
       ]
     }
   },
+  "counterexample_review": {
+    "case": "record-memory-verilog-prove",
+    "trace_sha256": "fd5fc70a65f246336160902da31dde8809b0b5358799692c9c688c5e49e8b89f",
+    "failing_property": "a_contents1",
+    "engine_step": 2,
+    "write": {
+      "step": 0,
+      "address": 1,
+      "data": 16
+    },
+    "subsequent_observation": {
+      "step": 1,
+      "word1": 0,
+      "reference1": 16,
+      "written_mask": 2
+    },
+    "classification": "Native record-array lowering loses written data; initialized validity excludes unwritten storage; same source proves with selected Slang"
+  },
   "installation": {
     "local_cold": {
       "source_revision": "6e694a5439272fb49183697b41178ac077530f6e",
@@ -4629,20 +4647,14 @@
     },
     {
       "label": "P00-core",
-      "run_id": "ci-2026-11-12T041041.840509+0000-f07cc7b0",
+      "run_id": "ci-2026-11-12T044451.806819+0000-ed11c875",
       "result": "PASS",
       "scope": "Toolchain capability fixtures only",
       "profile": "toolchain",
       "seeds": [],
-      "source_revision": "6e694a5439272fb49183697b41178ac077530f6e",
+      "source_revision": "745a50e6a2059e7ac2d4f25ce1535cae8575e840",
       "dirty": true,
-      "source_overrides": {
-        "tests/frontends/compare_native.py": null,
-        "tests/toolchain/sta_api.tcl": null,
-        "tests/toolchain/uvm_dpi.sv": "a1345be182be6282f7795a5282a12fae238bbc0b6b18521c6364aa4b2d244149",
-        "tools/frontend_qualification.py": "fa8552b55e1d57359dc73f6ccc763a8e03beb67884f1437fadd096cfa7dae3f5",
-        "tools/run.py": "d55726ab42dcf89cbdfa5393c55e4fc7e1d6a592bc335a65ec32cf85e80cb56a"
-      },
+      "source_overrides": {},
       "dependency_digests": {
         "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
         "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
@@ -4654,9 +4666,9 @@
         "tests/toolchain/timing.sdc": "034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824"
       },
       "command": "python3 tools/run.py ci --test doctor --test repo --test unit --test lint --test formal --test synth",
-      "raw_summary": ".build/runs/ci-2026-11-12T041041.840509+0000-f07cc7b0/summary.json",
-      "start_utc": "2026-11-12T04:10:41.855144+00:00",
-      "end_utc": "2026-11-12T04:10:51.689988+00:00",
+      "raw_summary": ".build/runs/ci-2026-11-12T044451.806819+0000-ed11c875/summary.json",
+      "start_utc": "2026-11-12T04:44:51.838558+00:00",
+      "end_utc": "2026-11-12T04:45:02.126131+00:00",
       "tool_identities": {
         "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
         "rtl_frontend": "slang",
@@ -4684,17 +4696,70 @@
         {"test":"runner-unit","result":"PASS"},
         {"test":"lint-fixture","result":"PASS"},
         {"test":"compile-error-rejection","result":"PASS","expected":"TOOL_ERROR"},
-        {"test":"formal-prove","frontend":"slang","result":"PASS","expected":"PROVE","engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
-        {"test":"formal-cover","frontend":"slang","result":"PASS","expected":"COVER","engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
-        {"test":"formal-mutation","frontend":"slang","result":"PASS","expected":"COUNTEREXAMPLE","engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
-        {"test":"mapped-synthesis","mapped_cells":{"DFF_X1":1,"XOR2_X1":1},"area":6.118,"result":"PASS","artifact_digests":{"netlist":"4014da5661b1aec50e25c58c04052e3c3e1db472e923d377f78d3a7e2ec2a03d","statistics":"5a62786be7598ed0db8ffe39368344fe50658628808fef95fb981ca4abe18157","script":"b186b52b3a58d636a7d1c02ca7ff8f8f553ad0c938082b97626b15b433e3f2e1"}},
+        {"test":"formal-prove","frontend":"slang","result":"PASS","expected":"PROVE","expected_property":null,"engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
+        {"test":"formal-cover","frontend":"slang","result":"PASS","expected":"COVER","expected_property":null,"engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
+        {"test":"formal-mutation","frontend":"slang","result":"PASS","expected":"COUNTEREXAMPLE","expected_property":"a_step","engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
+        {"test":"mapped-synthesis","mapped_cells":{"DFF_X1":1,"XOR2_X1":1},"area":6.118,"result":"PASS","artifact_digests":{"netlist":"4014da5661b1aec50e25c58c04052e3c3e1db472e923d377f78d3a7e2ec2a03d","statistics":"5a62786be7598ed0db8ffe39368344fe50658628808fef95fb981ca4abe18157","script":"7130f81fec2c136ef53da1ba4dec146c530c4be51a80273f64c554b16e7a7a85"}},
         {"test":"sta-max-min","result":"PASS","analysis":"Nangate45 typical 1.10 V / 25 C; ns, fF; 10 fF load; ideal-clock pre-layout fixture","slacks_ns":["8.84","0.17"],"artifact_digests":{"sdc":"034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824","liberty":"8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1","netlist":"4014da5661b1aec50e25c58c04052e3c3e1db472e923d377f78d3a7e2ec2a03d"}},
         {"test":"sta-driving-cell","result":"PASS"},
         {"test":"sta-bad-library","result":"PASS","expected":"TIMING_INPUT_REJECTION","classifier_result":"TOOL_ERROR","diagnostic":"Process exited 1"},
         {"test":"sta-bad-netlist","result":"PASS","expected":"TIMING_INPUT_REJECTION","classifier_result":"TOOL_ERROR","diagnostic":"Process exited 1"},
         {"test":"sta-bad-constraint","result":"PASS","expected":"TIMING_INPUT_REJECTION","classifier_result":"TOOL_ERROR","diagnostic":"Process exited 1"},
         {"test":"sta-unconstrained","result":"PASS","expected":"TIMING_INPUT_REJECTION","classifier_result":"FAIL","diagnostic":"Timing errors, warnings or missing max/min constrained paths"},
-        {"test":"sta-error-with-completion","result":"PASS","expected":"TIMING_INPUT_REJECTION","classifier_result":"FAIL","diagnostic":"Timing errors, warnings or missing max/min constrained paths"}
+        {"test":"sta-error-with-completion","result":"PASS","expected":"TIMING_INPUT_REJECTION","classifier_result":"FAIL","diagnostic":"Timing errors, warnings or missing max/min constrained paths"},
+        {"test":"sta-modern-api","result":"PASS","scope":"API availability only; no measured MCMM, variation or noise analysis","commands":["define_scene","read_spef","set_timing_derate","annotate_noise_delays"],"default_pocv_mode":"scalar","default_pocv_quantile":3}
+      ]
+    },
+    {
+      "label": "P00-native-counter",
+      "run_id": "formal-2026-11-12T044502.167668+0000-7cc5d971",
+      "result": "PASS",
+      "scope": "Toolchain capability fixtures only",
+      "profile": "toolchain",
+      "seeds": [],
+      "source_revision": "745a50e6a2059e7ac2d4f25ce1535cae8575e840",
+      "dirty": true,
+      "source_overrides": {},
+      "dependency_digests": {
+        "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+        "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+      },
+      "constraint_digests": {
+        "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+        "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+        "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+        "tests/toolchain/timing.sdc": "034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824"
+      },
+      "command": "python3 tools/run.py formal --frontend verilog",
+      "raw_summary": ".build/runs/formal-2026-11-12T044502.167668+0000-7cc5d971/summary.json",
+      "start_utc": "2026-11-12T04:45:02.198383+00:00",
+      "end_utc": "2026-11-12T04:45:04.464899+00:00",
+      "tool_identities": {
+        "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+        "rtl_frontend": "verilog",
+        "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111",
+        "verilator_coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator_coverage: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261111",
+        "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++ 14.2.0)",
+        "abc": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys-abc: ======== ABC command line \"version\"",
+        "sby": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+        "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+        "opensta": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sta: 3.2.0",
+        "compiler": "/usr/bin/g++: g++ (Debian 14.2.0-19) 14.2.0",
+        "cmake": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/cmake/bin/cmake: cmake version 4.4.5",
+        "swig": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/swig: SWIG Version 4.5.1",
+        "slang": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `help read_slang' --",
+        "slang_revision": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --",
+        "make": "/usr/bin/make: GNU Make 4.4.1",
+        "bash": "/usr/bin/bash: GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+      },
+      "cases": [
+        {"test":"versions","result":"PASS"},
+        {"test":"opensta-source","result":"PASS"},
+        {"test":"cxx20","result":"PASS"},
+        {"test":"solver-sat-unsat","result":"PASS"},
+        {"test":"formal-prove","frontend":"verilog","result":"PASS","expected":"PROVE","expected_property":null,"engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
+        {"test":"formal-cover","frontend":"verilog","result":"PASS","expected":"COVER","expected_property":null,"engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"},
+        {"test":"formal-mutation","frontend":"verilog","result":"PASS","expected":"COUNTEREXAMPLE","expected_property":"a_step","engine":"smtbmc z3; unbounded k-induction for prove; cover bound 20"}
       ]
     },
     {
@@ -5468,7 +5533,8 @@
       "source_revision": "9e11472f182adced8d9abe1277a306a4b13daff7",
       "dirty": true,
       "source_overrides": {
-        "tests/frontends/compare_native.py": null
+        "tests/frontends/compare_native.py": null,
+        "tools/run.py": "30110829eac46b1796143029244e04058b74f726d9026e623b68a5b9fbfb4032"
       },
       "dependency_digests": {
         "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
@@ -5573,7 +5639,9 @@
       "seeds": [],
       "source_revision": "1e32392bae51b578b129a3480f8a0ef428367eea",
       "dirty": true,
-      "source_overrides": {},
+      "source_overrides": {
+        "tools/run.py": "30110829eac46b1796143029244e04058b74f726d9026e623b68a5b9fbfb4032"
+      },
       "dependency_digests": {
         "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
         "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
@@ -5636,7 +5704,9 @@
       "seeds": [],
       "source_revision": "1e32392bae51b578b129a3480f8a0ef428367eea",
       "dirty": true,
-      "source_overrides": {},
+      "source_overrides": {
+        "tools/run.py": "30110829eac46b1796143029244e04058b74f726d9026e623b68a5b9fbfb4032"
+      },
       "dependency_digests": {
         "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
         "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"

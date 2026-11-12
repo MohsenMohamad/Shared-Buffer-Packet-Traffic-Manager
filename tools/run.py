@@ -170,8 +170,9 @@ def formal(run, args):
         if step['result'] == 'TIMEOUT' or step['returncode'] is None:
             result, reason = step['result'], step['first_failure']
         elif task == 'mutation':
-            ok = step['returncode'] != 0 and status == 'FAIL' and bool(waves) and 'Assert failed' in text
-            result, reason = ('PASS', None) if ok else ('TOOL_ERROR', 'Expected assertion counterexample, not tool failure')
+            intended = bool(re.search(r'Assert failed[^\n]*\ba_step\b', text))
+            ok = step['returncode'] != 0 and status == 'FAIL' and bool(waves) and intended
+            result, reason = ('PASS', None) if ok else ('TOOL_ERROR', 'Expected a_step counterexample and trace, not another failure')
         else:
             ok = step['returncode'] == 0 and status == 'PASS'
             if task == 'cover':
@@ -181,6 +182,7 @@ def formal(run, args):
             result, reason = ('PASS', None) if ok else ('TOOL_ERROR', 'Missing successful proof/cover evidence')
         case.data['artifacts'].update(status=str(status_file), traces=[str(p) for p in waves])
         case.finish(result, reason, expected='COUNTEREXAMPLE' if task == 'mutation' else task.upper(),
+                    expected_property='a_step' if task == 'mutation' else None,
                     engine='smtbmc z3; unbounded k-induction for prove; cover bound 20')
 
 

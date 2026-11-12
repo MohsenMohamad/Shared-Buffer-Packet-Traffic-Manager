@@ -129,6 +129,10 @@ them to X and rejects function forms. Its minimized attribute case fails the
 intended `a_constant` assertion with a trace. Explicit arbitrary input ports are
 the qualified bridge. The native record-memory counterexample and selected
 frontend's complete-word proof prevent elaboration alone from qualifying memory.
+The inspected native trace writes value 16 at address 1, then observes word 1
+as zero while the independent reference holds 16; `a_contents1` fails at step 2.
+The initialized written mask excludes an unwritten-data explanation. P00 counter
+mutation acceptance separately requires its intended `a_step` failure and trace.
 
 | Configuration | Assertions | Assumptions | Covers | Preserved named properties |
 | --- | ---: | ---: | ---: | ---: |
