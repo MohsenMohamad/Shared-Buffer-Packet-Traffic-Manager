@@ -1,0 +1,11 @@
+@READ@
+synth -top @TOP@ -flatten -noabc
+dffunmap
+dfflibmap -liberty @LIBERTY@
+abc -liberty @LIBERTY@ -constr @ABC_CONSTR@
+clean
+read_liberty -lib @LIBERTY@
+check -assert
+write_verilog -noattr @NETLIST@
+write_json @JSON@
+tee -o @STATS@ stat -json -liberty @LIBERTY@

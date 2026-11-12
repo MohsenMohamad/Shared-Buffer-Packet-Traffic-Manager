@@ -414,7 +414,8 @@ def main(argv=None):
     from doctor import qualify
     from formal_bridge import bridge
     from frontend_qualification import audit as frontend_audit, representation_formal, fifo_mapping
-    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge, **{'representation-formal': representation_formal, 'fifo-mapping': fifo_mapping})
+    from allocator_scaling import characterize
+    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge, **{'representation-formal': representation_formal, 'fifo-mapping': fifo_mapping, 'allocator-scaling': characterize})
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
     gates['uvm-dpi'] = uvm_dpi
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
@@ -437,7 +438,7 @@ def main(argv=None):
     else:
         # Version records accompany direct capability runs as well as CI. Independent
         # gates continue after failures; compilation remains prerequisite to execution.
-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge', 'representation-formal', 'fifo-mapping', 'uvm-dpi')):
+        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge', 'representation-formal', 'fifo-mapping', 'allocator-scaling', 'uvm-dpi')):
             qualify(run)
         for name in selected:
             try:

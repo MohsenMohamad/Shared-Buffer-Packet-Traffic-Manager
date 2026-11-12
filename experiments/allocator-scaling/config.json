@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "profiles": ["E0", "I0", "E1", "F0"],
+  "pools": {"cell": "tm_cell_pool_api", "descriptor": "tm_desc_pool_api"},
+  "frontend": "slang",
+  "source_set": "synthesis",
+  "sta_modes": ["slew", "drive"],
+  "synthesis_timeout_s": 1800,
+  "sta_timeout_s": 300,
+  "criteria": {
+    "i0_setup_hold_recovery_removal_min_slack_ns": 0,
+    "f0_selection_arrival_screen_ns": 6,
+    "area_per_entry_ratio_to_i0_screen": 2,
+    "data_net_sink_fanout_screen": 64,
+    "reset_sink_fanout_screen": 256
+  }
+}
