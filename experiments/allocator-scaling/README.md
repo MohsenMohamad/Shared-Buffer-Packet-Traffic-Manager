@@ -119,3 +119,17 @@ action feedback. At P08 remeasure the actual production receive/admission path
 at I0 and **1024 cells** with identified constraints, connected consumers and
 complete path coverage. Isolated results are not a guaranteed timing bound on
 that path. P03 and allocator redesign remain separate reviewed work.
+
+## Execution correction (no criteria amendment)
+
+The first run at `2beb248` was rejected: OpenSTA warning 1554 identified flop
+Q/QN pins as invalid `group_path -from` startpoints, leaving the selection
+group empty. Use register clock pins, the supported way to select paths
+launched by those registers. No IO constraints, exception, criterion or circuit
+is changed. The original failed run is retained in artifacts and excluded
+from accepted timing measurements.
+
+Enumerate internal names before writing both JSON and Verilog so fanout driver
+names and STA endpoints identify the same mapped objects. This only changes
+identifiers. Add evidence-rejection unit cases for diagnostics, missing/empty
+paths and missing state/dead outputs. Push this correction before reexecution.

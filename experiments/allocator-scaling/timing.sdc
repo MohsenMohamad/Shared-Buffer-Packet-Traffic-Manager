@@ -14,6 +14,6 @@ if {$::env(TM_DRIVE_MODE) eq "drive"} {
 }
 set_load 10.0 [all_outputs]
 # These groups identify outputs consumed by future admission/accounting logic.
-group_path -name selection -from [all_registers -output_pins] -to [get_ports {available_id*}]
+group_path -name selection -from [all_registers -clock_pins] -to [get_ports {available_id*}]
 group_path -name availability -to [get_ports available]
 group_path -name count -to [get_ports {free_count*}]
