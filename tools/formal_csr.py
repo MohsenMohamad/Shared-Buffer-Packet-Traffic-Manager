@@ -35,13 +35,8 @@ def formal_csr(run, args, configuration):
                 case.data.update(symbolic_inputs=ports, harness_sha256=sha(source),
                                  symbolic_representation='arbitrary top-level inputs; assumptions/properties unchanged')
             files.append(source.name+' '+str(source))
-        extra = []
-        if getattr(args, 'candidate_root', None) is not None:
-            package = args.candidate_root.parent/'tm_fixed.sv'
-            files.insert(0, package.name+' '+str(package))
-            extra = [package.name]
         case.data['frontend'] = selected_frontend(args, 'formal')
-        script = read_sources(extra+[(ROOT/p).name for p in registered['sources'] if p != 'formal/pools/storage_formal.sv'], 'csr_formal', frontend=selected_frontend(args, 'formal'), formal=True)
+        script = read_sources([(ROOT/p).name for p in registered['sources'] if p != 'formal/pools/storage_formal.sv'], 'csr_formal', frontend=selected_frontend(args, 'formal'), formal=True)
         script += 'prep -top csr_formal\nasync2sync\ndffunmap'
         config = case.path/'csr.sby'
         config.write_text((ROOT/'formal/csr/csr.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))

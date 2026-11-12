@@ -45,6 +45,19 @@ generate if (STATUS_W!=45 || $bits(input_probe.qid)!=8 || $bits(output_probe.sou
         begin : g_layout TM_INVALID_LAYOUT invalid_layout(); end endgenerate
 endmodule
 '''
+    text = text.replace('endmodule\n', """localparam input_user_t INPUT_LAYOUT = '{reserved:24'h123456,tag:16'h789a,length:16'hbcde,qid:8'hf0};
+localparam output_user_t OUTPUT_LAYOUT = '{reserved:16'h1234,source:8'h56,tag:16'h789a,length:16'hbcde,qid:8'hf0};
+localparam status_t STATUS_LAYOUT = '{valid:1'b1,code:FRAME_ERROR,tag:16'h1234,qid:8'h56,length:16'h789a};
+localparam beat_t BEAT_LAYOUT = '{data:64'h0123456789abcdef,keep:8'h55,last:1'b1,user:64'hfedcba9876543210};
+generate if (INPUT_LAYOUT!=64'h123456789abcdef0 || OUTPUT_LAYOUT!=64'h123456789abcdef0 ||
+    STATUS_LAYOUT!={1'b1,4'd6,16'h1234,8'h56,16'h789a} ||
+    BEAT_LAYOUT!={64'h0123456789abcdef,8'h55,1'b1,64'hfedcba9876543210} ||
+    COMMITTED!=0 || BAD_QID!=1 || BAD_LENGTH!=2 || QUEUE_LIMIT!=3 || NO_DESCRIPTOR!=4 || NO_CELLS!=5 ||
+    FREE!=0 || RX!=1 || QUEUED!=2 || TX!=3 || ABORT!=4 ||
+    IDLE!=0 || RECEIVE!=1 || DRAIN_REJECT!=2 || ABORT_DRAIN!=3 || OKAY!=0 || SLVERR!=2 || DECERR!=3)
+    begin : g_wire_layout TM_INVALID_LAYOUT changed_wire_layout(); end endgenerate
+endmodule
+""")
     path.write_text(text)
 
 

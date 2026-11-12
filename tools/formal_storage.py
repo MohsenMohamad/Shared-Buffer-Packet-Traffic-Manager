@@ -25,7 +25,7 @@ def formal_rtl(run, args):
             formal_csr(run, args, specs[name])
             continue
         for task in ('prove','cover','mutation') if name in ('cell','descriptor') else ('prove','cover'):
-            case = Case(run, 'rtl-'+name+'-'+task)
+            case = Case(run, getattr(args,'representation_label','')+'rtl-'+name+'-'+task)
             case.data.update(configuration=specs[name], source_set='formal',
                              registered_source_digests=fingerprint('formal'),
                              assumptions='Reset low at first two sampled edges; later resets and every action input arbitrary',
@@ -53,13 +53,8 @@ def formal_rtl(run, args):
                     case.data.update(symbolic_inputs=ports, harness_sha256=sha(source),
                                      symbolic_representation='arbitrary top-level inputs; assumptions/properties unchanged')
                 files.append(source.name+' '+str(source))
-            extra = []
-            if getattr(args, 'candidate_root', None) is not None:
-                package = args.candidate_root.parent/'tm_fixed.sv'
-                files.insert(0, package.name+' '+str(package))
-                extra = [package.name]
             case.data['frontend'] = selected_frontend(args, 'formal')
-            script=read_sources(extra+[(ROOT/p).name for p in registered['sources']], 'storage_formal', defines=specs[name]['defines'], frontend=selected_frontend(args, 'formal'), formal=True)
+            script=read_sources([(ROOT/p).name for p in registered['sources']], 'storage_formal', defines=specs[name]['defines'], frontend=selected_frontend(args, 'formal'), formal=True)
             script+='prep -top storage_formal\nasync2sync\ndffunmap'
             template=(ROOT/'formal/pools/storage.sby').read_text()
             config=case.path/'storage.sby'

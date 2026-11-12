@@ -23,6 +23,8 @@ jobs:
       artifact-id: ${{ steps.handoff.outputs.artifact-id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Immutable representation baseline for native/equivalence controls.
       - name: Ensure native build prerequisites
         uses: ./.github/actions/native-prerequisites
       - name: Compute installation compatibility
@@ -112,6 +114,8 @@ jobs:
       CXX: g++-14
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Immutable representation baseline for native/equivalence controls.
       - name: Ensure native build prerequisites
         uses: ./.github/actions/native-prerequisites
       - name: Receive prepared installation
@@ -167,6 +171,8 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Immutable representation baseline for native/equivalence controls.
       - name: Delete only this run's handoff; warn on one-day fallback
         id: cleanup
         env:

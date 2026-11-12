@@ -5,10 +5,12 @@ import re
 import sys
 from evidence import Case, ROOT, completed, output, sha
 from frontend import read_sources
+from registry import sources
+from representation import stage_baseline, baseline_revision, record_fifo_candidate
 
 BASE = ROOT / 'tests/frontends'
 CANDIDATES = ('baseline', 'ansi_vectors', 'package_vectors', 'package_scoped',
-              'inline_struct', 'type_parameter', 'forward_typedef', 'minimal', 'named_widths', 'bits_type')
+              'inline_struct', 'type_parameter', 'forward_typedef', 'minimal', 'named_widths', 'bits_type', 'production')
 PACKAGES = {'package_vectors','package_scoped','inline_struct','type_parameter','minimal','named_widths','bits_type'}
 
 
@@ -20,19 +22,30 @@ def audit(run, args):
     if step['result'] != 'PASS':
         return
     manifest = json.loads((generated/'candidates.json').read_text())
+    # Historical controls use their own headers; current modules use the registry.
+    stage_baseline(generated/'baseline-rtl')
+    production_probe=generated/'production/probe_unit.sv'
+    production_probe.parent.mkdir()
+    production_probe.write_text((BASE/'fixtures/probe_unit.sv').read_text().replace('PROBE_TYPES.svh','tm_types.svh'))
+    registered=sources('production')
+    def candidate_files(name):
+        if name=='production':
+            return [ROOT/p for p in registered['sources']]+[production_probe]
+        return ([generated/'tm_fixed.sv'] if name in PACKAGES else []) + [generated/p for p in manifest[name]]+[generated/name/'probe_unit.sv']
+    def candidate_includes(name):
+        return [generated, ROOT/'rtl/include'] if name=='production' else [generated,generated/'baseline-rtl/rtl/include']
     for name in CANDIDATES + ('features','unpacked','interface','record_memory'):
         top = {'features':'feature_top','unpacked':'unpacked_ports','interface':'interface_top','record_memory':'record_memory'}.get(name) or ('bits_type' if name=='bits_type' else 'synth_top')
-        includes = [generated, ROOT/'rtl/include']
+        includes = candidate_includes(name)
         if name in ('features','unpacked','interface','record_memory'):
             files=[BASE/(name+'.sv')]
         else:
-            files=([generated/'tm_fixed.sv'] if name in PACKAGES else [])
-            files += ([generated/'bits_type.sv'] if name=='bits_type' else
-                      [generated/p for p in manifest[name]] +
-                      [generated/name/'probe_unit.sv', generated/'synth_top.sv'])
+            files=([generated/'tm_fixed.sv',generated/'bits_type.sv'] if name=='bits_type'
+                   else candidate_files(name)+[generated/'synth_top.sv'])
         for phase in ('parse','elaborate','synthesis'):
             case=Case(run, f'frontend-{args.frontend}-{name}-{phase}')
             case.data.update(frontend=args.frontend, candidate=name, phase=phase,
+                             reference_revision=baseline_revision() if name not in ('production','features','unpacked','interface','record_memory') else 'current',
                              input_digests={str(p.relative_to(ROOT)):sha(p) for p in files},
                              method='AST compilation/semantic checking without RTLIL lowering' if phase=='parse' and args.frontend=='slang' else 'deferred AST parsing' if phase=='parse' else 'RTLIL elaboration' if phase=='elaborate' else 'completed generic synthesis')
             script=case.path/'run.ys'
@@ -78,15 +91,15 @@ def audit(run, args):
     if args.frontend=='slang':
         from registry import profile
         from contracts import INVALID
-        for name in ('type_parameter','named_widths'):
-            files=[generated/'tm_fixed.sv']+[generated/p for p in manifest[name]]+[generated/name/'probe_unit.sv']
+        for name in ('type_parameter','named_widths','production'):
+            files=candidate_files(name)
             configurations=[(p,profile(p),False) for p in ('F0','F1','I0','I1','E0','E1')]
             configurations += [('invalid-'+n,dict(profile('E0'),**delta),True) for n,delta in INVALID.items()]
             for label,params,invalid in configurations:
                 case=Case(run,'representation-'+name+'-'+label)
-                case.data.update(parameters=params,scope='Disposable production FIFO/CSR/statistics profile elaboration; no integrated TM')
+                case.data.update(parameters=params,scope='Current registered production elaboration' if name=='production' else 'Historical disposable production representation elaboration')
                 script=case.path/'elaboration.ys'
-                script.write_text(read_sources(files,'probe_unit',[generated,ROOT/'rtl/include'],params=params,frontend='slang'))
+                script.write_text(read_sources(files,'probe_unit',candidate_includes(name),params=params,frontend='slang'))
                 step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=args.timeout)
                 if invalid:
                     ok=step['returncode'] not in (0,None) and step['result']!='TIMEOUT' and 'TM_INVALID_CONFIGURATION' in output(step)
@@ -94,16 +107,15 @@ def audit(run, args):
                 else:
                     case.finish(step['result'],step['first_failure'])
     # Run the actual production-derived behavior on two heterogeneous instances.
-    for name in ('ansi_vectors','type_parameter','named_widths','features'):
+    for name in ('ansi_vectors','type_parameter','named_widths','production','features'):
         case=Case(run,'frontend-simulation-'+name)
         if name=='features':
             files=[BASE/'features.sv',BASE/'features_tb.sv'];top='feature_test';marker='TM_FEATURE_PASS reads=16'
         else:
-            files=([generated/'tm_fixed.sv'] if name in PACKAGES else [])+[generated/p for p in manifest[name]]
-            files += [generated/name/'probe_unit.sv', generated/'test.sv'];top='test';marker='PROBE_PASS two independent configurations'
+            files=candidate_files(name)+[generated/'test.sv'];top='test';marker='PROBE_PASS two independent configurations'
         binary=case.path/'obj'/('V'+top)
         argv=['verilator','--binary','--timing','--assert','--timescale','1ns/1ps','--build-jobs',str(args.jobs),
-              '--top-module',top,'--Mdir',str(binary.parent),'-I'+str(generated),'-I'+str(ROOT/'rtl/include')]+list(map(str,files))
+              '--top-module',top,'--Mdir',str(binary.parent)]+['-I'+str(p) for p in candidate_includes(name)]+list(map(str,files))
         step=case.execute(argv,timeout=args.build_timeout)
         if step['result']!='PASS' or not binary.is_file():
             case.finish(step['result'] if step['result']!='PASS' else 'TOOL_ERROR','Missing frontend behavior executable')
@@ -112,23 +124,22 @@ def audit(run, args):
 
 
 def representation_formal(run,args):
-    """Exercise richer headers/types on copies of the real production modules."""
+    """Prove registered production modules with the original independent properties."""
     from copy import copy
     from formal_storage import formal_rtl
-    case=Case(run,'representation-generate')
-    generated=run.path/'generated'
-    step=case.execute([sys.executable,str(BASE/'generate.py'),'--repo-root',str(ROOT),'--output',str(generated)])
-    case.finish(step['result'],step['first_failure'])
-    if step['result']!='PASS':return
-    candidate=generated/'type_parameter'
-    fifo=candidate/'tm_axis_rx_fifo.sv'
-    text=fifo.read_text();target='logic [BEAT_W-1:0] storage [0:RX_FIFO_DEPTH-1];'
-    if text.count(target)!=1:raise ValueError('Ambiguous FIFO record-memory transformation')
-    fifo.write_text(text.replace(target,'beat_t storage [0:RX_FIFO_DEPTH-1];'))
     proof_args=copy(args)
     proof_args.profile='E0';proof_args.test=['fifo2','fifo4','csr'];proof_args.seed=None
-    proof_args.frontend='slang';proof_args.candidate_root=candidate
+    proof_args.frontend='slang'
     formal_rtl(run,proof_args)
+    # Explicitly label the alternate storage proof as a disposable comparison.
+    record_args=copy(proof_args)
+    record_args.test=['fifo2','fifo4']
+    record_args.candidate_root=run.path/'record-candidate'
+    record_args.representation_label='record-'
+    record_fifo_candidate(record_args.candidate_root/'tm_axis_rx_fifo.sv')
+    formal_rtl(run,record_args)
+    from representation import sequential_equivalence
+    sequential_equivalence(run,args)
 
 
 def fifo_mapping(run,args):
@@ -136,23 +147,23 @@ def fifo_mapping(run,args):
     from registry import profile
     from run import sta_result
     liberty=ROOT/'.deps/liberty.lib'
-    generated=run.path/'fifo-mapping-generated'
-    generate=Case(run,'fifo-mapping-generate')
-    step=generate.execute([sys.executable,str(BASE/'generate.py'),'--repo-root',str(ROOT),'--output',str(generated)])
-    generate.finish(step['result'],step['first_failure'])
-    if step['result']!='PASS':return
-    candidate=generated/'type_parameter/tm_axis_rx_fifo.sv'
-    text=candidate.read_text();target='logic [BEAT_W-1:0] storage [0:RX_FIFO_DEPTH-1];'
-    if text.count(target)!=1:raise ValueError('Ambiguous record FIFO mapping site')
-    candidate.write_text(text.replace(target,'beat_t storage [0:RX_FIFO_DEPTH-1];'))
+    old_files,old_includes=stage_baseline(run.path/'baseline')
+    # Reassess the historical workaround on the actual FIFO, without changing
+    # any operation: full packed records and vectors must infer the same ports.
+    candidate=record_fifo_candidate(run.path/'record-fifo.sv')
     top='tm_axis_rx_fifo_api'
-    for representation in ('production-vector','candidate-record'):
+    measurements={}
+    for representation in ('baseline-vector','production-vector','candidate-record'):
         for depth in (2,4):
             case=Case(run,f'fifo-map-{representation}-depth{depth}')
             params=dict(profile('E0'),RX_FIFO_DEPTH=depth)
-            files=[ROOT/'rtl/common/tm_axis_rx_fifo.sv'] if representation=='production-vector' else [generated/'tm_fixed.sv',candidate]
+            files=[old_files[[p.name for p in old_files].index('tm_axis_rx_fifo.sv')]] if representation=='baseline-vector' else [ROOT/'rtl/common/tm_axis_rx_fifo.sv'] if representation=='production-vector' else [candidate]
+            includes=old_includes if representation=='baseline-vector' else [ROOT/'rtl/include']
+            inferred=case.path/'inferred.json'
             netlist,stats,script=case.path/'mapped.v',case.path/'stats.json',case.path/'mapping.ys'
-            script.write_text(read_sources(files,top,[ROOT/'rtl/include'],params=params,frontend='slang')+
+            script.write_text(read_sources(files,top,includes,params=params,frontend='slang')+
+                              f'proc\nmemory_collect\nwrite_json {inferred}\ndesign -reset\n'+
+                              read_sources(files,top,includes,params=params,frontend='slang')+
                               f'synth -top {top} -noabc\ndffunmap\ndfflibmap -liberty {liberty}\nabc -liberty {liberty}\nclean\n'+
                               f'read_liberty -lib {liberty}\ncheck -assert\nwrite_verilog -noattr {netlist}\ntee -o {stats} stat -json -liberty {liberty}\n')
             step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=max(args.timeout,300))
@@ -163,7 +174,12 @@ def fifo_mapping(run,args):
                 cells=data['num_cells_by_type']
                 if not cells or any(n.startswith('$') for n in cells) or not any(n.startswith('DFF') for n in cells):
                     raise ValueError('Expected fully mapped sequential/combinational FIFO')
-                case.finish('PASS',parameters=params,payload_bits=137*depth,mapped_cells=cells,area=data['area'],
+                memories=[c for m in json.loads(inferred.read_text())['modules'].values() for c in m['cells'].values() if c['type']=='$mem_v2']
+                memory_ports=[{k:int(c['parameters'][k],2) for k in ('WIDTH','SIZE','RD_PORTS','WR_PORTS','RD_CLK_ENABLE','WR_CLK_ENABLE')} for c in memories]
+                if memory_ports!=[dict(WIDTH=137,SIZE=depth,RD_PORTS=1,WR_PORTS=1,RD_CLK_ENABLE=0,WR_CLK_ENABLE=1)]:
+                    raise ValueError('FIFO memory width/depth/port semantics changed')
+                measurements[(representation,depth)]=(cells,data['area'],memory_ports)
+                case.finish('PASS',parameters=params,payload_bits=137*depth,inferred_memories=memory_ports,mapped_cells=cells,area=data['area'],
                             source_digests={str(p.relative_to(ROOT)):sha(p) for p in files},netlist_sha256=sha(netlist),
                             scope='Actual E0 FIFO including all payload bits; representation copies only; no allocator/TM characterization')
             except (OSError,ValueError,KeyError) as error:
@@ -188,3 +204,8 @@ def fifo_mapping(run,args):
                           timing_closure='FAIL' if any(float(v)<0 for v in slacks) else 'PASS',
                           constraints_sha256=sha(sdc),netlist_sha256=sha(netlist),
                           analysis='Nangate45 typical 1.10 V / 25 C; ns/fF; ideal clock; explicit IO including reset; no timing exceptions; pre-layout')
+    comparison=Case(run,'fifo-mapping-comparison')
+    ok=len(measurements)==6 and all(measurements[('baseline-vector',depth)]==measurements[(variant,depth)]
+        for depth in (2,4) for variant in ('production-vector','candidate-record'))
+    comparison.finish('PASS' if ok else 'FAIL',None if ok else 'Unexpected FIFO mapping/inference difference',
+                      baseline_revision=baseline_revision(),scope='Identical matched memory dimensions/ports, cell histogram and area; timing closure remains separately reported')
