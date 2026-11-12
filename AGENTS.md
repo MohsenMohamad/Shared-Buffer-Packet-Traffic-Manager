@@ -19,6 +19,17 @@ Use technical branch/commit/PR names such as `feat/cell-pool` and `fix(queue): p
 
 Do not push directly to the default branch, merge PRs, rewrite shared history or change repository access settings as part of implementation. Prepare a reviewable change; the maintainer controls integration. Check the current base revision before starting dependent work.
 
+## Hosted CI iteration
+
+Keep implementation PRs draft while iterating. Run affected local checks before
+meaningful pushes; use `python3 tools/check_repository.py` and
+`python3 tools/check_light.py` for toolchain-independent checks. `make lint`
+retains its Verilator meaning. Batch meaningful changes rather than pushing
+individual edits. When review-ready, mark the PR ready or explicitly request
+`full-ci` and wait for the full hosted suites before implementation merge.
+A light-only success is not hardware qualification. Main/manual full routes
+remain integration gates; see [hosted CI policy](docs/spec/automation.md#hosted-iteration-policy).
+
 ## Code Review Rules
 
 - Check readability: descriptive names, separated statements and state transitions, manageable functions, and explanations of non-obvious invariants.

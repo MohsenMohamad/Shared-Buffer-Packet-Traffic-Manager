@@ -1,18 +1,33 @@
 name: CI
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: ci-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}-{1}', github.run_id, github.run_attempt) }}
+  group: ${{ github.event.action == 'labeled' && github.event.label.name != 'full-ci' && format('label-{0}-', github.run_id) || '' }}ci-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}-{1}', github.run_id, github.run_attempt) }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   repository:
     uses: ./.github/workflows/repository.yml
+  policy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      full: ${{ steps.decision.outputs.full }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Classify complete PR diff and explicit requests
+        id: decision
+        run: python3 tools/ci_policy.py
   prepare:
+    needs: policy
+    if: ${{ needs.policy.outputs.full == 'true' }}
     name: prepare-toolchain
     runs-on: ubuntu-24.04
     timeout-minutes: 180
@@ -162,7 +177,7 @@ jobs:
       toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
   cleanup-handoff:
     name: cleanup-handoff
-    if: ${{ always() }}
+    if: ${{ always() && needs.prepare.result != 'skipped' }}
     needs: [prepare, capability, contracts, storage, csr, foundation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -185,3 +200,15 @@ jobs:
             --artifact-id "${{ needs.prepare.outputs.artifact-id }}"
       - name: Handoff ${{ steps.cleanup.outputs.status }}
         run: echo "Diagnostic and result artifacts are preserved."
+  full-ci-summary:
+    name: full-ci-summary
+    if: ${{ always() }}
+    needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Require every requested suite; distinguish intentional skips
+        env:
+          CI_SUMMARY_NEEDS: ${{ toJSON(needs) }}
+        run: python3 tools/ci_policy.py
