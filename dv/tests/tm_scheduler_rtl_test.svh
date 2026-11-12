@@ -26,7 +26,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         model=tm_schedule_checker::type_id::create("model",this);
         model.mode=SCHED_MODE;
     endfunction
-    function tm_frame packet(int q, int length);
+    function tm_frame packet(int queue_id, int packet_length);
         tm_packet p=new;
         tm_frame f=new;
         bit occupied;
@@ -40,14 +40,26 @@ class tm_scheduler_rtl_test extends uvm_test;
             candidate=(candidate+1)%N_DESC;
         end
         if(occupied) `uvm_fatal("SCHEDULER_STIMULUS","no unowned descriptor for publication")
-        // Existing packet object defines consistent legal lengths/framing.
-        p.qid=32'(q); p.length=32'(length); p.source=0;
-        p.beat_count=32'((length+7)/8); p.cell_count=32'((length+CELL_BYTES-1)/CELL_BYTES);
-        p.final_keep=8'((1<<(((length-1)%8)+1))-1);
-        f.qid=q; f.length=int'(p.length); f.source=int'(p.source); f.desc=candidate;
+        // Reuse the qualified legal packet constraints for consistent framing.
+        // Class 3 permits every legal directed length; repeated tags are legal.
+        if(!p.randomize() with {
+            qid==local::queue_id;
+            length==local::packet_length;
+            length_class==3;
+            source==0;
+            tag==0;
+        }) `uvm_fatal("SCHEDULER_PACKET", "legal packet randomization failed")
+        f.qid=int'(p.qid);
+        f.length=int'(p.length);
+        f.source=int'(p.source);
+        f.tag=int'(p.tag);
+        f.desc=candidate;
         next_id=(candidate+1)%N_DESC;
-        f.descriptor='0; f.descriptor.qid=Q_ID_W'(q);
-        f.descriptor.length=16'(length); f.descriptor.ncell=CELL_COUNT_W'(p.cell_count);
+        f.descriptor='0;
+        f.descriptor.qid=Q_ID_W'(p.qid);
+        f.descriptor.length=16'(p.length);
+        f.descriptor.ncell=CELL_COUNT_W'(p.cell_count);
+        f.descriptor.tag=p.tag;
         return f;
     endfunction
     task reset_case(int q0, int q1);
