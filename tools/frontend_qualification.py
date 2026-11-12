@@ -61,10 +61,17 @@ def audit(run, args):
                 if name in ('features','record_memory'):
                     inferred=json.loads((case.path/'inferred.json').read_text())
                     memories=[c for m in inferred['modules'].values() for c in m.get('cells',{}).values() if c['type']=='$mem_v2']
-                    fields['inferred_memories']=[{k:int(c['parameters'][k],2) for k in ('WIDTH','SIZE','RD_PORTS','WR_PORTS','RD_CLK_ENABLE')} for c in memories]
+                    fields['inferred_memories']=[{k:int(c['parameters'][k],2) for k in ('WIDTH','SIZE','RD_PORTS','WR_PORTS','RD_CLK_ENABLE','WR_CLK_ENABLE')} for c in memories]
                     widths=[10,16] if name=='features' else [10]
                     if len(memories)!=len(widths) or sorted(int(c['parameters']['WIDTH'],2) for c in memories)!=widths:
                         bad.append('Unexpected packed-record memory count/width')
+                    # Before memory_dff, the read register is a separate cell.
+                    # Both fixtures require four words, one asynchronous read
+                    # port feeding that register and one clocked write port.
+                    if any(any(m[k]!=v for k,v in dict(SIZE=4,RD_PORTS=1,WR_PORTS=1,
+                                                      RD_CLK_ENABLE=0,WR_CLK_ENABLE=1).items())
+                           for m in fields['inferred_memories']):
+                        bad.append('Unexpected inferred memory depth/ports/clocks')
                 case.finish('FAIL' if bad else 'PASS','Unexpected latch/memory structure' if bad else None,**fields)
             else:
                 case.finish('PASS')
@@ -172,6 +179,12 @@ def fifo_mapping(run,args):
                            'report_units\ncheck_setup -verbose\nputs TM_STA_MAX_BEGIN\nreport_checks -path_delay max -format full_clock_expanded\n'+
                            'puts TM_STA_MIN_BEGIN\nreport_checks -path_delay min -format full_clock_expanded\nputs TM_STA_DONE\nexit\n')
             step=timing.execute(['sta','-no_init','-exit',str(tcl)],timeout=args.timeout)
-            timing.finish(*sta_result(step),slacks_ns=re.findall(r'([-+]?\d+\.\d+)\s+slack',output(step)),
+            text=output(step)
+            slacks=re.findall(r'([-+]?\d+\.\d+)\s+slack',text)
+            reports=[dict(startpoint=start.strip(),endpoint=end.strip(),group=group.strip(),
+                          delay=delay,slack_ns=slack) for start,end,group,delay,slack in re.findall(
+                r'Startpoint: ([^\n]+)\nEndpoint: ([^\n]+)\nPath Group: ([^\n]+)\nPath Type: (max|min).*?([-+]?\d+\.\d+)\s+slack',text,re.S)]
+            timing.finish(*sta_result(step),slacks_ns=slacks,path_reports=reports,
+                          timing_closure='FAIL' if any(float(v)<0 for v in slacks) else 'PASS',
                           constraints_sha256=sha(sdc),netlist_sha256=sha(netlist),
                           analysis='Nangate45 typical 1.10 V / 25 C; ns/fF; ideal clock; explicit IO including reset; no timing exceptions; pre-layout')

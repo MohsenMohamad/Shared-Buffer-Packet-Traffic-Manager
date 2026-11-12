@@ -28,7 +28,7 @@ Upstream discovery on 2026-11-11 is separate from normal setup. Final locks must
 
 Every row names the old exact package pin. Candidate retention is not a qualification result. Packages not used by the selected recipe must be removed from the active lock; old sources remain reproducible through the starting commit and retained control installation.
 
-| Package | Old version | Role | Proposed disposition |
+| Package | Old version | Role | Original proposed disposition |
 | --- | --- | --- | --- |
 | autoconf | 2.72-3.1 | Verilator/CUDD configure generation | retain exact pin initially; verify necessity in cold build |
 | automake | 1:1.17-4 | CUDD build generation | retain exact pin initially; verify necessity in cold build |
@@ -159,20 +159,11 @@ utility outside runtime/setup. Its official Linux archive SHA256 is
 `8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8`.
 All current workflows passed this lint; this is not evidence of hosted execution.
 
-The current Actions-major candidate produced hosted `startup_failure` with zero
-jobs/check runs and no logs in runs `43096000196` and `43097152225`. An unchanged
-main control dispatch, `43099254455`, succeeded. All workflow files pass
-checksum-verified actionlint 1.7.12. Actions policy reads return HTTP 403 for the
-integration, so they cannot establish a policy cause. Compare the previously
-accepted exact cache/upload/download pins while retaining the expanded modern
-capability jobs and source stack. This comparison is not yet a passing result or
-a universal incompatibility claim about the upstream actions.
-
-PR run `43100219369` subsequently executed the current cache restore and artifact
-upload actions successfully before its superseding push cancellation. This
-disproves a general action-version startup incompatibility. Retain the current
-pins; manual startup failures remain recorded separately and are not an older-pin
-justification or a completed qualification run.
+Current action pins executed successfully in hosted runs `43104862084` and
+`43104870563`, including cold preparation, transfer, all consumers and cleanup.
+Earlier manual dispatches with startup failures had no jobs/logs and did not
+establish an action-version incompatibility; the older-pin comparison is not
+the selected configuration.
 
 OpenSTA's `GetGitRevisionDescription.cmake` walks ancestor directories without
 consulting `GIT_CEILING_DIRECTORIES`. An archive build beneath a checkout can
@@ -181,3 +172,15 @@ Setup supplies a project-include metadata function with the checksum-verified
 OpenSTA source commit; no upstream code is patched. Doctor queries
 `sta::git_sha1` and rejects a mismatched runtime identity. Cache generation v3
 invalidates installations with the misleading metadata.
+
+## Final package disposition
+
+The initial proposal above is preserved as the pre-result inventory. Cold local
+and hosted builds exercised the final lock: Autoconf, Automake, autotools metadata,
+Bison, Flex, M4, Tcl runtime/interpreter/headers, zlib runtime/headers and
+`libfl-dev` for `FlexLexer.h`. CMake is the pinned upstream distribution instead
+of the old Debian package. All other old package rows are removed from the
+active lock; `libfl2` is not a runtime requirement. Actual `ldd` closure uses
+the selected Tcl/zlib runtime and documented host glibc/C++ runtime. Optional
+Boost/Python embedding, interactive editing and manual-page generation remain
+disabled; their development packages are not installation prerequisites.
