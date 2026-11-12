@@ -39,16 +39,50 @@ class tm_foundation_coverage extends uvm_subscriber #(tm_sample);
         response_stall:coverpoint stalled;
         order_stall:cross arrival_order,response_stall;
     endgroup
+    bit inside_packet[N_RX], legal_frame[N_RX];
+    int packet_length[N_RX], packet_queue[N_RX], captured_bytes[N_RX];
+    covergroup packets with function sample(int source, int qid, int length, int final_width);
+        option.per_instance=1;
+        source_port: coverpoint source { bins ports[] = {[0:N_RX-1]}; }
+        queue_id: coverpoint qid { bins queues[] = {[0:N_Q-1]}; }
+        packet_length: coverpoint length {
+            bins one = {1}; bins seven = {7}; bins word = {8}; bins word_plus = {9};
+            bins cell_minus = {CELL_BYTES-1}; bins cell_exact = {CELL_BYTES}; bins cell_plus = {CELL_BYTES+1};
+            bins max_minus = {MAX_PACKET_BYTES-1}; bins maximum = {MAX_PACKET_BYTES};
+            bins interior = {[2:6], [10:CELL_BYTES-2], [CELL_BYTES+2:MAX_PACKET_BYTES-2]};
+        }
+        final_width: coverpoint final_width { bins widths[] = {[1:8]}; }
+    endgroup
+    function void sample_packet(int source, stream_sample_t sample);
+        int remaining;
+        if(!sample.valid || !sample.ready) return;
+        if(!inside_packet[source]) begin
+            packet_length[source] = int'(sample.beat.user[23:8]);
+            packet_queue[source] = int'(sample.beat.user[7:0]);
+            captured_bytes[source] = 0;
+            legal_frame[source] = packet_length[source] inside {[1:MAX_PACKET_BYTES]} && packet_queue[source] < N_Q;
+            inside_packet[source] = 1;
+        end
+        remaining = packet_length[source]-captured_bytes[source];
+        if(remaining <= 0 || sample.beat.keep != 8'((1 << (remaining >= 8 ? 8 : remaining))-1) ||
+           sample.beat.last != (remaining <= 8)) legal_frame[source] = 0;
+        captured_bytes[source] += $countones(sample.beat.keep);
+        if(sample.beat.last) begin
+            if(legal_frame[source]) packets.sample(source, packet_queue[source], packet_length[source], $countones(sample.beat.keep));
+            inside_packet[source] = 0;
+        end
+    endfunction
     bit b_stalled;
-    function new(string name,uvm_component parent);super.new(name,parent);captures=0;outputs=0;traffic=new;bus=new;aw_cycle=-1;w_cycle=-1;endfunction
+    function new(string name,uvm_component parent);super.new(name,parent);captures=0;outputs=0;traffic=new;bus=new;packets=new;aw_cycle=-1;w_cycle=-1;endfunction
     function void write(tm_sample x);
         stream_sample_t s;
         monitor_batch_t b=x.batch;
-        if(b.reset_asserted) begin aw_cycle=-1;w_cycle=-1;b_stalled=0;return;end
+        if(b.reset_asserted) begin aw_cycle=-1;w_cycle=-1;b_stalled=0;foreach(inside_packet[p]) inside_packet[p]=0;return;end
         for(int p=0;p<N_RX;p++) begin
             s=stream_sample_t'(b.captures[p*(BEAT_W+2)+:BEAT_W+2]);
             if(s.valid) traffic.sample(p,int'(s.beat.user[7:0]),$countones(s.beat.keep),!s.ready);
             if(s.valid && s.ready) captures++;
+            sample_packet(p, s);
         end
         if(b.output_sample.valid && b.output_sample.ready) outputs++;
         if(b.bus_req.awvalid && b.bus_rsp.awready) aw_cycle=int'(b.cycle);
@@ -128,6 +162,7 @@ class tm_environment extends uvm_env;
     tm_observation_monitor observations[3];
     tm_coordinator coordinator;
     tm_foundation_coverage coverage_collector;
+    tm_handshake_recorder handshake_recorder;
     tm_fixture_register_block registers;
     tm_register_block production_registers;
     tm_axil_adapter adapter;
@@ -145,6 +180,7 @@ class tm_environment extends uvm_env;
         end
         coordinator=tm_coordinator::type_id::create("coordinator",this);
         coverage_collector=tm_foundation_coverage::type_id::create("coverage_collector",this);
+        handshake_recorder=tm_handshake_recorder::type_id::create("handshake_recorder",this);
         registers=tm_fixture_register_block::type_id::create("registers");registers.build();registers.reset();
         production_registers=tm_register_block::type_id::create("production_registers");production_registers.build();
         if(production_registers.words["ID"].get_reset()!=64'h544d0100 || production_registers.words.num()!=34+16*N_Q) `uvm_fatal("RAL_MAP","production map shape/reset mismatch")
@@ -156,6 +192,7 @@ class tm_environment extends uvm_env;
         axil.monitor.samples.connect(coordinator.input_samples);
         foreach(observations[i]) observations[i].observed.connect(coordinator.input_samples);
         coordinator.sealed_batches.connect(coverage_collector.analysis_export);
+        coordinator.sealed_batches.connect(handshake_recorder.analysis_export);
         registers.default_map.set_sequencer(axil.sequencer,adapter);
         registers.default_map.set_auto_predict(0);predictor.map=registers.default_map;predictor.adapter=adapter;
         axil.monitor.transactions.connect(predictor.bus_in);

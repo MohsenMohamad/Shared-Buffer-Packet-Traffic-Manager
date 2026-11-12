@@ -21,7 +21,11 @@
     "dv/agents/tm_axil_agent.svh",
     "dv/env/tm_environment.svh",
     "dv/tests/tm_foundation_test.svh",
-    "dv/tests/tm_batch_test.svh"
+    "dv/tests/tm_batch_test.svh",
+    "dv/agents/tm_packet.svh",
+    "dv/model/tm_handshake_recorder.svh",
+    "dv/tests/tm_packet_test.svh",
+    "dv/tests/tm_schedule_test.svh"
   ],
   "scope": "Simulation-only behavioral fixture and UVM foundation; generated profile config is recorded by the runner"
 }

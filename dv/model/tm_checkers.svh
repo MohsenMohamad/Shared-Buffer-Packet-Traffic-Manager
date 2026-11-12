@@ -507,14 +507,28 @@ class tm_service_checker extends uvm_component;
             `uvm_fatal("RESOURCE_LEAK","resources not restored")
     endfunction
 endclass
+// Explicit fixture timing contract. An optimized scheduler needs a separately
+// implemented and qualified timing contract; there is no grant-following mode.
+class tm_baseline_schedule_timing;
+    function bit inspect_queue(bit tx_busy);
+        return !tx_busy; // One canonical queue inspection on every free-TX edge.
+    endfunction
+    function void check_dispatch_presence(bit observed, bit expected);
+        if(observed != expected)
+            `uvm_fatal("SCHEDULE_TIMING", "baseline scan missed an expected dispatch edge")
+    endfunction
+endclass
+
 class tm_schedule_checker extends uvm_component;
     `uvm_component_utils(tm_schedule_checker)
     tm_frame_queue queues[N_Q];
     tm_frame active;
+    tm_baseline_schedule_timing baseline_timing;
     int cursor, deficit[N_Q], quantum = MAX_PACKET_BYTES, dispatches, offset;
     bit visit;
     function new(string name, uvm_component parent);
         super.new(name, parent);
+        baseline_timing = new;
         foreach(queues[q]) queues[q] = new;
         dispatches = 0;
         flush();
@@ -541,19 +555,23 @@ class tm_schedule_checker extends uvm_component;
         grant = 0;
         q = cursor;
         credit = deficit[q];
-        if(active==null && queues[q].frames.size()!=0) begin
+        if(baseline_timing.inspect_queue(active != null) && queues[q].frames.size()!=0) begin
             if(!visit) credit+=quantum;
             f = queues[q].frames[0];
             grant = (f.length<=credit);
         end
-        check_dispatch(t, grant, q, f);
+        check_dispatch_policy(t, grant, q, f);
+        baseline_timing.check_dispatch_presence(t.dispatch.valid, grant);
         merge_queue_changes(committed_frame, grant, q, credit, f);
         check_retirement(b, grant);
     endfunction
-    function void check_dispatch(trace_t t, bit grant, int q, tm_frame f);
-        if(t.dispatch.valid!=grant)
-            `uvm_fatal("SCHEDULE_GRANT","missing or illegal pre-state dispatch")
-        if(grant) begin
+    function void check_dispatch_policy(trace_t t, bit grant, int q, tm_frame f);
+        // Legality, credit and head identity are checked even before timing.
+        // Expected state advances from the canonical visit, never from a DUT
+        // grant. Missing grants still fail the explicit baseline timing check.
+        if(t.dispatch.valid && !grant)
+            `uvm_fatal("SCHEDULE_GRANT", "dispatch without pre-state credit or TX ownership")
+        if(t.dispatch.valid) begin
             if(t.dispatch.qid!=Q_ID_W'(q) || int'(t.dispatch.desc)!=f.desc || t.dispatch.info!=f.descriptor)
                 `uvm_fatal("SCHEDULE_HEAD","dispatch does not match expected queue head")
         end

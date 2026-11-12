@@ -1,0 +1,2208 @@
+{
+  "status": "INCOMPLETE: final candidate qualification and review remain",
+  "scope": "Behavioral fixture and generator/checker qualification only; no production datapath verification",
+  "cleanup": [
+    {
+      "stage": "p07-before",
+      "profile": "E0",
+      "revision": "4d557574e7dfe943df81bfa26e0b6cda75bccc75",
+      "dirty": false,
+      "result": "PASS",
+      "run": ".build/p07-before/regression-2026-11-12T124657.291524+0000-3a78b9c8",
+      "dependency_digests": {
+        "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+        "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+      },
+      "source_digests": {
+        "dv/AGENTS.md": "4537e94bba299841e59910b957817fdcc5c9dbebc810db9b48ded28d97a4838e",
+        "dv/README.md": "126ab4e47c321d8db89541225b9e94574bc1af9d97c218a104f17ec750bccf02",
+        "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+        "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+        "dv/env/tm_bench_pkg.sv": "48aed41b0660532f9eac8f082155cafaaf1c532b03d1fe081c02fc56415aa122",
+        "dv/env/tm_csr_pkg.sv": "325bdaeb4f8b892c6a38f2816d84efe4daa90b287be9d830347ffa562f2396a4",
+        "dv/env/tm_environment.svh": "ccfae3ce048ec602c4800fbda5d009b3eeaceadbb9e33142e277d0c7d1f022b9",
+        "dv/fixtures/tm_csr_fixture.sv": "ef32aaf3af5b2f39973ccaba605f0c612aa8a0b575e1c4dc995c8b20604921bd",
+        "dv/fixtures/tm_csr_top.sv": "693a19995a9402142797825ded27d8c32eb8714c7085d16eda094b900c69148a",
+        "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+        "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+        "dv/model/events.py": "64fc73ad761df412d734e5ad20ff7d66262f03f1129c1255d6f8dd23629c42db",
+        "dv/model/tm_checkers.svh": "7c3977f272d5f3561e1751805768cba3ab76fa575aac7d45544a286a81975a18",
+        "dv/model/tm_csr_model.svh": "c7fb6548290fecc15fd648b938db4ecb7e0ce064f996dd11b73eed8f50da5717",
+        "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+        "dv/tests/tm_batch_test.svh": "883bcae2134878797682d1f463dee191a1c542565a7bf5580eebd33fc050bd5d",
+        "dv/tests/tm_csr_test.svh": "87a69141f050ab9a8e31135afebd27b25d980491a832ea1090861b8928b5109c",
+        "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+        "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+        "tools/foundation.py": "189bb3f53806fcf0b22fb28a79fc8bfb7097e1dd164a5c53eef425c5e87cbd3d",
+        "verification/formal.json": "a5ccd05906eb200382b58d9f522930cd517e2a2ae63eea4ebbc66ef04b6878f8",
+        "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+        "verification/representation.json": "97b84c6670f0a3a6d4fe151716fa5842449b82e2d4a3ca0350f386ddaee13f63",
+        "verification/requirements.json": "05ce00a3ff3e66fcbc1de4d379d427a6621a61becef0febae6f840346eca2cfc",
+        "verification/sources/csr.json": "602f1ffb7e91f9e7c186cf8a79b12a2e2a3c1cfb8a0ea373730c948aee6e5634",
+        "verification/sources/formal.json": "d032321afc12dbb95b6409f7d679dd125db61683267d5770235915360a13ae2b",
+        "verification/sources/production.json": "7fb2b38dfb24d55374b288cf9c0243e366c4015b8264e8ae72b4da16e2a66bea",
+        "verification/sources/simulation.json": "646d8ddf5513a62a0a30d6bdcbbd8b5b20c68dc5c15cd8817b44a9d7876d00a7",
+        "verification/sources/synthesis.json": "e259d3f43ed42cbbd4c8b60a2b54bb31ea580cf84664145ed27501a0d9cce575",
+        "verification/sources/uvm-foundation.json": "cc33d278985e4bcb067c2941196867479063987111cddbc133069e72b6631a9f",
+        "verification/suites.json": "218d950af59e4d789a3fa5a1f9ca71dc894f5d8574f3803b38a4d9b840dfb0f7"
+      },
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "foundation-build",
+          "result": "PASS",
+          "seed": 17
+        },
+        {
+          "test": "foundation-positive",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 314,
+                "total": 640
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-replay",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 314,
+                "total": 640
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-alternate",
+          "result": "PASS",
+          "seed": 19,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "7d900a6d029cc796143b091ecbb417470fa892c4ee86a0ecff094ac61077d894",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 316,
+                "total": 640
+              },
+              "expr": {
+                "hit": 185,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 906,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-small-quantum",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "daee33c0f63aae4e81634c5e8f6f01d63abe178136929b44002c4c83d35beb8d",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 244,
+                "total": 391
+              },
+              "branch": {
+                "hit": 317,
+                "total": 640
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-corrupt",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_CORRUPTION",
+          "observed_fatals": [
+            "BYTE_CORRUPTION"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "7a877c86cb931fa1c15d73521da5fb4ee9ae17290e888b35854bf8778449b1c3"
+        },
+        {
+          "test": "foundation-duplicate",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "5f3f9e76e467c52b4301a3f659f8fc9f6d9df15bd4badc88057d840e7d69fa05"
+        },
+        {
+          "test": "foundation-lost",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_LOST",
+          "observed_fatals": [
+            "BYTE_LOST"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "38f0756daaff0457519eb7b5a3ecd098d2739a2a737492558acb44ebcd3a6997"
+        },
+        {
+          "test": "foundation-status",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "STATUS_CAUSALITY",
+          "observed_fatals": [
+            "STATUS_CAUSALITY"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "4c02639df70101a72dab599837b0393204809e2857de1d5bd2d1aeff7f7a3855"
+        },
+        {
+          "test": "foundation-service",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "SERVICE_DATA",
+          "observed_fatals": [
+            "SERVICE_DATA"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "c1cff040fe0a3ec1907568834c8862a770f0ed58a38e49bcf93ece7d7d931e32"
+        },
+        {
+          "test": "foundation-admission",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "ADMISSION_PREDICATE",
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "c1cff040fe0a3ec1907568834c8862a770f0ed58a38e49bcf93ece7d7d931e32"
+        },
+        {
+          "test": "foundation-schedule",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "7c4a08fe5431114dd5d09c39334d75fd2d326fffae96c8abca0bb9d1903335c5"
+        },
+        {
+          "test": "foundation-stale",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "f26cc11029e7322a45055649c42dadf6deea50b2ff6945b2de33e808d51a5d74"
+        },
+        {
+          "test": "foundation-csr",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "CSR_RESOURCE",
+          "observed_fatals": [
+            "CSR_RESOURCE"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "bac7f7ffec991ef44fff945e91dabbc89a757e5db06f77189515fc5d1c6eadae"
+        },
+        {
+          "test": "foundation-barrier",
+          "result": "PASS",
+          "seed": 17
+        },
+        {
+          "test": "foundation-barrier-duplicate",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BATCH_DUPLICATE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_DUPLICATE"
+          ],
+          "trace_digest": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+        },
+        {
+          "test": "foundation-barrier-missing",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BATCH_MISSING",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_MISSING"
+          ],
+          "trace_digest": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+        },
+        {
+          "test": "foundation-barrier-stale",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BATCH_STALE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_STALE"
+          ],
+          "trace_digest": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+        },
+        {
+          "test": "foundation-seed-replay",
+          "result": "PASS",
+          "seed": 17,
+          "transaction_digests": [
+            "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+            "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+            "7d900a6d029cc796143b091ecbb417470fa892c4ee86a0ecff094ac61077d894"
+          ]
+        }
+      ],
+      "tools": {
+        "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+        "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+        "compiler": "/usr/bin/g++-14: g++-14 (Debian 14.2.0-19) 14.2.0"
+      },
+      "uvm": "2020.3.2"
+    },
+    {
+      "stage": "p07-clean-commit",
+      "profile": "E0",
+      "revision": "73f1b9dcbab54089c55fd25ef8d772b0c7012503",
+      "dirty": false,
+      "result": "PASS",
+      "run": ".build/p07-clean-commit/regression-2026-11-12T125241.129937+0000-8a860180",
+      "dependency_digests": {
+        "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+        "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+      },
+      "source_digests": {
+        "dv/AGENTS.md": "4537e94bba299841e59910b957817fdcc5c9dbebc810db9b48ded28d97a4838e",
+        "dv/README.md": "126ab4e47c321d8db89541225b9e94574bc1af9d97c218a104f17ec750bccf02",
+        "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+        "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+        "dv/env/tm_bench_pkg.sv": "48aed41b0660532f9eac8f082155cafaaf1c532b03d1fe081c02fc56415aa122",
+        "dv/env/tm_csr_pkg.sv": "325bdaeb4f8b892c6a38f2816d84efe4daa90b287be9d830347ffa562f2396a4",
+        "dv/env/tm_environment.svh": "58245ecc37cfddb73b34b83066633b183dde5fa5d79dcd9578e23fa5b7a83d4e",
+        "dv/fixtures/tm_csr_fixture.sv": "ef32aaf3af5b2f39973ccaba605f0c612aa8a0b575e1c4dc995c8b20604921bd",
+        "dv/fixtures/tm_csr_top.sv": "693a19995a9402142797825ded27d8c32eb8714c7085d16eda094b900c69148a",
+        "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+        "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+        "dv/model/events.py": "64fc73ad761df412d734e5ad20ff7d66262f03f1129c1255d6f8dd23629c42db",
+        "dv/model/tm_checkers.svh": "1c31ddfa44c02709dc7f07cd13daf6cc35df7eb69fac17565d061afe0b926046",
+        "dv/model/tm_csr_model.svh": "c7fb6548290fecc15fd648b938db4ecb7e0ce064f996dd11b73eed8f50da5717",
+        "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+        "dv/tests/tm_batch_test.svh": "83e4b8b30ff8c18a0f8ec8df5ecc398edb821a7bc2a925d61973f5f9a9bec5c8",
+        "dv/tests/tm_csr_test.svh": "87a69141f050ab9a8e31135afebd27b25d980491a832ea1090861b8928b5109c",
+        "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+        "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+        "tools/foundation.py": "189bb3f53806fcf0b22fb28a79fc8bfb7097e1dd164a5c53eef425c5e87cbd3d",
+        "verification/formal.json": "a5ccd05906eb200382b58d9f522930cd517e2a2ae63eea4ebbc66ef04b6878f8",
+        "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+        "verification/representation.json": "97b84c6670f0a3a6d4fe151716fa5842449b82e2d4a3ca0350f386ddaee13f63",
+        "verification/requirements.json": "05ce00a3ff3e66fcbc1de4d379d427a6621a61becef0febae6f840346eca2cfc",
+        "verification/sources/csr.json": "602f1ffb7e91f9e7c186cf8a79b12a2e2a3c1cfb8a0ea373730c948aee6e5634",
+        "verification/sources/formal.json": "d032321afc12dbb95b6409f7d679dd125db61683267d5770235915360a13ae2b",
+        "verification/sources/production.json": "7fb2b38dfb24d55374b288cf9c0243e366c4015b8264e8ae72b4da16e2a66bea",
+        "verification/sources/simulation.json": "646d8ddf5513a62a0a30d6bdcbbd8b5b20c68dc5c15cd8817b44a9d7876d00a7",
+        "verification/sources/synthesis.json": "e259d3f43ed42cbbd4c8b60a2b54bb31ea580cf84664145ed27501a0d9cce575",
+        "verification/sources/uvm-foundation.json": "cc33d278985e4bcb067c2941196867479063987111cddbc133069e72b6631a9f",
+        "verification/suites.json": "218d950af59e4d789a3fa5a1f9ca71dc894f5d8574f3803b38a4d9b840dfb0f7"
+      },
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "foundation-build",
+          "result": "PASS",
+          "seed": 17
+        },
+        {
+          "test": "foundation-positive",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 316,
+                "total": 642
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-replay",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 316,
+                "total": 642
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-alternate",
+          "result": "PASS",
+          "seed": 19,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "7d900a6d029cc796143b091ecbb417470fa892c4ee86a0ecff094ac61077d894",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 318,
+                "total": 642
+              },
+              "expr": {
+                "hit": 185,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 906,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-small-quantum",
+          "result": "PASS",
+          "seed": 17,
+          "metrics": {
+            "captures": 52,
+            "services": 52,
+            "commits": 11,
+            "delivered": 10,
+            "dispatches": 10,
+            "batches": 2324
+          },
+          "trace_digest": "daee33c0f63aae4e81634c5e8f6f01d63abe178136929b44002c4c83d35beb8d",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 319,
+                "total": 642
+              },
+              "expr": {
+                "hit": 181,
+                "total": 240
+              },
+              "toggle": {
+                "hit": 904,
+                "total": 1690
+              },
+              "covergroup": {
+                "hit": 20,
+                "total": 29
+              }
+            },
+            "functional_bins_hit": 20,
+            "functional_bins_total": 29
+          }
+        },
+        {
+          "test": "foundation-corrupt",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_CORRUPTION",
+          "observed_fatals": [
+            "BYTE_CORRUPTION"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "7a877c86cb931fa1c15d73521da5fb4ee9ae17290e888b35854bf8778449b1c3"
+        },
+        {
+          "test": "foundation-duplicate",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "5f3f9e76e467c52b4301a3f659f8fc9f6d9df15bd4badc88057d840e7d69fa05"
+        },
+        {
+          "test": "foundation-lost",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_LOST",
+          "observed_fatals": [
+            "BYTE_LOST"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "38f0756daaff0457519eb7b5a3ecd098d2739a2a737492558acb44ebcd3a6997"
+        },
+        {
+          "test": "foundation-status",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "STATUS_CAUSALITY",
+          "observed_fatals": [
+            "STATUS_CAUSALITY"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "4c02639df70101a72dab599837b0393204809e2857de1d5bd2d1aeff7f7a3855"
+        },
+        {
+          "test": "foundation-service",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "SERVICE_DATA",
+          "observed_fatals": [
+            "SERVICE_DATA"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "c1cff040fe0a3ec1907568834c8862a770f0ed58a38e49bcf93ece7d7d931e32"
+        },
+        {
+          "test": "foundation-admission",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "ADMISSION_PREDICATE",
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "c1cff040fe0a3ec1907568834c8862a770f0ed58a38e49bcf93ece7d7d931e32"
+        },
+        {
+          "test": "foundation-schedule",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "7c4a08fe5431114dd5d09c39334d75fd2d326fffae96c8abca0bb9d1903335c5"
+        },
+        {
+          "test": "foundation-stale",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "f26cc11029e7322a45055649c42dadf6deea50b2ff6945b2de33e808d51a5d74"
+        },
+        {
+          "test": "foundation-csr",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "CSR_RESOURCE",
+          "observed_fatals": [
+            "CSR_RESOURCE"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "bac7f7ffec991ef44fff945e91dabbc89a757e5db06f77189515fc5d1c6eadae"
+        },
+        {
+          "test": "foundation-barrier",
+          "result": "PASS",
+          "seed": 17
+        },
+        {
+          "test": "foundation-barrier-duplicate",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BATCH_DUPLICATE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_DUPLICATE"
+          ],
+          "trace_digest": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+        },
+        {
+          "test": "foundation-barrier-missing",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BATCH_MISSING",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_MISSING"
+          ],
+          "trace_digest": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+        },
+        {
+          "test": "foundation-barrier-stale",
+          "result": "PASS",
+          "seed": 17,
+          "detector": "BATCH_STALE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_STALE"
+          ],
+          "trace_digest": "61169108a05abae83780ae7a6a56f30fa8df255a505470ef1de8f0632395bd8f"
+        },
+        {
+          "test": "foundation-seed-replay",
+          "result": "PASS",
+          "seed": 17,
+          "transaction_digests": [
+            "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+            "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+            "7d900a6d029cc796143b091ecbb417470fa892c4ee86a0ecff094ac61077d894"
+          ]
+        }
+      ],
+      "tools": {
+        "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+        "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+        "compiler": "/usr/bin/g++-14: g++-14 (Debian 14.2.0-19) 14.2.0"
+      },
+      "uvm": "2020.3.2"
+    },
+    {
+      "stage": "p07-clean-commit",
+      "profile": "I0",
+      "revision": "73f1b9dcbab54089c55fd25ef8d772b0c7012503",
+      "dirty": false,
+      "result": "PASS",
+      "run": ".build/p07-clean-commit/regression-2026-11-12T125856.861497+0000-7b73bf0a",
+      "dependency_digests": {
+        "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+        "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+      },
+      "source_digests": {
+        "dv/AGENTS.md": "4537e94bba299841e59910b957817fdcc5c9dbebc810db9b48ded28d97a4838e",
+        "dv/README.md": "126ab4e47c321d8db89541225b9e94574bc1af9d97c218a104f17ec750bccf02",
+        "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+        "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+        "dv/env/tm_bench_pkg.sv": "48aed41b0660532f9eac8f082155cafaaf1c532b03d1fe081c02fc56415aa122",
+        "dv/env/tm_csr_pkg.sv": "325bdaeb4f8b892c6a38f2816d84efe4daa90b287be9d830347ffa562f2396a4",
+        "dv/env/tm_environment.svh": "58245ecc37cfddb73b34b83066633b183dde5fa5d79dcd9578e23fa5b7a83d4e",
+        "dv/fixtures/tm_csr_fixture.sv": "ef32aaf3af5b2f39973ccaba605f0c612aa8a0b575e1c4dc995c8b20604921bd",
+        "dv/fixtures/tm_csr_top.sv": "693a19995a9402142797825ded27d8c32eb8714c7085d16eda094b900c69148a",
+        "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+        "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+        "dv/model/events.py": "64fc73ad761df412d734e5ad20ff7d66262f03f1129c1255d6f8dd23629c42db",
+        "dv/model/tm_checkers.svh": "1c31ddfa44c02709dc7f07cd13daf6cc35df7eb69fac17565d061afe0b926046",
+        "dv/model/tm_csr_model.svh": "c7fb6548290fecc15fd648b938db4ecb7e0ce064f996dd11b73eed8f50da5717",
+        "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+        "dv/tests/tm_batch_test.svh": "83e4b8b30ff8c18a0f8ec8df5ecc398edb821a7bc2a925d61973f5f9a9bec5c8",
+        "dv/tests/tm_csr_test.svh": "87a69141f050ab9a8e31135afebd27b25d980491a832ea1090861b8928b5109c",
+        "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+        "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+        "tools/foundation.py": "189bb3f53806fcf0b22fb28a79fc8bfb7097e1dd164a5c53eef425c5e87cbd3d",
+        "verification/formal.json": "a5ccd05906eb200382b58d9f522930cd517e2a2ae63eea4ebbc66ef04b6878f8",
+        "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+        "verification/representation.json": "97b84c6670f0a3a6d4fe151716fa5842449b82e2d4a3ca0350f386ddaee13f63",
+        "verification/requirements.json": "05ce00a3ff3e66fcbc1de4d379d427a6621a61becef0febae6f840346eca2cfc",
+        "verification/sources/csr.json": "602f1ffb7e91f9e7c186cf8a79b12a2e2a3c1cfb8a0ea373730c948aee6e5634",
+        "verification/sources/formal.json": "d032321afc12dbb95b6409f7d679dd125db61683267d5770235915360a13ae2b",
+        "verification/sources/production.json": "7fb2b38dfb24d55374b288cf9c0243e366c4015b8264e8ae72b4da16e2a66bea",
+        "verification/sources/simulation.json": "646d8ddf5513a62a0a30d6bdcbbd8b5b20c68dc5c15cd8817b44a9d7876d00a7",
+        "verification/sources/synthesis.json": "e259d3f43ed42cbbd4c8b60a2b54bb31ea580cf84664145ed27501a0d9cce575",
+        "verification/sources/uvm-foundation.json": "cc33d278985e4bcb067c2941196867479063987111cddbc133069e72b6631a9f",
+        "verification/suites.json": "218d950af59e4d789a3fa5a1f9ca71dc894f5d8574f3803b38a4d9b840dfb0f7"
+      },
+      "cases": [
+        {
+          "test": "versions",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS",
+          "seed": null
+        },
+        {
+          "test": "foundation-build",
+          "result": "PASS",
+          "seed": 23
+        },
+        {
+          "test": "foundation-positive",
+          "result": "PASS",
+          "seed": 23,
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "trace_digest": "1acc92e84867d3297a479da1d5803c553aad8066a86693040d0ab5f64da3caff",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 318,
+                "total": 642
+              },
+              "expr": {
+                "hit": 191,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins_hit": 26,
+            "functional_bins_total": 39
+          }
+        },
+        {
+          "test": "foundation-replay",
+          "result": "PASS",
+          "seed": 23,
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "trace_digest": "1acc92e84867d3297a479da1d5803c553aad8066a86693040d0ab5f64da3caff",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 318,
+                "total": 642
+              },
+              "expr": {
+                "hit": 191,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins_hit": 26,
+            "functional_bins_total": 39
+          }
+        },
+        {
+          "test": "foundation-alternate",
+          "result": "PASS",
+          "seed": 25,
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "trace_digest": "ebd268a6fc50527d844602d9c164fe1b285c2f318bb81f7cd7ebc936a74c65aa",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 321,
+                "total": 642
+              },
+              "expr": {
+                "hit": 191,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins_hit": 26,
+            "functional_bins_total": 39
+          }
+        },
+        {
+          "test": "foundation-small-quantum",
+          "result": "PASS",
+          "seed": 23,
+          "metrics": {
+            "captures": 121,
+            "services": 121,
+            "commits": 15,
+            "delivered": 14,
+            "dispatches": 14,
+            "batches": 2576
+          },
+          "trace_digest": "6d7b6d2e24b5249b8da4721488bc6e8f9476057aa2a1e4a384307d84bfa6449b",
+          "saved_coverage": {
+            "owned_points": {
+              "line": {
+                "hit": 259,
+                "total": 406
+              },
+              "branch": {
+                "hit": 321,
+                "total": 642
+              },
+              "expr": {
+                "hit": 191,
+                "total": 246
+              },
+              "toggle": {
+                "hit": 827,
+                "total": 1714
+              },
+              "covergroup": {
+                "hit": 26,
+                "total": 39
+              }
+            },
+            "functional_bins_hit": 26,
+            "functional_bins_total": 39
+          }
+        },
+        {
+          "test": "foundation-corrupt",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BYTE_CORRUPTION",
+          "observed_fatals": [
+            "BYTE_CORRUPTION"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "b8886847bf65f892b797dcf0bbf07171243f70db2a5f46489bdef5a8b478f2b5"
+        },
+        {
+          "test": "foundation-duplicate",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "864b0c9ed192535affcd624f38b99de21baa9aac79940b826960279cb317e7f7"
+        },
+        {
+          "test": "foundation-lost",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BYTE_LOST",
+          "observed_fatals": [
+            "BYTE_LOST"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "a9767f5658009029f766dfde2140094406b76b161872c9d0cfbce4df7b824d8e"
+        },
+        {
+          "test": "foundation-status",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "STATUS_CAUSALITY",
+          "observed_fatals": [
+            "STATUS_CAUSALITY"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "c2a9d0e58128c74df1a14463d284ed40574d58c960701f686e8817b186638b79"
+        },
+        {
+          "test": "foundation-service",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "SERVICE_DATA",
+          "observed_fatals": [
+            "SERVICE_DATA"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "3fccb672156e786c2e70b18db49c032cb61d028a57b47b8a32e28786e9f72c97"
+        },
+        {
+          "test": "foundation-admission",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "ADMISSION_PREDICATE",
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "3fccb672156e786c2e70b18db49c032cb61d028a57b47b8a32e28786e9f72c97"
+        },
+        {
+          "test": "foundation-schedule",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "e7f778e080ad45df576906ed844ee3862e11b0f4ab2b37fb82401baaf5362b3a"
+        },
+        {
+          "test": "foundation-stale",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BYTE_UNEXPECTED",
+          "observed_fatals": [
+            "BYTE_UNEXPECTED"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "e4869e9d9cef297044b67a7c1eb09143b648b4c1d37ed75b74a42081024aa866"
+        },
+        {
+          "test": "foundation-csr",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "CSR_RESOURCE",
+          "observed_fatals": [
+            "CSR_RESOURCE"
+          ],
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "trace_digest": "c2e1c7f0b0e4804c1b5184490fde183838bcc2b80a85191417e81a0ebcbbe947"
+        },
+        {
+          "test": "foundation-barrier",
+          "result": "PASS",
+          "seed": 23
+        },
+        {
+          "test": "foundation-barrier-duplicate",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BATCH_DUPLICATE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_DUPLICATE"
+          ],
+          "trace_digest": "2ec1ccebe8c15b184cda2c7907c4cae96694fb54957fa0b33566abc302f18ae2"
+        },
+        {
+          "test": "foundation-barrier-missing",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BATCH_MISSING",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_MISSING"
+          ],
+          "trace_digest": "2ec1ccebe8c15b184cda2c7907c4cae96694fb54957fa0b33566abc302f18ae2"
+        },
+        {
+          "test": "foundation-barrier-stale",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "BATCH_STALE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "BATCH_STALE"
+          ],
+          "trace_digest": "2ec1ccebe8c15b184cda2c7907c4cae96694fb54957fa0b33566abc302f18ae2"
+        },
+        {
+          "test": "foundation-atomic",
+          "result": "PASS",
+          "seed": 23
+        },
+        {
+          "test": "foundation-atomic-limit",
+          "result": "PASS",
+          "seed": 23,
+          "detector": "ADMISSION_PREDICATE",
+          "expected": "SEEDED_DEFECT_DETECTION",
+          "returncode": 1,
+          "observed_fatals": [
+            "ADMISSION_PREDICATE"
+          ]
+        },
+        {
+          "test": "foundation-seed-replay",
+          "result": "PASS",
+          "seed": 23,
+          "transaction_digests": [
+            "1acc92e84867d3297a479da1d5803c553aad8066a86693040d0ab5f64da3caff",
+            "1acc92e84867d3297a479da1d5803c553aad8066a86693040d0ab5f64da3caff",
+            "ebd268a6fc50527d844602d9c164fe1b285c2f318bb81f7cd7ebc936a74c65aa"
+          ]
+        }
+      ],
+      "tools": {
+        "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+        "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+        "compiler": "/usr/bin/g++-14: g++-14 (Debian 14.2.0-19) 14.2.0"
+      },
+      "uvm": "2020.3.2"
+    }
+  ],
+  "development": {
+    "run": ".build/p07-generator-dev/regression-2026-11-12T130524.686282+0000-d36181c8",
+    "result": "PASS",
+    "profile": "E0",
+    "source_revision": "752bb9a733dba7378a324e4a7f780b637d5af63e",
+    "dirty": true,
+    "source_digests": {
+      "dv/agents/tm_packet.svh": "76191c6614105a072967da23ef81693fddff9a176bfa76745843fb7b581390ca",
+      "dv/model/tm_handshake_recorder.svh": "1428185814aa0fc59ab3ab7e599cd5e26a69e33de0a224a92e6678fb17678860",
+      "dv/tests/tm_packet_test.svh": "79409504006e96794c0c8198a45d7b58a87b5245acf29f4123c7b52f8c8934f4",
+      "dv/tests/tm_schedule_test.svh": "cec5f26622a2a90d4d862b5c43ea9cc42736b2fe7cbcbebc0a5b572b80454b32",
+      "tools/packet_stimulus.py": "82d7724a6b48320fc0b3fcf841f29950f20c5c7831614c7815a16fcf0f3415cf",
+      ".editorconfig": "2d8b5dd7eaec25a56b035b2d7c4d4fd6d6f32915dae03f18cfdf838a688b29d5",
+      ".gitattributes": "97e97349ddd3cf10e430e0a7b0ab2710be0e8ae84166d4a99db534a9bc3f56f0",
+      ".github/actions/native-prerequisites/action.yml": "41bb44a8e7f2a81d02230e73cdf7b00ea03c920231542ee96bcaffe436f328dc",
+      ".github/pull_request_template.md": "b7907c1234e6898baa8b22b181c4f551943edf1833f400f6020b84e066196b1a",
+      ".github/workflows/contracts.yml": "7a82290d1ddb3da3ee26537f9a39f4952212fcd72f46693bde517adfa7ce71e8",
+      ".github/workflows/csr.yml": "ce5cd072db584a587896b0e3e959abc3b91cf07249de7248088fb1b55b9e2133",
+      ".github/workflows/repository.yml": "b1c745c91eea25acf3c59c288e936c27127c85d8856bf8ef3f834a14d976e00e",
+      ".github/workflows/storage.yml": "7c6becd81ba2d22ed812627a1e28f2852e9d1790aa81ed7ab6e780f6aafd685c",
+      ".github/workflows/toolchain.yml": "8bf0c0d431d7ba7fd75dca67fce2b9020c3bf9517ed4650ff69a2ff146371978",
+      ".github/workflows/uvm-foundation.yml": "bcb32d67c62c18b80a5afb380b135558497060718c70c7784336f55fdaa7a961",
+      ".gitignore": "eb6d275386a13ff825369dd6da44eac7bda365729624b442a97b91f4ae306398",
+      "AGENTS.md": "bcf323d50904fcd67ceab4eae98b9eb9fe00a0998007d27f822d54c14c4f51e0",
+      "CONTRIBUTING.md": "a9fae53f7368bd28afe10bb28f703ab466fa6144a7717496368510d1822091a8",
+      "Makefile": "32ab2f71961254f733aa35e204eb924ef9b870db73503a41079fdfb9973c82ff",
+      "README.md": "732abacc453b211427467175ac3bae75be5cb30ea94f791f5588c6eba3ca8b2c",
+      "docs/decisions/0001-native-toolchain.md": "e316436f82608e9ba3f05de1422cb7aa2168ddb786682374a5fe5aba12678965",
+      "docs/decisions/0002-module-contracts.md": "b01631b408c52df2db6548681546393ae942209e6ec332c716ef32bc53b7719d",
+      "docs/decisions/0003-storage-primitives.md": "b4edb15610922a2fa05c77b2d1d9efa158e2c7bfe759c3d0706f75258f42afb5",
+      "docs/decisions/0004-uvm-foundation.md": "095405b3e69100cdc076c3b7be36b76cafb33c32b6def89c19328c623e87e796",
+      "docs/decisions/0005-csr-events.md": "e6eee44ec1e50c46d3220d050f5f84befaedfc5ded4e3a8ead50ed5812afcd15",
+      "docs/decisions/0006-modern-toolchain.md": "55e1c601aa1a0eefab4689ea885bfc5d7d85e87ac66726d6f5f84c8b40b1d967",
+      "docs/decisions/0007-rtl-representation.md": "26a56fc8b0025da6c2edb031f78f34eb3197915df3a5134191ebaeba26e8659b",
+      "docs/decisions/README.md": "4d29eef1c5d8f8fdd4887abfb9ca142bfa880b4c4c7229b1f8382da4ce5334da",
+      "docs/documentation.md": "f08a49ecd987f448a5f17d69ad8d7eadb49107a7f73a6b429eb8808385f206c1",
+      "docs/implementation/layout.md": "02279e0ea213621ff46586d9113cb8871f9da6b1374d4b76f2f6b3d7727339ae",
+      "docs/implementation/modern-toolchain-decisions.md": "c06b580735c112afc2f2391e94c40050f61e4cf56756f12381ef299535797f06",
+      "docs/implementation/modern-toolchain-plan.md": "818d742c783fa6a775d06bffdc19fddb093fed395c391f0325db0114dd88f3ec",
+      "docs/implementation/notes/README.md": "4dd112657b062cd8c4d47b4291be3740552efbd99ae4ec2204ed070cf03f1929",
+      "docs/implementation/plan.md": "2d460b60bfa85e87a1d37b0ce6d0e0a1d2c9ae9bdc74891e2ea7677e7372cd4d",
+      "docs/implementation/tasks/P00-followup-modern-toolchain.md": "244e16a460865110b3af70683f221082116d0dd6e07bea6176fcef56f9d6b1b5",
+      "docs/implementation/tasks/P00-toolchain.md": "a8aa7cb514f0cf74bfab6aec01bd435462113abe472f6b38c5632e979763c5a3",
+      "docs/implementation/tasks/P01-contracts.md": "4d7acca355217cbfc731ccb3c85469b7c2633fa55f5b5d21fb4ffa942bfed4f8",
+      "docs/implementation/tasks/P01-followup-representation.md": "e402d8cdf9b5f04c490dba766e7d2b8af24fc5939fefbb0f56d6abb85b7d8d7f",
+      "docs/implementation/tasks/P02-followup-scaling.md": "1007b61348a3c82aafb1c0ac829971a7af7f7a9f7a2b15caaa14a25f17ab8a06",
+      "docs/implementation/tasks/P02-storage-primitives.md": "c7ababc12b0473a98184b38c1ba9357ff8854b6e40c2bebd15531e2457b9cac0",
+      "docs/implementation/tasks/P03-queues.md": "a6b65926b4ce18babf8badf7d4543e42fcec766e6026b0c3f7b9fc2f4efd7ab2",
+      "docs/implementation/tasks/P04-scheduler.md": "df312d2b515a1e69df16cb79471e3e82ec96b08f6024d16e32777caf55d60ca6",
+      "docs/implementation/tasks/P05-memory-tx.md": "6f7b58f687c98dd0b72283cd9ddc44670f341d8b7c2f641136bc6669d1326d11",
+      "docs/implementation/tasks/P06-registers.md": "b4612c843f5f24c885c315acd2431eab2be7cbd346c4f215dcd264bf78d062b5",
+      "docs/implementation/tasks/P07-followup-stimulus.md": "70e0dea27ddaad7581dfa0765b3a068c52ead5bd9db4b14dd724f5911cfca32f",
+      "docs/implementation/tasks/P07-verification-foundation.md": "92d2392aa052b5792fd9ed2e3947a1681060ccd7723a16e1e957ce93f45368d8",
+      "docs/implementation/tasks/P08-receive-admission.md": "9813a52af0f3e999ad5ee612e7f43e6291aab1df13590db917268d35f11d452e",
+      "docs/implementation/tasks/P09-vertical-integration.md": "4eb96a567cc961dc82b844564bfbf239da435e14919a0fc32b14f39189919357",
+      "docs/implementation/tasks/P10-concurrency.md": "1cc7c9915aa410f0ff104ea6ad896473b5afb6cf4e655aa7d3784e778c992e25",
+      "docs/implementation/tasks/P11A-formal-resources.md": "3375e685217a6cf8b73c177a26db606e772039b0edbca55ee758d7c1ba8d2c4c",
+      "docs/implementation/tasks/P11B-formal-interfaces.md": "a70466715faf811db3bc4ec529bd5cf37b36383c67bec93b066eaf78a98b08e9",
+      "docs/implementation/tasks/P11C-coverage.md": "69d0d91e176dc74893ee04f48cf43e51389c7b65de03f495424cb78107b5665c",
+      "docs/implementation/tasks/P12-measurements.md": "9f4be31a0858a981d4ae68774223e205d4c627599dc716073eff338342d11f4d",
+      "docs/implementation/tasks/P13-diagnostics.md": "0923c4c11ebbde8dd1fefa9c2f4a55f539141a2b518de919ed7603cd1af0cd27",
+      "docs/implementation/tasks/P14-release.md": "a4ce7d01051f9c1a6dd80b49a95e0e05b4d06da62984e5d280e8862a8735345a",
+      "docs/implementation/toolchain.md": "79b38c531bfa28892e594e97063e595e9b1a34bfad39c9b7566e9d92f5c7b9af",
+      "docs/results/P00-toolchain.json": "7783e275eb238e15384d082822295a654c5c620798a2a07bbcf730d0a16d720e",
+      "docs/results/P00-toolchain.md": "08a4395209eb577e60ca8d8f9d85f766b80626076f35c688c3f4695d8fc96f6d",
+      "docs/results/P01-contracts.json": "49c3e7c1f05967c2a398295554d14daaa3e762e66481d5550e552dacfc397349",
+      "docs/results/P01-contracts.md": "0eb2220492688408909b84e34dbf3599c7a74886e9334d9fbdfc41a4d15248f6",
+      "docs/results/P02-storage-primitives.json": "458285a59c921b98bd0b055db8cbd6955bd5e267aebb2b83a15f4f0c3469b0d5",
+      "docs/results/P02-storage-primitives.md": "cdd5e92da0a155b777b36a43bfa877d46d1116cc23ddbae6fd60882b8b83eefb",
+      "docs/results/P06-registers.json": "d7116c800f9f08fa5712b1b82a5b47d18c48861faaaaae41809d4bdbf136c692",
+      "docs/results/P06-registers.md": "9327db834fd408aa13942869cf652edd9dc56b9ca3965f148294c5a691222848",
+      "docs/results/P07-verification-foundation.json": "2a845be037fddb514439901bc0d46d31638c9179f3a03f968aa6182377665c73",
+      "docs/results/P07-verification-foundation.md": "28b42067b40ce3e450bf1e492b0937a4fa06d521815cacafd599d8164b56a4a3",
+      "docs/results/README.md": "ed4e70f246e3241c4c7bf3491b6db2d26152b9aa86fcc1ba5a618d28879a0e80",
+      "docs/results/allocator-scaling.json": "9d1bca86f0a2340861a2d5eb007f0bc62036e017233d885c9cbf441bfe6491b9",
+      "docs/results/allocator-scaling.md": "34ba740e95e5c4eaed64551db741aaf8f767729ea8184db0cfe87600a9ec547e",
+      "docs/results/modern-toolchain.json": "4af771a370d552b337465b9ef18d46577e56eec1f89a32f23f55d2837b4d2d1c",
+      "docs/results/modern-toolchain.md": "e137acac01292302617f485181fb5ca3567ab283b8eda3232c930ad982a2091e",
+      "docs/results/review-preparation.md": "f8c072999665855614502773480d8ad11ec1008bb7c7e1b67d9b409262fcfb64",
+      "docs/results/rtl-representation.json": "fe9a1b1611930967987d310b2c7ca9ffcc78df95e6fa113eaa451a6904c6c1ad",
+      "docs/results/rtl-representation.md": "f15fa65e424890004f64d53c26151a08336c5e9b2b841aa08d6e3629283aa441",
+      "docs/spec/README.md": "014370b7329610ac5b8e3fcdb2711114ed0a8843b288671110cc19886b01bce5",
+      "docs/spec/acceptance.md": "214ec29e5c745777b9d9160beebc3b653cd0cce27221c80b0a659143b6e17304",
+      "docs/spec/architecture.md": "1d907df7d46b345796138898a4df2a637a2c8343375349cc07544edae9a3aa2c",
+      "docs/spec/automation.md": "30b5b538d6af4af1cbe77bc4fed3ca8846bfda2425b641ecefb9013f27d648ce",
+      "docs/spec/buffer-management.md": "74280da3b98aadddebd2932be0198ec49931b1438521949e23715eb8592192d6",
+      "docs/spec/formal.md": "55fa0da705cbdacad70e875968b0583e72d822e3f774aa64c6a06678f6622666",
+      "docs/spec/implementation.md": "e1d18698762e45a4ae347f873f7a1cd8801d6a8eb40567eb0a4cb186d579afe7",
+      "docs/spec/interfaces.md": "9c79e0385b8861caa8a8fe1993a79ce1b53f6a7b64c947495273898f1abfd986",
+      "docs/spec/module-contracts.md": "4cfe4995c35cd685275f3691fde54f76501c7eb1d4a9c7c31f5503db1642a340",
+      "docs/spec/queues-and-scheduling.md": "30f9585475b0c06a2e46630dda8759f79e32d66e8d719acf900115968cb10ead",
+      "docs/spec/references.md": "d821dce7c377630c933423232382bc1338dcf95071e505e088beb3e4cfe5ac63",
+      "docs/spec/registers.md": "b646566965b5d950279988e8fa5890bea0c0aa1bcc5cb743095a93627e8017bb",
+      "docs/spec/toolchain.md": "19fa2a0e8690ddd559330308656178a2529801bdb1be1d1408130c402dc99920",
+      "docs/spec/triage.md": "e862465c8534c9d534f853f7299636430b6277256806def210295082f1d2b7aa",
+      "docs/spec/verification.md": "46cce7ea2edfaa38ae9d3474496ca5925bbd07a0ba66ad55f89ef44948c29dd1",
+      "docs/status.md": "873f6a5f817d8a14ab2303e8abe3911656d545bf9882816ac00c7469ea00ba34",
+      "dv/AGENTS.md": "4537e94bba299841e59910b957817fdcc5c9dbebc810db9b48ded28d97a4838e",
+      "dv/README.md": "126ab4e47c321d8db89541225b9e94574bc1af9d97c218a104f17ec750bccf02",
+      "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+      "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+      "dv/env/tm_bench_pkg.sv": "9c0f0a1ecb68afd68cebaae03bffd8a248f6a41f99ab143d6bcebecc7fa05d19",
+      "dv/env/tm_csr_pkg.sv": "325bdaeb4f8b892c6a38f2816d84efe4daa90b287be9d830347ffa562f2396a4",
+      "dv/env/tm_environment.svh": "2e0cc9037d83e6c41c697fbe5b389616121195a47ed3a721bb7dd5b12033e572",
+      "dv/fixtures/tm_csr_fixture.sv": "ef32aaf3af5b2f39973ccaba605f0c612aa8a0b575e1c4dc995c8b20604921bd",
+      "dv/fixtures/tm_csr_top.sv": "693a19995a9402142797825ded27d8c32eb8714c7085d16eda094b900c69148a",
+      "dv/fixtures/tm_foundation_fixture.sv": "5a1bb0cb7e126e52b2f0c7134692f78521864efdcded87031992f5a8ea1b7f10",
+      "dv/fixtures/tm_foundation_top.sv": "43bebd47928cd8100104dd6b0251ad50168a524dd80bc60cc48ad37383abdbf7",
+      "dv/model/events.py": "64fc73ad761df412d734e5ad20ff7d66262f03f1129c1255d6f8dd23629c42db",
+      "dv/model/tm_checkers.svh": "120261a8588cc33e333d24d512f66fa6cd246a34d2e9d968a40cd7efe8f030b3",
+      "dv/model/tm_csr_model.svh": "c7fb6548290fecc15fd648b938db4ecb7e0ce064f996dd11b73eed8f50da5717",
+      "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+      "dv/tests/tm_batch_test.svh": "83e4b8b30ff8c18a0f8ec8df5ecc398edb821a7bc2a925d61973f5f9a9bec5c8",
+      "dv/tests/tm_csr_test.svh": "87a69141f050ab9a8e31135afebd27b25d980491a832ea1090861b8928b5109c",
+      "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+      "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+      "experiments/allocator-scaling/README.md": "702df7d59708e354d46848aa18455e74ef82784fe0f66f6ecb17b6f33815cff0",
+      "experiments/allocator-scaling/abc.constr": "57947f140a2ab2795e7318aa70cae726825234738d67366df3b0a149660efb22",
+      "experiments/allocator-scaling/config.json": "a5ac198435077e126276ca1b121606027e9d495989eebf4ba774b3c6264dcb93",
+      "experiments/allocator-scaling/mapping.ys.in": "22d48f97f1d0927e1c628969bccbbeabd85aea92430ba978329c1db7d856a52b",
+      "experiments/allocator-scaling/timing.sdc": "f829bf3133ad3b358e9465db4ca7e24b0d4a848f0648835814d6b1c97081527b",
+      "experiments/allocator-scaling/timing.tcl": "599478ead10bb043c934b2acdbb4f2b5e0f88766be46891b7c180d811e34368e",
+      "formal/AGENTS.md": "bd5f4b106224ac9b5473768f5a2ed0528737e4e7fd68c5d898ea6339d02869b9",
+      "formal/csr/README.md": "fbb9113205d7dd298a75839775c7d18976c123b009eb651d2d227173ab13d487",
+      "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+      "formal/csr/csr_formal.sv": "778f3b8e4acaddadefaed492aff13f759157a3721a20c95cd4c2e602d8b00186",
+      "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+      "formal/pools/README.md": "676fda5a2d4bd0dfc442c91e43fedcaf462b79e697298fe16254c03db97c352b",
+      "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+      "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+      "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+      "formal/pools/storage_formal.sv": "8741c498d77ba36de98afc5debd94d36037549c72f3182b42f8d07f1192c6a6f",
+      "rtl/AGENTS.md": "59ba68931f194e99cbf2d57eac4464c23f0530eeec4acf09fceeba4c4e4cb478",
+      "rtl/common/tm_axis_rx_fifo.sv": "7720db1148c4be2c608bbb1a29bf66b798c970c88ac00e2180d2ecc5794492d1",
+      "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+      "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+      "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+      "rtl/include/tm_module_ports.sv": "84e3129c73a6ec611041b0c39d7bca18be73a3d1330ef5cd7a43384360816b3d",
+      "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+      "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+      "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+      "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+      "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+      "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+      "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+      "tests/contracts/test_contracts.py": "9981f0fad34944fe0cb8703030b4bae49389510c9f62f90fbac45970c0aa14e5",
+      "tests/frontends/README.md": "413da74a7ccaf02aeb1904ab731995e302f37f7b585ad44ff22f78059946510f",
+      "tests/frontends/compare_native.py": "eea7cdbe0b308d3881743b5936e62f71a046e7f58cdf70c8cede9ea2c099c05a",
+      "tests/frontends/features.sv": "aa16821f0e5964fe901cc12548eeb001c6f63ef11759835df3e93acd183960f1",
+      "tests/frontends/features_tb.sv": "6352b33281ed35920d39fcb5f01b6b60fbdf6e1032911f7c80b6b8064f367e52",
+      "tests/frontends/fixtures/bits_type.sv": "7acf2905f9886358b1ef6e8a3625c52ea1fa6b4af165c66e7aecb9d119c2ed2f",
+      "tests/frontends/fixtures/formal_probe.sv": "0f3728e76c0fb622033f2b12b3bb147e8a437caf2f19c8af07dd843e87ac0306",
+      "tests/frontends/fixtures/probe_unit.sv": "bd89d5fd515b83eadc6865339c3bc6b900d3f5726c7bc9b3032f995c07317b9e",
+      "tests/frontends/fixtures/synth_top.sv": "558b7802c77fb768e64ec181f4c7359ffe65fa6ea4df086a125d74bf496270f4",
+      "tests/frontends/fixtures/test.sv": "deac064d023d9ebcad55efca97819401c1028806f7507c67f3be26e7a4da454b",
+      "tests/frontends/generate.py": "c37ab7c6f735d2eddb68366b9816ec69da9e7b73a8012b20c0942ce25e5c246e",
+      "tests/frontends/interface.sv": "92fcdb5d1b3e797ecd35a195055dc626ce27bee979b87627b7eeed8a2e23aafa",
+      "tests/frontends/record_memory.sv": "3b100dd7e5b95dd4ab79b509c3d2751b208794517ae456b994c7ffdb6a0bd9d9",
+      "tests/frontends/record_memory_formal.sv": "47ba6c1e5bef6b1b0bba3c5a938f7c3f7d8a308f1183d37dc2097ef8c7a4448b",
+      "tests/frontends/symbolic_attributes.sv": "b386b8d2cd67656dcdb9bebe5d4eaaaadcbec7448c0e07ed1d7eeec438bd5fa3",
+      "tests/frontends/symbolic_functions.sv": "bcff3c5a06ab8941a3503a09198fa680c4ffccb1168a1098b9e41956af0a23cf",
+      "tests/frontends/symbolics.sv": "0339c9afcb742af4636f9fdacf4dd571c3856e36e8e4df56bc49a94339537514",
+      "tests/frontends/unpacked.sv": "9dec4794530eb391ca7974b2b5099167f2a35262ab71d52e7db7d5d9dc21e1c5",
+      "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+      "tests/toolchain/counter.sv": "8a895c2fe1e3ee2eaba5929ea917df7d72bace177f94459dd6eb0a2d167e0964",
+      "tests/toolchain/four_state.sv": "4f841fe97930d6e35eaacac4ebee9ecc03ff3d6f15a8d245267e81615eb45a8e",
+      "tests/toolchain/mapping.v": "34328fc3efa5282533ecf1c8cabce515c425936a5555a93c9e358a916c2db9dc",
+      "tests/toolchain/sta_api.tcl": "eebc7a3ce4cea84d6e34c4fa7bd23eb44ab6c8a9bf0fce0cdff902771afd89b9",
+      "tests/toolchain/test_allocator_scaling.py": "09fb5b6ff0636c942f451602f8585b0cfe7ac94c2e55f9c5bbfbf28eee3ac4c8",
+      "tests/toolchain/test_ci_workflow.py": "e1ca02c6bca7c4a27be0c3634ce8edd908b0fd92d11c7a0c1773283e5c49d742",
+      "tests/toolchain/test_handoff_cleanup.py": "41741234ef4af698f07bda4425c1aa21824281573e523cc7128569f58b5ef359",
+      "tests/toolchain/test_runner.py": "2ce608a81acd430c8354a82281e3ee67b07e4711012ef25df1d024efe799f713",
+      "tests/toolchain/test_toolchain_cache.py": "fe5949aa25d76dea3994ad0f3a3f2b32992e05a8c2849bd67d47266d0ae09730",
+      "tests/toolchain/timing.sdc": "034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824",
+      "tests/toolchain/timing.tcl": "10fcef1369b5dc7425278096265ac0e8445375f2500b8953d092f20fcd9278c5",
+      "tests/toolchain/uvm_dpi.sv": "685ae46f80e662ab2000af197a0147b28547796261822c555808d33e6eacc7d4",
+      "tests/toolchain/uvm_smoke.sv": "1a3ce89d69e229353bc61b5060a05c618ce3056adfb637bc4854297b6892d08d",
+      "tools/AGENTS.md": "b6a510ca25a8955c662302699edbd673893ab138afa0699ad3b365cad5a269e1",
+      "tools/allocator_scaling.py": "c24601f3e316e94939cef27d80162312bdd4e8bf9c5cf4c3a3e4f3c29a388e25",
+      "tools/check_repository.py": "75dbcb835e759545d70669e44d1c61e2ce65588646f0366fa0b01796ff6bd43d",
+      "tools/cleanup_toolchain_artifact.py": "4279c0c63bc047f9e96edb9238e6151f1543f12c8ee2ab56ad24890008fbf50f",
+      "tools/contracts.py": "182beed08e56c6a8b5811beeefa38eeaa643be53fd6987b93f2372d2df7107c1",
+      "tools/csr.py": "84234def046d16017a012274ec70e851adc46535ea37ad01b50a6efd8229521b",
+      "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+      "tools/doctor.py": "11a70e94db96f4348b394f9fc307bd602f22af24c3054236b4521f19b6298aa8",
+      "tools/evidence.py": "312a6180d9b1466d093709c0d1c05cb1012d7a90ac66d63c1ba6fe50dbcdd67f",
+      "tools/formal_bridge.py": "254c4377ce4733ecce0d2398bc9423bdf28357eaeaea5cdde8ea0d066900e0b7",
+      "tools/formal_csr.py": "034219a838171aab13aca2cdb352cdb84c8b34e3466bc8ef9086e9fd97b235f7",
+      "tools/formal_storage.py": "b91722124d5e5703a4d558a40443e323ac77f3813643c5269878e5861a8a3411",
+      "tools/foundation.py": "c3f2bc6bc25c3370762a257a34f403ae48343612f54df427efb8fc70c195a62f",
+      "tools/frontend.py": "93e18e7165f1391e4675cd2b1d6e6435501e28cf7bcb0e618465daa6ad7b9961",
+      "tools/frontend_qualification.py": "d52bdb0a68b982e9d8b4bd476a1fde8073410bc05f937d7d9b83e15c37da2e3c",
+      "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996",
+      "tools/registry.py": "68677cd959c358fde2ac0a0fbfe42f89cb2c845793888943290b7b88a7a86552",
+      "tools/representation.py": "798140e6c87b4f046c81e8899a3fd26e30df4de5ae8afc570e610af74f8b999c",
+      "tools/run.py": "3a293fad9cf752846b20318d1adf420e6a09be0145aa9d26f0e094a44de5bc7c",
+      "tools/run_uvm_capabilities.py": "114c4a4612c963d1e70babfadc716f18534f2693c808746754d9e23c8b9fa20a",
+      "tools/setup.sh": "a7ba3762c9c09bce6dcf9d0d2c55ad5b752b36396750e926f2f2a77d6e10a528",
+      "tools/setup_toolchain.py": "5299746bf0ca03dfed83104b644eeb241d634f096e5db8e962f1ea269498b7e5",
+      "tools/storage.py": "0a23e51503a812cc0075aa2e2cc6375ab7fbf39f31f943a553afa034b9e94408",
+      "tools/toolchain_cache.py": "d926de9e50061e50401f5f562795a7043efbdeb1c42aecc073f64fe61814db37",
+      "verification/formal.json": "a5ccd05906eb200382b58d9f522930cd517e2a2ae63eea4ebbc66ef04b6878f8",
+      "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+      "verification/representation.json": "97b84c6670f0a3a6d4fe151716fa5842449b82e2d4a3ca0350f386ddaee13f63",
+      "verification/requirements.json": "05ce00a3ff3e66fcbc1de4d379d427a6621a61becef0febae6f840346eca2cfc",
+      "verification/sources/csr.json": "602f1ffb7e91f9e7c186cf8a79b12a2e2a3c1cfb8a0ea373730c948aee6e5634",
+      "verification/sources/formal.json": "d032321afc12dbb95b6409f7d679dd125db61683267d5770235915360a13ae2b",
+      "verification/sources/production.json": "7fb2b38dfb24d55374b288cf9c0243e366c4015b8264e8ae72b4da16e2a66bea",
+      "verification/sources/simulation.json": "646d8ddf5513a62a0a30d6bdcbbd8b5b20c68dc5c15cd8817b44a9d7876d00a7",
+      "verification/sources/synthesis.json": "e259d3f43ed42cbbd4c8b60a2b54bb31ea580cf84664145ed27501a0d9cce575",
+      "verification/sources/uvm-foundation.json": "37a6fd5bc502635ddd3c4f2b9a0398948d7b7976ea3f14c28c7c0f0b07d4eecf",
+      "verification/suites.json": "218d950af59e4d789a3fa5a1f9ca71dc894f5d8574f3803b38a4d9b840dfb0f7"
+    },
+    "qualification": "Exploratory E0 run. Current source has later coverage/analysis edits; final candidate NOT_RUN.",
+    "cases": [
+      {
+        "test": "versions",
+        "seed": null,
+        "result": "PASS"
+      },
+      {
+        "test": "opensta-source",
+        "seed": null,
+        "result": "PASS"
+      },
+      {
+        "test": "cxx20",
+        "seed": null,
+        "result": "PASS"
+      },
+      {
+        "test": "solver-sat-unsat",
+        "seed": null,
+        "result": "PASS"
+      },
+      {
+        "test": "foundation-build",
+        "seed": 17,
+        "result": "PASS"
+      },
+      {
+        "test": "foundation-positive",
+        "seed": 17,
+        "result": "PASS",
+        "metrics": {
+          "captures": 52,
+          "services": 52,
+          "commits": 11,
+          "delivered": 10,
+          "dispatches": 10,
+          "batches": 2324
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 270,
+              "total": 501
+            },
+            "branch": {
+              "hit": 332,
+              "total": 776
+            },
+            "expr": {
+              "hit": 199,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 904,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 34,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 34,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-replay",
+        "seed": 17,
+        "result": "PASS",
+        "metrics": {
+          "captures": 52,
+          "services": 52,
+          "commits": 11,
+          "delivered": 10,
+          "dispatches": 10,
+          "batches": 2324
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 270,
+              "total": 501
+            },
+            "branch": {
+              "hit": 332,
+              "total": 776
+            },
+            "expr": {
+              "hit": 199,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 904,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 34,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 34,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-alternate",
+        "seed": 19,
+        "result": "PASS",
+        "metrics": {
+          "captures": 52,
+          "services": 52,
+          "commits": 11,
+          "delivered": 10,
+          "dispatches": 10,
+          "batches": 2324
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 270,
+              "total": 501
+            },
+            "branch": {
+              "hit": 334,
+              "total": 776
+            },
+            "expr": {
+              "hit": 203,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 906,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 34,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 34,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-small-quantum",
+        "seed": 17,
+        "result": "PASS",
+        "metrics": {
+          "captures": 52,
+          "services": 52,
+          "commits": 11,
+          "delivered": 10,
+          "dispatches": 10,
+          "batches": 2324
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 270,
+              "total": 501
+            },
+            "branch": {
+              "hit": 335,
+              "total": 776
+            },
+            "expr": {
+              "hit": 199,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 904,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 34,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 34,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-corrupt",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BYTE_CORRUPTION",
+        "observed_fatals": [
+          "BYTE_CORRUPTION"
+        ]
+      },
+      {
+        "test": "foundation-duplicate",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BYTE_UNEXPECTED",
+        "observed_fatals": [
+          "BYTE_UNEXPECTED"
+        ]
+      },
+      {
+        "test": "foundation-lost",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BYTE_LOST",
+        "observed_fatals": [
+          "BYTE_LOST"
+        ]
+      },
+      {
+        "test": "foundation-status",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "STATUS_CAUSALITY",
+        "observed_fatals": [
+          "STATUS_CAUSALITY"
+        ]
+      },
+      {
+        "test": "foundation-service",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SERVICE_DATA",
+        "observed_fatals": [
+          "SERVICE_DATA"
+        ]
+      },
+      {
+        "test": "foundation-admission",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "ADMISSION_PREDICATE",
+        "observed_fatals": [
+          "ADMISSION_PREDICATE"
+        ]
+      },
+      {
+        "test": "foundation-schedule",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SCHEDULE_HEAD",
+        "observed_fatals": [
+          "SCHEDULE_HEAD"
+        ]
+      },
+      {
+        "test": "foundation-stale",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BYTE_UNEXPECTED",
+        "observed_fatals": [
+          "BYTE_UNEXPECTED"
+        ]
+      },
+      {
+        "test": "foundation-csr",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "CSR_RESOURCE",
+        "observed_fatals": [
+          "CSR_RESOURCE"
+        ]
+      },
+      {
+        "test": "foundation-barrier",
+        "seed": 17,
+        "result": "PASS"
+      },
+      {
+        "test": "foundation-barrier-duplicate",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BATCH_DUPLICATE"
+      },
+      {
+        "test": "foundation-barrier-missing",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BATCH_MISSING"
+      },
+      {
+        "test": "foundation-barrier-stale",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "BATCH_STALE"
+      },
+      {
+        "test": "foundation-seed-replay",
+        "seed": 17,
+        "result": "PASS",
+        "transaction_digests": [
+          "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+          "0dea18a5dbe04ed7f49fa4ef63af1b7bf415ca17d7bb9c42305eca8414a27f65",
+          "7d900a6d029cc796143b091ecbb417470fa892c4ee86a0ecff094ac61077d894"
+        ]
+      },
+      {
+        "test": "foundation-packet-constraints",
+        "seed": 17,
+        "result": "PASS"
+      },
+      {
+        "test": "foundation-schedule-policy",
+        "seed": 17,
+        "result": "PASS"
+      },
+      {
+        "test": "foundation-schedule-bypass",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SCHEDULE_GRANT",
+        "observed_fatals": [
+          "SCHEDULE_GRANT"
+        ]
+      },
+      {
+        "test": "foundation-schedule-credit",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SCHEDULE_GRANT",
+        "observed_fatals": [
+          "SCHEDULE_GRANT"
+        ]
+      },
+      {
+        "test": "foundation-schedule-missing",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SCHEDULE_TIMING",
+        "observed_fatals": [
+          "SCHEDULE_TIMING"
+        ]
+      },
+      {
+        "test": "foundation-schedule-head",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SCHEDULE_HEAD",
+        "observed_fatals": [
+          "SCHEDULE_HEAD"
+        ]
+      },
+      {
+        "test": "foundation-schedule-busy",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "SCHEDULE_GRANT",
+        "observed_fatals": [
+          "SCHEDULE_GRANT"
+        ]
+      },
+      {
+        "test": "foundation-packet-randomize-failure",
+        "seed": 17,
+        "result": "PASS",
+        "detector": "PACKET_RANDOMIZE",
+        "observed_fatals": [
+          "PACKET_RANDOMIZE"
+        ]
+      },
+      {
+        "test": "foundation-packets-positive",
+        "seed": 17,
+        "result": "PASS",
+        "stimulus": {
+          "packets": 157,
+          "legal_packets": 147,
+          "random_packets": 128,
+          "directed_statuses": [
+            1,
+            2,
+            2,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            0
+          ],
+          "captured_beats": 717,
+          "output_beats": 699,
+          "boundaries": [
+            1,
+            7,
+            8,
+            9,
+            15,
+            16,
+            17,
+            127,
+            128
+          ],
+          "final_widths": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "distributions": {
+            "source": {
+              "0": 128
+            },
+            "qid": {
+              "0": 58,
+              "1": 70
+            },
+            "class": {
+              "0": 32,
+              "1": 25,
+              "2": 20,
+              "3": 51
+            },
+            "pattern": {
+              "0": 34,
+              "1": 29,
+              "2": 33,
+              "3": 32
+            },
+            "gap": {
+              "0": 28,
+              "1": 31,
+              "2": 41,
+              "3": 28
+            }
+          },
+          "stimulus_digest": "cf2ba7c93396fe0953a067e179cde1ad9caec503a8b5bdd413319293addbe93b",
+          "handshake_digest": "b373b35f0aefe6bb35b997e54122032548722200a1b20728f665492b7ab823e5"
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 269,
+              "total": 501
+            },
+            "branch": {
+              "hit": 321,
+              "total": 776
+            },
+            "expr": {
+              "hit": 189,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 877,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 46,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 46,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-packets-replay",
+        "seed": 17,
+        "result": "PASS",
+        "stimulus": {
+          "packets": 157,
+          "legal_packets": 147,
+          "random_packets": 128,
+          "directed_statuses": [
+            1,
+            2,
+            2,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            0
+          ],
+          "captured_beats": 717,
+          "output_beats": 699,
+          "boundaries": [
+            1,
+            7,
+            8,
+            9,
+            15,
+            16,
+            17,
+            127,
+            128
+          ],
+          "final_widths": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "distributions": {
+            "source": {
+              "0": 128
+            },
+            "qid": {
+              "0": 58,
+              "1": 70
+            },
+            "class": {
+              "0": 32,
+              "1": 25,
+              "2": 20,
+              "3": 51
+            },
+            "pattern": {
+              "0": 34,
+              "1": 29,
+              "2": 33,
+              "3": 32
+            },
+            "gap": {
+              "0": 28,
+              "1": 31,
+              "2": 41,
+              "3": 28
+            }
+          },
+          "stimulus_digest": "cf2ba7c93396fe0953a067e179cde1ad9caec503a8b5bdd413319293addbe93b",
+          "handshake_digest": "b373b35f0aefe6bb35b997e54122032548722200a1b20728f665492b7ab823e5"
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 269,
+              "total": 501
+            },
+            "branch": {
+              "hit": 321,
+              "total": 776
+            },
+            "expr": {
+              "hit": 189,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 877,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 46,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 46,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-packets-alternate",
+        "seed": 19,
+        "result": "PASS",
+        "stimulus": {
+          "packets": 157,
+          "legal_packets": 147,
+          "random_packets": 128,
+          "directed_statuses": [
+            1,
+            2,
+            2,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            0
+          ],
+          "captured_beats": 660,
+          "output_beats": 642,
+          "boundaries": [
+            1,
+            7,
+            8,
+            9,
+            15,
+            16,
+            17,
+            127,
+            128
+          ],
+          "final_widths": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "distributions": {
+            "source": {
+              "0": 128
+            },
+            "qid": {
+              "0": 72,
+              "1": 56
+            },
+            "class": {
+              "0": 32,
+              "1": 32,
+              "2": 14,
+              "3": 50
+            },
+            "pattern": {
+              "0": 30,
+              "1": 30,
+              "2": 33,
+              "3": 35
+            },
+            "gap": {
+              "0": 35,
+              "1": 30,
+              "2": 31,
+              "3": 32
+            }
+          },
+          "stimulus_digest": "b7f852a2a35c32d17ca1ec536281f9b893d2b05370e222a24775c0270a4104e6",
+          "handshake_digest": "25a0712f0405a2d52ec9068d40682add60b90b7bde92e0eb73131f4915527851"
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 269,
+              "total": 501
+            },
+            "branch": {
+              "hit": 321,
+              "total": 776
+            },
+            "expr": {
+              "hit": 189,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 877,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 46,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 46,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-packets-small-quantum",
+        "seed": 17,
+        "result": "PASS",
+        "stimulus": {
+          "packets": 157,
+          "legal_packets": 147,
+          "random_packets": 128,
+          "directed_statuses": [
+            1,
+            2,
+            2,
+            6,
+            6,
+            6,
+            6,
+            6,
+            6,
+            0
+          ],
+          "captured_beats": 717,
+          "output_beats": 699,
+          "boundaries": [
+            1,
+            7,
+            8,
+            9,
+            15,
+            16,
+            17,
+            127,
+            128
+          ],
+          "final_widths": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "distributions": {
+            "source": {
+              "0": 128
+            },
+            "qid": {
+              "0": 58,
+              "1": 70
+            },
+            "class": {
+              "0": 32,
+              "1": 25,
+              "2": 20,
+              "3": 51
+            },
+            "pattern": {
+              "0": 34,
+              "1": 29,
+              "2": 33,
+              "3": 32
+            },
+            "gap": {
+              "0": 28,
+              "1": 31,
+              "2": 41,
+              "3": 28
+            }
+          },
+          "stimulus_digest": "cf2ba7c93396fe0953a067e179cde1ad9caec503a8b5bdd413319293addbe93b",
+          "handshake_digest": "c49dca7bfef482c1d40b9815b6ee5ead6503020fd6a9693265eefa7b53377e41"
+        },
+        "saved_coverage": {
+          "owned_points": {
+            "line": {
+              "hit": 269,
+              "total": 501
+            },
+            "branch": {
+              "hit": 324,
+              "total": 776
+            },
+            "expr": {
+              "hit": 189,
+              "total": 274
+            },
+            "toggle": {
+              "hit": 877,
+              "total": 1690
+            },
+            "covergroup": {
+              "hit": 46,
+              "total": 50
+            }
+          },
+          "functional_bins_hit": 46,
+          "functional_bins_total": 50
+        }
+      },
+      {
+        "test": "foundation-packets-seed-replay",
+        "seed": 17,
+        "result": "PASS",
+        "recorded_digests": [
+          {
+            "stimulus_digest": "cf2ba7c93396fe0953a067e179cde1ad9caec503a8b5bdd413319293addbe93b",
+            "handshake_digest": "b373b35f0aefe6bb35b997e54122032548722200a1b20728f665492b7ab823e5"
+          },
+          {
+            "stimulus_digest": "cf2ba7c93396fe0953a067e179cde1ad9caec503a8b5bdd413319293addbe93b",
+            "handshake_digest": "b373b35f0aefe6bb35b997e54122032548722200a1b20728f665492b7ab823e5"
+          },
+          {
+            "stimulus_digest": "b7f852a2a35c32d17ca1ec536281f9b893d2b05370e222a24775c0270a4104e6",
+            "handshake_digest": "25a0712f0405a2d52ec9068d40682add60b90b7bde92e0eb73131f4915527851"
+          }
+        ]
+      }
+    ]
+  }
+}

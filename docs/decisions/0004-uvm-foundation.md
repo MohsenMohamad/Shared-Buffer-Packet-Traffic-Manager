@@ -1,7 +1,9 @@
 # UVM foundation uses signal observations and a declared fixture
 
 Historical decision: current tool/frontend restrictions and their dispositions
-are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+are covered by [decision 0006](0006-modern-toolchain.md). The active
+[P07 follow-up](../results/P07-followup-stimulus.md) records the readable checker
+phases, constrained packet qualification and separate baseline timing checks. The original evidence
 and behavioral choices below remain historical records.
 
 P07 supplies reusable UVM agents and independent models before the complete

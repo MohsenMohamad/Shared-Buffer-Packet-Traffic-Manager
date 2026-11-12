@@ -47,12 +47,36 @@ committed head, then applies the current commit; it cannot bypass an empty queue
 
 Set the model's static limits, WAIT mode and scheduling quantum explicitly when
 configuring another component fixture. The current fixture qualifies DROP,
-default limits, default/small DRR quanta and zero-cell malformed abort. It does
+default limits, default/small DRR quanta and serial malformed abort cleanup. It does
 not implement the production configuration lifecycle, RAM read pipeline, serial
 abort traversal, statistics snapshots, packet-RR variant or resource WAIT traffic.
 These remain production integration checks under their original requirements.
 See [the decision](../docs/decisions/0004-uvm-foundation.md) and
 [executed results](../docs/results/P07-verification-foundation.md).
+
+## Constrained packet follow-up
+
+The same `uvm-foundation` suite also runs `tm_packet_constraints_test`,
+`tm_schedule_test` and `tm_packet_test`; CI executes E0, I0, E1 and F0.
+`tm_packet` constrains source/qid/length/gap/pattern and the related beat count,
+cell count and final keep. Length classes weight word, cell and maximum
+boundaries alongside the full legal range. Every `randomize()` result is checked.
+The packet converts to the existing unrestricted `tm_stream_item`; malformed
+controls remain separate raw-item edits. No DPI or backdoor dependency is needed.
+
+Each packet case records `stimulus.jsonl` and passive `handshakes.jsonl`, including
+all accepted input/output beats and statuses. The runner checks raw captures,
+valid output bytes, exact directed dispositions, saved functional counters and
+128-sample random distributions, then compares both stimulus and handshake
+hashes for replay and changed-seed diversity. Forced boundaries and keep widths
+are reported separately from unconstrained random samples. Serial pacing keeps
+this generator qualification below resource pressure; the existing simultaneous,
+duplicate-tag, reset and broken-fixture cases still execute separately.
+
+The scheduling model has separate policy and explicit baseline timing checks.
+The baseline remains one queue inspection per free-TX cycle; an optimized timing
+contract remains unqualified. See the [follow-up record](../docs/results/P07-followup-stimulus.md)
+for actual tested revisions, distributions, coverage and expected detections.
 
 ## Production CSR component bench
 

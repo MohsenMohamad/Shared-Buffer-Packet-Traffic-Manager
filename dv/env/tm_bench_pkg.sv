@@ -54,9 +54,13 @@ package tm_bench_pkg;
         endfunction
     endclass
     `include "tm_stream_agent.svh"
+    `include "tm_packet.svh"
+    `include "tm_handshake_recorder.svh"
     `include "tm_axil_agent.svh"
     `include "tm_checkers.svh"
     `include "tm_environment.svh"
     `include "tm_foundation_test.svh"
     `include "tm_batch_test.svh"
+    `include "tm_packet_test.svh"
+    `include "tm_schedule_test.svh"
 endpackage

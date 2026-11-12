@@ -168,3 +168,82 @@ def foundation(run, args):
     replay=Case(run,'foundation-seed-replay',seed)
     ok=len(signatures)==3 and signatures[0]==signatures[1] and signatures[0]!=signatures[2]
     replay.finish('PASS' if ok else 'FAIL',None if ok else 'Missing, nonrepeatable or seed-independent observed trace',transaction_digests=signatures)
+    packet_followup(run, args, binary, result, params, seed)
+
+
+def packet_followup(run, args, binary, build_result, parameters, seed):
+    """P07 additions share the genuine foundation executable and CI route."""
+    from packet_stimulus import inspect_stimulus
+
+    probes = [('packet-constraints', 'tm_packet_constraints_test', None, 'TM_PACKET_CONSTRAINTS_PASS rejected=9'),
+              ('schedule-policy', 'tm_schedule_test', None, 'TM_SCHEDULE_PASS')]
+    probes += [('schedule-'+name.lower(), 'tm_schedule_test', 'SCHED_'+name, detector)
+               for name, detector in (('BYPASS', 'SCHEDULE_GRANT'), ('CREDIT', 'SCHEDULE_GRANT'),
+                                      ('MISSING', 'SCHEDULE_TIMING'), ('HEAD', 'SCHEDULE_HEAD'),
+                                      ('BUSY', 'SCHEDULE_GRANT'))]
+    probes += [('packet-randomize-failure', 'tm_packet_test', 'PACKET_RANDOMIZE', 'PACKET_RANDOMIZE')]
+    constraints_qualified = False
+    for name, test, mutation, marker in probes:
+        case = Case(run, 'foundation-'+name, seed)
+        if build_result != 'PASS':
+            case.finish('NOT_RUN', 'Foundation compilation did not qualify')
+            continue
+        command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES', '+UVM_TESTNAME='+test]
+        if mutation:
+            command += ['+MUT_'+mutation, '+TRACE']
+        step = case.execute(command, timeout=args.timeout, cwd=case.path)
+        if mutation:
+            fatals = re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]', output(step))
+            wave = case.path/'wave.vcd'
+            ok = (step['result'] != 'TIMEOUT' and step['returncode'] not in (0, None) and
+                  fatals == [marker] and wave.is_file() and wave.stat().st_size > 0)
+            first_failure(case, step, marker)
+            case.data['artifacts']['waveform'] = str(wave)
+            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended first checker detection/waveform missing',
+                        expected='SEEDED_DEFECT_DETECTION', detector=marker, observed_fatals=fatals)
+        else:
+            status, reason = run_result(step, marker)
+            case.finish(status, reason)
+            if name == 'packet-constraints':
+                constraints_qualified = status == 'PASS'
+
+    signatures = []
+    for name, case_seed in [('positive', seed), ('replay', seed), ('alternate', seed%2147483645+2), ('small-quantum', seed)]:
+        case = Case(run, 'foundation-packets-'+name, case_seed)
+        case.data.update(scope='Constrained packet stimulus and declared fixture only; no production TM result',
+                         parameters=parameters, source_set='uvm-foundation')
+        if not constraints_qualified:
+            case.finish('NOT_RUN', 'Packet constraint capability did not qualify')
+            continue
+        command = [str(binary), f'+verilator+seed+{case_seed}', '+UVM_NO_RELNOTES', '+UVM_TESTNAME=tm_packet_test']
+        if name == 'small-quantum':
+            command += ['+SMALL_QUANTUM']
+        step = case.execute(command, timeout=args.timeout, cwd=case.path)
+        status, reason = run_result(step, 'TM_PACKET_PASS')
+        if status == 'PASS':
+            try:
+                case.data['coverage'] = coverage(case.path/'coverage.dat')
+                stimulus = inspect_stimulus(case.path, parameters, case.data['coverage'])
+                case.data['stimulus'] = stimulus
+                report = case.execute(['verilator_coverage', '--report', 'summary', str(case.path/'coverage.dat')], timeout=args.timeout)
+                if report['result'] != 'PASS':
+                    status, reason = report['result'], 'Coverage report generation failed'
+                if name != 'small-quantum' and status == 'PASS':
+                    signatures.append({key: stimulus[key] for key in ('stimulus_digest', 'handshake_digest')})
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                status, reason = 'FAIL', str(error)
+        case.data['artifacts'].update({key: str(case.path/filename) for key, filename in
+                                      (('stimulus', 'stimulus.jsonl'), ('handshakes', 'handshakes.jsonl'),
+                                       ('coverage', 'coverage.dat'), ('transactions', 'transactions.jsonl'))})
+        if status != 'PASS' and step['result'] != 'TIMEOUT':
+            first_failure(case, step)
+            rerun = case.path/'failing-rerun'
+            rerun.mkdir()
+            case.execute(command+['+TRACE'], timeout=args.timeout, cwd=rerun, stem='failing-rerun')
+            case.data['artifacts']['waveform'] = str(rerun/'wave.vcd')
+        case.finish(status, reason)
+    replay = Case(run, 'foundation-packets-seed-replay', seed)
+    ok = (len(signatures) == 3 and signatures[0] == signatures[1] and
+          all(signatures[0][key] != signatures[2][key] for key in ('stimulus_digest', 'handshake_digest')))
+    replay.finish('PASS' if ok else 'FAIL', None if ok else 'Missing, nonrepeatable or seed-independent packet/handshake evidence',
+                  recorded_digests=signatures, scope='Same pinned stack only; no cross-version random-stream claim')
