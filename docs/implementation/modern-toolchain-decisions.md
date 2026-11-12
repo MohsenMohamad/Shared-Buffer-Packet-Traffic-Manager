@@ -23,7 +23,7 @@ remains a separate PR; retain explicit open cases below.
 | `tools/run.py`: mapping script | Earlier synthesis/ABC defaults | `synth -noabc`, explicit flop/library mapping, then Liberty ABC; require real mapped combinational/sequential cells, no internal unmapped cells | Adopt explicit script: P00 and both actual FIFO representations mapped with library cells/check-assert; no latches in generic candidates |
 | `tests/toolchain/timing.sdc`, `timing.tcl` | Tiny pre-layout capability conditions | Fixed Nangate45 units are ns/fF, 1.10 V / 25 C. Explicit 10 fF load, 0.05 ns uncertainty, IO delays/slew and separate driving-cell case; compare old control under these same inputs | Correct active unit clarity; old measurements stay historical |
 | `tools/run.py`: timing error parser | Older OpenSTA unnumbered diagnostics | Numbered/unnumbered errors and warnings override completion; actual bad-library/netlist/constraint/unconstrained/error-plus-marker cases | Retain stricter rejection after qualification; never accept completion alone |
-| OpenSTA multi-scene/variation/noise features | Old packaged STA lacked modern analysis APIs | Current source capabilities reviewed against available data: only one typical Liberty and no routed parasitics/variation/noise models | Retain single-corner pre-layout boundary; no new measured physical claims |
+| OpenSTA multi-scene/variation/noise features | Old packaged STA lacked modern analysis APIs | Runtime API check: `define_scene`, `read_spef`, `set_timing_derate`, `annotate_noise_delays`; default POCV mode scalar / quantile 3. Only one typical Liberty and no routed parasitics/variation/noise models | Retain single-corner pre-layout boundary; no new measured physical claims |
 | `tools/doctor.py`: GCC 14.2.0 patch check | Original observed compiler mistaken for universal requirement | Compile/execute C++20 concepts and std::format; record actual compiler/target/runtime in cache identity | Remove patch-specific rejection; preserve actual ABI/language qualification |
 | `tools/packages.lock.json`: old distro bundle | Packaged Yosys/ABC/STA/solver carried unused dev dependencies | Source-built selected tools, exact transitive archives; Click runtime explicitly installed; Boost Python/filesystem/system, ffi, readline, old tool binaries removed | Remove unused packages; retain only exercised build/Tcl/zlib dependencies |
 
@@ -58,3 +58,9 @@ remains a separate PR; retain explicit open cases below.
 
 No downloadable launch pack is changed. Capability acceptance alone does not
 justify adding interfaces, abstractions or algorithms to the traffic manager.
+
+The mapped FIFO comparison is an execution/integrity capability check, not timing
+closure. Both representations report identical cells/area and setup/hold paths;
+with explicit reset IO constraints they both have −0.09 ns asynchronous reset
+removal slack. Preserve that violation and its constraints for the representation
+follow-up; do not hide it with an unqualified false path or a changed reset delay.

@@ -246,3 +246,12 @@ The first command on an empty installation must report `cold`, the second `cache
 6. After consumers settle, inspect `cleanup-handoff`. Confirm the selected handoff ID is absent after `deleted`, while preparation and test artifacts remain. A reported permission/API failure or cancellation leaves the one-day fallback; record it as a fallback, not successful deletion. Check concurrency with distinct main/manual run IDs and shared same-PR groups; do not claim hosted main execution from a local policy test.
 
 The supporting [review-preparation results](../results/review-preparation.md) distinguish executed local checks from observed hosted runs.
+
+The synthesis gate also checks current OpenSTA API availability (`define_scene`,
+`read_spef`, `set_timing_derate`, `annotate_noise_delays`) and default POCV mode.
+This does not run multi-scene, statistical variation or coupled-noise analysis.
+Those studies need characterized corner/variation libraries and annotated routed
+parasitics, including coupling data for noise. `define_corners` is deprecated
+upstream in favor of `define_scene`. FIFO mapping records path groups and
+`timing_closure` independently of successful analysis; see the refresh report
+for the retained reset-removal violation.

@@ -218,6 +218,14 @@ def synth(run, args):
     slacks = re.findall(r'([-+]?\d+\.\d+)\s+slack', text)
     sta.finish(result, reason, analysis='Nangate45 typical 1.10 V / 25 C; ns, fF; 10 fF load; ideal-clock pre-layout fixture', slacks_ns=slacks)
     timing_rejections(run, args, liberty, netlist)
+    api = Case(run, 'sta-modern-api')
+    step = api.execute(['sta', '-no_init', '-exit', str(FIXTURES / 'sta_api.tcl')], timeout=args.timeout)
+    result, reason = completed(step, 'TM_STA_API_PASS')
+    if re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:', output(step)):
+        result, reason = 'FAIL', 'Unexpected OpenSTA API diagnostic'
+    api.finish(result, reason, scope='API availability only; no measured MCMM, variation or noise analysis',
+               commands=['define_scene','read_spef','set_timing_derate','annotate_noise_delays'],
+               default_pocv_mode='scalar', default_pocv_quantile=3)
 
 
 
