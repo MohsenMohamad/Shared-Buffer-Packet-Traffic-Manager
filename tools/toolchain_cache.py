@@ -76,7 +76,14 @@ def seal(identity, root=ROOT):
 
 
 def check_payload(identity, root=ROOT):
-    data = json.loads((root / MANIFEST).read_text())
+    try:
+        data = json.loads((root / MANIFEST).read_text())
+    except FileNotFoundError as error:
+        raise ValueError(
+            'Missing installation manifest ' + MANIFEST +
+            '; receive and unpack the producer handoff before validate. '
+            'For local setup run python3 tools/toolchain_cache.py prepare --jobs 2. '
+            'Consumers must not build or accept an unsealed installation.') from error
     # Compare the canonical key, since JSON converts tuples to lists.
     if data['schema_version'] != 1 or data['key'] != cache_key(identity):
         raise ValueError('Toolchain cache compatibility mismatch')
@@ -172,4 +179,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:
+        print(f'Toolchain validation/preparation failed: {error}', file=sys.stderr)
+        sys.exit(1)

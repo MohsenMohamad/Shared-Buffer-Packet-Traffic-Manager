@@ -15,6 +15,8 @@ class WorkflowTests(unittest.TestCase):
 
     def test_prs_share_a_group_but_every_main_manual_run_and_attempt_is_independent(self):
         group = re.search(r'^  group: (.+)$', self.workflow, re.M).group(1)
+        # Irrelevant labels get a unique prefix and cannot supersede active CI.
+        group = group.removeprefix("${{ github.event.action == 'labeled' && github.event.label.name != 'full-ci' && format('label-{0}-', github.run_id) || '' }}")
         # Read the formats from the actual expression. A shared ref-based group
         # or different argument list fails this contract, not just sample cases.
         match = re.fullmatch(
@@ -44,7 +46,7 @@ class WorkflowTests(unittest.TestCase):
         dependencies = re.search(r'^    needs: \[([^]]+)\]$', cleanup, re.M).group(1)
         self.assertEqual({name.strip() for name in dependencies.split(',')},
                          consumers | {'prepare'})
-        self.assertRegex(cleanup, r'if: \$\{\{ always\(\) \}\}')
+        self.assertRegex(cleanup, r"if: \$\{\{ always\(\) && needs.prepare.result != 'skipped' \}\}")
         self.assertIn('      actions: write', cleanup)
         self.assertEqual(len(re.findall(r'^\s+actions: write$', self.workflow, re.M)), 1)
         self.assertIn('needs.prepare.outputs.artifact-id', cleanup)

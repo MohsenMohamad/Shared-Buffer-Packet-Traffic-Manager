@@ -52,9 +52,11 @@ for cache identity, exact-restore rejection, cold setup and capability commands.
 
 ## Hosted iteration policy
 
-[C01](../implementation/tasks/C01-ci-economy.md) owns implementation of the
-light/full split. Until it is merged, the existing workflows remain the actual
-execution behavior; this policy is not evidence of a changed workflow.
+The CI workflow implements [C01](../implementation/tasks/C01-ci-economy.md).
+`repository-contracts` checks repository documents/requirements;
+`python-unit-syntax` runs Python unit tests and Python/JSON/shell syntax checks
+without setup, doctor or HDL tools. Empty/missing selections and import failures
+fail. `make lint` remains the separate Verilator capability check.
 
 Light repository and toolchain-independent checks run on every PR/main push,
 without path filters. Full prepared-toolchain runs are requested by ready-for-
@@ -67,3 +69,36 @@ Decide full execution inside a workflow so metadata requests are not suppressed
 by broad workflow-level Markdown path filters. Unknown paths are substantive.
 Skipped preparation means consumers/cleanup skip; it is not a hardware PASS.
 Preserve stable required-check behavior and a truthful full-CI summary.
+
+The only cosmetic path is root `README.md`. All other paths, including writing
+instructions in `docs/documentation.md`, are substantive. Classification uses
+Git's complete merge-base-to-PR-head diff with full checkout history, including
+renamed/deleted source paths; unavailable, malformed or empty diffs conservatively
+request full CI for ready PRs. Draft pushes still skip unless `full-ci` is present.
+`full-ci` persists across pushes; remove it to return a draft to light iteration.
+Only a `labeled` event for `full-ci` requests heavy work. Unrelated labels use an
+isolated concurrency group so they cannot cancel an active full request. Normal
+PR events supersede previous runs; each main/manual run/attempt stays independent.
+
+`full-ci-summary` is a stable check: it fails on failed/missing policy or light
+checks, and on any failed/cancelled/skipped/missing requested full suite. For an
+intentional light-only run it reports `NOT_REQUESTED`, never hardware PASS.
+Preparation skipped means consumers and cleanup skip. Otherwise cleanup uses
+`always()` and waits for all consumers even after failure/cancellation; its
+existing verified-artifact deletion and one-day fallback remain in effect.
+
+### Maintainer setup
+
+Create the repository label `full-ci` (exact spelling) if label requests are
+wanted; until then, marking ready requests full CI. This change does not create
+labels or edit branch protection/rulesets. Maintainers should inspect their
+current required checks: per-suite checks cannot be the sole iteration signal
+when intentionally skipped. Keep the existing hardware/integration requirements;
+use the stable `full-ci-summary` together with the light checks as appropriate,
+and require a requested, completed full run before merging implementation work.
+A green summary containing `NOT_REQUESTED` establishes only light qualification.
+Do not weaken branch rules to accept an unfinished requested run. Check names
+for existing consumer suites are unchanged.
+
+See the [C01 results report](../results/C01-ci-economy.md) for structural versus
+hosted evidence, reproduction and the helper-change cache invalidation.
