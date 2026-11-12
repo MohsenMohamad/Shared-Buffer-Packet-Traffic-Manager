@@ -30,7 +30,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         tm_packet p=new;
         tm_frame f=new;
         bit occupied;
-        int candidate;
+        int candidate, randomized;
         candidate=next_id;
         for(int attempt=0;attempt<N_DESC;attempt++) begin
             occupied=model.active!=null && model.active.desc==candidate;
@@ -42,13 +42,14 @@ class tm_scheduler_rtl_test extends uvm_test;
         if(occupied) `uvm_fatal("SCHEDULER_STIMULUS","no unowned descriptor for publication")
         // Reuse the qualified legal packet constraints for consistent framing.
         // Class 3 permits every legal directed length; repeated tags are legal.
-        if(!p.randomize() with {
+        randomized=p.randomize() with {
             qid==local::queue_id;
             length==local::packet_length;
             length_class==3;
             source==0;
             tag==0;
-        }) `uvm_fatal("SCHEDULER_PACKET", "legal packet randomization failed")
+        };
+        if(randomized==0) `uvm_fatal("SCHEDULER_PACKET", "legal packet randomization failed")
         f.qid=int'(p.qid);
         f.length=int'(p.length);
         f.source=int'(p.source);
