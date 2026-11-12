@@ -24,8 +24,9 @@ was addressed by the runner race fix merged with PR #10; preserve its history.
 
 ## Remaining decisions and work
 
-- [F01](implementation/tasks/F01-formal-symbols.md) blocks P03 until fixed symbolic
-  witnesses have a qualified recipe and unsupported constructs fail closed.
+- [F01](implementation/tasks/F01-formal-symbols.md) qualifies fixed symbolic
+  witnesses and fail-closed source guards. [Local results](results/F01-formal-symbols.md)
+  close this prerequisite for P03; queue RTL/proofs remain P03 work.
 - [R01](implementation/tasks/R01-reset-timing.md) establishes shared reset timing
   interpretation; original negative removal measurements remain recorded.
 - [A01](implementation/tasks/A01-allocator-selection.md) evaluates the demonstrated

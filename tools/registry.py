@@ -30,6 +30,11 @@ def sources(name, seen=()):
                 raise ValueError('Missing or external registered path: ' + path)
             if key != 'include_dirs' and name in ('production', 'formal', 'synthesis') and not (path.startswith('rtl/') or (name=='formal' and path.startswith('formal/'))):
                 raise ValueError('Non-production source in ' + name + ': ' + path)
+    if name == 'formal':
+        from formal_symbols import check_sources
+        # No registry-provided exception list: diagnostic fixtures cannot opt in.
+        check_sources([ROOT / p for p in result['sources'] + result['headers']],
+                      [ROOT / p for p in result['include_dirs']], legacy=True)
     return result
 
 

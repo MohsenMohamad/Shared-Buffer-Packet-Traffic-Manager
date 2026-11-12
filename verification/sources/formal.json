@@ -3,16 +3,19 @@
   "extends": "production",
   "include_dirs": [
     "formal/pools",
-    "formal/csr"
+    "formal/csr",
+    "formal/symbolic"
   ],
   "sources": [
     "formal/pools/storage_formal.sv",
-    "formal/csr/csr_formal.sv"
+    "formal/csr/csr_formal.sv",
+    "formal/symbolic/symbolic_inputs.sv"
   ],
   "headers": [
     "formal/pools/bitmap_properties.svh",
     "formal/pools/fifo_properties.svh",
-    "formal/csr/csr_properties.svh"
+    "formal/csr/csr_properties.svh",
+    "formal/symbolic/symbolic_checks.svh"
   ],
   "scope": "Local production storage and CSR protocol proofs; no integrated TM ownership or datapath proof.",
   "frontend": "slang",

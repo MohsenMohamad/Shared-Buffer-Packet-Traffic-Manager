@@ -4,7 +4,7 @@
 
 Implement descriptor-linked FIFO queues with exact publication/dispatch linearization and safe reuse of stale metadata.
 
-Dependencies: [P02](P02-storage-primitives.md), completed [F01 symbolic-input qualification](F01-formal-symbols.md). The merged stabilization work does not close F01 automatically.
+Dependencies: [P02](P02-storage-primitives.md), completed [F01 symbolic-input qualification](F01-formal-symbols.md). Use the qualified recipe and exact command in the [F01 results](../../results/F01-formal-symbols.md).
 
 ## Sources and work boundary
 

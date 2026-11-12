@@ -25,6 +25,9 @@ def read_sources(files, top, includes=(), defines=(), params=None, frontend='sla
     defines = list(defines)
     if formal and 'FORMAL' not in defines:
         defines.append('FORMAL')
+    if formal and frontend == 'slang':
+        from formal_symbols import check_text
+        check_text('\n'.join(defines), 'formal command defines')
     flags += ' ' + ' '.join('-D' + p for p in defines)
     if frontend == 'slang':
         flags += ' ' + ' '.join('-G' + k + '=' + str(v) for k, v in (params or {}).items())
@@ -72,4 +75,7 @@ enable,s_valid,m_ready,s_beat
 input clk;'''
     else:
         header = 'module csr_formal(clk,' + ','.join(ports) + ');\ninput clk;'
-    return text.replace(match[0], header, 1), ports
+    adapted = text.replace(match[0], header, 1)
+    from formal_symbols import check_text
+    check_text(adapted, source)
+    return adapted, ports

@@ -375,7 +375,7 @@ def main(argv=None):
         args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
     run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
     from frontend import selected
-    args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal') else 'synthesis')
+    args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal','formal-symbols') else 'synthesis')
     run.versions['rtl_frontend'] = args.frontend
     if action == 'formal-rtl':
         from formal_storage import formal_rtl, selection as formal_selection
@@ -413,9 +413,10 @@ def main(argv=None):
         return run.finish()
     from doctor import qualify
     from formal_bridge import bridge
+    from symbolic_qualification import qualify as symbolic_qualify
     from frontend_qualification import audit as frontend_audit, representation_formal, fifo_mapping
     from allocator_scaling import characterize
-    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge, **{'representation-formal': representation_formal, 'fifo-mapping': fifo_mapping, 'allocator-scaling': characterize})
+    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge, **{'formal-symbols': symbolic_qualify, 'representation-formal': representation_formal, 'fifo-mapping': fifo_mapping, 'allocator-scaling': characterize})
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
     gates['uvm-dpi'] = uvm_dpi
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
@@ -438,7 +439,7 @@ def main(argv=None):
     else:
         # Version records accompany direct capability runs as well as CI. Independent
         # gates continue after failures; compilation remains prerequisite to execution.
-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge', 'representation-formal', 'fifo-mapping', 'allocator-scaling', 'uvm-dpi')):
+        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge', 'formal-symbols', 'representation-formal', 'fifo-mapping', 'allocator-scaling', 'uvm-dpi')):
             qualify(run)
         for name in selected:
             try:

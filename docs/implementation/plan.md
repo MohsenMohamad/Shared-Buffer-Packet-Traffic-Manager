@@ -14,8 +14,8 @@ tested revisions and scopes remain in the linked reports. The main run
 [43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
 completed successfully. This statement records that hosted result, not a new local run.
 
-P03 is the next new hardware stage after [F01](tasks/F01-formal-symbols.md) closes
-fixed-symbol formal semantics. [R01](tasks/R01-reset-timing.md) owns reset
+P03 is the next new hardware stage. [F01](tasks/F01-formal-symbols.md) closes
+its symbolic-input prerequisite with [executed recipe evidence](../results/F01-formal-symbols.md). [R01](tasks/R01-reset-timing.md) owns reset
 constraint interpretation before new allocator/P08 studies. [A01](tasks/A01-allocator-selection.md)
 owns measured allocator alternatives and a reviewed disposition before P08.
 [C01](tasks/C01-ci-economy.md) reduces hosted iteration cost and is useful early;

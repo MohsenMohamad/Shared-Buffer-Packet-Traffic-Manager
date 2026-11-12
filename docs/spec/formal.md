@@ -56,8 +56,9 @@ stimulus as explicit top-level input ports. A time-varying input needs no
 stability assumption. A fixed arbitrary witness needs an explicit, documented
 stability assumption over the entire proof, including later DUT resets.
 
-The following is the required recipe to qualify in [F01](../implementation/tasks/F01-formal-symbols.md)
-before P03; it is not a claim that F01 has already executed:
+The following recipe is qualified by [F01](../results/F01-formal-symbols.md)
+with `make formal-symbols RUN_ARGS='--timeout 120'` at witness widths 1 and 4
+on the pinned stack. New P03 harnesses use this pattern directly:
 
 ```systemverilog
 module witness_example #(parameter int W=4)
@@ -78,11 +79,23 @@ would allow a supposedly fixed witness to change across resets. Any domain/range
 restriction is a separate assumption justified by the property. An assumption
 that fixes the witness must not inadvertently constrain unrelated traffic.
 
-F01 qualifies the recipe with a constancy assertion, an unreachable-change cover,
-distinct reachable witness values, later resets and a missing-assumption negative
-control. It adds a fail-closed check for unqualified symbolic constructs in new
-Slang formal harness source lists and included headers. Until that executable
-qualification and guard are integrated, P03's formal prerequisite remains open.
+F01 proves constancy unboundedly, checks the change cover is unreachable through
+12 steps, and reaches zero/all-ones witnesses, changing stimulus and a later
+reset. The native `anyconst` control has matching outcomes. Rejected Slang
+decoration and the missing-assumption negative both fail `a_constant` and reach
+`c_witness_change`; unknown symbolic functions are separate frontend rejections.
+The reachable covers establish non-vacuity, not a production queue proof.
+
+`tools/registry.py` checks the complete formal source/header registration and
+transitive literal includes before staging. `tools/formal_symbols.py` rejects
+unqualified `anyseq`/`anyconst` attributes and functions (also `allseq`/`allconst`)
+across all conditional branches, including multiline/comment/escaped-name
+variants. Slang formal command defines are checked too. Comments and string literals do not introduce symbols. Macro includes,
+missing/external headers and token concatenation fail closed because their
+source expansion is unqualified. This is a source-policy checker, not an RTL
+translator. The only raw-symbol exceptions are the two canonical legacy paths
+below, checked through their adapter; same-named copies and diagnostic fixtures
+cannot add registry exemptions. `make test-unit` also executes the guard tests.
 
 `tools/frontend.py` retains a narrowly qualified anyseq-to-free-input adapter for
 the two legacy harnesses `storage_formal` and `csr_formal`. Do not apply it to
