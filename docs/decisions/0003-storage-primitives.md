@@ -1,8 +1,8 @@
 # Pre-state storage and local proof boundary
 
-Historical decision: current tool/frontend restrictions and their dispositions
-are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
-and behavioral choices below remain historical records.
+Historical frontend observations are superseded by [0006](0006-modern-toolchain.md)
+and [0007](0007-rtl-representation.md). Original storage behavior and results
+remain historical records; those frontend limits are not active restrictions.
 
 The P01 storage APIs retain their names and signatures. A shared bitmap kernel
 implements one allocation and one/two return lanes; wrappers own the cell and
@@ -15,11 +15,13 @@ One widened signed count expression and one next bitmap are committed per edge.
 The FIFO uses a circular register array, occupancy, pointers and registered
 space indication. A full FIFO inserts a push bubble on the first pop. `enable`
 is the registered RUN/initialized query at integration and gates input readiness;
-it neither discards buffered beats nor stops their consumption. Payload storage
-uses plain `logic [BEAT_W-1:0]` vectors: the pinned Yosys frontend interprets an
-unpacked array of packed struct typedefs as a packed vector rather than the
-intended memory. The same vector-array RTL runs in simulation and formal, with
-packed beat records at its ports. No translated formal DUT is used.
+it neither discards buffered beats nor stops their consumption. The original native frontend misinterpreted packed-record arrays, so P02 used
+vector payload storage. Current Slang correctly infers both record and vector
+arrays. Production retains vectors because this FIFO performs whole-beat copies;
+it no longer needs the unrelated module-local record universe. Matched actual
+memory/port/full-payload mapping evidence is in the [migration report](../results/rtl-representation.md).
+Production formal still consumes the actual DUT without translation.
+
 
 `formal-smoke` remains the P00 counter fixture. `formal-rtl` selects only real
 storage APIs from the formal registry. Proof-only immediate assertions and

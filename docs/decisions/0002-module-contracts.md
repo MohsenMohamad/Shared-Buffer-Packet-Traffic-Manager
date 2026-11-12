@@ -1,16 +1,13 @@
 # Packed portable contracts and atomic ownership
 
-Historical decision: current tool/frontend restrictions and their dispositions
-are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
-and behavioral choices below remain historical records.
-
-G1 uses common parameter headers, module-local packed record types and packed
-lane vectors in production declarations. Verilator 5.054 and pinned Yosys
-`read_verilog -sv` consume identical sources. Parameterized packages/interfaces
-and unpacked ports would add unsupported frontend dependencies. Yosys does not
-accept `$bits(type)` in these port widths; explicit shared width constants are
-checked against `$bits(typed_signal)` during elaboration instead. The contracts
-suite qualifies this representation before component tasks depend on it.
+Historical representation decision, superseded by [0006](0006-modern-toolchain.md)
+and [0007](0007-rtl-representation.md). At original G1, the native frontend used
+module-local typedefs, non-ANSI ports and explicit width sums. Its wildcard-import,
+`$bits(type)` and unpacked-port restrictions explained those choices at that
+revision; they are not current language or design prohibitions. Current
+production uses ANSI declarations, a fixed shared package and scoped dependent
+types. The original G1 evidence remains historical, with no changed API,
+ownership, lane ordering or timing contract.
 
 Module APIs are deliberately named `_api` and contain no assignments. The
 external tm_top is also declaration-only. A generated elaboration harness

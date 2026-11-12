@@ -3,8 +3,10 @@
 This table assigns the representation follow-up's decisions to executable
 qualification, rather than treating old frontend observations as language rules.
 The executed results and exact identities are recorded in the
-[qualification report](../results/modern-toolchain.md). Production RTL conversion
-remains a separate PR; retain explicit open cases below.
+[qualification report](../results/modern-toolchain.md). Production RTL conversion is delivered by the separate
+[representation change](../results/rtl-representation.md); the table below
+preserves the toolchain qualification dispositions. See
+[decision 0007](../decisions/0007-rtl-representation.md) for the integrated choices.
 
 ## Capability to design
 
