@@ -28,7 +28,8 @@ invalid `group_path -from` objects, leaving selection empty. The correction uses
 register clock pins and enumerates internal names before JSON/Verilog emission,
 so fanout and timing identify the same cells. It changes neither thresholds,
 IO constraints, exceptions nor logic. Original failed evidence is retained and
-excluded from accepted timing numbers.
+excluded from accepted timing numbers. All eight original/corrected maps have
+identical area, cell histograms, state and buffer counts, independently checked.
 
 [The durable JSON](allocator-scaling.json) records exact source/lock/definition/
 library digests, tool identities, per-point measurements, mapped-to-RTL state
@@ -237,3 +238,22 @@ P02 had no matched mapped allocator timing; historical FIFO timing used differen
 IO/uncertainty conditions and different logic. Neither is a numeric comparator.
 Original reports and JSON remain unchanged. Regenerate expired raw artifacts
 using the recorded SHA, locks, definition and commands above.
+
+## Hosted execution reference
+
+[PR #9](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/9)
+has a passing [CI run](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43217405597)
+(all 21 jobs, including handoff cleanup) and a passing [allocator characterization job](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43217405597/job/131180482259).
+Its actual tested merge is `56d75b44e07e2e7f9cc429c73de5024cbcfd95e3`, with PR
+head `2dda7603a60755ca3c4d359548ccfb3d7cd7e1b5`. The fetched merge object has
+identical RTL, verification sources, experiment scripts/constraints, frontend and
+locks to the local measured revision; the runner only adds scope metadata.
+This does not replace the local tested SHA or imply execution on later metadata.
+
+GitHub reports artifact `13944132446`, size 1,805,959 bytes; its name and supplied
+SHA256 are in the JSON. The environment proxy rejects the redirected Azure Blob
+host with HTTP CONNECT 403 even though environment settings report unrestricted
+networking. The archive was **not retrieved or digest-verified**, and hosted
+numbers were **not cross-compared**. The numerical tables remain the committed
+local measurements. Job PASS and artifact metadata are verified through GitHub;
+archive verification is a separate unavailable check, not an inferred PASS.

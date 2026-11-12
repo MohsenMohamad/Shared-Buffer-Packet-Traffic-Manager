@@ -2671,5 +2671,29 @@
     "summary_sha256": "7c59affcb5b3dc65d12522682f0b5d2fb272dbb3dabc5ee5fb8ba10f7e0cc26d",
     "result": "FAIL",
     "reason": "OpenSTA warning 1554: Q/QN invalid startpoints; empty selection group. All 16 timing cases rejected; no timing acceptance from this attempt."
+  },
+  "query_correction_mapping_check": "PASS: all eight original/corrected maps have identical area, cell histogram, state bits, capacity and buffer count",
+  "hosted_execution": {
+    "pull_request": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/9",
+    "run_url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43217405597",
+    "job_url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43217405597/job/131180482259",
+    "job_result": "PASS",
+    "pr_head_revision": "2dda7603a60755ca3c4d359548ccfb3d7cd7e1b5",
+    "actual_tested_merge_revision": "56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
+    "source_comparison": "PASS: fetched actual merge object; RTL, formal, dv, verification, experiment definition, frontend and dependency/package locks identical to local tested revision; runner differs only in scope metadata",
+    "command": "make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test allocator-scaling'",
+    "measurement_comparison": "NOT_RUN: hosted archive retrieval blocked; numerical tables remain local measurements",
+    "artifact": {
+      "id": 13944132446,
+      "name": "toolchain-allocator-scaling-56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
+      "size_bytes": 1805959,
+      "sha256_from_github_metadata": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
+      "archive_digest_verified": false,
+      "retrieval_result": "TOOL_ERROR",
+      "retrieval_reason": "GitHub API returned artifact redirect; inherited environment proxy rejected CONNECT to productionresultssa6.blob.core.windows.net with 403 Forbidden. gh and independent urllib request failed.",
+      "retention_days": 14
+    },
+    "workflow_result": "PASS",
+    "successful_jobs": 21
   }
 }
