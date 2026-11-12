@@ -1,20 +1,26 @@
 module tm_axis_rx_fifo_api #(
 `include "tm_parameters.svh"
-) (clk, rst_n, enable, s_valid, s_beat, s_ready, m_valid, m_beat, m_ready, empty);
-`include "tm_types.svh"
-input logic clk, rst_n, enable;
-input logic s_valid;
-input beat_t s_beat;
-output logic s_ready, m_valid;
-output beat_t m_beat;
-input logic m_ready;
-output logic empty;
+, localparam integer BEAT_W=DATA_W+DATA_W/8+65
+) (
+    input logic clk,
+    input logic rst_n,
+    input logic enable,
+    input logic s_valid,
+    input logic [BEAT_W-1:0] s_beat,
+    output logic s_ready,
+    output logic m_valid,
+    output logic [BEAT_W-1:0] m_beat,
+    input logic m_ready,
+    output logic empty
+);
 `include "tm_validate.svh"
 
 localparam integer PTR_W=(RX_FIFO_DEPTH>1 ? $clog2(RX_FIFO_DEPTH) : 1);
 localparam integer OCC_W=$clog2(RX_FIFO_DEPTH+1);
 logic [PTR_W-1:0] rd_ptr, wr_ptr;
 logic [OCC_W-1:0] occupancy, next_occupancy;
+// Whole-beat bit copies need no field/type adaptation. Record arrays also infer
+// correctly on the selected stack; fifo-mapping compares both against baseline.
 logic [BEAT_W-1:0] storage [0:RX_FIFO_DEPTH-1];
 logic ready_q, push, pop;
 // enable is a registered RUN/initialized query at integration. Neither ready
