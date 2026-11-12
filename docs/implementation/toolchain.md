@@ -19,7 +19,7 @@ make representation-formal
 make ci JOBS=2
 ```
 
-The active candidate locks are Yosys 0.70 with its integrated slang frontend and
+The selected locks are Yosys 0.70 with its integrated slang frontend and
 ABC gitlinks, Verilator 5.054, UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative
 OpenSTA 3.2.0 source. CMake 4.4.5, SWIG 4.5.1, Eigen 5.0.1, CUDD 3.0.0 and Click
 8.5.1 are explicit dependencies. See the [inventory and source identities](modern-toolchain-plan.md)
@@ -97,7 +97,7 @@ counts. Positive failures are rerun with tracing using the same executable,
 seed and profile. The negative assertion run always saves `wave.vcd`.
 
 Verilator is two-state: X/Z propagation is unsupported. The separate current-stack reproducer retains its actual execution status in the refresh report. UVM DPI/backdoor
-services are deliberately outside the qualified `UVM_NO_DPI` baseline. No
+services are available for separately qualified uses; the default frontdoor path retains `UVM_NO_DPI`. No
 production RTL, full-system proof, physical timing signoff or silicon result
 is implied. See [the decision record](../decisions/0001-native-toolchain.md)
 and [executed results](../results/P00-toolchain.md).
@@ -255,3 +255,10 @@ parasitics, including coupling data for noise. `define_corners` is deprecated
 upstream in favor of `define_scene`. FIFO mapping records path groups and
 `timing_closure` independently of successful analysis; see the refresh report
 for the retained reset-removal violation.
+
+The executed DPI service probe passes positive/negative regex matching and
+HDL path/read/deposit using unmodified UVM C++ sources. Only its target variable
+is marked `public_flat_rw`; globally exposing the entire UVM implementation is
+unnecessary. Integer API results are compared with zero and deposit values are
+cast to `uvm_hdl_data_t`, keeping owned width diagnostics enabled. This does not
+qualify force/release, polling or X/Z semantics.

@@ -136,7 +136,7 @@ def uvm_dpi(run,args):
     case=Case(run,'uvm-dpi-services')
     uvm_src=Path(os.environ['UVM_HOME'])/'src'
     binary=case.path/'obj/Vuvm_dpi_probe'
-    argv=['verilator','--binary','--timing','--assert','--vpi','--public-flat-rw',
+    argv=['verilator','--binary','--timing','--assert','--vpi',
           '--timescale','1ns/1ps','--build-jobs',str(args.jobs),'--output-groups','4',
           '--output-split','20000','-CFLAGS','-O0 -DVERILATOR -I'+str(uvm_src/'dpi'),
           '-I'+str(uvm_src),str(uvm_src/'uvm_pkg.sv'),str(FIXTURES/'uvm_dpi.sv'),
