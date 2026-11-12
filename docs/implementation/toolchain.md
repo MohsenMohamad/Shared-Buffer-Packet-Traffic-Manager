@@ -11,6 +11,7 @@ make repo-check
 make test-unit
 make lint
 make test-uvm-smoke JOBS=2
+make uvm-dpi JOBS=2
 make formal-smoke
 make synth-smoke
 make frontends
@@ -262,3 +263,6 @@ is marked `public_flat_rw`; globally exposing the entire UVM implementation is
 unnecessary. Integer API results are compared with zero and deposit values are
 cast to `uvm_hdl_data_t`, keeping owned width diagnostics enabled. This does not
 qualify force/release, polling or X/Z semantics.
+
+DPI services have their own shared-installation CI consumer; production frontdoor
+regressions continue to use their tested no-DPI configuration.
