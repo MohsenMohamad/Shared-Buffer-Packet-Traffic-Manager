@@ -241,8 +241,8 @@ It demonstrates batching, not a complete policy/scheduler/byte/physical model.
 [Source registries](../../verification/sources/production.json) keep production,
 simulation, formal and synthesis purposes separate. Simulation inherits
 production and adds monitor headers. Synthesis/formal inherit production only;
-the formal set adds production storage and CSR harnesses/properties from
-`formal/pools/` and `formal/csr/`. No mapped TM synthesis target exists. Capability
+the formal set adds production storage, queue and CSR harnesses/properties from
+`formal/pools/`, `formal/queue/` and `formal/csr/`. No mapped TM synthesis target exists. Capability
 fixtures remain under tests/toolchain and never enter production source lists.
 Each contracts case records the selected source set, parameter values, source
 hashes and exact frontend command in the P00 evidence manifest.
@@ -263,7 +263,7 @@ P00 commands retain `toolchain`, CI `--test` gate selection and at least two
 distinct seeds for UVM replay/seed-diversity qualification. Regression suite
 selection is independent: empty, duplicate, unknown suite/profile and invalid
 seed selections fail. `formal-rtl` defaults to E0 and accepts distinct `cell`, `descriptor`, `fifo2`,
-`fifo4` and `csr` selections; it accepts no random seed. `formal-smoke` retains the
+`fifo4`, `csr` and `queues` selections; it accepts no random seed. `formal-smoke` retains the
 P00 fixture route. Other unfinished commands remain NOT_IMPLEMENTED. A
 passing declaration case is never evidence that IF/ADM/MEM/Q/SCH/CSR behavior
 exists; full PAR-01 functional regression remains for later component integration.
@@ -285,3 +285,14 @@ selects local production protocol properties. Actual datapath event wiring and
 whole-system IDLE generation remain P09/P10 integration obligations. See the
 [CSR decision](../decisions/0005-csr-events.md) and
 [proof scope](../../formal/csr/README.md).
+
+P03 registers the `queues` source set/suite and `formal-rtl --test queues`
+selection. `make regression RUN_ARGS='--profile E0 --test queues --seed 17'`
+checks the actual controller and metadata-owned `tm_desc_links` child against
+independent lists, with the actual P02 pool retaining descriptors through
+queue dispatch. Run all six profiles for qid widths 1/2/3/4 and count widths
+4/5/6/9. `make formal-rtl RUN_ARGS='--test queues --timeout 300'` selects the
+unbounded reduced FIFO proof, reachability covers and last-entry mutation.
+See the [queue proof boundary](../../formal/queue/README.md) and
+[P03 results](../results/P03-queues.md). P05 reuses the same link child once
+inside the metadata wrapper; it must not introduce another link owner.

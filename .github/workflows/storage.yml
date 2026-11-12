@@ -1,4 +1,4 @@
-name: Storage components
+name: Storage and queue components
 on:
   workflow_call:
     inputs:
@@ -26,14 +26,14 @@ jobs:
         run: |
           tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
           python3 tools/toolchain_cache.py validate
-      - name: Check storage components at every production size
+      - name: Check storage and queue components at every production size
         shell: bash
         run: |
           set -euo pipefail
           for profile in F0 F1 I0 I1 E0 E1; do
-            make regression RUN_ARGS="--profile $profile --test pools --seed 17"
+            make regression RUN_ARGS="--profile $profile --test pools --test queues --seed 17"
           done
-      - name: Prove production storage and qualify wrong-delta detection
+      - name: Prove production storage/queues and qualify seeded defect detection
         run: make formal-rtl RUN_ARGS='--timeout 240'
       - name: Preserve independent formal fixture route
         run: make formal-smoke

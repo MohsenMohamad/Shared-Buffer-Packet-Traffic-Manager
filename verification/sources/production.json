@@ -12,12 +12,14 @@
     "rtl/pools/tm_cell_pool.sv",
     "rtl/pools/tm_desc_pool.sv",
     "rtl/csr/tm_axil_regs.sv",
-    "rtl/csr/tm_statistics.sv"
+    "rtl/csr/tm_statistics.sv",
+    "rtl/queue/tm_queue_ctrl.sv",
+    "rtl/queue/tm_desc_links.sv"
   ],
   "headers": [
     "rtl/include/tm_parameters.svh",
     "rtl/include/tm_types.svh",
     "rtl/include/tm_validate.svh"
   ],
-  "scope": "Storage and CSR/statistics APIs implemented; remaining APIs and top are declarations."
+  "scope": "Storage, queues and CSR/statistics APIs implemented; remaining APIs and top are declarations."
 }

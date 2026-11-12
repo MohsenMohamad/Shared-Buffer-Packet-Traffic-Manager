@@ -128,6 +128,12 @@ class RegistrationTests(unittest.TestCase):
         self.assertFalse(any('tests/toolchain' in p for p in sources('formal')['sources']))
         self.assertEqual(selection('E0', ['pools']), ['pools'])
         self.assertEqual(selection('E0', ['csr']), ['csr'])
+        self.assertEqual(selection('E0', ['queues']), ['queues'])
+        self.assertIn('rtl/queue/tm_queue_ctrl.sv', sources('production')['sources'])
+        self.assertIn('rtl/queue/tm_desc_links.sv', sources('synthesis')['sources'])
+        self.assertIn('formal/queue/queue_formal.sv', sources('formal')['sources'])
+        self.assertIn('dv/unit/queues_tb.sv', sources('queues')['sources'])
+        self.assertNotIn('dv/unit/queues_tb.sv', sources('formal')['sources'])
         self.assertIn('rtl/csr/tm_axil_regs.sv', sources('production')['sources'])
         self.assertIn('rtl/csr/tm_statistics.sv', sources('synthesis')['sources'])
         self.assertIn('dv/fixtures/tm_csr_fixture.sv', sources('csr')['sources'])
@@ -164,7 +170,7 @@ class StorageRoutingTests(unittest.TestCase):
         from argparse import Namespace
         from formal_storage import selection as formal_selection
         specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
-        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr'})
+        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues'})
         for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
                 ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
             with self.assertRaises(ValueError):
@@ -187,5 +193,8 @@ class StorageRoutingTests(unittest.TestCase):
             with patch('csr.csr', side_effect=done) as registers:
                 self.assertEqual(main(['regression','--profile','E0','--test','csr','--seed','17','--output',folder]),0)
                 registers.assert_called_once()
+            with patch('queues.queues', side_effect=done) as queues:
+                self.assertEqual(main(['regression','--profile','E0','--test','queues','--seed','17','--output',folder]),0)
+                queues.assert_called_once()
 
 if __name__=='__main__': unittest.main()

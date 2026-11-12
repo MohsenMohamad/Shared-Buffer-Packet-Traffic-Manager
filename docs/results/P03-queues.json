@@ -1,0 +1,750 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "P03 queue/link component only; no integrated traffic-manager or timing claim",
+  "branch": "feat/descriptor-queues",
+  "tested_base_revision": "068e2c64cbf43f0bece51ff9065ab470407b4efa",
+  "tested_dirty": true,
+  "dependencies": {
+    "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+  },
+  "tool_versions": {
+    "python": "/usr/bin/python3: Python 3.13.5",
+    "rtl_frontend": "slang",
+    "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "sby": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+    "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "compiler": "/usr/bin/g++: g++ (Debian 14.2.0-19) 14.2.0"
+  },
+  "frontend_revisions": [
+    "sv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222",
+    "slang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+  ],
+  "source_digests": {
+    "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+    "formal/queue/README.md": "42b14faae66b0cb67ec2ddf188de1a7ef5dddc508db665fa36c7bae6def85fec",
+    "formal/queue/queue.sby": "744a8b44b99b0651703d3cf3533e07b1e893b7c3d26c733f77118eca73e726c1",
+    "formal/queue/queue_formal.sv": "a25f26fd5ce08a7118ea9ade8ccf744d66d3c6e1c980dcc3a614c148b8ac0c91",
+    "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+    "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+    "tools/formal_queue.py": "b0dc898b4a621d7be4e655ac5830c63af0613d33c6c6103c4e685aef4321fb79",
+    "tools/queues.py": "91596d3ac0fd6e70d196db69e75629b57f74a7d27c11e1084ee66d858f2c9f3d",
+    "verification/sources/queues.json": "12ae5b3254dac0ecec260b0ad634ec54921bbc6d13c3fc80a83fdd48bb104080",
+    "verification/formal.json": "93b7ad0dcb9331070298ede2c813cbb479b25bc5eb38fce2934f8bea4dc7b907",
+    "verification/sources/formal.json": "5171562a36bab0b3333f555810361c4df7e5bfd5fbcd2ff6f3e6fb78008bd8f2",
+    "verification/sources/production.json": "334219e84209fdcbb9f8f7a8c08daa4221b1336d53de429613684b1d75a2e531",
+    "verification/suites.json": "9d9fbfc0820e6fc9b6ef83e86e0fdb1926b7e50695b45d4267360c94fbfff3f8"
+  },
+  "simulation": [
+    {
+      "test": "queues",
+      "profile": "F0",
+      "seed": 23,
+      "result": "PASS",
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "metrics": {
+        "cycles": 12615,
+        "pushes": 9334,
+        "pops": 7909,
+        "last_replace": 77,
+        "long_replace": 310,
+        "different": 5319,
+        "empty_attempts": 1471,
+        "full": 407,
+        "reused_stale": 9030,
+        "reset_collisions": 26,
+        "rapid_reuse": 4149,
+        "read_write_collision": 69,
+        "delayed_returns": 7443,
+        "rejected_empty": 2
+      },
+      "source_set": "queues",
+      "start_utc": "2026-11-12T19:41:51.966645+00:00",
+      "end_utc": "2026-11-12T19:42:47.423060+00:00",
+      "elapsed_seconds": 55.456415,
+      "manifest": ".build/runs/regression-2026-11-12T194147.180300+0000-38c5c446/queues/manifest.json",
+      "run": "regression-2026-11-12T194147.180300+0000-38c5c446",
+      "command": "make regression RUN_ARGS='--profile F0 --test queues --seed 23 --timeout 120'",
+      "registered_rtl_digests": {
+        "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+        "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+        "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+        "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+        "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+        "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+        "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+        "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+        "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+        "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+        "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+      }
+    },
+    {
+      "test": "queues",
+      "profile": "F1",
+      "seed": 17,
+      "result": "PASS",
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2
+      },
+      "metrics": {
+        "cycles": 12615,
+        "pushes": 9262,
+        "pops": 7877,
+        "last_replace": 73,
+        "long_replace": 339,
+        "different": 5289,
+        "empty_attempts": 1424,
+        "full": 379,
+        "reused_stale": 8958,
+        "reset_collisions": 18,
+        "rapid_reuse": 4098,
+        "read_write_collision": 74,
+        "delayed_returns": 7423,
+        "rejected_empty": 2
+      },
+      "source_set": "queues",
+      "start_utc": "2026-11-12T19:41:50.812756+00:00",
+      "end_utc": "2026-11-12T19:42:49.117501+00:00",
+      "elapsed_seconds": 58.304745,
+      "manifest": ".build/runs/regression-2026-11-12T194147.283516+0000-3ef6b987/queues/manifest.json",
+      "run": "regression-2026-11-12T194147.283516+0000-3ef6b987",
+      "command": "make regression RUN_ARGS='--profile F1 --test queues --seed 17 --timeout 120'",
+      "registered_rtl_digests": {
+        "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+        "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+        "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+        "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+        "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+        "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+        "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+        "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+        "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+        "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+        "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+      }
+    },
+    {
+      "test": "queues",
+      "profile": "I0",
+      "seed": 23,
+      "result": "PASS",
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "metrics": {
+        "cycles": 12063,
+        "pushes": 7257,
+        "pops": 7095,
+        "last_replace": 257,
+        "long_replace": 807,
+        "different": 3119,
+        "empty_attempts": 1997,
+        "full": 2491,
+        "reused_stale": 7228,
+        "reset_collisions": 12,
+        "rapid_reuse": 4187,
+        "read_write_collision": 189,
+        "delayed_returns": 7047,
+        "rejected_empty": 2
+      },
+      "source_set": "queues",
+      "start_utc": "2026-11-12T19:42:54.373939+00:00",
+      "end_utc": "2026-11-12T19:43:42.022445+00:00",
+      "elapsed_seconds": 47.648506,
+      "manifest": ".build/runs/regression-2026-11-12T194247.708248+0000-9f86a9bd/queues/manifest.json",
+      "run": "regression-2026-11-12T194247.708248+0000-9f86a9bd",
+      "command": "make regression RUN_ARGS='--profile I0 --test queues --seed 23 --timeout 120'",
+      "registered_rtl_digests": {
+        "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+        "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+        "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+        "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+        "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+        "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+        "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+        "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+        "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+        "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+        "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+      }
+    },
+    {
+      "test": "queues",
+      "profile": "I1",
+      "seed": 17,
+      "result": "PASS",
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2
+      },
+      "metrics": {
+        "cycles": 12063,
+        "pushes": 7299,
+        "pops": 7153,
+        "last_replace": 270,
+        "long_replace": 771,
+        "different": 3289,
+        "empty_attempts": 1860,
+        "full": 2338,
+        "reused_stale": 7270,
+        "reset_collisions": 6,
+        "rapid_reuse": 4147,
+        "read_write_collision": 198,
+        "delayed_returns": 7096,
+        "rejected_empty": 2
+      },
+      "source_set": "queues",
+      "start_utc": "2026-11-12T19:42:54.411639+00:00",
+      "end_utc": "2026-11-12T19:43:43.030292+00:00",
+      "elapsed_seconds": 48.618653,
+      "manifest": ".build/runs/regression-2026-11-12T194249.282193+0000-6da815c1/queues/manifest.json",
+      "run": "regression-2026-11-12T194249.282193+0000-6da815c1",
+      "command": "make regression RUN_ARGS='--profile I1 --test queues --seed 17 --timeout 120'",
+      "registered_rtl_digests": {
+        "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+        "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+        "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+        "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+        "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+        "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+        "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+        "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+        "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+        "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+        "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+      }
+    },
+    {
+      "test": "queues",
+      "profile": "E0",
+      "seed": 17,
+      "result": "PASS",
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "metrics": {
+        "cycles": 12035,
+        "pushes": 7163,
+        "pops": 7104,
+        "last_replace": 719,
+        "long_replace": 1359,
+        "different": 2169,
+        "empty_attempts": 1893,
+        "full": 2465,
+        "reused_stale": 7148,
+        "reset_collisions": 7,
+        "rapid_reuse": 4138,
+        "read_write_collision": 293,
+        "delayed_returns": 7066,
+        "rejected_empty": 2
+      },
+      "source_set": "queues",
+      "start_utc": "2026-11-12T19:43:48.078256+00:00",
+      "end_utc": "2026-11-12T19:44:34.566086+00:00",
+      "elapsed_seconds": 46.48783,
+      "manifest": ".build/runs/regression-2026-11-12T194343.197058+0000-f89705a6/queues/manifest.json",
+      "run": "regression-2026-11-12T194343.197058+0000-f89705a6",
+      "command": "make regression RUN_ARGS='--profile E0 --test queues --seed 17 --timeout 120'",
+      "registered_rtl_digests": {
+        "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+        "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+        "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+        "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+        "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+        "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+        "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+        "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+        "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+        "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+        "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+      }
+    },
+    {
+      "test": "queues",
+      "profile": "E1",
+      "seed": 23,
+      "result": "PASS",
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2
+      },
+      "metrics": {
+        "cycles": 12119,
+        "pushes": 7551,
+        "pops": 7192,
+        "last_replace": 127,
+        "long_replace": 448,
+        "different": 3830,
+        "empty_attempts": 1932,
+        "full": 2193,
+        "reused_stale": 7492,
+        "reset_collisions": 17,
+        "rapid_reuse": 4123,
+        "read_write_collision": 111,
+        "delayed_returns": 7128,
+        "rejected_empty": 2
+      },
+      "source_set": "queues",
+      "start_utc": "2026-11-12T19:43:45.990742+00:00",
+      "end_utc": "2026-11-12T19:44:36.982111+00:00",
+      "elapsed_seconds": 50.991369,
+      "manifest": ".build/runs/regression-2026-11-12T194342.329996+0000-93c20282/queues/manifest.json",
+      "run": "regression-2026-11-12T194342.329996+0000-93c20282",
+      "command": "make regression RUN_ARGS='--profile E1 --test queues --seed 23 --timeout 120'",
+      "registered_rtl_digests": {
+        "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+        "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+        "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+        "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+        "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+        "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+        "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+        "dv/unit/queues_tb.sv": "3e6c37933acff5aef6fb76a1cfcaf9d1f648cd529e09281f4545ff13ca8f7f84",
+        "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+        "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+        "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+      }
+    }
+  ],
+  "formal": {
+    "command": "make formal-rtl RUN_ARGS='--test queues --timeout 300'",
+    "families": [
+      "FP-QUEUE",
+      "FP-ORDER"
+    ],
+    "prove_depth": 4,
+    "cover_depth": 16,
+    "mutation_depth": 8,
+    "results": [
+      {
+        "test": "rtl-queues-prove",
+        "profile": "E0",
+        "seed": null,
+        "result": "PASS",
+        "expected": "PROVE",
+        "engine_status": "PASS",
+        "method": "unbounded k-induction",
+        "configuration": {
+          "top": "queue_formal",
+          "N_RX": 1,
+          "N_Q": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "CELL_BYTES": 16,
+          "MAX_PACKET_BYTES": 128,
+          "families": [
+            "FP-QUEUE",
+            "FP-ORDER"
+          ]
+        },
+        "frontend": "slang",
+        "engine": "smtbmc z3",
+        "assumptions": "Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.",
+        "source_set": "formal",
+        "start_utc": "2026-11-12T19:45:20.826347+00:00",
+        "end_utc": "2026-11-12T19:46:20.589432+00:00",
+        "elapsed_seconds": 59.763085,
+        "manifest": ".build/runs/formal-rtl-2026-11-12T194518.055255+0000-24a4e80c/rtl-queues-prove/manifest.json",
+        "covers": [],
+        "assertion_failures": [],
+        "engine_elapsed_seconds": [
+          "59"
+        ],
+        "run": "formal-rtl-2026-11-12T194518.055255+0000-24a4e80c",
+        "registered_rtl_digests": {
+          "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+          "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+          "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+          "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+          "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+          "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+          "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+          "formal/queue/queue_formal.sv": "a25f26fd5ce08a7118ea9ade8ccf744d66d3c6e1c980dcc3a614c148b8ac0c91",
+          "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+          "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+          "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+        },
+        "compiled_sources": [
+          "rtl/include/tm_fixed.sv",
+          "rtl/queue/tm_queue_ctrl.sv",
+          "rtl/queue/tm_desc_links.sv",
+          "formal/queue/queue_formal.sv"
+        ]
+      },
+      {
+        "test": "rtl-queues-cover",
+        "profile": "E0",
+        "seed": null,
+        "result": "PASS",
+        "expected": "COVER",
+        "engine_status": "PASS",
+        "method": "bounded reachability depth 16",
+        "configuration": {
+          "top": "queue_formal",
+          "N_RX": 1,
+          "N_Q": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "CELL_BYTES": 16,
+          "MAX_PACKET_BYTES": 128,
+          "families": [
+            "FP-QUEUE",
+            "FP-ORDER"
+          ]
+        },
+        "frontend": "slang",
+        "engine": "smtbmc z3",
+        "assumptions": "Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.",
+        "source_set": "formal",
+        "start_utc": "2026-11-12T19:46:20.590165+00:00",
+        "end_utc": "2026-11-12T19:48:05.900113+00:00",
+        "elapsed_seconds": 105.309948,
+        "manifest": ".build/runs/formal-rtl-2026-11-12T194518.055255+0000-24a4e80c/rtl-queues-cover/manifest.json",
+        "covers": [
+          {
+            "name": "c_empty_attempt",
+            "step": 3
+          },
+          {
+            "name": "c_reset_active",
+            "step": 4
+          },
+          {
+            "name": "c_last_replace",
+            "step": 4
+          },
+          {
+            "name": "c_long_replace",
+            "step": 5
+          },
+          {
+            "name": "c_two_qids",
+            "step": 5
+          },
+          {
+            "name": "c_reset_collision",
+            "step": 5
+          },
+          {
+            "name": "c_full",
+            "step": 11
+          }
+        ],
+        "assertion_failures": [],
+        "engine_elapsed_seconds": [
+          "105"
+        ],
+        "run": "formal-rtl-2026-11-12T194518.055255+0000-24a4e80c",
+        "registered_rtl_digests": {
+          "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+          "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+          "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+          "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+          "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+          "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+          "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+          "formal/queue/queue_formal.sv": "a25f26fd5ce08a7118ea9ade8ccf744d66d3c6e1c980dcc3a614c148b8ac0c91",
+          "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+          "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+          "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+        },
+        "compiled_sources": [
+          "rtl/include/tm_fixed.sv",
+          "rtl/queue/tm_queue_ctrl.sv",
+          "rtl/queue/tm_desc_links.sv",
+          "formal/queue/queue_formal.sv"
+        ]
+      },
+      {
+        "test": "rtl-queues-mutation",
+        "profile": "E0",
+        "seed": null,
+        "result": "PASS",
+        "expected": "ORDER_COUNTEREXAMPLE",
+        "engine_status": "FAIL",
+        "method": "unbounded k-induction",
+        "configuration": {
+          "top": "queue_formal",
+          "N_RX": 1,
+          "N_Q": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "CELL_BYTES": 16,
+          "MAX_PACKET_BYTES": 128,
+          "families": [
+            "FP-QUEUE",
+            "FP-ORDER"
+          ]
+        },
+        "frontend": "slang",
+        "engine": "smtbmc z3",
+        "assumptions": "Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.",
+        "source_set": "formal",
+        "start_utc": "2026-11-12T19:48:05.901049+00:00",
+        "end_utc": "2026-11-12T19:48:40.228667+00:00",
+        "elapsed_seconds": 34.327618,
+        "manifest": ".build/runs/formal-rtl-2026-11-12T194518.055255+0000-24a4e80c/rtl-queues-mutation/manifest.json",
+        "covers": [],
+        "assertion_failures": [
+          "a_link_port",
+          "g_order[1].a_order"
+        ],
+        "engine_elapsed_seconds": [
+          "34"
+        ],
+        "run": "formal-rtl-2026-11-12T194518.055255+0000-24a4e80c",
+        "inspected_counterexample": {
+          "qid": 1,
+          "pre_count": 1,
+          "dispatched_old_desc": 0,
+          "committed_desc": 4,
+          "stale_old_head_next": 2,
+          "mutant_post_head": 2,
+          "expected_post_head": 4
+        },
+        "registered_rtl_digests": {
+          "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+          "rtl/include/tm_module_ports.sv": "34f5329885dfdccb2a99e0c889eb1496341a83cd56d1ae9c3f9b6aebabbf8591",
+          "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+          "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+          "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+          "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+          "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+          "formal/queue/queue_formal.sv": "a25f26fd5ce08a7118ea9ade8ccf744d66d3c6e1c980dcc3a614c148b8ac0c91",
+          "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+          "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+          "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+        },
+        "compiled_sources": [
+          "rtl/include/tm_fixed.sv",
+          "rtl/queue/tm_queue_ctrl.sv",
+          "rtl/queue/tm_desc_links.sv",
+          "formal/queue/queue_formal.sv"
+        ]
+      }
+    ]
+  },
+  "checks": [
+    {
+      "command": "make formal-symbols RUN_ARGS='--timeout 120'",
+      "run": "formal-symbols-2026-11-12T193907.034559+0000-abacd6b4",
+      "result": "PASS",
+      "cases": 28,
+      "case_results": [
+        {
+          "test": "versions",
+          "result": "PASS"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-source-guards",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-unsupported-functions",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-native-w1-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-native-w1-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-native-w1-reach",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-decorated-w1-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-decorated-w1-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-recipe-w1-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-recipe-w1-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-recipe-w1-reach",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-missing-assumption-w1-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-missing-assumption-w1-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-missing-assumption-w1-reach",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-native-w4-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-native-w4-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-native-w4-reach",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-decorated-w4-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-decorated-w4-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-recipe-w4-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-recipe-w4-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-recipe-w4-reach",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-missing-assumption-w4-prove",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-missing-assumption-w4-change",
+          "result": "PASS"
+        },
+        {
+          "test": "symbolic-missing-assumption-w4-reach",
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "command": "make regression RUN_ARGS='--profile E0 --test contracts --seed 17 --timeout 120'",
+      "run": "regression-2026-11-12T194353.791527+0000-d99eced2",
+      "result": "PASS",
+      "cases": 76
+    },
+    {
+      "command": "make lint",
+      "run": "lint-2026-11-12T194259.619788+0000-a015fb8c",
+      "result": "PASS",
+      "scope": "Existing capability fixture lint; production queue warning/assertion checks are its simulation builds."
+    },
+    {
+      "command": "python3 tools/check_light.py",
+      "result": "PASS",
+      "unit_tests": 73
+    },
+    {
+      "command": "python3 tools/check_repository.py",
+      "result": "PASS",
+      "requirements": 52
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "residual_obligations": [
+    "P04/P11A legal pre-state scheduler dispatch and TX acceptance",
+    "P05 instantiate same descriptor-link child once in metadata wrapper; immutable information and TX final-return timing",
+    "P09/P10/P11A legal RX-owned complete commits, not already queued, no FREE/TX/ABORT alias, actual P02 pool/accounting/reset composition",
+    "Commit-to-output payload order and global ownership/conservation remain unproved"
+  ]
+}
