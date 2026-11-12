@@ -199,7 +199,8 @@ def packet_followup(run, args, binary, build_result, parameters, seed):
                   fatals == [marker] and wave.is_file() and wave.stat().st_size > 0)
             first_failure(case, step, marker)
             case.data['artifacts']['waveform'] = str(wave)
-            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended first checker detection/waveform missing',
+            case.finish('PASS' if ok else ('TIMEOUT' if step['result'] == 'TIMEOUT' else 'FAIL'),
+                        None if ok else 'Intended first checker detection/waveform missing',
                         expected='SEEDED_DEFECT_DETECTION', detector=marker, observed_fatals=fatals)
         else:
             status, reason = run_result(step, marker)

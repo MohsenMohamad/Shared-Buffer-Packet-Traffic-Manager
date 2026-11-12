@@ -120,7 +120,7 @@ class tm_byte_checker extends uvm_component;
             if(s.beat.user!={16'b0, 8'(f.source), 16'(f.tag), 16'(f.length), 8'(f.qid)})
                 `uvm_fatal("BYTE_METADATA","output metadata changed")
             if(s.beat.keep!=8'((1<<((f.length-output_offset>=8)?8:f.length-output_offset))-1) || s.beat.last!=(f.length-output_offset<=8))
-            `uvm_fatal("BYTE_FRAMING","output keep/last mismatch")
+                `uvm_fatal("BYTE_FRAMING","output keep/last mismatch")
             for(int lane = 0;lane<8;lane++) if(s.beat.keep[lane]) begin
                 if(output_offset>=f.bytes.size() || s.beat.data[lane*8+:8]!=f.bytes[output_offset])
                     `uvm_fatal("BYTE_CORRUPTION", $sformatf("payload mismatch key=%s offset=%0d", f.key(), output_offset))
@@ -262,7 +262,7 @@ class tm_service_checker extends uvm_component;
         // A newly allocated ID cannot also be returned on this edge.
         if(t.cell_free.valid && (!cell_owned.exists(int'(t.cell_free.id)) ||
             (t.cell_alloc.valid && t.cell_alloc.id==t.cell_free.id)))
-                `uvm_fatal("CELL_RETURN","return must have a pre-state owner")
+            `uvm_fatal("CELL_RETURN","return must have a pre-state owner")
         if(t.abort_done.valid && !descriptors.exists(int'(t.abort_done.desc)))
             `uvm_fatal("ABORT_DONE","completion must have a pre-state owner")
         if(t.tx_done.valid && !descriptors.exists(int'(t.tx_done.desc)))
@@ -272,7 +272,7 @@ class tm_service_checker extends uvm_component;
         // Compare observations to independently reconstructed pre-state.
         if({live.unreserved, live.reserved_free, live.assigned, live.physical_free, live.free_desc}!=
             {CELL_COUNT_W'(unreserved_cells), CELL_COUNT_W'(reserved_cells), CELL_COUNT_W'(assigned_cells), CELL_COUNT_W'(N_CELL-assigned_cells), DESC_COUNT_W'(free_descriptors)})
-        `uvm_fatal("RESOURCE_LIVE","live resources disagree with model")
+            `uvm_fatal("RESOURCE_LIVE","live resources disagree with model")
         foreach(queue_owned_cells[q]) if(live.owned[q*CELL_COUNT_W+:CELL_COUNT_W]!=CELL_COUNT_W'(queue_owned_cells[q]))
             `uvm_fatal("RESOURCE_H","queue budget mismatch")
     endfunction
@@ -389,7 +389,7 @@ class tm_service_checker extends uvm_component;
                 t.admit.tag!=16'(f.tag) ||
                 t.admit.accept!=(rejection_reason==0) ||
                 int'(t.admit.reason)!=rejection_reason)
-            `uvm_fatal("ADMISSION_PREDICATE","admission/reason disagrees with observed header and pre-state credits")
+                `uvm_fatal("ADMISSION_PREDICATE","admission/reason disagrees with observed header and pre-state credits")
             if(rejection_reason!=2 && rejection_reason!=1 && t.admit.ncell!=CELL_COUNT_W'(required_cells))
                 `uvm_fatal("ADMISSION_SIZE","wrong reservation")
             f.survives = (rejection_reason==0);
@@ -609,7 +609,7 @@ class tm_schedule_checker extends uvm_component;
                 `uvm_fatal("SCHEDULE_OUTPUT","output is not dispatched packet")
             if((t.cell_free.valid && t.cell_free.desc!=DESC_ID_W'(active.desc)) ||
                 (t.tx_done.valid && t.tx_done.desc!=DESC_ID_W'(active.desc)))
-                    `uvm_fatal("SCHEDULE_RETIRE","release of a different packet")
+                `uvm_fatal("SCHEDULE_RETIRE","release of a different packet")
             offset+=$countones(b.output_sample.beat.keep);
             if(t.cell_free.valid!=((offset%CELL_BYTES==0)||b.output_sample.beat.last))
                 `uvm_fatal("SCHEDULE_RETIRE","incorrect cell retirement boundary")
