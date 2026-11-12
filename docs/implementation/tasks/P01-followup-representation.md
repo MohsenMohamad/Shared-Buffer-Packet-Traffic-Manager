@@ -60,4 +60,5 @@ object named in `verification/representation.json`; CI fetches full history.
 Source-relative filenames containing whitespace remain unqualified.
 
 The [migration report](../../results/rtl-representation.md) records actual results;
-acceptance requires applicable final-candidate CI. P03+ stays paused.
+acceptance requires applicable final-candidate CI, including independent
+CSR/statistics regression on all six profiles and the existing E0/I0 P07 fixtures. P03+ stays paused.
