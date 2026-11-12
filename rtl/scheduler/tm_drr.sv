@@ -44,7 +44,8 @@ generate if (SCHED_MODE==0) begin : g_packet_rr
         if (rst_n && cfg.run && !tx_owned) begin
             if (!nonempty) cursor_next = successor(cursor);
             else if (tx_ready) begin
-                dispatch = '{1'b1, cursor, heads[cursor*DESC_ID_W +: DESC_ID_W], selected_info};
+                dispatch = '{valid:1'b1, qid:cursor,
+                    desc:heads[cursor*DESC_ID_W +: DESC_ID_W], info:selected_info};
                 cursor_next = successor(cursor);
             end
         end
@@ -72,7 +73,8 @@ end else begin : g_drr
                     cursor_next = successor(cursor);
                     visit_next = 1'b0;
                 end else if (tx_ready) begin
-                    dispatch = '{1'b1, cursor, heads[cursor*DESC_ID_W +: DESC_ID_W], selected_info};
+                    dispatch = '{valid:1'b1, qid:cursor,
+                        desc:heads[cursor*DESC_ID_W +: DESC_ID_W], info:selected_info};
                     deficits_next[cursor*DEFICIT_W +: DEFICIT_W] =
                         DEFICIT_W'(credit-(DEFICIT_W+1)'(selected_info.length));
                     // Only a merged zero count closes a dispatched visit.

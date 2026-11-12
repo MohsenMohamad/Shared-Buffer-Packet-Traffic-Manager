@@ -166,6 +166,11 @@ jobs:
     uses: ./.github/workflows/csr.yml
     with:
       toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+  scheduler:
+    needs: prepare
+    uses: ./.github/workflows/scheduler.yml
+    with:
+      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
   foundation:
     needs: prepare
     uses: ./.github/workflows/uvm-foundation.yml
@@ -174,7 +179,7 @@ jobs:
   cleanup-handoff:
     name: cleanup-handoff
     if: ${{ always() && needs.prepare.result != 'skipped' }}
-    needs: [prepare, capability, contracts, storage, csr, foundation]
+    needs: [prepare, capability, contracts, storage, csr, foundation, scheduler]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -197,7 +202,7 @@ jobs:
   full-ci-summary:
     name: full-ci-summary
     if: ${{ always() }}
-    needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation]
+    needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation, scheduler]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

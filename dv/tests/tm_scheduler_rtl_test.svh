@@ -4,8 +4,9 @@ class tm_scheduler_rtl_test extends uvm_test;
     tm_schedule_checker model;
     tm_frame transmitting;
     int tx_offset, next_id, cycles, grants, replacements, longer, different;
-    int stalls, completions, reactivations, max_credit, waiting, continuing;
-        covergroup policy_cg with function sample(int collision, bit busy, bit reactivation, int relation);
+    int stalls, completions, reactivations, max_credit, waiting, continuing, bound_hits;
+    bit [N_Q-1:0] served='0;
+    covergroup policy_cg with function sample(int collision, bit busy, bit reactivation, int relation);
         option.per_instance=1;
         update_kind: coverpoint collision { bins none={0}; bins singleton={1}; bins longer={2}; bins different={3}; }
         tx_busy: coverpoint busy;
@@ -70,7 +71,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         vif.commit='0; vif.tx_done='0;
         if(cq>=0) begin
             committed=packet(cq,length);
-            vif.commit='{1'b1,Q_ID_W'(cq),DESC_ID_W'(committed.desc),committed.descriptor};
+            vif.commit='{valid:1'b1,desc:DESC_ID_W'(committed.desc),qid:Q_ID_W'(cq),info:committed.descriptor};
         end
         if(transmitting!=null) begin
             b.output_sample.valid=1; b.output_sample.ready=sink_ready;
@@ -87,12 +88,17 @@ class tm_scheduler_rtl_test extends uvm_test;
         @(posedge vif.clk);
         b.policy.commit=vif.commit; b.policy.dispatch=vif.dispatch; b.policy.tx_done=vif.tx_done;
         q=model.cursor; credit=model.deficit[q]+(model.visit ? 0 : model.quanta[q]);
+        if(SCHED_MODE==1 && run && model.active==null && model.queues[q].frames.size()>0) begin
+            if(credit>max_credit) max_credit=credit;
+            if(credit==4096+MAX_PACKET_BYTES-1) bound_hits++;
+        end
         relation=model.queues[q].frames.size()==0 ? 0 :
             (model.queues[q].frames[0].length>credit ? 0 : (model.queues[q].frames[0].length==credit ? 1 : 2));
         activation=cq>=0 && model.queues[cq].frames.size()==0;
         if(activation) reactivations++;
         if(vif.dispatch.valid) begin
             grants++;
+            served[vif.dispatch.qid]=1;
             if(model.visit) continuing++;
             if(cq==int'(vif.dispatch.qid)) begin
                 collision=model.queues[cq].frames.size()==1 ? 1 : 2;
@@ -160,7 +166,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         if(model.active==null || model.dispatched_bytes[0]==0 || model.dispatched_bytes[1]==0 ||
            model.cleared[0]!=0 || model.cleared[1]!=0)
             `uvm_fatal("SCHEDULE_ACCOUNTING","saturated endpoint not exercised")
-        `uvm_info("SCHEDULER_BYTES",$sformatf("quantum0=%0d quantum1=%0d dispatch0=%0d dispatch1=%0d delivered0=%0d delivered1=%0d deficit0=%0d deficit1=%0d inflight=%0d",quantum0,quantum1,model.dispatched_bytes[0],model.dispatched_bytes[1],model.delivered_bytes[0],model.delivered_bytes[1],model.deficit[0],model.deficit[1],model.active.length-model.offset),UVM_NONE)
+        `uvm_info("SCHEDULER_BYTES",$sformatf("quantum0=%0d quantum1=%0d dispatch0=%0d dispatch1=%0d delivered0=%0d delivered1=%0d deficit0=%0d deficit1=%0d inflight=%0d visits0=%0d visits1=%0d",quantum0,quantum1,model.dispatched_bytes[0],model.dispatched_bytes[1],model.delivered_bytes[0],model.delivered_bytes[1],model.deficit[0],model.deficit[1],model.active.length-model.offset,model.completed_visits[0],model.completed_visits[1]),UVM_NONE)
         drain();
     endtask
     task run_phase(uvm_phase phase);
@@ -179,22 +185,27 @@ class tm_scheduler_rtl_test extends uvm_test;
         reset_case(4096,64);
         step(0,1,0); step(0,1,0); step(0,MAX_PACKET_BYTES,0); step(1,MAX_PACKET_BYTES,0);
         until_eligible(); step(0,MAX_PACKET_BYTES); // Longer same-qid update.
-        finish_tx(); until_eligible(); step(1,64); // Different qid update.
+        finish_tx(); until_eligible(); step((model.cursor+1)%N_Q,64); // Different qid update.
         drain();
         // Fixed maximum quantum, repeated maximum lengths and singleton
         // replacements exercise carry near the arithmetic bound.
         reset_case(4096,4096);
         step(0,1,0);
-        repeat(12) begin
+        repeat((4096/MAX_PACKET_BYTES+1)*3) begin
             until_eligible(); step(0,MAX_PACKET_BYTES);
             finish_tx();
         end
         drain();
         saturated(MAX_PACKET_BYTES,MAX_PACKET_BYTES);
         saturated(64,128);
+        reset_case(64,64);
+        for(int q=0;q<N_Q;q++) step(q,1,0);
+        drain();
+        if(!(&served)) `uvm_fatal("SCHEDULER_COVERAGE","a qid was not served")
+        if(SCHED_MODE==1 && bound_hits==0) `uvm_fatal("SCHEDULER_COVERAGE","maximum arithmetic bound not reached")
         if(grants==0 || replacements==0 || longer==0 || different==0 || stalls==0 || waiting==0 || reactivations==0)
             `uvm_fatal("SCHEDULER_COVERAGE","mandatory scenario absent")
-        `uvm_info("SCHEDULER",$sformatf("TM_SCHEDULER_PASS mode=%0d grants=%0d replacement=%0d longer=%0d different=%0d stalls=%0d waiting=%0d reactivation=%0d continuing=%0d max_credit=%0d cycles=%0d",SCHED_MODE,grants,replacements,longer,different,stalls,waiting,reactivations,continuing,max_credit,cycles),UVM_NONE)
+        `uvm_info("SCHEDULER",$sformatf("TM_SCHEDULER_PASS mode=%0d grants=%0d replacement=%0d longer=%0d different=%0d stalls=%0d waiting=%0d reactivation=%0d continuing=%0d max_credit=%0d bound_hits=%0d qids=%0d cycles=%0d",SCHED_MODE,grants,replacements,longer,different,stalls,waiting,reactivations,continuing,max_credit,bound_hits,$countones(served),cycles),UVM_NONE)
         phase.drop_objection(this);
     endtask
 endclass

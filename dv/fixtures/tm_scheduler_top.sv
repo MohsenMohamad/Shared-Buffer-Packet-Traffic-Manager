@@ -32,6 +32,27 @@ module tm_scheduler_top;
     logic [N_Q*DESC_INFO_W-1:0] head_info;
     desc_link_write_t next_write;
     desc_id_t old_head_next;
+    logic observed_tx_owned;
+    always_ff @(posedge clk or negedge io.rst_n) begin
+        if(!io.rst_n) observed_tx_owned<=0;
+        else begin
+            if(io.tx_done.valid) observed_tx_owned<=0;
+            if(io.dispatch.valid) observed_tx_owned<=1;
+        end
+    end
+    a_eligible: assert property (@(posedge clk) disable iff(!io.rst_n)
+        io.dispatch.valid |-> io.cfg.run && io.tx_ready && !observed_tx_owned &&
+        io.counts[io.dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]!=0 &&
+        io.dispatch.desc==io.heads[io.dispatch.qid*DESC_ID_W +: DESC_ID_W])
+        else $fatal(1,"SCHEDULER_GRANT");
+    a_busy_freeze: assert property (@(posedge clk) disable iff(!io.rst_n)
+        observed_tx_owned |=> $stable(io.deficits))
+        else $fatal(1,"SCHEDULER_FREEZE");
+    for(genvar q=0;q<N_Q;q++) begin : g_bounds
+        a_bounds: assert property (@(posedge clk) disable iff(!io.rst_n)
+            int'(io.deficits[q*DEFICIT_W +: DEFICIT_W])<=4096+MAX_PACKET_BYTES-1)
+            else $fatal(1,"SCHEDULER_BOUNDS");
+    end
     for(genvar q=0;q<N_Q;q++) begin : g_query
         assign head_info[q*DESC_INFO_W +: DESC_INFO_W]=metadata[io.heads[q*DESC_ID_W +: DESC_ID_W]];
     end

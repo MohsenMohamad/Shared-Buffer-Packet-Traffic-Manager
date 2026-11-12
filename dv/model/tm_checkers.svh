@@ -525,7 +525,7 @@ class tm_schedule_checker extends uvm_component;
     tm_frame active;
     tm_baseline_schedule_timing baseline_timing;
     int cursor, deficit[N_Q], quantum = MAX_PACKET_BYTES, dispatches, offset;
-    int quanta[N_Q], mode = 1;
+    int quanta[N_Q], mode = 1, visit_entries[N_Q], completed_visits[N_Q];
     longint added[N_Q], dispatched_bytes[N_Q], delivered_bytes[N_Q], cleared[N_Q];
     bit visit;
     function new(string name, uvm_component parent);
@@ -539,6 +539,8 @@ class tm_schedule_checker extends uvm_component;
         foreach(queues[q]) begin
             queues[q].frames.delete();
             deficit[q] = 0;
+            visit_entries[q] = 0;
+            completed_visits[q] = 0;
             added[q] = 0;
             dispatched_bytes[q] = 0;
             delivered_bytes[q] = 0;
@@ -564,7 +566,8 @@ class tm_schedule_checker extends uvm_component;
         if(run && baseline_timing.inspect_queue(active != null) && queues[q].frames.size()!=0) begin
             if(mode==1 && !visit) begin
                 credit+=(quanta[q]==0 ? quantum : quanta[q]);
-                added[q]+=(quanta[q]==0 ? quantum : quanta[q]);
+                visit_entries[q]++;
+                added[q]+=(quanta[q]==0 ? longint'(quantum) : longint'(quanta[q]));
             end
             f = queues[q].frames[0];
             grant = tx_ready && (mode==0 || f.length<=credit);
@@ -594,14 +597,14 @@ class tm_schedule_checker extends uvm_component;
             removed = queues[q].frames.pop_front();
             active = f;
             offset = 0;
-            dispatched_bytes[q]+=f.length;
+            dispatched_bytes[q]+=longint'(f.length);
             deficit[q] = mode==1 ? credit-f.length : 0;
             visit = mode==1;
             if(mode==0) cursor = (q+1)%N_Q;
             dispatches++;
         end else if(active==null && run) begin
             if(queues[q].frames.size()==0) begin
-                cleared[q]+=deficit[q];
+                cleared[q]+=longint'(deficit[q]);
                 deficit[q] = 0;
                 cursor = (q+1)%N_Q;
                 visit = 0;
@@ -609,12 +612,16 @@ class tm_schedule_checker extends uvm_component;
                 deficit[q] = credit;
                 // Readiness cannot end a visit whose head fits.
                 visit = queues[q].frames[0].length<=credit;
-                if(!visit) cursor = (q+1)%N_Q;
+                if(!visit) begin
+                    completed_visits[q]++;
+                    cursor = (q+1)%N_Q;
+                end
             end else if(tx_ready) cursor = (q+1)%N_Q;
         end
         if(committed_frame!=null) queues[committed_frame.qid].frames.push_back(committed_frame);
         if(grant && queues[q].frames.size()==0) begin
-            cleared[q]+=deficit[q];
+            if(mode==1) completed_visits[q]++;
+            cleared[q]+=longint'(deficit[q]);
             deficit[q] = 0;
             visit = 0;
             cursor = (q+1)%N_Q;
@@ -649,10 +656,12 @@ class tm_schedule_checker extends uvm_component;
     function void check_accounting();
         longint inflight;
         foreach(deficit[q]) begin
-            inflight = active!=null && active.qid==q ? active.length-offset : 0;
+            inflight = active!=null && active.qid==q ? longint'(active.length)-longint'(offset) : 0;
             if(dispatched_bytes[q]!=delivered_bytes[q]+inflight)
                 `uvm_fatal("SCHEDULE_ACCOUNTING", "dispatch/delivery endpoint mismatch")
-            if(mode==1 && (added[q]!=dispatched_bytes[q]+deficit[q]+cleared[q] ||
+            if(mode==1 && added[q]!=longint'(visit_entries[q])*(quanta[q]==0 ? longint'(quantum) : longint'(quanta[q])))
+                `uvm_fatal("SCHEDULE_ACCOUNTING", "visit/quantum equation failed")
+            if(mode==1 && (added[q]!=dispatched_bytes[q]+longint'(deficit[q])+cleared[q] ||
                           deficit[q]<0 || deficit[q]>4096+MAX_PACKET_BYTES-1))
                 `uvm_fatal("SCHEDULE_ACCOUNTING", "byte credit equation or bounds failed")
         end

@@ -58,9 +58,13 @@ package tm_bench_pkg;
     `include "tm_handshake_recorder.svh"
     `include "tm_axil_agent.svh"
     `include "tm_checkers.svh"
+    // Component scheduler runs retain the agents/packet objects/checkers;
+    // unrelated factory-registered system tests belong to the foundation run.
+`ifndef TM_SCHEDULER_BENCH
     `include "tm_environment.svh"
     `include "tm_foundation_test.svh"
     `include "tm_batch_test.svh"
     `include "tm_packet_test.svh"
     `include "tm_schedule_test.svh"
+`endif
 endpackage

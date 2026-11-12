@@ -38,10 +38,6 @@ always_ff @(posedge clk) begin
     if(startup<2) begin assume(!rst_n); startup<=startup+1; end
     // Quanta are static legal software configuration. Safety has no sink
     // progress assumption; ready/completion may stall for arbitrary duration.
-    for(integer q=0;q<N_Q;q=q+1) begin
-        assume(cfg.quantum[q*13 +: 13]>=64 && cfg.quantum[q*13 +: 13]<=4096);
-        if(history) assume(cfg.quantum[q*13 +: 13]==$past(cfg.quantum[q*13 +: 13]));
-    end
     if(!rst_n) begin
         seen_replace<=0; seen_empty<=0; seen_busy<=0; emptied<='0;
         a_reset_grant: assert(!dispatch.valid);
@@ -52,6 +48,11 @@ always_ff @(posedge clk) begin
         if(commit.valid) assume(int'(commit.qid)<N_Q);
         assume(!tx_done.valid || dut.tx_owned);
         a_cursor: assert(int'(dut.cursor)<N_Q);
+        if(SCHED_MODE==1 && !dut.tx_owned && counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0)
+            a_add_bound: assert(expected_credit<=4096+MAX_PACKET_BYTES-1);
+        if(history && $past(rst_n))
+            a_tx_ownership: assert(dut.tx_owned == ($past(dispatch.valid) ||
+                ($past(dut.tx_owned) && !$past(tx_done.valid))));
         a_grant: assert(!dispatch.valid || (cfg.run && !dut.tx_owned && tx_ready &&
             counts[dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]!=0 &&
             dispatch.qid==dut.cursor && dispatch.desc==heads[dispatch.qid*DESC_ID_W +: DESC_ID_W] &&
@@ -59,7 +60,28 @@ always_ff @(posedge clk) begin
         a_presence: assert(dispatch.valid == (cfg.run && !dut.tx_owned && tx_ready &&
             counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0 &&
             (SCHED_MODE==0 || int'(selected.length)<=expected_credit)));
-        for(integer q=0;q<N_Q;q=q+1) begin
+        if(counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0)
+            assume(selected.length>=1 && selected.length<=MAX_PACKET_BYTES);
+        if(dispatch.valid && merged_count==0) begin seen_empty<=1; emptied[dispatch.qid]<=1; end
+        if(dispatch.valid && commit.valid && commit.qid==dispatch.qid && counts[dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]==1)
+            seen_replace<=1;
+        if(dut.tx_owned && !tx_done.valid) seen_busy<=1;
+        c_replace: cover(seen_replace && dut.tx_owned && seen_busy && tx_done.valid);
+        c_reactivate: cover(seen_empty && commit.valid && emptied[commit.qid] && counts[commit.qid*DESC_COUNT_W +: DESC_COUNT_W]==0);
+        c_different: cover(dispatch.valid && commit.valid && dispatch.qid!=commit.qid);
+        c_long: cover(dispatch.valid && commit.valid && dispatch.qid==commit.qid && counts[dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]==2);
+        c_wait: cover(cfg.run && !dut.tx_owned && !tx_ready && counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0 && (SCHED_MODE==0 || int'(selected.length)<=expected_credit));
+        if(SCHED_MODE==1) begin
+            c_carry: cover(dispatch.valid && !dut.visit_active && deficits[dut.cursor*DEFICIT_W +: DEFICIT_W]!=0);
+            c_continue: cover(dispatch.valid && dut.visit_active);
+        end
+    end
+end
+for(genvar q=0;q<N_Q;q=q+1) begin : g_credit
+    always_ff @(posedge clk) begin
+        assume(cfg.quantum[q*13 +: 13]>=64 && cfg.quantum[q*13 +: 13]<=4096);
+        if(history) assume(cfg.quantum[q*13 +: 13]==$past(cfg.quantum[q*13 +: 13]));
+        if(rst_n) begin
             assume(counts[q*DESC_COUNT_W +: DESC_COUNT_W]<=2);
             if(history) begin
                 if(!$past(rst_n)) assume(counts[q*DESC_COUNT_W +: DESC_COUNT_W]==0);
@@ -95,21 +117,6 @@ always_ff @(posedge clk) begin
                     a_busy_visit: assert(dut.visit_active==$past(dut.visit_active));
                 end
             end
-        end
-        if(counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0)
-            assume(selected.length>=1 && selected.length<=MAX_PACKET_BYTES);
-        if(dispatch.valid && merged_count==0) begin seen_empty<=1; emptied[dispatch.qid]<=1; end
-        if(dispatch.valid && commit.valid && commit.qid==dispatch.qid && counts[dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]==1)
-            seen_replace<=1;
-        if(dut.tx_owned && !tx_done.valid) seen_busy<=1;
-        c_replace: cover(seen_replace && dut.tx_owned && seen_busy && tx_done.valid);
-        c_reactivate: cover(seen_empty && commit.valid && emptied[commit.qid] && counts[commit.qid*DESC_COUNT_W +: DESC_COUNT_W]==0);
-        c_different: cover(dispatch.valid && commit.valid && dispatch.qid!=commit.qid);
-        c_long: cover(dispatch.valid && commit.valid && dispatch.qid==commit.qid && counts[dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]==2);
-        c_wait: cover(cfg.run && !dut.tx_owned && !tx_ready && counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0 && int'(selected.length)<=expected_credit);
-        if(SCHED_MODE==1) begin
-            c_carry: cover(dispatch.valid && !dut.visit_active && deficits[dut.cursor*DEFICIT_W +: DEFICIT_W]!=0);
-            c_continue: cover(dispatch.valid && dut.visit_active);
         end
     end
 end

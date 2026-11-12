@@ -39,8 +39,8 @@ python3 tools/check_repository.py
 python3 tools/check_light.py
 ```
 
-Both modes run for each selected production profile. The storage workflow runs
-the scheduler suite at all six production sizes and includes FP-SCHED. The raw
+Both modes run for each selected production profile. The scheduler workflow runs
+the suite at all six production sizes and includes FP-SCHED. The raw
 run manifests, logs, coverage and counterexamples live under `.build/runs/` and
 are retained by hosted CI.
 

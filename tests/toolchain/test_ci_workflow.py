@@ -41,7 +41,7 @@ class WorkflowTests(unittest.TestCase):
     def test_cleanup_waits_for_all_consumers_even_if_they_fail(self):
         consumers = {name for name, body in self.jobs.items()
                      if re.search(r'^    needs: prepare$', body, re.M)}
-        self.assertEqual(consumers, {'capability', 'contracts', 'storage', 'csr', 'foundation'})
+        self.assertEqual(consumers, {'capability', 'contracts', 'storage', 'csr', 'foundation', 'scheduler'})
         cleanup = self.jobs['cleanup-handoff']
         dependencies = re.search(r'^    needs: \[([^]]+)\]$', cleanup, re.M).group(1)
         self.assertEqual({name.strip() for name in dependencies.split(',')},
@@ -62,13 +62,13 @@ class WorkflowTests(unittest.TestCase):
         self.assertLess(prepare.index('Record handoff retention fallback'),
                         prepare.index('Transfer prepared installation'))
         self.assertIn('retention-days: 14', prepare)
-        for name in ('contracts', 'csr', 'storage', 'uvm-foundation'):
+        for name in ('contracts', 'csr', 'storage', 'uvm-foundation', 'scheduler'):
             workflow = (ROOT / '.github/workflows' / (name + '.yml')).read_text()
             self.assertIn('retention-days: 14', workflow)
 
     def test_each_consumer_runs_current_validation_and_cannot_build_on_a_miss(self):
         bodies = [self.jobs['capability']]
-        for name in ('contracts', 'csr', 'storage', 'uvm-foundation'):
+        for name in ('contracts', 'csr', 'storage', 'uvm-foundation', 'scheduler'):
             bodies.append((ROOT / '.github/workflows' / (name + '.yml')).read_text())
         for body in bodies:
             self.assertIn('python3 tools/toolchain_cache.py validate', body)

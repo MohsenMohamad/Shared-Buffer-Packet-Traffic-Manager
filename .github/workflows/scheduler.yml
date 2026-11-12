@@ -1,0 +1,48 @@
+name: Scheduler components
+on:
+  workflow_call:
+    inputs:
+      toolchain-artifact:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  scheduler:
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [F0, F1, I0, I1, E0, E1]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Ensure native build prerequisites
+        uses: ./.github/actions/native-prerequisites
+      - name: Receive the prepared installation
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ inputs.toolchain-artifact }}
+          path: .build/toolchain-transfer
+      - name: Unpack and validate; consumers never build
+        run: |
+          tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
+          python3 tools/toolchain_cache.py validate
+      - name: Exercise production scheduler, queues and both scheduling modes
+        run: make regression RUN_ARGS='--profile ${{ matrix.profile }} --test scheduler --seed 17'
+      - name: Prove scheduler grant, credit and bounds; qualify extra quantum
+        if: matrix.profile == 'E0'
+        run: make formal-rtl RUN_ARGS='--test scheduler --timeout 240'
+      - name: Retain scheduler evidence, coverage and counterexamples
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: scheduler-${{ matrix.profile }}-${{ github.sha }}
+          path: |
+            .build/runs/
+            .build/setup-cache/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error

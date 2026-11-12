@@ -22,5 +22,5 @@
     "rtl/include/tm_types.svh",
     "rtl/include/tm_validate.svh"
   ],
-  "scope": "Storage, queues and CSR/statistics APIs implemented; remaining APIs and top are declarations."
+  "scope": "Storage, queues, scheduler and CSR/statistics APIs implemented; remaining APIs and top are declarations."
 }
