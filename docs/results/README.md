@@ -11,6 +11,7 @@ coverage databases and generated netlists remain ignored build/CI artifacts.
 - [P00 toolchain fixtures](P00-toolchain.md)
 - [P01 contracts and batching](P01-contracts.md)
 - [P02 FIFO and pool components](P02-storage-primitives.md)
+- [P03 descriptor queue components](P03-queues.md)
 
 - [P07 UVM foundation fixture](P07-verification-foundation.md)
 - [P07 readable checkers and constrained packet stimulus](P07-followup-stimulus.md)

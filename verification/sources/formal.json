@@ -9,7 +9,8 @@
   "sources": [
     "formal/pools/storage_formal.sv",
     "formal/csr/csr_formal.sv",
-    "formal/symbolic/symbolic_inputs.sv"
+    "formal/symbolic/symbolic_inputs.sv",
+    "formal/queue/queue_formal.sv"
   ],
   "headers": [
     "formal/pools/bitmap_properties.svh",
@@ -17,7 +18,7 @@
     "formal/csr/csr_properties.svh",
     "formal/symbolic/symbolic_checks.svh"
   ],
-  "scope": "Local production storage and CSR protocol proofs; no integrated TM ownership or datapath proof.",
+  "scope": "Local production storage, queue/controller-link and CSR protocol proofs; no integrated TM ownership or datapath proof.",
   "frontend": "slang",
   "diagnostic_frontend": "verilog"
 }

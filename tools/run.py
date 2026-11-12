@@ -379,7 +379,7 @@ def main(argv=None):
     run.versions['rtl_frontend'] = args.frontend
     if action == 'formal-rtl':
         from formal_storage import formal_rtl, selection as formal_selection
-        run.scope = 'Local production storage/CSR properties and reachability; no integrated TM proof'
+        run.scope = 'Local production storage/queues/CSR properties and reachability; no integrated TM proof'
         try:
             if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
                 raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
@@ -396,6 +396,7 @@ def main(argv=None):
         from storage import pools
         from foundation import foundation
         from csr import csr
+        from queues import queues
         run.scope = 'Selected contract/component suites; no integrated TM validation'
         try:
             selected = selection(args.profile, args.test)
@@ -405,7 +406,7 @@ def main(argv=None):
                 raise ValueError('Regression accepts one positive 31-bit functional seed')
             from doctor import qualify
             qualify(run)
-            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr}
+            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues}
             for name in selected:
                 handlers[name](run, args)
         except (OSError, ValueError, KeyError) as error:

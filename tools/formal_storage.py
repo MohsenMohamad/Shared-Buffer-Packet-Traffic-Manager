@@ -20,6 +20,10 @@ def formal_rtl(run, args):
     specs, selected = selection(args)
     registered = sources('formal')
     for name in selected:
+        if name == 'queues':
+            from formal_queue import formal_queue
+            formal_queue(run, args, specs[name])
+            continue
         if name == 'csr':
             from formal_csr import formal_csr
             formal_csr(run, args, specs[name])

@@ -92,6 +92,25 @@ class SymbolicPolicyTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, 'Unqualified symbolic'):
                         sources('formal')
 
+    def test_legacy_bridge_keeps_all_controls_when_new_proofs_are_registered(self):
+        from formal_bridge import legacy_configurations
+        configurations = read('formal.json')['configurations']
+        expected = {'cell', 'descriptor', 'fifo2', 'fifo4', 'csr'}
+        self.assertIn('queues', configurations)
+        # A future explicit-input proof has no native defines or old harness.
+        expanded = dict(configurations, future_explicit_input={'top': 'future'})
+        with patch('formal_bridge.read', return_value={'configurations': expanded}):
+            selected = legacy_configurations()
+        self.assertEqual(set(selected), expected)
+        for name in expected:
+            self.assertIs(selected[name], configurations[name])
+        for missing in expected:
+            incomplete = {k: v for k, v in expanded.items() if k != missing}
+            with self.subTest(missing=missing), patch('formal_bridge.read',
+                    return_value={'configurations': incomplete}):
+                with self.assertRaises(KeyError):
+                    legacy_configurations()
+
     def test_crash_and_wrong_assertion_cannot_detect_negative(self):
         for status in (None, 'ERROR', 'UNKNOWN', 'FAIL'):
             result, _ = outcome({'result':'TOOL_ERROR', 'returncode':1}, status,

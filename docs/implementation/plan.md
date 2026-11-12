@@ -14,7 +14,8 @@ tested revisions and scopes remain in the linked reports. The main run
 [43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
 completed successfully. This statement records that hosted result, not a new local run.
 
-P03 is the next new hardware stage. [F01](tasks/F01-formal-symbols.md) closes
+P03 has [local queue component results](../results/P03-queues.md); P04/P05
+remain the next hardware stages and P11A owns caller composition. [F01](tasks/F01-formal-symbols.md) closes
 its symbolic-input prerequisite with [executed recipe evidence](../results/F01-formal-symbols.md). [R01](tasks/R01-reset-timing.md) owns reset
 constraint interpretation before new allocator/P08 studies. [A01](tasks/A01-allocator-selection.md)
 owns measured allocator alternatives and a reviewed disposition before P08.

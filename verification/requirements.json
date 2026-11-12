@@ -128,7 +128,22 @@
       "name": "Descriptor exhaustion",
       "requirement": "Exhaust descriptors with short packets before cells; release descriptor at packet EOF, not queue dispatch.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
+      }
     },
     {
       "id": "ADM-04",
@@ -176,7 +191,22 @@
         "formal-rtl"
       ],
       "component_scope": "Local cell-pool free/live uniqueness and count consistency; packet/controller ownership composition remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md"
+      "component_evidence": "docs/results/P02-storage-primitives.md",
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
+      }
     },
     {
       "id": "MEM-02",
@@ -244,6 +274,21 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
       }
     },
     {
@@ -251,21 +296,66 @@
       "name": "Last dequeue plus enqueue",
       "requirement": "Queue has exactly one descriptor; concurrent dequeue/enqueue must leave the new descriptor at head and tail.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
+      }
     },
     {
       "id": "Q-03",
       "name": "Longer queue race",
       "requirement": "Concurrent enqueue/dequeue at count>1; next links, tail and count all agree with the abstract list.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
+      }
     },
     {
       "id": "Q-04",
       "name": "Different queue updates",
       "requirement": "Enqueue one queue while dispatching another; no state update is lost or applied to the wrong queue.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
+      }
     },
     {
       "id": "Q-05",
@@ -282,6 +372,21 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
       }
     },
     {
@@ -457,6 +562,21 @@
         ],
         "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
         "evidence": "docs/results/P06-registers.json"
+      },
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
       }
     },
     {
@@ -485,6 +605,21 @@
         ],
         "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
         "evidence": "docs/results/P06-registers.json"
+      },
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
       }
     },
     {
@@ -647,6 +782,21 @@
         ],
         "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
         "evidence": "docs/results/P06-registers.json"
+      },
+      "queue_component_verification": {
+        "suite": "queues",
+        "formal_selection": "formal-rtl --test queues",
+        "status": "PASS",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
+        "evidence": "docs/results/P03-queues.json"
       }
     },
     {
