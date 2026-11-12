@@ -17,9 +17,11 @@ Extend the integrated [P07](P07-verification-foundation.md) foundation before P0
 
 Deliver separate cleanup and functionality commits, before/after positive and intended-negative qualifications, randomization success/failure/boundary tests, replay/diversity and actual generated-stimulus evidence. Retain duplicate tags, reset epochs, simultaneous batching and malformed controls. Fixture results remain distinct from production receive/integration evidence. Complete before [P08](P08-receive-admission.md).
 
-## Candidate checkpoint
+## Completion
 
-The separate checker cleanup is qualified. A constrained-packet and explicit
-baseline-timing candidate is saved in `feat/dv-foundation-followup`; this task is
-not complete. See the [partial execution record](../../results/P07-followup-stimulus.md)
-for tested revisions and the remaining final/profile/affected-suite checks.
+The follow-up candidate is qualified: separate cleanup and functionality commits,
+existing positive/intended-negative reruns, constrained packet generation,
+recorded boundary/distribution/replay evidence and explicit baseline scheduler
+timing checks. See the [execution record](../../results/P07-followup-stimulus.md)
+for tested revisions, profiles, commands and limits. Production integration and
+optimized scheduler timing remain unqualified; P03+ stays paused.

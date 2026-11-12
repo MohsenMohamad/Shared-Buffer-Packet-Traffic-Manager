@@ -31,3 +31,8 @@ precedes [allocator characterization](results/allocator-scaling.md). The standal
 allocator study calls for investigation of 1024-cell selection depth and reset
 timing/fanout; it changes no hardware and closes no integrated gate. P08 retains
 the actual consumer-path recheck, including 1024 cells. P03+ remains paused.
+
+The [P07 follow-up](results/P07-followup-stimulus.md) qualifies readable independent
+checkers and constrained packet stimulus on E0/I0/E1/F0 fixtures, with recorded
+coverage/replay and preserved intended detections. This candidate result and its
+affected CSR checks do not advance integrated TM gates or unpause P03/P08.
