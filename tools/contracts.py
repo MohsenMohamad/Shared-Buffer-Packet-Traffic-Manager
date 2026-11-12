@@ -4,6 +4,7 @@ import os
 import sys
 from evidence import Case, ROOT, completed, output
 from registry import profile, sources, fingerprint
+from frontend import read_sources, selected
 
 PARAMETERS = ('DATA_W N_RX N_Q CELL_BYTES N_CELL N_DESC MAX_PACKET_BYTES RX_FIFO_DEPTH '
               'MEM_RD_LATENCY TX_FIFO_DEPTH SCHED_MODE QUANTUM_DEFAULT TRACE_ENABLE '
@@ -66,9 +67,8 @@ def frontend(run, args, tool, name, params, invalid=False, monitor=False):
         argv += [f'-G{k}={v}' for k, v in params.items()] + files
     else:
         script = case.path / 'elaborate.ys'
-        script.write_text('read_verilog -sv ' + ' '.join('-I'+p for p in includes) + ' ' +
-                          ' '.join(files) + '\nhierarchy -check -top tm_contract_elab ' +
-                          ' '.join(f'-chparam {k} {v}' for k, v in params.items()) + '\n')
+        case.data['frontend'] = selected(args)
+        script.write_text(read_sources(files, 'tm_contract_elab', includes, params=params, frontend=selected(args)))
         argv = ['yosys', '-s', str(script)]
     step = case.execute(argv, timeout=args.timeout)
     text = output(step)

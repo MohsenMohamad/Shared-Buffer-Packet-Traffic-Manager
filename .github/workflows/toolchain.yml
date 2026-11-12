@@ -15,7 +15,7 @@ jobs:
   prepare:
     name: prepare-toolchain
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 180
     env:
       CXX: g++-14
     outputs:
@@ -31,7 +31,7 @@ jobs:
       - name: Restore exact compatible installation
         id: cache
         continue-on-error: true
-        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           key: ${{ steps.identity.outputs.key }}
           path: |
@@ -62,7 +62,7 @@ jobs:
       - name: Save only a complete validated installation
         continue-on-error: true
         if: ${{ success() && steps.cache.outputs.cache-hit != 'true' }}
-        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           key: ${{ steps.identity.outputs.key }}
           path: |
@@ -80,7 +80,7 @@ jobs:
           printf '%s\n' 'Toolchain handoff: one-day retention fallback if post-consumer cleanup cannot complete; diagnostic/result artifacts are preserved.' >> "$GITHUB_STEP_SUMMARY"
       - name: Transfer prepared installation
         id: handoff
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: toolchain-${{ github.run_id }}-${{ github.run_attempt }}
           path: .build/toolchain-transfer/toolchain.tar.zst
@@ -89,7 +89,7 @@ jobs:
           if-no-files-found: error
       - name: Retain preparation provenance and diagnostics
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: preparation-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -107,7 +107,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gate: [uvm, formal, synth]
+        gate: [uvm, uvm-dpi, formal, synth, frontends, bridge, representation-formal, fifo-mapping]
     env:
       CXX: g++-14
     steps:
@@ -115,7 +115,7 @@ jobs:
       - name: Ensure native build prerequisites
         uses: ./.github/actions/native-prerequisites
       - name: Receive prepared installation
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: ${{ needs.prepare.outputs.artifact }}
           path: .build/toolchain-transfer
@@ -127,7 +127,7 @@ jobs:
         run: make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test ${{ matrix.gate }}'
       - name: Retain manifests, separate logs, coverage, traces and mapped netlists
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: toolchain-${{ matrix.gate }}-${{ github.sha }}
           path: |

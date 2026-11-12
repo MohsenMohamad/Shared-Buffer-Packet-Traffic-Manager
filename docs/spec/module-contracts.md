@@ -13,10 +13,15 @@ external semantics in [interfaces.md](interfaces.md) remain normative.
 
 [tm_parameters.svh](../../rtl/include/tm_parameters.svh) is the common parameter
 list. [tm_types.svh](../../rtl/include/tm_types.svh) defines module-local packed
-records, enumerations and width constants. This avoids parameterized packages,
-unpacked array ports and synthesizer-specific interface support. Both frontends
-consume the same production source files without translated copies. See
-[decision 0002](../decisions/0002-module-contracts.md).
+records, enumerations and width constants. These are the current production representations, inherited from the original
+frontend constraints. The selected frontend now qualifies ANSI headers, fixed
+packages, type parameters, `$bits(type)` and packed-record memories; the
+[representation follow-up](../implementation/tasks/P01-followup-representation.md)
+converts production in a separate PR. Packed lane order remains the public API;
+interface support alone does not justify changing it. Production RTL is consumed
+directly; the formal adapter changes only arbitrary-input harness declarations.
+See [decision 0002](../decisions/0002-module-contracts.md) and
+[the current capability decisions](../implementation/modern-toolchain-decisions.md).
 
 The six production profiles and defaults are owned by
 [profiles.json](../../verification/profiles.json), matching architecture.md.

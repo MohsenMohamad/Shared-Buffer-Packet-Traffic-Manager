@@ -135,3 +135,21 @@ class RunnerTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class TimingDiagnosticsTests(unittest.TestCase):
+    def test_numbered_and_unnumbered_errors_override_complete_reports(self):
+        from run import sta_result
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            stdout, stderr = directory/'out', directory/'err'
+            good = 'TM_STA_MAX_BEGIN\nStartpoint: x\nEndpoint: y\nslack 1\nTM_STA_MIN_BEGIN\nStartpoint: x\nEndpoint: y\nslack 1\nTM_STA_DONE\n'
+            stderr.write_text('')
+            step = dict(result='PASS', returncode=0, stdout=str(stdout), stderr=str(stderr))
+            stdout.write_text(good)
+            self.assertEqual(sta_result(step)[0], 'PASS')
+            for diagnostic in ('Error: missing library', 'Error 102: bad constraint', 'Warning 1234: unconstrained endpoint'):
+                stdout.write_text(diagnostic+'\n'+good)
+                self.assertEqual(sta_result(step)[0], 'FAIL')
+            for text in (good+'TM_STA_DONE\n', good.replace('Endpoint: y',''), good.replace('TM_STA_MAX_BEGIN','')):
+                stdout.write_text(text)
+                self.assertEqual(sta_result(step)[0], 'FAIL')

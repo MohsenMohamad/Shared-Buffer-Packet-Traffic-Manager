@@ -21,7 +21,7 @@ PAYLOAD = ('.tools/install', '.tools/sysroot', '.tools/activate.sh',
            '.tools/environment.json', '.tools/setup.json', '.deps/downloads',
            '.deps/src/uvm', '.deps/liberty.lib')
 MANIFEST = '.tools/cache-manifest.json'
-CACHE_PREFIX = 'tm-tools-v1-'
+CACHE_PREFIX = 'tm-tools-v3-'
 BUILD_FLAGS = ('CC', 'CFLAGS', 'CXXFLAGS', 'CPPFLAGS', 'LDFLAGS', 'MAKEFLAGS')
 
 
@@ -126,7 +126,7 @@ def prepare(identity, jobs, root=ROOT, restored_key=None):
                         'entry remains bad, bump CACHE_PREFIX before expecting healthy reuse.')
             # CI owns these ignored directories. Discard partial/stale build
             # trees as well as stamps, so a cold rebuild cannot reuse old objects.
-            for name in ('.tools', '.deps'):
+            for name in ('.tools', '.deps', '.build/setup/yosys', '.build/setup/eigen', '.build/setup/opensta'):
                 path = root / name
                 if path.is_symlink():
                     path.unlink()
@@ -134,7 +134,7 @@ def prepare(identity, jobs, root=ROOT, restored_key=None):
                     shutil.rmtree(path)
             report['steps'].append(checked_step(
                 [sys.executable, 'tools/setup_toolchain.py', '--jobs', str(jobs)],
-                'cold-setup', 7200, root))
+                'cold-setup', 14400, root))
             report['steps'].append(checked_step(
                 [sys.executable, 'tools/run.py', 'doctor'], 'cold-doctor', 300, root))
             seal(identity, root)

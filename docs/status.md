@@ -22,3 +22,8 @@ This table describes the candidate state on a feature branch and the
 integrated state on `main`. The linked report identifies tested revisions,
 recorded results and validation boundaries; later documentation edits do
 not imply a new qualification run.
+
+The [modern toolchain refresh](results/modern-toolchain.md) requalifies these
+merged components on the selected source stack; it does not advance integrated
+traffic-manager gates. The [representation follow-up](implementation/tasks/P01-followup-representation.md)
+precedes allocator characterization. P03+ remains paused.

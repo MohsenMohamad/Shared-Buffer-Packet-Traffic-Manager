@@ -1,1 +1,10 @@
-{"schema_version":1,"extends":"production","include_dirs":[],"sources":[],"headers":[],"scope":"Production declarations only, excluding monitor records and fixtures; no mapping claim."}
+{
+  "schema_version": 1,
+  "extends": "production",
+  "include_dirs": [],
+  "sources": [],
+  "headers": [],
+  "scope": "Production declarations only, excluding monitor records and fixtures; no mapping claim.",
+  "frontend": "slang",
+  "diagnostic_frontend": "verilog"
+}

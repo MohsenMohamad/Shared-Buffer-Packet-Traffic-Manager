@@ -50,4 +50,4 @@ Requirement focus: `IF-02`, `MEM-01`, `MEM-06`, `RST-01`, `PAR-01`
 
 ## Scheduled follow-up
 
-The completed component work remains intact. Run the [allocator-scaling follow-up](P02-followup-scaling.md) now and complete it before P08; standalone scaling evidence does not close consumer-path timing.
+The completed component work remains intact. Complete the [qualified representation follow-up](P01-followup-representation.md), then run the [allocator-scaling follow-up](P02-followup-scaling.md) and complete it before P08; standalone scaling evidence does not close consumer-path timing.

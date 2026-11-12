@@ -1,5 +1,9 @@
 # Pre-state storage and local proof boundary
 
+Historical decision: current tool/frontend restrictions and their dispositions
+are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+and behavioral choices below remain historical records.
+
 The P01 storage APIs retain their names and signatures. A shared bitmap kernel
 implements one allocation and one/two return lanes; wrappers own the cell and
 descriptor record adaptation. Allocation must name the lowest pre-state free ID.

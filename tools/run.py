@@ -11,6 +11,7 @@ import sys
 import uuid
 
 from evidence import Case, IGNORED, ROOT, Run, completed, output, utc
+from frontend import read_sources
 
 FIXTURES = ROOT / 'tests/toolchain'
 
@@ -131,11 +132,35 @@ def uvm(run, args):
                   observed_digests=digests)
 
 
+def uvm_dpi(run,args):
+    case=Case(run,'uvm-dpi-services')
+    uvm_src=Path(os.environ['UVM_HOME'])/'src'
+    binary=case.path/'obj/Vuvm_dpi_probe'
+    argv=['verilator','--binary','--timing','--assert','--vpi',
+          '--timescale','1ns/1ps','--build-jobs',str(args.jobs),'--output-groups','4',
+          '--output-split','20000','-CFLAGS','-O0 -DVERILATOR -I'+str(uvm_src/'dpi'),
+          '-I'+str(uvm_src),str(uvm_src/'uvm_pkg.sv'),str(FIXTURES/'uvm_dpi.sv'),
+          str(uvm_src/'dpi/uvm_dpi.cc'),'--top-module','uvm_dpi_probe','--Mdir',str(binary.parent)]
+    step=case.execute(argv,timeout=args.build_timeout)
+    if step['result']!='PASS' or not binary.is_file():
+        case.finish(step['result'] if step['result']!='PASS' else 'TOOL_ERROR','DPI service build failed')
+        return
+    case.finish(*completed(case.execute([str(binary)],cwd=case.path,timeout=args.timeout),'TM_UVM_DPI_PASS'))
+
+
 def formal(run, args):
     for task in ('prove', 'cover', 'mutation'):
         case = Case(run, 'formal-' + task)
         for source in ('counter.sv', 'counter.sby'):
             shutil.copyfile(FIXTURES / source, case.path / source)
+        config = case.path / 'counter.sby'
+        text = config.read_text()
+        for label, defines in [('prove', ()), ('cover', ()), ('mutation', ('MUTATE',))]:
+            old = label + ': read -formal -sv ' + ('-D MUTATE ' if defines else '') + 'counter.sv'
+            command = read_sources(['counter.sv'], 'counter', defines=defines, frontend=args.frontend, formal=True).strip()
+            text = text.replace(old, '\n'.join(label + ': ' + line for line in command.splitlines()))
+        config.write_text(text)
+        case.data['frontend'] = args.frontend
         step = case.execute(['sby', '-f', '-d', str(case.path / 'engine'), 'counter.sby', task],
                             timeout=args.timeout, cwd=case.path)
         status_file = case.path / 'engine/status'
@@ -145,8 +170,9 @@ def formal(run, args):
         if step['result'] == 'TIMEOUT' or step['returncode'] is None:
             result, reason = step['result'], step['first_failure']
         elif task == 'mutation':
-            ok = step['returncode'] != 0 and status == 'FAIL' and bool(waves) and 'Assert failed' in text
-            result, reason = ('PASS', None) if ok else ('TOOL_ERROR', 'Expected assertion counterexample, not tool failure')
+            intended = bool(re.search(r'Assert failed[^\n]*\ba_step\b', text))
+            ok = step['returncode'] != 0 and status == 'FAIL' and bool(waves) and intended
+            result, reason = ('PASS', None) if ok else ('TOOL_ERROR', 'Expected a_step counterexample and trace, not another failure')
         else:
             ok = step['returncode'] == 0 and status == 'PASS'
             if task == 'cover':
@@ -156,6 +182,7 @@ def formal(run, args):
             result, reason = ('PASS', None) if ok else ('TOOL_ERROR', 'Missing successful proof/cover evidence')
         case.data['artifacts'].update(status=str(status_file), traces=[str(p) for p in waves])
         case.finish(result, reason, expected='COUNTEREXAMPLE' if task == 'mutation' else task.upper(),
+                    expected_property='a_step' if task == 'mutation' else None,
                     engine='smtbmc z3; unbounded k-induction for prove; cover bound 20')
 
 
@@ -164,7 +191,7 @@ def synth(run, args):
     liberty = ROOT / '.deps/liberty.lib'
     script = case.path / 'mapping.ys'
     netlist, stats = case.path / 'mapped.v', case.path / 'stats.json'
-    script.write_text(f'read_verilog {FIXTURES}/mapping.v\nsynth -top mapping\n'
+    script.write_text(read_sources([FIXTURES / 'mapping.v'], 'mapping', frontend=args.frontend) + 'synth -top mapping -noabc\n'
                       f'dfflibmap -liberty {liberty}\nabc -liberty {liberty}\nclean\n'
                       f'read_liberty -lib {liberty}\ncheck -assert\nwrite_verilog -noattr {netlist}\n'
                       f'tee -o {stats} stat -json -liberty {liberty}\n')
@@ -186,17 +213,89 @@ def synth(run, args):
         sta.finish('NOT_RUN', 'Mapped synthesis did not qualify')
         return
     os.environ.update(TM_LIBERTY=str(liberty), TM_NETLIST=str(netlist), TM_SDC=str(FIXTURES / 'timing.sdc'))
-    step = sta.execute(['sta', '-exit', str(FIXTURES / 'timing.tcl')], timeout=args.timeout)
+    step = sta.execute(['sta', '-no_init', '-exit', str(FIXTURES / 'timing.tcl')], timeout=args.timeout)
+    text = output(step)
+    result, reason = sta_result(step)
+    sta.data['artifacts'].update(sdc=str(FIXTURES / 'timing.sdc'), liberty=str(liberty), netlist=str(netlist))
+    slacks = re.findall(r'([-+]?\d+\.\d+)\s+slack', text)
+    sta.finish(result, reason, analysis='Nangate45 typical 1.10 V / 25 C; ns, fF; 10 fF load; ideal-clock pre-layout fixture', slacks_ns=slacks)
+    timing_rejections(run, args, liberty, netlist)
+    api = Case(run, 'sta-modern-api')
+    step = api.execute(['sta', '-no_init', '-exit', str(FIXTURES / 'sta_api.tcl')], timeout=args.timeout)
+    result, reason = completed(step, 'TM_STA_API_PASS')
+    if re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:', output(step)):
+        result, reason = 'FAIL', 'Unexpected OpenSTA API diagnostic'
+    api.finish(result, reason, scope='API availability only; no measured MCMM, variation or noise analysis',
+               commands=['define_scene','read_spef','set_timing_derate','annotate_noise_delays'],
+               default_pocv_mode='scalar', default_pocv_quantile=3)
+
+
+
+def timing_rejections(run, args, liberty, netlist):
+    original_sdc = (FIXTURES / 'timing.sdc').read_text()
+    original_tcl = (FIXTURES / 'timing.tcl').read_text()
+    saved = {k: os.environ.get(k) for k in ('TM_LIBERTY','TM_NETLIST','TM_SDC')}
+    try:
+        for variant in ('driving-cell','bad-library','bad-netlist','bad-constraint','unconstrained','error-with-completion'):
+            case = Case(run, 'sta-' + variant)
+            sdc, script = case.path / 'timing.sdc', case.path / 'timing.tcl'
+            sdc.write_text(original_sdc)
+            script.write_text(original_tcl)
+            os.environ.update(TM_LIBERTY=str(liberty),TM_NETLIST=str(netlist),TM_SDC=str(sdc))
+            if variant == 'driving-cell':
+                sdc.write_text(original_sdc.replace('set_input_transition 0.05 [get_ports {a b}]',
+                    'set_driving_cell -lib_cell BUF_X1 -pin Z [get_ports {a b}]'))
+            elif variant == 'bad-library':
+                os.environ['TM_LIBERTY'] = str(case.path / 'missing.lib')
+            elif variant == 'bad-netlist':
+                os.environ['TM_NETLIST'] = str(case.path / 'missing.v')
+            elif variant == 'bad-constraint':
+                sdc.write_text(original_sdc + '\nthis_is_not_an_sdc_command\n')
+            elif variant == 'unconstrained':
+                sdc.write_text('# Deliberate lack of clocks and IO constraints.\n')
+            elif variant == 'error-with-completion':
+                script.write_text('set sta_continue_on_error 1\nread_liberty ' + str(case.path / 'missing.lib') + '\n' + original_tcl)
+            step = case.execute(['sta','-no_init','-exit',str(script)],timeout=args.timeout)
+            result, reason = sta_result(step)
+            text = output(step)
+            if variant == 'driving-cell':
+                case.finish(result,reason)
+            else:
+                diagnosis = bool(re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:',text))
+                if variant == 'unconstrained':
+                    diagnosis = diagnosis or ('no clock' in text.lower() or 'unconstrained' in text.lower())
+                targets = {'bad-library':'missing.lib', 'bad-netlist':'missing.v',
+                           'bad-constraint':'this_is_not_an_sdc_command', 'error-with-completion':'missing.lib'}
+                if variant in targets:
+                    diagnosis = diagnosis and targets[variant] in text
+                ok = result in ('FAIL','TOOL_ERROR') and diagnosis and step['result'] != 'TIMEOUT'
+                if variant == 'error-with-completion':
+                    ok = ok and result == 'FAIL' and step['returncode'] == 0 and 'TM_STA_DONE' in text
+                case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing intended timing-input rejection with completion marker',
+                            expected='TIMING_INPUT_REJECTION', classifier_result=result, diagnostic=reason)
+    finally:
+        for key,value in saved.items():
+            if value is None:os.environ.pop(key,None)
+            else:os.environ[key]=value
+
+
+def sta_result(step):
     text = output(step)
     result, reason = completed(step, 'TM_STA_DONE')
-    maximum = text.split('TM_STA_MAX_BEGIN')[-1].split('TM_STA_MIN_BEGIN')[0]
-    minimum = text.split('TM_STA_MIN_BEGIN')[-1].split('TM_STA_DONE')[0]
-    if result == 'PASS' and (re.search(r'(?im)^\s*(?:Error|Warning):', text) or
-                            any('slack' not in section or 'Startpoint:' not in section or
-                                'Endpoint:' not in section for section in (maximum, minimum))):
-        result, reason = 'FAIL', 'Timing errors, warnings or missing max/min constrained paths'
-    sta.data['artifacts'].update(sdc=str(FIXTURES / 'timing.sdc'), liberty=str(liberty), netlist=str(netlist))
-    sta.finish(result, reason, analysis='Nangate45 typical; pre-layout wire model; synthetic fixture only')
+    if result != 'PASS':
+        return result, reason
+    # OpenSTA can print Error <number>: and keep executing Tcl, even returning
+    # zero with a completion marker. A marker cannot overrule those diagnostics.
+    markers = ['TM_STA_MAX_BEGIN', 'TM_STA_MIN_BEGIN', 'TM_STA_DONE']
+    if any(text.count(m) != 1 for m in markers) or not text.index(markers[0]) < text.index(markers[1]) < text.index(markers[2]):
+        return 'FAIL', 'Missing, duplicated or unordered timing report sections'
+    maximum = text.split(markers[0])[1].split(markers[1])[0]
+    minimum = text.split(markers[1])[1].split(markers[2])[0]
+    if re.search(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:', text) or any(
+            'slack' not in section or 'Startpoint:' not in section or 'Endpoint:' not in section
+            for section in (maximum, minimum)):
+        return 'FAIL', 'Timing errors, warnings or missing max/min constrained paths'
+    return 'PASS', None
 
 
 def lint(run, args):
@@ -248,6 +347,7 @@ def main(argv=None):
     parser = ManifestParser(description=__doc__)
     parser.add_argument('action')
     parser.add_argument('--profile', default=None)
+    parser.add_argument('--frontend', choices=('slang', 'verilog'), help='Override registered frontend for a diagnostic comparison')
     parser.add_argument('--test', action='append', help='CI gate or regression suite selection (repeatable)')
     parser.add_argument('--seed', action='append', type=int)
     parser.add_argument('--jobs', type=int, default=2)
@@ -274,6 +374,9 @@ def main(argv=None):
     if args.profile is None:
         args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
     run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
+    from frontend import selected
+    args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal') else 'synthesis')
+    run.versions['rtl_frontend'] = args.frontend
     if action == 'formal-rtl':
         from formal_storage import formal_rtl, selection as formal_selection
         run.scope = 'Local production storage/CSR properties and reachability; no integrated TM proof'
@@ -309,8 +412,11 @@ def main(argv=None):
             Case(run, 'selection-or-suite-error').finish('TOOL_ERROR', str(error))
         return run.finish()
     from doctor import qualify
-    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth)
+    from formal_bridge import bridge
+    from frontend_qualification import audit as frontend_audit, representation_formal, fifo_mapping
+    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit, bridge=bridge, **{'representation-formal': representation_formal, 'fifo-mapping': fifo_mapping})
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
+    gates['uvm-dpi'] = uvm_dpi
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
     error = None
     if args.profile != 'toolchain':
@@ -331,7 +437,7 @@ def main(argv=None):
     else:
         # Version records accompany direct capability runs as well as CI. Independent
         # gates continue after failures; compilation remains prerequisite to execution.
-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state')):
+        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'bridge', 'representation-formal', 'fifo-mapping', 'uvm-dpi')):
             qualify(run)
         for name in selected:
             try:

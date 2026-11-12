@@ -12,6 +12,6 @@ A required implementation comparison is one-stage flat versus two-stage banked/r
 
 
 
-Verilator RTL lint is required. Do not blanket-disable warning classes to close lint. Scope a waiver to the exact construct and document its functional reason. Keep simulation-only classes and monitors out of synthesis source lists. Use a portable synthesizable SystemVerilog subset accepted by the pinned Yosys frontend; qualify any frontend extension before relying on it.
+Verilator RTL lint is required. Do not blanket-disable warning classes to close lint. Scope a waiver to the exact construct and document its functional reason. Keep simulation-only classes and monitors out of synthesis source lists. Use synthesizable SystemVerilog accepted by the registered pinned `read_slang` flow. Consume the [qualified representation recipes](../implementation/tasks/P01-followup-representation.md); old native-frontend syntax rejections are not current prohibitions. Qualify constructs beyond that tested subset before relying on them.
 
 Generated netlists, timing scripts, logs and waves belong in ignored build/output directories and CI artifacts. Commit concise curated results with the source revision and commands needed to regenerate them. Never equate positive setup slack at one reference corner with physical signoff.

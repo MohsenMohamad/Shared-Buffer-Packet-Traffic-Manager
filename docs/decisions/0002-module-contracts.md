@@ -1,5 +1,9 @@
 # Packed portable contracts and atomic ownership
 
+Historical decision: current tool/frontend restrictions and their dispositions
+are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+and behavioral choices below remain historical records.
+
 G1 uses common parameter headers, module-local packed record types and packed
 lane vectors in production declarations. Verilator 5.054 and pinned Yosys
 `read_verilog -sv` consume identical sources. Parameterized packages/interfaces

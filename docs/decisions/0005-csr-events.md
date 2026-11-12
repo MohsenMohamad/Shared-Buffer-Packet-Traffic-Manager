@@ -1,5 +1,9 @@
 # CSR execution and independent event qualification
 
+Historical decision: current tool/frontend restrictions and their dispositions
+are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+and behavioral choices below remain historical records.
+
 P06 retains the P01 packed AXI, configuration, live-state and statistics APIs.
 The register slave owns configuration and three independent channel holds.
 Statistics has one writer for live counters/high-water and separate shadow

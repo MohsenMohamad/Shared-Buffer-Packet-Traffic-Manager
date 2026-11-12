@@ -41,3 +41,10 @@ separate from regression suite selectors.
 ## Durable versus execution evidence
 
 For new work, follow [the durable evidence policy](../documentation.md#durable-evidence-for-new-work): Git stores compact tested-revision/configuration/tool/result/measurement and reproduction records; artifacts store bulky execution details, logs, waves and databases. Existing result JSON files are preserved unchanged. Record the actual tested SHA with PR/workflow references where available; integrated-main metadata never substitutes for tested-source provenance.
+
+Frontend selection is explicit in the formal/synthesis source registries and
+`--frontend {slang,verilog}` runner option. `make frontends`, `make bridge`,
+`make representation-formal` and `make fifo-mapping` qualify disposable richer
+representations without converting production RTL. Consumers validate the shared
+installation and never invoke setup. See the [operational guide](../implementation/toolchain.md)
+for cache identity, exact-restore rejection, cold setup and capability commands.
