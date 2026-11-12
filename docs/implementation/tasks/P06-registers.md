@@ -47,3 +47,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The CSR portion of G2 executes against a declared independent event fixture. Real datapath event wiring and whole-system IDLE are verified again in P09/P10.
 
 Requirement focus: `CSR-01`, `CSR-02`, `CSR-03`, `CSR-04`, `CSR-05`, `CSR-06`, `RST-01`, `RST-02`
+
+The [representation migration report](../../results/rtl-representation.md) records
+the ANSI/shared-type conversion and new checks. Original behavioral acceptance
+and historical evidence remain in force; no later hardware stage is started.

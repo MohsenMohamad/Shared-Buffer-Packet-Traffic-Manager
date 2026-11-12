@@ -51,3 +51,7 @@ Requirement focus: `IF-02`, `MEM-01`, `MEM-06`, `RST-01`, `PAR-01`
 ## Scheduled follow-up
 
 The completed component work remains intact. Complete the [qualified representation follow-up](P01-followup-representation.md), then run the [allocator-scaling follow-up](P02-followup-scaling.md) and complete it before P08; standalone scaling evidence does not close consumer-path timing.
+
+The [representation migration report](../../results/rtl-representation.md) records
+the ANSI/shared-type conversion and new checks. Original behavioral acceptance
+and historical evidence remain in force; no later hardware stage is started.
