@@ -1,0 +1,2732 @@
+{
+  "schema_version": 1,
+  "scope": "Standalone real production cell/descriptor pools; measurement validity is separate from timing acceptance",
+  "definition_revision": "2beb248978ceb5d26a509f91aa13f0811bbe46f9",
+  "correction_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+  "tested_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+  "dirty": false,
+  "criteria_amendments": [],
+  "decision": "investigate alternatives",
+  "units": {
+    "area": "um^2 (Liberty cell area; not placement area)",
+    "time": "ns",
+    "capacitance": "fF"
+  },
+  "dependency_digests": {
+    "tools/dependencies.json": "27e3866353b7fb15424f267697ca2e71bcb442e734071232f71cdfab8e6d9592",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+  },
+  "definition_digests": {
+    "experiments/allocator-scaling/README.md": "702df7d59708e354d46848aa18455e74ef82784fe0f66f6ecb17b6f33815cff0",
+    "experiments/allocator-scaling/abc.constr": "57947f140a2ab2795e7318aa70cae726825234738d67366df3b0a149660efb22",
+    "experiments/allocator-scaling/config.json": "a5ac198435077e126276ca1b121606027e9d495989eebf4ba774b3c6264dcb93",
+    "experiments/allocator-scaling/mapping.ys.in": "22d48f97f1d0927e1c628969bccbbeabd85aea92430ba978329c1db7d856a52b",
+    "experiments/allocator-scaling/timing.sdc": "f829bf3133ad3b358e9465db4ca7e24b0d4a848f0648835814d6b1c97081527b",
+    "experiments/allocator-scaling/timing.tcl": "599478ead10bb043c934b2acdbb4f2b5e0f88766be46891b7c180d811e34368e"
+  },
+  "source_digests": {
+    "dv/unit/storage_tb.sv": "4f224ff3cadff5d7be6fdeb0b2d286a76e0f48c77380ad5686c0220c4c0be4cc",
+    "formal/pools/README.md": "676fda5a2d4bd0dfc442c91e43fedcaf462b79e697298fe16254c03db97c352b",
+    "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+    "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+    "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+    "formal/pools/storage_formal.sv": "8741c498d77ba36de98afc5debd94d36037549c72f3182b42f8d07f1192c6a6f",
+    "rtl/AGENTS.md": "59ba68931f194e99cbf2d57eac4464c23f0530eeec4acf09fceeba4c4e4cb478",
+    "rtl/common/tm_axis_rx_fifo.sv": "7720db1148c4be2c608bbb1a29bf66b798c970c88ac00e2180d2ecc5794492d1",
+    "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+    "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "rtl/include/tm_module_ports.sv": "84e3129c73a6ec611041b0c39d7bca18be73a3d1330ef5cd7a43384360816b3d",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+    "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+    "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+    "tools/allocator_scaling.py": "7d7ef2284791362a6433a3d7a50f2bac398102e49398b4f8e69f9547a04584a9",
+    "tools/frontend.py": "93e18e7165f1391e4675cd2b1d6e6435501e28cf7bcb0e618465daa6ad7b9961",
+    "tools/run.py": "3a293fad9cf752846b20318d1adf420e6a09be0145aa9d26f0e094a44de5bc7c",
+    "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+    "verification/sources/production.json": "7fb2b38dfb24d55374b288cf9c0243e366c4015b8264e8ae72b4da16e2a66bea",
+    "verification/sources/synthesis.json": "e259d3f43ed42cbbd4c8b60a2b54bb31ea580cf84664145ed27501a0d9cce575"
+  },
+  "profiles": {
+    "schema_version": 1,
+    "profiles": {
+      "F0": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "F1": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2
+      },
+      "I0": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "I1": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2
+      },
+      "E0": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "E1": {
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2
+      }
+    },
+    "defaults": {
+      "DATA_W": 64,
+      "RX_FIFO_DEPTH": 2,
+      "TX_FIFO_DEPTH": 4,
+      "SCHED_MODE": 1,
+      "TRACE_ENABLE": 1
+    },
+    "scope": "Production profiles only; reduced formal kernels require separate named configurations."
+  },
+  "observed_tools": {
+    "python": "/usr/bin/python3: Python 3.13.5",
+    "rtl_frontend": "slang",
+    "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "verilator_coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator_coverage: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "abc": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys-abc: ======== ABC command line \"version\"",
+    "sby": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+    "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "opensta": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sta: 3.2.0",
+    "compiler": "/usr/bin/g++-14: g++-14 (Debian 14.2.0-19) 14.2.0",
+    "cmake": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/cmake/bin/cmake: cmake version 4.4.5",
+    "swig": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/swig: SWIG Version 4.5.1",
+    "slang": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `help read_slang' --",
+    "slang_revision": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --",
+    "make": "/usr/bin/make: GNU Make 4.4.1",
+    "bash": "/usr/bin/bash: GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+  },
+  "locked_tools": {
+    "yosys": {
+      "version": "0.70",
+      "commit": "28ba3cb926fe376fa05ebfc1b921747d011d4557",
+      "url": "https://codeload.github.com/YosysHQ/yosys/tar.gz/28ba3cb926fe376fa05ebfc1b921747d011d4557",
+      "target": "yosys",
+      "archive": "tar",
+      "sha256": "6a134c366622795f98c9b3e0588dde625f96ae5b80304813f73f2c261e317602"
+    },
+    "abc": {
+      "version": "bundled",
+      "commit": "6c5104934c90eb3cdef9ea063318f7588908a185",
+      "url": "https://codeload.github.com/YosysHQ/abc/tar.gz/6c5104934c90eb3cdef9ea063318f7588908a185",
+      "target": "yosys/abc",
+      "archive": "tar",
+      "sha256": "d0448ed85efdd2a411f2ca6638122983bc3d361498a74ba5b1ecc651bac2b018"
+    },
+    "slang": {
+      "version": "bundled",
+      "commit": "545f88b2ed3a2d20325fbd17413af177a6bca72f",
+      "url": "https://codeload.github.com/MikePopoloski/slang/tar.gz/545f88b2ed3a2d20325fbd17413af177a6bca72f",
+      "target": "yosys/libs/slang",
+      "archive": "tar",
+      "sha256": "2d424f4280c879daaf05a2e78efd6928c350cc3ac086da59b872a305a277f7b8"
+    },
+    "sv_elab": {
+      "version": "2026-10-13",
+      "commit": "9dcee13ea3862347e1715dc51f63e9f845cdd222",
+      "url": "https://codeload.github.com/povik/sv-elab/tar.gz/9dcee13ea3862347e1715dc51f63e9f845cdd222",
+      "target": "yosys/frontends/slang/lib",
+      "archive": "tar",
+      "sha256": "2d54c9e186496ad192e9c77046b0571ce3fdde42a1aad5c4e63829d888331d14"
+    },
+    "opensta": {
+      "version": "3.2.0",
+      "commit": "c7f04667369f1f7bfeb9eebb381fd8c63267bb21",
+      "url": "https://codeload.github.com/parallaxsw/OpenSTA/tar.gz/c7f04667369f1f7bfeb9eebb381fd8c63267bb21",
+      "target": "opensta",
+      "archive": "tar",
+      "sha256": "e7cb5c7750317308da920918e078e3ef669cb1aa4bb26d68a66278bc50500e6c"
+    },
+    "liberty": {
+      "name": "NangateOpenCellLibrary_typical.lib",
+      "commit": "9275989ffcad3e17a1be884b31e5c9bb4a42c06e",
+      "url": "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD-flow-scripts/9275989ffcad3e17a1be884b31e5c9bb4a42c06e/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib",
+      "sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1"
+    }
+  },
+  "study_artifact_directory": ".build/runs/allocator-scaling-2026-11-12T121457.361321+0000-1dda634d",
+  "study_summary_sha256": "450207cbb7d6bcad0deb485c7d30334ce2d8be74bb3ef3fe0955e95e1696f044",
+  "commands": [
+    "export CXX=g++-14; source .tools/activate.sh",
+    "make allocator-scaling RUN_ARGS='--timeout 1800'",
+    "make regression RUN_ARGS='--profile I0 --test pools --seed 17'",
+    "make regression RUN_ARGS='--profile F0 --test pools --seed 17'",
+    "make formal-rtl RUN_ARGS='--test cell --test descriptor --timeout 900'",
+    "make test-unit",
+    "make repo-check"
+  ],
+  "path_columns": [
+    "startpoint",
+    "endpoint",
+    "arrival_ns",
+    "slack_ns"
+  ],
+  "points": [
+    {
+      "profile": "E0",
+      "pool": "cell",
+      "capacity": 16,
+      "area_um2": 344.47,
+      "mapped_cells": 211,
+      "state_bits": 22,
+      "buffers": 10,
+      "output_widths": {
+        "available_id": 4,
+        "free_count": 5,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "allocate": {
+          "direction": "input",
+          "width": 8,
+          "loaded_bits": 5
+        },
+        "release_cell": {
+          "direction": "input",
+          "width": 10,
+          "loaded_bits": 5
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_250_/Z",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 24
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 22
+        }
+      },
+      "netlist_sha256": "bdadb4d77eb0da89b472f1dde4424606f679522685d0ef7dad65ade263399a74",
+      "mapping_script_sha256": "696641a47fe120872a4c7ab7a712e4039d828d32b91faec0cc7f75f06a364171",
+      "mapping_stdout_sha256": "a020ef5e589587793381cf1393d6a4275bcbcb7ef7bf6d5dc64c392ed8a97786",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 11,
+          "constrained_registers": 22,
+          "stdout_sha256": "ab6bd06648b8ac8e86d18b5c93d291b488a0b02f0993c57315fd6727eacc3fde",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.12286,
+              5.77714
+            ],
+            "clk": [
+              "rst_n",
+              "_410_",
+              2.55304,
+              7.30677
+            ],
+            "selection": [
+              "_402_",
+              "available_id[0]",
+              0.41331,
+              7.48669
+            ],
+            "count": [
+              "_394_",
+              "free_count[0]",
+              0.13383,
+              7.76617
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_395_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_392_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_407_",
+              "_407_",
+              0.12111,
+              0.01891
+            ],
+            "count": [
+              "_410_",
+              "free_count[4]",
+              0.09699,
+              0.19699
+            ],
+            "selection": [
+              "_409_",
+              "available_id[0]",
+              0.13918,
+              0.23918
+            ],
+            "availability": [
+              "_411_",
+              "available",
+              0.16738,
+              0.26738
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_302_/ZN",
+              "limit": 0.19853,
+              "actual": 0.07434,
+              "slack": 0.1242,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_302_/ZN",
+              "limit": 10.4713,
+              "actual": 5.0518,
+              "slack": 5.4195,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 5
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 11,
+          "constrained_registers": 22,
+          "stdout_sha256": "dc9ec73294c9827c0c36ab4c7483bef5f0f19dc3bdefc0a957d0ba62d7620906",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.21318,
+              5.68682
+            ],
+            "clk": [
+              "rst_n",
+              "_410_",
+              2.64297,
+              7.21685
+            ],
+            "selection": [
+              "_402_",
+              "available_id[0]",
+              0.41331,
+              7.48669
+            ],
+            "count": [
+              "_394_",
+              "free_count[0]",
+              0.13383,
+              7.76617
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_395_",
+              2.08443,
+              7.85678
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_392_",
+              0.28443,
+              -0.09905
+            ],
+            "clk": [
+              "_407_",
+              "_407_",
+              0.12111,
+              0.01891
+            ],
+            "count": [
+              "_410_",
+              "free_count[4]",
+              0.09699,
+              0.19699
+            ],
+            "selection": [
+              "_409_",
+              "available_id[0]",
+              0.13918,
+              0.23918
+            ],
+            "availability": [
+              "_411_",
+              "available",
+              0.16738,
+              0.26738
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "rst_n",
+              "limit": 0.19853,
+              "actual": 0.08178,
+              "slack": 0.11675,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_302_/ZN",
+              "limit": 10.4713,
+              "actual": 5.0518,
+              "slack": 5.4195,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 5
+        }
+      },
+      "mapped_state_aliases": {
+        "_410_": [
+          "pool.free_count[4]"
+        ],
+        "_402_": [
+          "pool.free_bitmap[7]"
+        ],
+        "_394_": [
+          "pool.free_count[0]"
+        ],
+        "_395_": [
+          "pool.free_bitmap[14]"
+        ],
+        "_392_": [
+          "pool.free_count[2]"
+        ],
+        "_407_": [
+          "pool.free_bitmap[2]"
+        ],
+        "_409_": [
+          "pool.free_bitmap[0]"
+        ],
+        "_411_": [
+          "pool.free_bitmap[15]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 1.115418,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "PASS"
+      }
+    },
+    {
+      "profile": "E0",
+      "pool": "descriptor",
+      "capacity": 8,
+      "area_um2": 284.886,
+      "mapped_cells": 178,
+      "state_bits": 13,
+      "buffers": 15,
+      "output_widths": {
+        "available_id": 3,
+        "free_count": 4,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "admit": {
+          "direction": "input",
+          "width": 55,
+          "loaded_bits": 5
+        },
+        "tx_return": {
+          "direction": "input",
+          "width": 4,
+          "loaded_bits": 4
+        },
+        "abort_return": {
+          "direction": "input",
+          "width": 4,
+          "loaded_bits": 4
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_204_/Z",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 14
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 13
+        }
+      },
+      "netlist_sha256": "dc7dcee0c5f985d10b2a0a038c66aea7ce15baaaa5369e357748ea0c2d963d0d",
+      "mapping_script_sha256": "253f8cec6c96d6377c02c898e50cf8116698c258d2f4e6c067df6dc53c7136d3",
+      "mapping_stdout_sha256": "59dc117a4f706ae10d18498fde0a40a334520d0877886f7d50c02970a017038b",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 9,
+          "constrained_registers": 13,
+          "stdout_sha256": "7352de726dcf7ea0212d188a79255748bc72810054a45bfbb8f7a2b7b74d39c7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.1218,
+              5.7782
+            ],
+            "clk": [
+              "tx_return[1]",
+              "_337_",
+              2.49057,
+              7.36874
+            ],
+            "selection": [
+              "_339_",
+              "available_id[2]",
+              0.2571,
+              7.6429
+            ],
+            "count": [
+              "_338_",
+              "free_count[0]",
+              0.14591,
+              7.75409
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_339_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_337_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_345_",
+              "_345_",
+              0.12341,
+              0.02118
+            ],
+            "count": [
+              "_346_",
+              "free_count[3]",
+              0.09701,
+              0.19701
+            ],
+            "selection": [
+              "_345_",
+              "available_id[0]",
+              0.12738,
+              0.22738
+            ],
+            "availability": [
+              "_345_",
+              "available",
+              0.17434,
+              0.27434
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_249_/ZN",
+              "limit": 0.19853,
+              "actual": 0.07685,
+              "slack": 0.12168,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_271_/ZN",
+              "limit": 10.4713,
+              "actual": 3.42545,
+              "slack": 7.04585,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 3
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 9,
+          "constrained_registers": 13,
+          "stdout_sha256": "49c15785c0e9b37e0d6e7ae79b94105f182ed117d1e87db0d5d1866a60c10f73",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.1717,
+              5.7283
+            ],
+            "clk": [
+              "rst_n",
+              "_349_",
+              2.51786,
+              7.34145
+            ],
+            "selection": [
+              "_339_",
+              "available_id[2]",
+              0.2571,
+              7.6429
+            ],
+            "count": [
+              "_338_",
+              "free_count[0]",
+              0.14591,
+              7.75409
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_339_",
+              2.04999,
+              7.88944
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_337_",
+              0.24999,
+              -0.09254
+            ],
+            "clk": [
+              "_345_",
+              "_345_",
+              0.12341,
+              0.02118
+            ],
+            "count": [
+              "_346_",
+              "free_count[3]",
+              0.09701,
+              0.19701
+            ],
+            "selection": [
+              "_345_",
+              "available_id[0]",
+              0.12738,
+              0.22738
+            ],
+            "availability": [
+              "_345_",
+              "available",
+              0.17434,
+              0.27434
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_249_/ZN",
+              "limit": 0.19853,
+              "actual": 0.07685,
+              "slack": 0.12168,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_271_/ZN",
+              "limit": 10.4713,
+              "actual": 3.42545,
+              "slack": 7.04585,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 3
+        }
+      },
+      "mapped_state_aliases": {
+        "_337_": [
+          "pool.free_count[1]"
+        ],
+        "_339_": [
+          "pool.free_bitmap[6]"
+        ],
+        "_338_": [
+          "pool.free_count[0]"
+        ],
+        "_345_": [
+          "pool.free_bitmap[0]"
+        ],
+        "_346_": [
+          "pool.free_count[3]"
+        ],
+        "_349_": [
+          "pool.free_count[2]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 1.293478,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "PASS"
+      }
+    },
+    {
+      "profile": "I0",
+      "pool": "cell",
+      "capacity": 32,
+      "area_um2": 617.652,
+      "mapped_cells": 384,
+      "state_bits": 39,
+      "buffers": 14,
+      "output_widths": {
+        "available_id": 5,
+        "free_count": 6,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "allocate": {
+          "direction": "input",
+          "width": 10,
+          "loaded_bits": 6
+        },
+        "release_cell": {
+          "direction": "input",
+          "width": 13,
+          "loaded_bits": 6
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_405_/Z",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 40
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 39
+        }
+      },
+      "netlist_sha256": "61d86e1fb62c95c1384266d9ba5b7ea9891b65e3abcbd68e9e7d02a8aef18ea7",
+      "mapping_script_sha256": "8e467653e063e972536cad10452442aa8d6e67ae3cc289aa3be67993ed9b62c0",
+      "mapping_stdout_sha256": "05bbeb139490aa5561fdb07fa8655b1a63e97b3fdccf712e71e1655031eb259b",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 13,
+          "constrained_registers": 39,
+          "stdout_sha256": "f52748508e58a556f9e1958dd01b2a729a811d03b966967c6cbd0023070aa137",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.19931,
+              5.70069
+            ],
+            "selection": [
+              "_746_",
+              "available_id[3]",
+              0.81659,
+              7.08341
+            ],
+            "clk": [
+              "rst_n",
+              "_755_",
+              2.57078,
+              7.28903
+            ],
+            "count": [
+              "_722_",
+              "free_count[0]",
+              0.13352,
+              7.76648
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_723_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_719_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_751_",
+              "_751_",
+              0.11087,
+              0.0087
+            ],
+            "count": [
+              "_755_",
+              "free_count[5]",
+              0.09699,
+              0.19699
+            ],
+            "availability": [
+              "_754_",
+              "available",
+              0.15124,
+              0.25124
+            ],
+            "selection": [
+              "_754_",
+              "available_id[1]",
+              0.17248,
+              0.27248
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_526_/ZN",
+              "limit": 0.19853,
+              "actual": 0.07794,
+              "slack": 0.1206,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_449_/ZN",
+              "limit": 10.4713,
+              "actual": 5.00563,
+              "slack": 5.46567,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 10
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 13,
+          "constrained_registers": 39,
+          "stdout_sha256": "92c2423e6edb64e4769d40e1bf4daf71b46af3af61dd4489367498cdacf4a86a",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.34087,
+              5.55913
+            ],
+            "selection": [
+              "_746_",
+              "available_id[3]",
+              0.81659,
+              7.08341
+            ],
+            "clk": [
+              "rst_n",
+              "_755_",
+              2.71234,
+              7.14747
+            ],
+            "count": [
+              "_722_",
+              "free_count[0]",
+              0.13352,
+              7.76648
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_719_",
+              2.1367,
+              7.79262
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_719_",
+              0.3367,
+              -0.10898
+            ],
+            "clk": [
+              "_751_",
+              "_751_",
+              0.11087,
+              0.0087
+            ],
+            "count": [
+              "_755_",
+              "free_count[5]",
+              0.09699,
+              0.19699
+            ],
+            "availability": [
+              "_754_",
+              "available",
+              0.15124,
+              0.25124
+            ],
+            "selection": [
+              "_754_",
+              "available_id[1]",
+              0.17248,
+              0.27248
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "rst_n",
+              "limit": 0.19853,
+              "actual": 0.13147,
+              "slack": 0.06707,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "rst_n",
+              "limit": 60.65371,
+              "actual": 56.3903,
+              "slack": 4.2634,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 10
+        }
+      },
+      "mapped_state_aliases": {
+        "_746_": [
+          "pool.free_bitmap[7]"
+        ],
+        "_755_": [
+          "pool.free_count[5]"
+        ],
+        "_722_": [
+          "pool.free_count[0]"
+        ],
+        "_723_": [
+          "pool.free_bitmap[30]"
+        ],
+        "_719_": [
+          "pool.free_count[3]"
+        ],
+        "_751_": [
+          "pool.free_bitmap[2]"
+        ],
+        "_754_": [
+          "pool.free_bitmap[31]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 1.0,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "PASS",
+        "local_10ns_analysis_target": "MISS"
+      }
+    },
+    {
+      "profile": "I0",
+      "pool": "descriptor",
+      "capacity": 16,
+      "area_um2": 440.496,
+      "mapped_cells": 306,
+      "state_bits": 22,
+      "buffers": 24,
+      "output_widths": {
+        "available_id": 4,
+        "free_count": 5,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "admit": {
+          "direction": "input",
+          "width": 57,
+          "loaded_bits": 6
+        },
+        "tx_return": {
+          "direction": "input",
+          "width": 5,
+          "loaded_bits": 5
+        },
+        "abort_return": {
+          "direction": "input",
+          "width": 5,
+          "loaded_bits": 5
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_436_/Z",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 23
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 22
+        }
+      },
+      "netlist_sha256": "a6fd0ddae4ff059a0d1d9b0496a78057e23a4357aa3e1531d878db0ebdc53345",
+      "mapping_script_sha256": "4fd09f72e5e77a2d117ab88ec16ae2c566d0d16fa0546123ddeb58e12f85b399",
+      "mapping_stdout_sha256": "62d3a8a5f661968ef872470d314865db5a036fcb39bcf608c76fc60892be2d2a",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 11,
+          "constrained_registers": 22,
+          "stdout_sha256": "881c3db92e5af25f8f0a8e4e9f0c800b7b9adc6ce027ebb6af16d7e5a1a542d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.13202,
+              5.76798
+            ],
+            "clk": [
+              "tx_return[1]",
+              "_601_",
+              2.61002,
+              7.2498
+            ],
+            "selection": [
+              "_590_",
+              "available_id[3]",
+              0.47333,
+              7.42667
+            ],
+            "count": [
+              "_584_",
+              "free_count[0]",
+              0.13512,
+              7.76488
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_585_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_582_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_599_",
+              "_599_",
+              0.11943,
+              0.01728
+            ],
+            "count": [
+              "_601_",
+              "free_count[4]",
+              0.097,
+              0.197
+            ],
+            "selection": [
+              "_600_",
+              "available_id[0]",
+              0.15098,
+              0.25098
+            ],
+            "availability": [
+              "_600_",
+              "available",
+              0.19047,
+              0.29047
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_319_/ZN",
+              "limit": 0.19853,
+              "actual": 0.08386,
+              "slack": 0.11468,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_319_/ZN",
+              "limit": 11.4822,
+              "actual": 5.16929,
+              "slack": 6.31291,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 7
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 11,
+          "constrained_registers": 22,
+          "stdout_sha256": "dbb904247248ff286be005007d6c9fa0072aa93de7d9dce2456fa19b83ab14e0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.21503,
+              5.68497
+            ],
+            "clk": [
+              "tx_return[1]",
+              "_601_",
+              2.58831,
+              7.2715
+            ],
+            "selection": [
+              "_590_",
+              "available_id[3]",
+              0.47333,
+              7.42667
+            ],
+            "count": [
+              "_584_",
+              "free_count[0]",
+              0.13512,
+              7.76488
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_585_",
+              2.08034,
+              7.86065
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_582_",
+              0.28034,
+              -0.09828
+            ],
+            "clk": [
+              "_599_",
+              "_599_",
+              0.11943,
+              0.01728
+            ],
+            "count": [
+              "_601_",
+              "free_count[4]",
+              0.097,
+              0.197
+            ],
+            "selection": [
+              "_600_",
+              "available_id[0]",
+              0.15098,
+              0.25098
+            ],
+            "availability": [
+              "_600_",
+              "available",
+              0.19045,
+              0.29045
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_319_/ZN",
+              "limit": 0.19853,
+              "actual": 0.08386,
+              "slack": 0.11468,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_319_/ZN",
+              "limit": 11.4822,
+              "actual": 5.16929,
+              "slack": 6.31291,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 7
+        }
+      },
+      "mapped_state_aliases": {
+        "_601_": [
+          "pool.free_count[4]"
+        ],
+        "_590_": [
+          "pool.free_bitmap[9]"
+        ],
+        "_584_": [
+          "pool.free_count[0]"
+        ],
+        "_585_": [
+          "pool.free_bitmap[14]"
+        ],
+        "_582_": [
+          "pool.free_count[2]"
+        ],
+        "_599_": [
+          "pool.free_bitmap[0]"
+        ],
+        "_600_": [
+          "pool.free_bitmap[15]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 1.0,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "PASS",
+        "local_10ns_analysis_target": "MISS"
+      }
+    },
+    {
+      "profile": "E1",
+      "pool": "cell",
+      "capacity": 64,
+      "area_um2": 1090.068,
+      "mapped_cells": 671,
+      "state_bits": 72,
+      "buffers": 22,
+      "output_widths": {
+        "available_id": 6,
+        "free_count": 7,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "allocate": {
+          "direction": "input",
+          "width": 12,
+          "loaded_bits": 7
+        },
+        "release_cell": {
+          "direction": "input",
+          "width": 16,
+          "loaded_bits": 7
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_925_/Z",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 75
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 72
+        }
+      },
+      "netlist_sha256": "ff672ff5a7924ca1bb7124d760cee707d3059e5dca21944738a7327aaf2de23e",
+      "mapping_script_sha256": "a9fda1812b7d22b8d2839e386908f3394d83b52cdda6280d23f8638cecd9d62a",
+      "mapping_stdout_sha256": "2c428756c4d6bf4ab3674d0574eff42b846220700396ac8b2b4acbdd27900c64",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 15,
+          "constrained_registers": 72,
+          "stdout_sha256": "737e6c8cc8b95b0a286b10e7e0cfcf93d8f4c7073875092787b98d61a83e7d81",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.13161,
+              5.76839
+            ],
+            "selection": [
+              "_1318_",
+              "available_id[5]",
+              1.47682,
+              6.42318
+            ],
+            "clk": [
+              "release_cell[9]",
+              "_1321_",
+              2.63085,
+              7.23253
+            ],
+            "count": [
+              "_1262_",
+              "free_count[0]",
+              0.13334,
+              7.76666
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_1263_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_1258_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_1323_",
+              "_1323_",
+              0.11094,
+              0.00877
+            ],
+            "count": [
+              "_1327_",
+              "free_count[6]",
+              0.097,
+              0.197
+            ],
+            "selection": [
+              "_1326_",
+              "available_id[0]",
+              0.15578,
+              0.25578
+            ],
+            "availability": [
+              "_1326_",
+              "available",
+              0.17032,
+              0.27032
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_945_/ZN",
+              "limit": 0.19853,
+              "actual": 0.1205,
+              "slack": 0.07803,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_1034_/ZN",
+              "limit": 10.4713,
+              "actual": 9.47202,
+              "slack": 0.99928,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 19
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 15,
+          "constrained_registers": 72,
+          "stdout_sha256": "b4e5a3848dea574937bb00a81625702b302cdbbf3b9f4fa07856b2c0f1dfdb5d",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.40859,
+              5.49141
+            ],
+            "selection": [
+              "_1318_",
+              "available_id[5]",
+              1.47682,
+              6.42318
+            ],
+            "clk": [
+              "rst_n",
+              "_1327_",
+              2.87496,
+              6.99465
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_1258_",
+              2.25142,
+              7.6515
+            ],
+            "count": [
+              "_1262_",
+              "free_count[0]",
+              0.13334,
+              7.76666
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_1258_",
+              0.45142,
+              -0.13077
+            ],
+            "clk": [
+              "_1323_",
+              "_1323_",
+              0.11094,
+              0.00877
+            ],
+            "count": [
+              "_1327_",
+              "free_count[6]",
+              0.097,
+              0.197
+            ],
+            "selection": [
+              "_1326_",
+              "available_id[0]",
+              0.15578,
+              0.25578
+            ],
+            "availability": [
+              "_1326_",
+              "available",
+              0.17032,
+              0.27032
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "rst_n",
+              "limit": 0.19853,
+              "actual": 0.24051,
+              "slack": -0.04198,
+              "units": "ns",
+              "result": "VIOLATED"
+            },
+            "max_capacitance": {
+              "pin": "rst_n",
+              "limit": 60.65371,
+              "actual": 104.17567,
+              "slack": -43.52197,
+              "units": "fF",
+              "result": "VIOLATED"
+            }
+          },
+          "selection_combinational_stages": 19
+        }
+      },
+      "mapped_state_aliases": {
+        "_1318_": [
+          "pool.free_bitmap[7]"
+        ],
+        "_1321_": [
+          "pool.free_bitmap[4]"
+        ],
+        "_1262_": [
+          "pool.free_count[0]"
+        ],
+        "_1263_": [
+          "pool.free_bitmap[62]"
+        ],
+        "_1258_": [
+          "pool.free_count[4]"
+        ],
+        "_1323_": [
+          "pool.free_bitmap[2]"
+        ],
+        "_1327_": [
+          "pool.free_count[6]"
+        ],
+        "_1326_": [
+          "pool.free_bitmap[63]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 0.882429,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "PASS"
+      }
+    },
+    {
+      "profile": "E1",
+      "pool": "descriptor",
+      "capacity": 32,
+      "area_um2": 740.278,
+      "mapped_cells": 502,
+      "state_bits": 39,
+      "buffers": 32,
+      "output_widths": {
+        "available_id": 5,
+        "free_count": 6,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "admit": {
+          "direction": "input",
+          "width": 60,
+          "loaded_bits": 7
+        },
+        "tx_return": {
+          "direction": "input",
+          "width": 6,
+          "loaded_bits": 6
+        },
+        "abort_return": {
+          "direction": "input",
+          "width": 6,
+          "loaded_bits": 6
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_627_/ZN",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 40
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 39
+        }
+      },
+      "netlist_sha256": "63e68a77bfb8c80033af3ef93e41fe3289c1612da87bda31928de8f9d99399b0",
+      "mapping_script_sha256": "2a111d53d1922bc6508837c97824302f8979070317bb010c177047ee4fe46908",
+      "mapping_stdout_sha256": "70384654c0dfff0ce134e282396e23042216184223265349969990145662708d",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 13,
+          "constrained_registers": 39,
+          "stdout_sha256": "b9e39febc2f1b8605579ca64094b7139292149da284598fd15c2ac1139feaeff",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.102,
+              5.798
+            ],
+            "selection": [
+              "_982_",
+              "available_id[4]",
+              0.70012,
+              7.19988
+            ],
+            "clk": [
+              "tx_return[2]",
+              "_991_",
+              2.63141,
+              7.2284
+            ],
+            "count": [
+              "_958_",
+              "free_count[0]",
+              0.13708,
+              7.76292
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_959_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_955_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_960_",
+              "_960_",
+              0.12235,
+              0.02014
+            ],
+            "count": [
+              "_991_",
+              "free_count[5]",
+              0.09699,
+              0.19699
+            ],
+            "selection": [
+              "_989_",
+              "available_id[0]",
+              0.15841,
+              0.25841
+            ],
+            "availability": [
+              "_959_",
+              "available",
+              0.18448,
+              0.28448
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_688_/ZN",
+              "limit": 0.19853,
+              "actual": 0.085,
+              "slack": 0.11354,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_587_/ZN",
+              "limit": 10.4713,
+              "actual": 3.5589,
+              "slack": 6.9124,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 10
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 13,
+          "constrained_registers": 39,
+          "stdout_sha256": "b3c35406e95f902895c365ab2f1c62b847f91944b965906727ee885589eeb393",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "availability": [
+              "rst_n",
+              "available",
+              2.24416,
+              5.65584
+            ],
+            "clk": [
+              "rst_n",
+              "_991_",
+              2.67288,
+              7.18694
+            ],
+            "selection": [
+              "_982_",
+              "available_id[4]",
+              0.70012,
+              7.19988
+            ],
+            "count": [
+              "_958_",
+              "free_count[0]",
+              0.13708,
+              7.76292
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_955_",
+              2.1367,
+              7.79262
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_955_",
+              0.3367,
+              -0.10898
+            ],
+            "clk": [
+              "_960_",
+              "_960_",
+              0.12235,
+              0.02014
+            ],
+            "count": [
+              "_991_",
+              "free_count[5]",
+              0.09699,
+              0.19699
+            ],
+            "selection": [
+              "_989_",
+              "available_id[0]",
+              0.15841,
+              0.25841
+            ],
+            "availability": [
+              "_959_",
+              "available",
+              0.18448,
+              0.28448
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "rst_n",
+              "limit": 0.19853,
+              "actual": 0.13147,
+              "slack": 0.06707,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "rst_n",
+              "limit": 60.65371,
+              "actual": 56.3903,
+              "slack": 4.2634,
+              "units": "fF",
+              "result": "MET"
+            }
+          },
+          "selection_combinational_stages": 10
+        }
+      },
+      "mapped_state_aliases": {
+        "_982_": [
+          "pool.free_bitmap[7]"
+        ],
+        "_991_": [
+          "pool.free_count[5]"
+        ],
+        "_958_": [
+          "pool.free_count[0]"
+        ],
+        "_959_": [
+          "pool.free_bitmap[30]"
+        ],
+        "_955_": [
+          "pool.free_count[3]"
+        ],
+        "_960_": [
+          "pool.free_bitmap[29]"
+        ],
+        "_989_": [
+          "pool.free_bitmap[0]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 0.840278,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "PASS"
+      }
+    },
+    {
+      "profile": "F0",
+      "pool": "cell",
+      "capacity": 1024,
+      "area_um2": 20109.334,
+      "mapped_cells": 11399,
+      "state_bits": 1036,
+      "buffers": 600,
+      "output_widths": {
+        "available_id": 10,
+        "free_count": 11,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "allocate": {
+          "direction": "input",
+          "width": 19,
+          "loaded_bits": 11
+        },
+        "release_cell": {
+          "direction": "input",
+          "width": 24,
+          "loaded_bits": 11
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_12935_/ZN",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 1038
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 1036
+        }
+      },
+      "netlist_sha256": "f8a16dcdd15a599d1125c9dc7de1b84ad9531b162d308fd36997548800c51251",
+      "mapping_script_sha256": "43c2983f4f71493a4419d82bd049bb71d201d9ff10a4595500134251472ea0e6",
+      "mapping_stdout_sha256": "e3b73ec75881634528530c28d894e6abaf13067b6055e72da44835299d8794ec",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 23,
+          "constrained_registers": 1036,
+          "stdout_sha256": "edfd52e319d78ffeff8955dc84dcc13010feef0af4907f9c2bbfb8b10212d206",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "selection": [
+              "_22766_",
+              "available_id[8]",
+              23.93948,
+              -16.03948
+            ],
+            "availability": [
+              "_22766_",
+              "available",
+              23.91619,
+              -16.01619
+            ],
+            "clk": [
+              "_22766_",
+              "_22775_",
+              24.35943,
+              -14.49976
+            ],
+            "count": [
+              "_21744_",
+              "free_count[6]",
+              0.13196,
+              7.76804
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_21751_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_21742_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_22760_",
+              "_22760_",
+              0.11116,
+              0.00899
+            ],
+            "count": [
+              "_22775_",
+              "free_count[10]",
+              0.09692,
+              0.19692
+            ],
+            "availability": [
+              "_22774_",
+              "available",
+              0.1962,
+              0.2962
+            ],
+            "selection": [
+              "_21771_",
+              "available_id[1]",
+              0.20124,
+              0.30124
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_12990_/ZN",
+              "limit": 0.19853,
+              "actual": 0.15546,
+              "slack": 0.04308,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_12990_/ZN",
+              "limit": 11.4822,
+              "actual": 14.55184,
+              "slack": -3.06964,
+              "units": "fF",
+              "result": "VIOLATED"
+            }
+          },
+          "selection_combinational_stages": 306
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 23,
+          "constrained_registers": 1036,
+          "stdout_sha256": "c6e434445b7e5dd4e94042c7dfa096462e42732bd0eaf4d0199049bb3e78c34d",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "selection": [
+              "_22766_",
+              "available_id[8]",
+              23.93948,
+              -16.03948
+            ],
+            "availability": [
+              "_22766_",
+              "available",
+              23.91619,
+              -16.01619
+            ],
+            "clk": [
+              "_22766_",
+              "_22775_",
+              24.35943,
+              -14.49976
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_21742_",
+              5.39682,
+              3.78227
+            ],
+            "count": [
+              "_21744_",
+              "free_count[6]",
+              0.13196,
+              7.76804
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_21742_",
+              3.59682,
+              -0.72827
+            ],
+            "clk": [
+              "_22760_",
+              "_22760_",
+              0.11116,
+              0.00899
+            ],
+            "count": [
+              "_22775_",
+              "free_count[10]",
+              0.09692,
+              0.19692
+            ],
+            "availability": [
+              "_22774_",
+              "available",
+              0.1962,
+              0.2962
+            ],
+            "selection": [
+              "_21771_",
+              "available_id[1]",
+              0.20124,
+              0.30124
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "rst_n",
+              "limit": 0.19853,
+              "actual": 3.2303,
+              "slack": -3.03176,
+              "units": "ns",
+              "result": "VIOLATED"
+            },
+            "max_capacitance": {
+              "pin": "rst_n",
+              "limit": 60.65371,
+              "actual": 1414.35461,
+              "slack": -1353.70093,
+              "units": "fF",
+              "result": "VIOLATED"
+            }
+          },
+          "selection_combinational_stages": 306
+        }
+      },
+      "mapped_state_aliases": {
+        "_22766_": [
+          "pool.free_bitmap[7]"
+        ],
+        "_22775_": [
+          "pool.free_count[10]"
+        ],
+        "_21744_": [
+          "pool.free_count[6]"
+        ],
+        "_21751_": [
+          "pool.free_bitmap[1022]"
+        ],
+        "_21742_": [
+          "pool.free_count[8]"
+        ],
+        "_22760_": [
+          "pool.free_bitmap[13]"
+        ],
+        "_22774_": [
+          "pool.free_bitmap[1023]"
+        ],
+        "_21771_": [
+          "pool.free_bitmap[1002]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 1.017428,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "MISS",
+        "exploratory_selection_screen": "MISS"
+      }
+    },
+    {
+      "profile": "F0",
+      "pool": "descriptor",
+      "capacity": 256,
+      "area_um2": 5128.746,
+      "mapped_cells": 3750,
+      "state_bits": 266,
+      "buffers": 274,
+      "output_widths": {
+        "available_id": 8,
+        "free_count": 9,
+        "available": 1,
+        "invariant_error": 1
+      },
+      "input_ports": {
+        "clk": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "rst_n": {
+          "direction": "input",
+          "width": 1,
+          "loaded_bits": 1
+        },
+        "admit": {
+          "direction": "input",
+          "width": 67,
+          "loaded_bits": 10
+        },
+        "tx_return": {
+          "direction": "input",
+          "width": 9,
+          "loaded_bits": 9
+        },
+        "abort_return": {
+          "direction": "input",
+          "width": 9,
+          "loaded_bits": 9
+        }
+      },
+      "fanout": {
+        "data": {
+          "driver": "_4047_/Z",
+          "sink_pins": 10
+        },
+        "reset": {
+          "driver": "input:pool.rst_n,rst_n",
+          "sink_pins": 267
+        },
+        "clock": {
+          "driver": "input:clk,pool.clk",
+          "sink_pins": 266
+        }
+      },
+      "netlist_sha256": "dcbcd2594465c0559b4000cf6ada5404d1e71e6c5e97fdfcd920a6c6b2442e83",
+      "mapping_script_sha256": "bae827152f4a0b2f08d7c67d169f0f5d4cf883257af11a47b050d8c43c461666",
+      "mapping_stdout_sha256": "cbe59586f0b3d140494a31ce519a764c28e638e2f82b36df281fad16ed3a69af",
+      "timing": {
+        "slew": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 19,
+          "constrained_registers": 266,
+          "stdout_sha256": "2277dc6e6a4accaad3a7962df94b8edb789f1d9965881833996aad42be3447fa",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "selection": [
+              "_7468_",
+              "available_id[7]",
+              5.34754,
+              2.55246
+            ],
+            "availability": [
+              "_7468_",
+              "available",
+              5.31446,
+              2.58554
+            ],
+            "clk": [
+              "_7468_",
+              "_7481_",
+              5.90283,
+              3.95489
+            ],
+            "count": [
+              "_7224_",
+              "free_count[0]",
+              0.14065,
+              7.75935
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_7225_",
+              2.0,
+              7.93947
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_7218_",
+              0.2,
+              -0.14368
+            ],
+            "clk": [
+              "_7253_",
+              "_7253_",
+              0.11808,
+              0.01594
+            ],
+            "count": [
+              "_7481_",
+              "free_count[8]",
+              0.09693,
+              0.19693
+            ],
+            "availability": [
+              "_7480_",
+              "available",
+              0.1735,
+              0.2735
+            ],
+            "selection": [
+              "_7230_",
+              "available_id[4]",
+              0.19203,
+              0.29203
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "_5629_/ZN",
+              "limit": 0.19853,
+              "actual": 0.14326,
+              "slack": 0.05527,
+              "units": "ns",
+              "result": "MET"
+            },
+            "max_capacitance": {
+              "pin": "_5629_/ZN",
+              "limit": 10.4713,
+              "actual": 12.31177,
+              "slack": -1.84047,
+              "units": "fF",
+              "result": "VIOLATED"
+            }
+          },
+          "selection_combinational_stages": 77
+        },
+        "drive": {
+          "evidence_result": "PASS",
+          "timing_closure": "FAIL",
+          "check_setup": "PASS; no warnings/errors, no missing clocks/IO delays, no loops/unconstrained endpoints",
+          "constrained_outputs": 19,
+          "constrained_registers": 266,
+          "stdout_sha256": "b95b0606439bce65b0ba1194e1b4d4fbbbff7590dd2bc72fb8122268a9e5bbc1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "max": {
+            "selection": [
+              "_7468_",
+              "available_id[7]",
+              5.34754,
+              2.55246
+            ],
+            "availability": [
+              "_7468_",
+              "available",
+              5.31446,
+              2.58554
+            ],
+            "clk": [
+              "_7468_",
+              "_7481_",
+              5.90283,
+              3.95489
+            ],
+            "asynchronous": [
+              "rst_n",
+              "_7218_",
+              2.87866,
+              6.87991
+            ],
+            "count": [
+              "_7224_",
+              "free_count[0]",
+              0.14065,
+              7.75935
+            ]
+          },
+          "min": {
+            "asynchronous": [
+              "rst_n",
+              "_7218_",
+              1.07866,
+              -0.24992
+            ],
+            "clk": [
+              "_7253_",
+              "_7253_",
+              0.11808,
+              0.01594
+            ],
+            "count": [
+              "_7481_",
+              "free_count[8]",
+              0.09693,
+              0.19693
+            ],
+            "availability": [
+              "_7480_",
+              "available",
+              0.1735,
+              0.2735
+            ],
+            "selection": [
+              "_7230_",
+              "available_id[4]",
+              0.19203,
+              0.29203
+            ]
+          },
+          "electrical": {
+            "max_slew": {
+              "pin": "rst_n",
+              "limit": 0.19853,
+              "actual": 0.83672,
+              "slack": -0.63819,
+              "units": "ns",
+              "result": "VIOLATED"
+            },
+            "max_capacitance": {
+              "pin": "rst_n",
+              "limit": 60.65371,
+              "actual": 365.44641,
+              "slack": -304.79269,
+              "units": "fF",
+              "result": "VIOLATED"
+            }
+          },
+          "selection_combinational_stages": 77
+        }
+      },
+      "mapped_state_aliases": {
+        "_7468_": [
+          "pool.free_bitmap[11]"
+        ],
+        "_7481_": [
+          "pool.free_count[8]"
+        ],
+        "_7224_": [
+          "pool.free_count[0]"
+        ],
+        "_7225_": [
+          "pool.free_bitmap[254]"
+        ],
+        "_7218_": [
+          "pool.free_count[6]"
+        ],
+        "_7253_": [
+          "pool.free_bitmap[226]"
+        ],
+        "_7480_": [
+          "pool.free_bitmap[255]"
+        ],
+        "_7230_": [
+          "pool.free_bitmap[249]"
+        ]
+      },
+      "criteria": {
+        "area_per_entry_ratio_to_i0": 0.727695,
+        "area_screen": "PASS",
+        "data_fanout_screen": "PASS",
+        "reset_fanout_screen": "MISS",
+        "exploratory_selection_screen": "PASS"
+      }
+    }
+  ],
+  "verification_runs": [
+    {
+      "directory": ".build/runs/regression-2026-11-12T121316.672068+0000-4d14e1c9",
+      "summary_sha256": "a74f7d2a4bd16a60bc86cf14ab34dcbed582ddb79c39a8d90eea988a66630ca0",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "pools-depth2",
+          "result": "PASS",
+          "source_revision": "2beb248978ceb5d26a509f91aa13f0811bbe46f9",
+          "dirty": false,
+          "profile": "I0",
+          "seed": 17,
+          "metrics": {
+            "cycles": 3749,
+            "pushes": 989,
+            "pops": 986,
+            "simultaneous": 385,
+            "blocked": 488,
+            "cell_allocs": 1265,
+            "desc_allocs": 1234,
+            "two_returns": 2,
+            "mixed": 1,
+            "invalids": 1263
+          },
+          "manifest_sha256": "ed2ebc96063956b608ce99d83b4080e722cec816eb75e29fd0367ec4c447ae6c"
+        },
+        {
+          "test": "pools-depth4",
+          "result": "PASS",
+          "source_revision": "2beb248978ceb5d26a509f91aa13f0811bbe46f9",
+          "dirty": false,
+          "profile": "I0",
+          "seed": 17,
+          "metrics": {
+            "cycles": 3757,
+            "pushes": 1098,
+            "pops": 1093,
+            "simultaneous": 503,
+            "blocked": 222,
+            "cell_allocs": 1265,
+            "desc_allocs": 1234,
+            "two_returns": 2,
+            "mixed": 1,
+            "invalids": 1263
+          },
+          "manifest_sha256": "ba88de2ac970641939bdb7f47299d201b3150bb2454c743fe8629bc4f1f1afc1"
+        }
+      ]
+    },
+    {
+      "directory": ".build/runs/regression-2026-11-12T121356.225007+0000-a498b006",
+      "summary_sha256": "bfb11d41b508776a1332011fe0210cbda87302255763791b0adf0fc7ab3942a1",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "pools-depth2",
+          "result": "PASS",
+          "source_revision": "2beb248978ceb5d26a509f91aa13f0811bbe46f9",
+          "dirty": false,
+          "profile": "F0",
+          "seed": 17,
+          "metrics": {
+            "cycles": 6725,
+            "pushes": 989,
+            "pops": 986,
+            "simultaneous": 385,
+            "blocked": 488,
+            "cell_allocs": 3249,
+            "desc_allocs": 1714,
+            "two_returns": 2,
+            "mixed": 1,
+            "invalids": 2495
+          },
+          "manifest_sha256": "d2fe137c61f218e20d4a0a35901333d3e96bcdd09c5007f1ca9c9e0fc590d1a1"
+        },
+        {
+          "test": "pools-depth4",
+          "result": "PASS",
+          "source_revision": "2beb248978ceb5d26a509f91aa13f0811bbe46f9",
+          "dirty": false,
+          "profile": "F0",
+          "seed": 17,
+          "metrics": {
+            "cycles": 6733,
+            "pushes": 1098,
+            "pops": 1093,
+            "simultaneous": 503,
+            "blocked": 222,
+            "cell_allocs": 3249,
+            "desc_allocs": 1714,
+            "two_returns": 2,
+            "mixed": 1,
+            "invalids": 2495
+          },
+          "manifest_sha256": "b3a74c235868b9b25fd7a6714cfe05a635b6961aa103dc0894690a3d031240e2"
+        }
+      ]
+    },
+    {
+      "directory": ".build/runs/formal-rtl-2026-11-12T121458.600482+0000-971e561e",
+      "summary_sha256": "e7105bee8236bce0ef76a6f39115f9bd1c3a86151dfb9d3d51542d8b57fb85aa",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "rtl-cell-prove",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": false,
+          "profile": "E0",
+          "seed": null,
+          "configuration": {
+            "defines": [
+              "PROVE_CELL"
+            ],
+            "capacity": 16,
+            "id_width": 5,
+            "returns": 1
+          },
+          "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+          "method": "unbounded k-induction",
+          "engine_status": "PASS",
+          "expected": "PROVE",
+          "manifest_sha256": "5148d20fbf773f7c9a001d38df1cb86d91d88f41304f548db5ed29ad20dfc2b4"
+        },
+        {
+          "test": "rtl-cell-cover",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": false,
+          "profile": "E0",
+          "seed": null,
+          "configuration": {
+            "defines": [
+              "PROVE_CELL"
+            ],
+            "capacity": 16,
+            "id_width": 5,
+            "returns": 1
+          },
+          "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+          "method": "bounded reachability depth 40",
+          "engine_status": "PASS",
+          "expected": "COVER",
+          "manifest_sha256": "2bb8c5a4105f2b65999965f966dbf49c30e794575893751a535b009ba7aab2f9",
+          "reached_covers": 5
+        },
+        {
+          "test": "rtl-cell-mutation",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": false,
+          "profile": "E0",
+          "seed": null,
+          "configuration": {
+            "defines": [
+              "PROVE_CELL"
+            ],
+            "capacity": 16,
+            "id_width": 5,
+            "returns": 1
+          },
+          "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+          "method": "unbounded k-induction",
+          "engine_status": "FAIL",
+          "expected": "POPULATION_COUNTEREXAMPLE",
+          "manifest_sha256": "7a700a4d5d2d5ce3b93f7b1d901a854a02493d9e70002acd95196fd14d364095",
+          "detected_property": "a_population"
+        },
+        {
+          "test": "rtl-descriptor-prove",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": false,
+          "profile": "E0",
+          "seed": null,
+          "configuration": {
+            "defines": [
+              "PROVE_DESC"
+            ],
+            "capacity": 8,
+            "id_width": 4,
+            "returns": 2
+          },
+          "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+          "method": "unbounded k-induction",
+          "engine_status": "PASS",
+          "expected": "PROVE",
+          "manifest_sha256": "ef00b3ae5783022eb0f90f2d33b479b1e2804871e57585f859f81d55cad587b2"
+        },
+        {
+          "test": "rtl-descriptor-cover",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": false,
+          "profile": "E0",
+          "seed": null,
+          "configuration": {
+            "defines": [
+              "PROVE_DESC"
+            ],
+            "capacity": 8,
+            "id_width": 4,
+            "returns": 2
+          },
+          "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+          "method": "bounded reachability depth 40",
+          "engine_status": "PASS",
+          "expected": "COVER",
+          "manifest_sha256": "9fcb3590b19335d7b50f3d317ba63f2e061817f416bcdf1fba4a067f0639030c",
+          "reached_covers": 8
+        },
+        {
+          "test": "rtl-descriptor-mutation",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": false,
+          "profile": "E0",
+          "seed": null,
+          "configuration": {
+            "defines": [
+              "PROVE_DESC"
+            ],
+            "capacity": 8,
+            "id_width": 4,
+            "returns": 2
+          },
+          "assumptions": "Reset low at first two sampled edges; later resets and every action input arbitrary",
+          "method": "unbounded k-induction",
+          "engine_status": "FAIL",
+          "expected": "POPULATION_COUNTEREXAMPLE",
+          "manifest_sha256": "7ac6e15f4e9e32fd81eac00c2adbf43c6b681d389597420bc07c4053cdb9fd60",
+          "detected_property": "a_population"
+        }
+      ]
+    },
+    {
+      "directory": ".build/runs/unit-2026-11-12T121809.453911+0000-8c2e5d96",
+      "summary_sha256": "9cba6f639d6e7dd1e435383afd4798933d9a04ce36627bf9e9c98478cbfd99e1",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "runner-unit",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": true,
+          "profile": "toolchain",
+          "seed": null,
+          "manifest_sha256": "e3330cdf4da14200a4817e20f0cdf0175d200a942286d7ba09cb6e5535a253dc",
+          "source_overrides": {
+            ".github/workflows/toolchain.yml": "8bf0c0d431d7ba7fd75dca67fce2b9020c3bf9517ed4650ff69a2ff146371978",
+            "tools/allocator_scaling.py": "c24601f3e316e94939cef27d80162312bdd4e8bf9c5cf4c3a3e4f3c29a388e25"
+          }
+        }
+      ]
+    },
+    {
+      "directory": ".build/runs/repo-2026-11-12T121815.471028+0000-5f07828e",
+      "summary_sha256": "ccf5020cb40d400b1a8ed87752ff0e2aa9632c06bde2923cb9a7b99d4794f735",
+      "result": "PASS",
+      "cases": [
+        {
+          "test": "repository-contracts",
+          "result": "PASS",
+          "source_revision": "5d977514412e2af902c3e48faec827af859cf03f",
+          "dirty": true,
+          "profile": "toolchain",
+          "seed": null,
+          "manifest_sha256": "23fa60e78170cc8de173b1fa045a0de4d810971d12e63408b9f11d7443eb4fdc",
+          "source_overrides": {
+            ".github/workflows/toolchain.yml": "8bf0c0d431d7ba7fd75dca67fce2b9020c3bf9517ed4650ff69a2ff146371978",
+            "tools/allocator_scaling.py": "c24601f3e316e94939cef27d80162312bdd4e8bf9c5cf4c3a3e4f3c29a388e25"
+          }
+        }
+      ]
+    }
+  ],
+  "rejected_attempt": {
+    "directory": ".build/runs/allocator-scaling-2026-11-12T121306.234304+0000-538a2e90",
+    "source_revision": "2beb248978ceb5d26a509f91aa13f0811bbe46f9",
+    "summary_sha256": "7c59affcb5b3dc65d12522682f0b5d2fb272dbb3dabc5ee5fb8ba10f7e0cc26d",
+    "result": "FAIL",
+    "reason": "OpenSTA warning 1554: Q/QN invalid startpoints; empty selection group. All 16 timing cases rejected; no timing acceptance from this attempt."
+  },
+  "query_correction_mapping_check": "PASS: all eight original/corrected maps have identical area, cell histogram, state bits, capacity and buffer count",
+  "hosted_execution": {
+    "pull_request": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/9",
+    "run_url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43217405597",
+    "job_url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43217405597/job/131180482259",
+    "job_result": "PASS",
+    "pr_head_revision": "2dda7603a60755ca3c4d359548ccfb3d7cd7e1b5",
+    "actual_tested_merge_revision": "56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
+    "source_comparison": "PASS: fetched actual merge object; RTL, formal, dv, verification, experiment definition, frontend and dependency/package locks identical to local tested revision; runner differs only in scope metadata",
+    "command": "make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test allocator-scaling'",
+    "measurement_comparison": "PASS: all eight mapping measurement sets and sixteen STA measurement sets match local records exactly; raw mapping statistics/netlist digests validated and all STA stdout/stderr reparsed with the strict local parser",
+    "artifact": {
+      "id": 13944132446,
+      "name": "toolchain-allocator-scaling-56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
+      "size_bytes": 1805959,
+      "sha256_from_github_metadata": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
+      "archive_digest_verified": true,
+      "retrieval_result": "PASS",
+      "retention_days": 14,
+      "retrieval_method": "GitHub connector Actions artifact download and independently uploaded ZIP; both archives are byte-for-byte identical, match GitHub SHA256/size and pass ZIP CRC checks",
+      "verified_sha256": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
+      "direct_download_limitation": "Workspace gh/urllib HTTP clients received proxy CONNECT 403 for productionresultssa6.blob.core.windows.net; GitHub connector artifact download succeeds",
+      "connector_download": {
+        "result": "PASS",
+        "artifact_id": 13944132446,
+        "verified_sha256": "0e781af3dc9c381caad3d8435310c6da5c393156e518103c52e7dfdfc18aae91",
+        "size_bytes": 1805959,
+        "matches_uploaded_archive_byte_for_byte": true
+      }
+    },
+    "workflow_result": "PASS",
+    "successful_jobs": 21,
+    "archive_cross_check": {
+      "result": "PASS",
+      "hosted_source_revision": "56d75b44e07e2e7f9cc429c73de5024cbcfd95e3",
+      "dirty": false,
+      "summary_sha256": "a74541c96805d913bbfc5843c012f7859bb8df1f88b3ddec3fe63f4f31606044",
+      "summary_cases_passed": 32,
+      "mapped_designs_compared": 8,
+      "timing_analyses_compared": 16,
+      "compared_fields": [
+        "complete mapping measurement dictionaries (area/cells/state/buffers/ports/fanout)",
+        "complete timing measurement dictionaries (every reported max/min group path, endpoints/arrival/slack, electrical checks)",
+        "definition digests",
+        "Liberty digest",
+        "netlist digests"
+      ],
+      "raw_evidence_validation": [
+        "eight netlists match their manifest digests",
+        "eight mapped JSON/statistics files reproduce recorded integrity/area measurements",
+        "sixteen raw STA stdout/stderr pairs reparse without diagnostics or missing paths",
+        "all 24 allocator case manifests identify the same clean hosted source revision"
+      ],
+      "numerical_differences": 0,
+      "decision_change": false
+    }
+  }
+}
