@@ -48,7 +48,9 @@ itself, requiring clog2(capacity+1). `DEFICIT_W` holds
 `4096+MAX_PACKET_BYTES-1`. `tm_validate.svh` rejects unsupported parameters,
 insufficient widths and TX depth less than read latency+2 by instantiating an
 unresolved `TM_INVALID_CONFIGURATION` only in the invalid generate branch.
-Both Verilator elaboration and Yosys `hierarchy -check` must reject that branch.
+Both Verilator elaboration and the selected Yosys elaboration must reject that branch.
+The contracts suite also rejects counter widths outside 1..64 and the bitmap
+kernel's invalid capacity, index/count widths and return-lane counts.
 Reduced formal kernels are separately named harness configurations in later
 proof work; they do not extend the supported production range.
 

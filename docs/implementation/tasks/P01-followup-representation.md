@@ -44,7 +44,8 @@ boundary because it only copies complete beats. See [decision 0007](../../decisi
 
 `make frontends` retains the toolchain PR's historical disposable candidates at
 the immutable pre-migration revision and adds the current registered production
-sources, six profiles, invalid contracts and heterogeneous simulation. These are
+sources, six profiles, invalid contracts and heterogeneous simulation. The contracts
+suite additionally checks statistics counter-width and bitmap capacity/index/count/return-lane guards in both frontends. These are
 separate cases. `make representation-formal` now targets registered production
 FIFO/CSR proofs/covers/mutation and old/current sequential equivalence across all
 six profiles, both FIFO depths and full/reduced statistics counters.
