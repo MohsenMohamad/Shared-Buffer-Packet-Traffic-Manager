@@ -71,7 +71,7 @@ def sequential_equivalence(run,args):
                 # Compare interface shape before accepting a proof: all outputs,
                 # including invalid-data bits, participate in equiv_make.
                 text+=f'write_json {case.path}/models.json\n'
-                text+='equiv_make gold gate equiv\nhierarchy -top equiv\nequiv_struct -icells\nequiv_simple -seq 1\nequiv_induct -seq 4\nequiv_status -assert\n'
+                text+='equiv_make gold gate equiv\nhierarchy -top equiv\nequiv_struct -fwd -icells -maxiter 8\nequiv_simple -short -seq 1\nequiv_induct -seq 4\nequiv_status -assert\n'
                 script.write_text(text)
                 step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=max(args.timeout,300))
                 inference={}
