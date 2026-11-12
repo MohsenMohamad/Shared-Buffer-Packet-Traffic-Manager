@@ -48,3 +48,22 @@ Frontend selection is explicit in the formal/synthesis source registries and
 representations without converting production RTL. Consumers validate the shared
 installation and never invoke setup. See the [operational guide](../implementation/toolchain.md)
 for cache identity, exact-restore rejection, cold setup and capability commands.
+
+
+## Hosted iteration policy
+
+[C01](../implementation/tasks/C01-ci-economy.md) owns implementation of the
+light/full split. Until it is merged, the existing workflows remain the actual
+execution behavior; this policy is not evidence of a changed workflow.
+
+Light repository and toolchain-independent checks run on every PR/main push,
+without path filters. Full prepared-toolchain runs are requested by ready-for-
+review or `full-ci`, run for substantive ready PR updates, and always run for
+main pushes/manual dispatches. An unlabeled draft or ordinary prose-only push
+can avoid heavy preparation. Normative specs, acceptance cards, source registries,
+instructions and setup/workflow/parser changes are not cosmetic documentation.
+
+Decide full execution inside a workflow so metadata requests are not suppressed
+by broad workflow-level Markdown path filters. Unknown paths are substantive.
+Skipped preparation means consumers/cleanup skip; it is not a hardware PASS.
+Preserve stable required-check behavior and a truthful full-CI summary.

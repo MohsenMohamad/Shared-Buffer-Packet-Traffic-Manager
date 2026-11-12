@@ -1,38 +1,40 @@
 # Integration status
 
-G0 is qualified on toolchain fixtures; G1 fixes executable module/type/event
-contracts. P02 implements and locally verifies registered FIFOs and bitmap
-pools. P07 qualifies reusable UVM agents/RAL and independent checkers on a
-behavioral fixture. P06 implements and locally verifies the CSR/statistics APIs
-with independent events. The top and remaining component APIs are declarations; integrated
-traffic-manager functional gates remain pending.
+PRs #1-#10 are integrated through `c32b3f1b79ac3412532e0564e038983aa2862112`.
+The modern toolchain, ANSI/type migration, allocator characterization and P07
+constrained-stimulus/readability follow-up are merged. The top and unimplemented
+components remain declarations; complete traffic-manager behavior is pending.
 
-| Gate | Status | Evidence |
+| Gate | Current scope | Evidence / owner |
 | --- | --- | --- |
-| G0 Toolchain | PASS (toolchain fixtures) | [P00 evidence](results/P00-toolchain.md) |
-| G1 Contracts | PASS (declarations and batching only) | [P01 evidence](results/P01-contracts.md) |
-| G2 Components | PARTIAL: FIFO/pools, CSR/statistics; UVM foundation fixture | [P02 evidence](results/P02-storage-primitives.md); [P07 evidence](results/P07-verification-foundation.md); [P06 evidence](results/P06-registers.md); remaining P03–P05 and P08 |
-| G3 Vertical path | PENDING | P09 |
-| G4 Concurrency | PENDING | P10 |
-| G5 Verification | PENDING | P11A–P11C |
-| G6 Measurements | PENDING | P12 |
-| G7 Release | PENDING | P13–P14 |
+| G0 | Qualified toolchain fixtures and selected frontend | [Modern qualification](results/modern-toolchain.md) |
+| G1 | Qualified declarations/configurations; representation migrated | [P01](results/P01-contracts.md), [migration](results/rtl-representation.md) |
+| G2 | Partial: FIFOs/pools, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P03/P04/P05/P08 pending |
+| G3 | Pending real vertical path | P09 |
+| G4 | Pending integrated concurrency/profile evidence | P10 |
+| G5 | Pending composition proofs and coverage closure | P11A/P11B/P11C |
+| G6 | Pending full matched traffic/implementation studies | P12 |
+| G7 | Pending checked diagnostics and release audit | P13/P14 |
 
-This table describes the candidate state on a feature branch and the
-integrated state on `main`. The linked report identifies tested revisions,
-recorded results and validation boundaries; later documentation edits do
-not imply a new qualification run.
+The integrated-main CI run
+[43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
+completed successfully. This records hosted evidence; no new local test execution
+is implied by this documentation update. The earlier main failure at `4d55757`
+was addressed by the runner race fix merged with PR #10; preserve its history.
 
-The [modern toolchain refresh](results/modern-toolchain.md) requalifies these
-merged components on the selected source stack; it does not advance integrated
-traffic-manager gates. The [representation follow-up](implementation/tasks/P01-followup-representation.md)
-is recorded in [its migration report](results/rtl-representation.md) and
-precedes [allocator characterization](results/allocator-scaling.md). The standalone
-allocator study calls for investigation of 1024-cell selection depth and reset
-timing/fanout; it changes no hardware and closes no integrated gate. P08 retains
-the actual consumer-path recheck, including 1024 cells. P03+ remains paused.
+## Remaining decisions and work
 
-The [P07 follow-up](results/P07-followup-stimulus.md) qualifies readable independent
-checkers and constrained packet stimulus on E0/I0/E1/F0 fixtures, with recorded
-coverage/replay and preserved intended detections. This candidate result and its
-affected CSR checks do not advance integrated TM gates or unpause P03/P08.
+- [F01](implementation/tasks/F01-formal-symbols.md) blocks P03 until fixed symbolic
+  witnesses have a qualified recipe and unsupported constructs fail closed.
+- [R01](implementation/tasks/R01-reset-timing.md) establishes shared reset timing
+  interpretation; original negative removal measurements remain recorded.
+- [A01](implementation/tasks/A01-allocator-selection.md) evaluates the demonstrated
+  1024-cell selection bottleneck and records a disposition before P08.
+- P08 measures the real allocator/admission consumer path. Standalone timing is
+  not an integrated bound; existing statistics area remains separately identified.
+- [C01](implementation/tasks/C01-ci-economy.md) owns cheaper hosted iteration and
+  minor validator/run housekeeping; it does not establish hardware correctness.
+
+Each results report identifies its tested revisions, assumptions, profiles and
+scope. Later prose/merge commits do not replace those identities or create PASS.
+See the [current plan](implementation/plan.md) for the remaining dependency order.

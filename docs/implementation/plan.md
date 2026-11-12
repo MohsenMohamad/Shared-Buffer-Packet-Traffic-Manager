@@ -1,84 +1,132 @@
 # Implementation plan
 
-The task cards define engineering assignments; [the specifications](../spec/README.md) define required behavior. Follow the committed repository working and documentation rules. A task's component evidence does not by itself close the entire integration gate.
+Task cards define assignments; [specifications](../spec/README.md) define behavior.
+Use the committed working/documentation rules and the actual current source tree.
+Completion of a fixture or local proof does not close an integrated gate.
 
-## Dependencies and ownership
+## Integrated baseline and remaining entry condition
 
-Shared APIs, state/array ownership and source/profile registration are fixed in P01 before components diverge. Component tasks add their real tests and local proofs; P11A/P11B close production composition rather than postpone all verification until the end.
+At `c32b3f1b79ac3412532e0564e038983aa2862112`, PRs #1-#10 integrate P00/P01/P02/
+P06/P07, shared CI/evidence work, modern toolchain qualification, the RTL
+representation migration, allocator characterization and the P07 stimulus/checker
+follow-up. These stabilization implementation steps are complete. Their original
+tested revisions and scopes remain in the linked reports. The main run
+[43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
+completed successfully. This statement records that hosted result, not a new local run.
 
-| Task | Assignment | Dependencies |
+P03 is the next new hardware stage after [F01](tasks/F01-formal-symbols.md) closes
+fixed-symbol formal semantics. [R01](tasks/R01-reset-timing.md) owns reset
+constraint interpretation before new allocator/P08 studies. [A01](tasks/A01-allocator-selection.md)
+owns measured allocator alternatives and a reviewed disposition before P08.
+[C01](tasks/C01-ci-economy.md) reduces hosted iteration cost and is useful early;
+it does not block queue implementation.
+
+## Dependencies and owners
+
+| Work | Assignment | Entry / current state |
 | --- | --- | --- |
-| P00 | [Open-source toolchain and executable capability gates](tasks/P00-toolchain.md) | seed |
-| P01 | [Module contracts, types and reference interfaces](tasks/P01-contracts.md) | P00 |
-| P02 | [Elastic FIFOs, cell pool and descriptor pool](tasks/P02-storage-primitives.md) | P01 |
-| P03 | [Descriptor queues and simultaneous update correctness](tasks/P03-queues.md) | P02 |
-| P04 | [Deficit round robin and packet-RR comparison](tasks/P04-scheduler.md) | P03 |
-| P05 | [Finite-port packet store and transmit engine](tasks/P05-memory-tx.md) | P03 |
-| P06 | [AXI4-Lite configuration and coherent statistics](tasks/P06-registers.md) | P01 |
-| P07 | [UVM agents, monitors and independent models](tasks/P07-verification-foundation.md) | P01 |
-| P00 refresh | [Current toolchain and frontend qualification](tasks/P00-followup-modern-toolchain.md) | integrated P00/P01/P02/P06/P07 |
-| P01 representation | [Qualified RTL representation](tasks/P01-followup-representation.md) | P00 refresh; before allocator characterization |
-| P02 follow-up | [Production allocator scaling](tasks/P02-followup-scaling.md) | P02, P01 representation; before P08 |
-| P07 follow-up | [Readable checkers and constrained packet stimulus](tasks/P07-followup-stimulus.md) | P07; before P08 |
-| P08 | [Interleaved receive, admission and abort cleanup](tasks/P08-receive-admission.md) | P02, P03, P05, P07 and both follow-ups |
-| P09 | [Single-flow end-to-end vertical integration](tasks/P09-vertical-integration.md) | P04, P05, P06, P07, P08 |
-| P10 | [Full subsystem concurrency and parameter regression](tasks/P10-concurrency.md) | P09 |
-| P11A | [Ownership, conservation and queue proof closure](tasks/P11A-formal-resources.md) | P10 |
-| P11B | [Transmit, scheduler and register property closure](tasks/P11B-formal-interfaces.md) | P10 |
-| P11C | [Coverage review and requirement closure](tasks/P11C-coverage.md) | P10, P11A, P11B |
-| P12 | [Traffic benchmarks, mapped synthesis and timing](tasks/P12-measurements.md) | P11C |
-| P13 | [Regression evidence and checked diagnostic workflow](tasks/P13-diagnostics.md) | P10 |
-| P14 | [Independent integration audit and release evidence](tasks/P14-release.md) | P12, P13 |
+| P00/P01/P02/P06/P07 | Toolchain, contracts, storage, CSR and bench foundation | Integrated with component/fixture boundaries |
+| Stabilization | [Toolchain refresh](tasks/P00-followup-modern-toolchain.md), [representation](tasks/P01-followup-representation.md), [scaling](tasks/P02-followup-scaling.md), [stimulus](tasks/P07-followup-stimulus.md) | Integrated; consume results, do not recreate |
+| C01 | [CI iteration economy](tasks/C01-ci-economy.md) | Early maintenance; preserve all full suites |
+| F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Before P03 and new harnesses |
+| P03 | [Descriptor queues](tasks/P03-queues.md) | P02 + F01 |
+| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | P03 |
+| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | P03 |
+| R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
+| A01 | [Allocator evaluation/disposition](tasks/A01-allocator-selection.md) | Existing characterization + R01; before P08 |
+| P08 | [Receive/admission/reclaim](tasks/P08-receive-admission.md) | P02/P03/P05/P07 + A01/R01; earlier follow-ups integrated |
+| P09 | [Real vertical path](tasks/P09-vertical-integration.md) | P04/P05/P06/P07/P08 |
+| P10 | [Concurrency/profile regression](tasks/P10-concurrency.md) | P09; packet-rate decision before P11 |
+| P11A | [Resource/queue proof closure](tasks/P11A-formal-resources.md) | P10 |
+| P11B | [TX/scheduler/CSR proof closure](tasks/P11B-formal-interfaces.md) | P10 |
+| P11C | [Coverage/requirement closure](tasks/P11C-coverage.md) | P10 + P11A/P11B |
+| P12 | [Traffic and implementation studies](tasks/P12-measurements.md) | P11C; R01 + P08 timing inputs |
+| P13 | [Checked failure diagnostics](tasks/P13-diagnostics.md) | P10; secondary to core RTL/DV |
+| P14 | [Independent release audit](tasks/P14-release.md) | P12/P13 and current integrated evidence |
 
-## Stabilization before the next implementation stage
+A practical serial route is C01/F01, P03, P04, P05, R01, A01, P08, P09, P10,
+P11A, P11B, P11C, P12, P13, P14. C01 and independent analysis can run alongside
+hardware work when shared file ownership is explicit. P04/P05, P11A/P11B and
+P12/P13 remain possible independent waves; serial work is simpler by default.
 
-P00, P01, P02, P06 and P07 are integrated at `a473b8c535d02b50b23604047f1bae64638c89df` (PRs #1–#5). These completed stages retain their recorded component/fixture boundaries. P03 and later hardware remain paused during this stabilization pass and its reevaluation.
+## Active tool and representation contract
 
-1. Complete the [P00 toolchain refresh](tasks/P00-followup-modern-toolchain.md), retaining shared CI preparation and the durable evidence policy.
-2. Complete [P01 representation](tasks/P01-followup-representation.md) with the tested recipe before allocator characterization.
-3. Complete the focused [P02 allocator-scaling follow-up](tasks/P02-followup-scaling.md) now, before P08. Commit and push constraints and decision criteria before experiments; review measured findings without presupposing replacement.
-4. The [P07 readability and constrained-stimulus follow-up](tasks/P07-followup-stimulus.md) is qualified on its candidate branch before P08; see [executed evidence](../results/P07-followup-stimulus.md).
-5. Reevaluate stabilization results. P03 remains the next new implementation stage; completed stages and hardware scope are unchanged.
-6. Measure basic packet rate in P09, expand diagnosis in P10, and explicitly accept the measured baseline or propose optimization after P10 before P11 closure. P12 retains the full benchmark study.
+Use the selected source identities in `tools/dependencies.json`, not a floating
+latest release. The integrated stack is Yosys 0.70+post/Slang, Verilator 5.054,
+official UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative OpenSTA 3.2.0 with
+pinned transitive inputs. [Decision 0006](../decisions/0006-modern-toolchain.md)
+and [0007](../decisions/0007-rtl-representation.md) explain qualified choices.
 
-## Starting and integrating work
+Use ANSI ports, `tm_fixed`, the shared dependent `localparam type` declarations,
+guarded widths and registered source lists. Preserve packed public lane order
+and intentional generic vector FIFO/pool boundaries. The separator macro avoids
+duplicate dependent records; it is not an invitation to create a macro framework.
+Qualify a useful new language/library construct once before depending on it.
+Do not flatten current types to satisfy the historical native frontend or assume
+that richer design syntax implies full temporal-SVA/four-state support.
 
-Check the actual default branch and prerequisite implementations before starting a dependent task. A completed candidate on an open PR is available for review, not yet an integrated dependency. Reuse its existing implementation; do not regenerate it merely because a task card changed.
+Use F01's explicit-input recipe in new formal harnesses. Legacy bridge results
+retain their narrower scope. UVM agents, passive models, constrained packet
+objects and RAL already exist; extend them onto real RTL without another bench
+or runner. Frontdoor/no-DPI remains a valid tested choice; use qualified DPI
+only for a concrete need, not to replace external checking.
 
-Use one implementation task followed by a fresh review of its exact base/head revisions. A practical serial order that satisfies every dependency is:
+## Implementation and decision checkpoints
 
-1. P00, then P01.
-2. P02, P07, P03, P06, P04, P05.
-3. P08, P09, P10.
-4. P11A, P11B, P11C.
-5. P12, P13, P14.
+P03/P04/P05/P08 add their component simulation, assertions and local production
+proofs as they implement the hardware. P09 wires the real top and bench;
+P10 establishes concurrency across F0/F1/I0/I1/E0/E1. P11 closes composition and
+coverage rather than deferring all verification until the end.
 
-The original independent waves remain possible: P02/P07, P03/P06, P04/P05, P11A/P11B and P12/P13. Use them only when both bases contain their prerequisites and shared edits have an explicit owner. In particular, `tools/run.py`, `Makefile`, CI, shared model APIs and `verification/requirements.json` are shared integration surfaces, even when RTL paths are disjoint. Integrate and review each wave before starting dependent work. Initially keep at most two implementation branches active; this is a coordination recommendation, not a hardware limit.
+R01 preserves old reset-violation evidence and establishes comparable new
+constraints. A01 reviews whether lowest-pre-state-ID ordering has any functional
+consumer before comparing selection structures. It may propose a reviewed
+any-valid-free-ID contract with complete specification/checker updates; ownership
+safety does not depend on numeric ordering. Latency/return-bypass changes remain
+separate decisions. Existing tests alone are not a justification for an arbitrary
+policy, and deleting a failing safety check is not a design decision.
+P08 measures through the actual selected allocator consumer at I0 and 1024 cells.
 
-The cards may span more than one session. Continue a saved task using its existing branch/state rather than silently dropping acceptance checks. An API change updates affected callers/tests together. A change after proof or coverage closure refreshes the checks it affects; P12 implementation variants and P13 failure-hook edits are included in the final audit.
+P09 measures saturated 64/1536-byte packet rate early. P10 attributes each output
+cycle once and records a reviewed baseline/optimization decision before P11.
+There is no invented 64-byte target; the existing 1536-byte target remains.
+An adopted optimization refreshes affected integration/checker/proof evidence.
 
-## Command implementation ownership
+P12 can be delivered in cohesive steps: traffic benchmarks, the actual matched
+flat/banked memory variant, then final mapped/STA comparison. Those steps together
+close P12. P13 can likewise separate offline failure collection from its real
+diagnostic session/review; fixtures alone do not close AI-01. Later executable
+changes refresh affected G5 evidence before P14.
 
-This table specifies work to implement. It does not claim that future suites already exist. The integrated P00 guide and runner define commands actually available at that revision.
+## Commands and evidence ownership
 
-| Stage | Command/registration work | Verification boundary |
-| --- | --- | --- |
-| P00 | Setup/doctor, repo/lint/unit, UVM/formal/synthesis smoke and capability CI | Independent capability fixtures |
-| P01 | Functional profiles, source registration and named `regression` suites; single functional seed; initial `contracts` suite | Compilation/elaboration and model-interface checks |
-| P02 | Add `formal-rtl` target/action with production family selection; `pools` regression/proof suites | Actual FIFO/pool RTL; retain `formal-smoke` fixture behavior |
-| P03–P08 | Register `queues`, `scheduler`, `memory-tx`, `csr`, `uvm-foundation`, `receive` as applicable | Component RTL or explicitly named UVM fixture; applicable local proofs |
-| P09 | `vertical` regression and actual subsystem CI smoke | Production TM with one active flow |
-| P10 | `concurrency` and parameter suites; functional regression/CI expansion | Concurrent integrated TM |
-| P11A/P11B | Resource/control production proof-family selections | Actual reduced production elaborations and composition |
-| P11C | `coverage` extraction, compatible merging and summaries | Saved real databases and reviewed bins |
-| P12 | `benchmark`, `synthesis`, `sta` | Actual workloads and matched mapped TM variants |
-| P13 | Triage unit/failure-hook checks in existing runner | Offline fixture checks plus actual diagnostic evidence |
-| P14 | Clean-environment entry-point and release-evidence audit | Exact final integrated candidate |
+The current runner/registries are authoritative for commands that exist. Future
+cards register their own named suite (`queues`, `scheduler`, `memory-tx`, `receive`,
+`vertical`, `concurrency`) and production-proof families. Keep capability fixture
+commands and functional single-seed replay semantics distinct. Empty, unknown,
+duplicate or missing required selections fail rather than silently passing.
 
-Selection grammar and profile handling are implemented/documented with the owning stage, using the common runner. P00's `--test` CI-gate selector and two-seed replay requirement must not be imposed blindly on later single-test functional replay. Preserve capability compatibility while adding those routes. Do not reuse a fixture result to satisfy a production suite.
+P11C owns compatible saved coverage databases and reviewed exclusions. P12 owns
+`benchmark`, `synthesis` and `sta`; P13 owns triage hooks through the same runner.
+P14 reconciles all 52 obligations with actual current source and results.
+Keep the requirement registry tied to executed scope; fixture/component results
+must not be promoted to full-subsystem PASS.
 
-## Requirement accounting
+Review exact base/head revisions and integrate prerequisites before dependent
+tasks. Retain criteria-before-results and cleanup-before-new-functionality commits
+through merge commits where their order is evidence. Keep bulk logs/waves/netlists
+in artifacts and compact durable results/commands in Git. Reuse valid unchanged
+evidence; refresh checks affected by executable changes. The maintainer controls
+merges and any release tag.
 
-Each card names requirements it contributes to, not permission to mark all of them PASS after a local test. Keep `verification/requirements.json` tied to tests, actual outcomes and scope. P10 establishes integrated functional/parameter evidence; P11A/P11B establish the selected production proofs; P11C reconciles required verification coverage; P09/P10 establish early packet-rate measurements and a pre-P11 baseline decision; P12 owns the full performance experiments and P13 owns AI-01. P14 checks all 52 obligations against the final source.
+## Reviewing a recorded design restriction
 
-Use reduced formal dimensions only under the documented formal elaboration/abstraction contract. They do not expand the supported functional profile range. Required unresolved proofs/tests block their gate; recording a truthful unsupported or inconclusive status is not completion of that obligation.
+A current contract is the starting point for compatible work, not proof that its
+original choice was well studied. Before preserving a restrictive implementation
+policy, identify the external behavior or real consumer that requires it,
+distinguish architectural timing from correctness invariants, and compare a
+grounded alternative when evidence warrants it. Change a contract explicitly with
+its callers/checkers and verification plan; do not silently freeze convenience
+choices or weaken safety to make an experiment pass. A01 is the assigned review
+of numeric allocation order; this does not reopen every accepted project scope
+decision without a concrete reason.

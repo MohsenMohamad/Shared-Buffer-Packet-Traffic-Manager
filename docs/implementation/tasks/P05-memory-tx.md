@@ -20,7 +20,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Execution sequence
 
-1. Use P01 RAM/descriptor/link contracts and P03 dispatch ownership. Implement the logical 64-bit 1R1W payload interface with fixed one/two-cycle responses and no response backpressure.
+1. Use P01 RAM/descriptor/link contracts and P03 dispatch ownership. Implement the logical 64-bit 1R1W payload interface with fixed one/two-cycle responses and no response backpressure. Complete the production metadata wrapper: reuse P03's descriptor-link child, add the single-writer cell-next and descriptor-info arrays, and preserve the documented two cell-link read muxes, per-queue head-info queries and queue-next query. Keep all array owners unique and include their finite ports in tests/area scope.
 
 2. Define bounded buffered-plus-outstanding accounting before issuing reads. Include simultaneous response arrival and output handshake in the credit update, preventing overissue at exact capacity.
 

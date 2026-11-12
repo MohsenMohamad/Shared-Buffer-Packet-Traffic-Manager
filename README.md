@@ -1,39 +1,92 @@
 # Shared-Buffer Packet Traffic Manager
 
-Single-clock SystemVerilog traffic-manager slice with shared cell storage, descriptor queues, admission control, deficit round robin and backpressure.
+A single-clock SystemVerilog traffic-manager slice for variable-length packets:
+four independently backpressured 64-bit inputs share sixteen logical queues,
+64 KiB of payload cells and 256 packet descriptors, with one packet output.
+The design combines whole-packet reservation, store-and-forward publication,
+byte-based deficit round robin and an AXI4-Lite control/statistics plane.
 
-Default configuration: four 64-bit packet inputs, sixteen logical queues, one output, 64 KiB of payload cells and 256 descriptors. The design uses whole-packet credit reservations and store-and-forward commit.
+## Data path
 
-## Project state
+```mermaid
+flowchart TD
+  IN["Packet inputs"] --> FIFO["Ingress FIFOs"]
+  FIFO --> RX["Arbitration, admission and cleanup"]
+  RX --> RAM["Shared cell store"]
+  RX --> Q["Descriptor queues"]
+  Q --> DRR["DRR scheduler"]
+  DRR --> TX["Read engine and output FIFO"]
+  RAM --> TX
+  TX --> OUT["Packet output"]
+  POOL["Cell and descriptor pools"] <--> RX
+  TX --> POOL
+  CSR["AXI4-Lite configuration and statistics"] --> RX
+  CSR --> DRR
+```
 
-This repository contains the implementation specification, executable toolchain capability gates, and G1 module/type/event contracts. The registered FIFO, cell/descriptor pools and CSR/statistics APIs are implemented; the top and remaining component APIs are declarations. Integrated traffic-manager behavior and subsystem verification remain pending. Track integration gates in [docs/status.md](docs/status.md).
+This is the target architecture. FIFOs, bitmap pools, CSR/statistics and the UVM
+foundation are implemented and locally verified. Queue, scheduler, memory/TX,
+receive/admission and production top integration are the remaining hardware work.
+Declaration elaboration and bench fixtures do not establish an integrated TM.
+[Current status](docs/status.md) and the [implementation plan](docs/implementation/plan.md)
+identify the exact completed scope and next prerequisites.
 
-## Documentation
+## Engineering decisions
 
-- [Specification index](docs/spec/README.md)
-- [Implementation plan](docs/implementation/plan.md)
-- [Contribution and validation workflow](CONTRIBUTING.md)
-- [Dependencies](tools/dependencies.json)
-- [Modern toolchain qualification](docs/results/modern-toolchain.md)
-- [Toolchain setup and commands](docs/implementation/toolchain.md)
+| Decision | Consequence |
+| --- | --- |
+| Reserve the declared packet's cells and one descriptor before service | Admission cannot overbook shared capacity; DROP/WAIT and malformed cleanup are explicit |
+| Publish at successful commit; dequeue at dispatch | Per-queue order follows commit, including cross-input completion races |
+| One payload read and one write per cycle | Four inputs share ingress bandwidth; read credits track fixed one/two-cycle responses |
+| DRR accounts in bytes, packet RR is the comparison mode | Mixed packet sizes exercise fairness beyond equal packet counts |
+| Reset flushes in-flight work | No stale responses or packets may appear in the next epoch |
+| ANSI records/types through the selected Slang frontend | Shared fixed/dependent types preserve explicit layouts and supported configurations |
 
-`make setup` installs the pinned native tools. `make ci` exercises UVM/randomization/assertions/saved coverage, formal prove/cover/mutation, and mapped synthesis/max/min STA on independent fixtures. `make repo-check` validates documents and requirement data only. Executed results identify their source revision, profile and tool versions.
+The default profile is F0; F1 tests read latency two. I0/I1 are small fully mapped
+implementation profiles, and E0/E1 exercise configuration boundaries. The
+[architecture](docs/spec/architecture.md) defines the six profiles, targets and
+exclusions. The project does not claim Ethernet wire rate, physical signoff or
+silicon power measurement. New mapped timing uses the identified public reference
+library and explicitly scoped reset/IO assumptions.
 
-G1 contract regression: `make regression RUN_ARGS="--profile E0 --test contracts --seed 17"`.
-See [module contracts](docs/spec/module-contracts.md) for APIs and scope.
-Declaration compilation does not establish traffic-manager functionality.
+## Build and verification
 
-Storage component regression: `make regression RUN_ARGS="--profile E0 --test pools --seed 17"`.
-Production local proofs: `make formal-rtl RUN_ARGS="--timeout 240"`.
-See [P02 evidence](docs/results/P02-storage-primitives.md) for scope and results.
+Use the qualified Linux x86-64 cloud toolchain and repository setup recipe:
 
-The [UVM foundation](dv/README.md) runs independently of full TM integration:
-`make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'`.
-Its behavioral fixture qualifies the bench and checkers; production verification
-remains tracked separately.
+```sh
+make setup
+make doctor
+make regression RUN_ARGS='--profile E0 --test pools --seed 17'
+make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'
+make regression RUN_ARGS='--profile E0 --test csr --seed 17'
+make formal-rtl RUN_ARGS='--timeout 240'
+```
 
-Production CSR regression: `make regression RUN_ARGS='--profile E0 --test csr --seed 17'`.
-The independent event fixture checks configuration and coherent statistics;
-`make formal-rtl RUN_ARGS='--test csr'` proves local protocol properties.
-Real event wiring and whole-system IDLE generation remain integration checks.
-See [P06 evidence](docs/results/P06-registers.md) for the executed component checks.
+Setup installs pinned dependencies; ordinary tests use that installation.
+`make repo-check` validates repository contracts only. `make ci` includes
+capability fixtures and registered component checks; its actual cases and scopes
+come from the runner. Future production suites are added by their owning tasks.
+
+The exercised stack uses Yosys 0.70+post/Slang, Verilator 5.054, official UVM
+2020.3.2, SBY 0.71, Z3 5.4.1 and OpenSTA 3.2.0. Exact source/transitive identities,
+ABI requirements and activation commands are in the
+[locks](tools/dependencies.json) and [toolchain guide](docs/implementation/toolchain.md).
+
+SV/UVM drivers, passive monitors, RAL, independently batched policy/resource
+models, constrained packet generation, SVA and selected production formal proofs
+are exercised at their recorded component/fixture scope. The black-box scoreboard
+uses monitored handshakes, not driver intentions. Four-state simulation remains
+outside the qualified two-state flow. New fixed formal witnesses require
+[F01](docs/implementation/tasks/F01-formal-symbols.md) before queue proof work.
+
+## Results and navigation
+
+- [Normative specifications](docs/spec/README.md) and [module contracts](docs/spec/module-contracts.md)
+- [Modern toolchain qualification](docs/results/modern-toolchain.md) and [representation migration](docs/results/rtl-representation.md)
+- [Allocator scaling](docs/results/allocator-scaling.md): established F0 selection-depth risk; alternatives and real-consumer timing are assigned work
+- [P07 stimulus/checker qualification](docs/results/P07-followup-stimulus.md)
+- [Verification requirements](verification/requirements.json), [acceptance gates](docs/spec/acceptance.md) and [contribution workflow](CONTRIBUTING.md)
+
+Reports retain their actual tested source/tool/configuration identities. Merged
+documentation does not substitute for execution or promote a local proof into
+whole-subsystem verification.

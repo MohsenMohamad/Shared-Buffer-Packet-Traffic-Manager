@@ -36,11 +36,11 @@ Use the repository PR template as a default, adapting it to the size of the chan
 1. **Summary:** Explain the concrete problem and resulting behavior in one short paragraph. Link the work item when relevant.
 2. **Changes:** List the important changes in a few focused bullets. Omit this section when the summary is sufficient.
 3. **Validation:** Summarize checks by capability or behavior, with their actual result and essential qualification. Link the supporting report or CI run.
-4. **Limitations:** State boundaries that affect interpretation, including unsupported or unexecuted checks. Omit this section when there are none.
+4. **Scope or open items, only when material:** Keep a result's essential boundary beside that result. Add a separate short section only for an unresolved issue or qualification that affects the reviewer's decision. Name its consequence and, for scheduled work, its owner/entry gate. Omit it when it adds no information.
 
 Use a small validation table when it improves comparison. A single check may be clearer in a sentence. Keep a result's essential qualification beside it even if the limitations section adds detail.
 
-Full hashes, seed lists, digests, command transcripts, long artifact paths and detailed measurements belong in the results report. Include a number or short command in the PR when it materially helps assess the change. Do not compress all evidence into a long bullet.
+Full hashes, seed lists, digests, command transcripts, long artifact paths and detailed measurements belong in the results report. Include a number or short command in the PR when it materially helps assess the change. Do not compress all evidence into a long bullet. Give unrelated constraints separate short bullets or sentences; do not mix them with hashes, commands and artifact paths. Keep the complete scope/assumptions in the linked report. Do not fill a limitations section with every project exclusion, an inventory of untouched files, routine task boundaries or already resolved issues. A real failure or unexecuted required check must remain visible; moving detail to a report does not justify hiding its consequence.
 
 An expected seeded-defect detection is a successful negative check only if the intended violation was detected. A generic crash, unrelated assertion or missing executable does not establish that result. Label the expected detection explicitly.
 

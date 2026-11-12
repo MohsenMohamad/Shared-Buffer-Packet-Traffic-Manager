@@ -48,3 +48,13 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The resource portion of G5 has the required scoped unbounded results, composition evidence and reachable scenarios. Required timeouts are unresolved proof obligations, not a passing gate.
 
 Requirement focus: `MEM-01`, `MEM-02`, `MEM-06`, `Q-01`, `Q-02`, `Q-03`, `Q-04`, `Q-05`, `ADM-02`, `FMT-06`, `RST-02`
+
+
+## Harness semantics
+
+Use [F01](F01-formal-symbols.md) and the current formal specification for new
+symbolic inputs. A fixed descriptor/packet witness stays constant through later
+resets; arbitrary sink or traffic inputs remain unconstrained except for explicit
+legitimate protocol assumptions. Preserve property names, covers and intended
+negative detections when changing harness representation. Native diagnostics are
+historical/minimized controls, not the parser for current production types.
