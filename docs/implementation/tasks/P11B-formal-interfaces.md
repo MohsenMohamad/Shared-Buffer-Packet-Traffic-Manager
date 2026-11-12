@@ -49,3 +49,13 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The interface/control portion of G5 has the selected production safety results and explicit progress scope, with no unexplained assertion-semantic divergence or required inconclusive result counted as complete.
 
 Requirement focus: `IF-01`, `MEM-04`, `MEM-05`, `SCH-01`, `SCH-02`, `SCH-03`, `SCH-04`, `SCH-06`, `CSR-02`, `CSR-03`, `CSR-04`, `CSR-05`, `RST-02`
+
+
+## Harness semantics
+
+Use [F01](F01-formal-symbols.md) and the current formal specification for new
+symbolic inputs. A fixed descriptor/packet witness stays constant through later
+resets; arbitrary sink or traffic inputs remain unconstrained except for explicit
+legitimate protocol assumptions. Preserve property names, covers and intended
+negative detections when changing harness representation. Native diagnostics are
+historical/minimized controls, not the parser for current production types.

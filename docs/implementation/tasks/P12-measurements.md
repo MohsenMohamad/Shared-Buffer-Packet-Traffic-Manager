@@ -4,7 +4,7 @@
 
 Measure the actual TM and matched implementation variants without conflating reference-policy models, abstract storage or fixture timing with production hardware.
 
-Dependencies: [P11C](P11C-coverage.md)
+Dependencies: [P11C](P11C-coverage.md), [R01 reset convention](R01-reset-timing.md); consume A01/P08 allocator decisions and actual consumer measurements.
 
 ## Sources and work boundary
 
@@ -33,7 +33,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 7. Implement `make synthesis` and `make sta` with production-only source lists, identified Liberty/ABC constraints and included payload/metadata/FIFO/control hardware for I0/I1. State the observation-logic boundary consistently.
 
-8. Apply the specified initial 10-ns clock, 2-ns I/O budgets, 0.10-ns uncertainty and explicit min/max slew/load assumptions. Inspect max/min groups, unconstrained paths and valid exceptions. Do not cut a valid path to improve slack.
+8. Apply the specified initial 10-ns clock, 2-ns data I/O budgets, 0.10-ns uncertainty and explicit min/max slew/load assumptions. Consume R01's shared reset-deassertion convention and report recovery/removal and reset fanout separately. Inspect all intended max/min groups, unconstrained paths and valid exceptions. Do not cut a valid path or tune an arbitrary reset delay merely to improve slack.
 
 9. Compare cell area, setup/hold slack, registers/storage, read latency and measured throughput under matched library/PVT/capacity/conditions. Keep large abstract-SRAM logic area separate from storage assumptions. Investigate missed targets rather than changing workloads silently.
 

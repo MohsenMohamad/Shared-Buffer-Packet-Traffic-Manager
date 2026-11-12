@@ -1,22 +1,19 @@
-<!-- Follow ../docs/documentation.md. Remove these instructions and unused sections before posting. Adapt the structure to the size of the change. -->
+<!-- Follow docs/documentation.md. Adapt to the change and delete unused sections/comments. -->
 
 ## Summary
 
-<!-- Explain the concrete problem and resulting behavior. Link the work item where relevant. -->
-
-## Changes
-
-<!-- A few focused bullets for important changes. Omit when the summary is sufficient. -->
+<!-- Concrete problem and resulting behavior. Add Changes bullets only when they help review. -->
 
 ## Validation
 
-<!-- Summarize actual results by capability or behavior. Use the table when helpful; a sentence is enough for one check. Keep full commands, revisions, seeds, digests and detailed metrics in the linked results report. Label expected seeded-defect detections explicitly. -->
+<!-- Actual outcomes by behavior/capability. Keep essential scope beside the result.
+One check can be a sentence; use a small table only for a useful comparison.
+Link the supporting report/CI run for commands, revisions, seeds and full metrics.
+Label intended seeded-defect detections. Do not leave placeholders or empty tables. -->
 
-| Check | Result | Essential qualification |
-| --- | --- | --- |
+## Open items
 
-<!-- Link the actual supporting report or CI run. Do not leave an empty table, placeholder rows or unsupported claims. -->
-
-## Limitations
-
-<!-- State material boundaries, unsupported or unexecuted checks and outstanding failures. Omit when none apply. -->
+<!-- Optional: only a material unresolved issue or required unexecuted check.
+Use one short bullet per issue: consequence and owner/decision gate where applicable.
+Keep measurement/proof boundaries beside Validation results; link fuller assumptions.
+Delete this section when it adds nothing. Do not list every project exclusion. -->

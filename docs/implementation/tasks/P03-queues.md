@@ -4,7 +4,7 @@
 
 Implement descriptor-linked FIFO queues with exact publication/dispatch linearization and safe reuse of stale metadata.
 
-Dependencies: [P02](P02-storage-primitives.md)
+Dependencies: [P02](P02-storage-primitives.md), completed [F01 symbolic-input qualification](F01-formal-symbols.md). The merged stabilization work does not close F01 automatically.
 
 ## Sources and work boundary
 
@@ -18,7 +18,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Execution sequence
 
-1. Use P01 query/enqueue/dispatch contracts and the P02 descriptor ownership boundary. State which block writes descriptor information and which owns descriptor-next and head/tail/count arrays.
+1. Use P01 query/enqueue/dispatch contracts and the P02 descriptor ownership boundary. The queue controller owns head/tail/count; metadata owns descriptor-next and immutable descriptor information. Implement the descriptor-link array as a reusable production child with the specified single-write/combinational pre-state read boundary, and use it in queue tests/proofs. P05 reuses that child in the metadata wrapper; do not create a second independently owned link array or a behavioral-only substitute.
 
 2. Implement pre-state queue queries and successful-commit publication. An enqueue to an empty queue is not eligible for same-edge dispatch. Removing a descriptor transfers it to TX; it does not free it.
 
@@ -28,7 +28,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 5. Build an independent list/FIFO model. Run ID reuse and alternating same/different-qid updates across supported queue widths; include empty dispatch attempts and maximum occupancy.
 
-6. Create FP-QUEUE/FP-ORDER harnesses for the production queue controller. Prove ordering/count against an abstract FIFO with explicit legal-owner inputs; preserve those assumptions for caller checking in P11A.
+6. Create FP-QUEUE/FP-ORDER harnesses for the production queue controller. Prove ordering/count against an abstract FIFO with explicit legal-owner inputs; preserve those assumptions for caller checking in P11A. Use F01's qualified top-level-input recipe for arbitrary/fixed witnesses, held across later resets. Do not introduce native anyconst/anyseq attributes or unsupported temporal formal syntax into a new Slang harness.
 
 7. Reach last-pop/push and two-qid covers; demonstrate that removing the required last-entry bypass triggers the ordering checker. Register the `queues` simulation and production-proof suites.
 

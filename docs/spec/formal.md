@@ -46,16 +46,54 @@ Proof tasks target production modules. A feasibility example or reference-model 
 
 Selected conservation, ownership, occupancy and queue-order safety claims require passing unbounded results at documented reduced configurations. Additional integrated symbolic payload tracking is a stretch task. A timeout remains inconclusive; do not change the property into a weaker statement just to obtain PASS.
 
+
 ## Selected frontend and arbitrary inputs
 
 Use the frontend registered in `verification/sources/formal.json`. The pinned
-`read_slang` flow does not preserve native `anyseq`/`anyconst` declarations as
-symbolic cells. `tools/frontend.py` exposes the unchanged production harness's
-arbitrary internals as free top-level inputs; it preserves every expression,
-assumption, assertion, cover and state update. Do not apply it to DUT state.
-`make bridge` compares property inventories/source locations and proves mutual
-inclusion of the complete assumption predicates against the native-supported pre-migration Git control in
-`verification/representation.json`,
-including startup reset and arbitrary later resets. Its additional control-state
-equalities are proved invariants, not new environmental assumptions. Retain
-production unbounded/cover/mutation checks; bridge equivalence alone is insufficient.
+Slang flow does not preserve native `anyseq`/`anyconst` attributes/functions as
+native symbolic cells. New production harnesses therefore declare arbitrary
+stimulus as explicit top-level input ports. A time-varying input needs no
+stability assumption. A fixed arbitrary witness needs an explicit, documented
+stability assumption over the entire proof, including later DUT resets.
+
+The following is the required recipe to qualify in [F01](../implementation/tasks/F01-formal-symbols.md)
+before P03; it is not a claim that F01 has already executed:
+
+```systemverilog
+module witness_example #(parameter int W=4)
+  (input logic clk, rst_n, input logic [W-1:0] witness);
+  logic f_history_valid = 1'b0;
+  always_ff @(posedge clk) begin
+    f_history_valid <= 1'b1;
+    if (f_history_valid)
+      assume(witness == $past(witness));
+  end
+  // Property-specific DUT connections/assertions/covers follow.
+endmodule
+```
+
+The witness is arbitrary initially; it is not sampled from DUT state. The
+history-valid bit is initialized once and **not reset by rst_n**. Resetting it
+would allow a supposedly fixed witness to change across resets. Any domain/range
+restriction is a separate assumption justified by the property. An assumption
+that fixes the witness must not inadvertently constrain unrelated traffic.
+
+F01 qualifies the recipe with a constancy assertion, an unreachable-change cover,
+distinct reachable witness values, later resets and a missing-assumption negative
+control. It adds a fail-closed check for unqualified symbolic constructs in new
+Slang formal harness source lists and included headers. Until that executable
+qualification and guard are integrated, P03's formal prerequisite remains open.
+
+`tools/frontend.py` retains a narrowly qualified anyseq-to-free-input adapter for
+the two legacy harnesses `storage_formal` and `csr_formal`. Do not apply it to
+DUT state, assume it translates anyconst, or broaden it into a regex-based general
+translator. Explicit unsupported-feature fixtures remain diagnostic exceptions;
+they cannot bypass the production-source rule.
+
+The existing `make bridge` route compares property inventories/source locations
+and proves mutual inclusion of complete assumption predicates against the native-
+supported historical control in `verification/representation.json`, including
+startup reset and arbitrary later resets. Its control-state equalities are proved
+invariants, not environmental restrictions. Keep those scoped checks, production
+unbounded/cover/mutation evidence and immediate-assertion monitor semantics.
+Bridge equivalence alone does not establish the hardware specification.
