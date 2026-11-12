@@ -26,9 +26,12 @@ def scheduler_coverage(path, mode):
     expected |= {'fit.'+name for name in ('insufficient','equal','surplus')}
     expected |= {'replacement_busy.<'+kind+',auto_'+str(busy)+'>'
                  for kind in ('none','singleton','longer','different') for busy in (0,1)}
+    expected |= {'reactivation_fit.<auto_'+str(active)+','+relation+'>'
+                 for active in (0,1) for relation in ('insufficient','equal','surplus')}
     excluded = {'replacement_busy.<'+kind+',auto_1>': 'Dispatch collisions require free pre-state TX'
                 for kind in ('singleton','longer','different')}
     if mode==0:
+        excluded.update({name: 'Byte credit is absent in packet RR' for name in expected if name.startswith('reactivation_fit.')})
         excluded.update({'fit.'+name: 'Byte credit is absent in packet RR'
                          for name in ('insufficient','equal','surplus')})
     if set(bins)!=expected or not points.get('line', {}).get('hit'):
@@ -38,6 +41,28 @@ def scheduler_coverage(path, mode):
         raise ValueError('Mandatory scheduler bins not hit: '+', '.join(sorted(missing)))
     return dict(owned_points=points, functional_bins=bins, exclusions=excluded,
                 mandatory_hit=len(expected-excluded.keys()), mandatory_total=len(expected-excluded.keys()))
+
+
+def schedule_checker_probes(run, args, binary, seed):
+    probes = [(None, 'TM_SCHEDULE_PASS'), ('BYPASS','SCHEDULE_GRANT'),
+              ('CREDIT','SCHEDULE_GRANT'), ('MISSING','SCHEDULE_TIMING'),
+              ('HEAD','SCHEDULE_HEAD'), ('BUSY','SCHEDULE_GRANT')]
+    for mutation, detector in probes:
+        case = Case(run, 'scheduler-checker-'+(mutation.lower() if mutation else 'positive'), seed)
+        command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES', '+UVM_TESTNAME=tm_schedule_test']
+        if mutation:
+            command += ['+MUT_SCHED_'+mutation, '+TRACE']
+        step = case.execute(command, timeout=args.timeout, cwd=case.path)
+        if mutation:
+            fatals = re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]', output(step))
+            wave = case.path/'wave.vcd'
+            ok = (step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and
+                  fatals==[detector] and wave.is_file() and wave.stat().st_size>0)
+            case.data['artifacts']['waveform']=str(wave)
+            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended policy/timing probe detection missing',
+                        expected='SEEDED_DEFECT_DETECTION', detector=detector, observed_fatals=fatals)
+        else:
+            case.finish(*run_result(step, detector))
 
 
 def scheduler(run, args):
@@ -88,9 +113,11 @@ def scheduler(run, args):
         if result!='PASS':
             case.finish('NOT_RUN', 'Build did not qualify')
             continue
+        if mode==1 and not mutation:
+            schedule_checker_probes(run, args, binary, seed)
         command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES']
         if mutation:
-            command += ['+TRACE']
+            command += ['+TRACE', '+PACKET_QUANTUM_PROBE']
         step = case.execute(command, timeout=args.timeout, cwd=case.path)
         if mutation:
             fatals = re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]', output(step))

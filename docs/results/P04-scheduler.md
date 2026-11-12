@@ -12,7 +12,9 @@ only affect merged empty closure. A singleton replacement retains post-debit
 credit; a true empty transition clears it before a later activation. TX ownership
 blocks all scans and additions, including the completion edge. A fitting head
 waits for readiness without another visit addition. Packet RR rotates after one
-accepted packet and has no byte-credit arithmetic.
+accepted packet and has no byte-credit arithmetic. Scanning remains one queue per free-TX edge;
+active-queue scanning and lookahead remain deferred until P09/P10 diagnosis and
+an explicit decision.
 
 The existing P07 UVM checker uses packet lists, static per-queue quanta, canonical
 visit state and architectural events. Policy legality and baseline missing-grant

@@ -6,6 +6,7 @@ class tm_scheduler_rtl_test extends uvm_test;
     int tx_offset, next_id, cycles, grants, replacements, longer, different;
     int stalls, completions, reactivations, max_credit, waiting, continuing, bound_hits;
     bit [N_Q-1:0] served='0;
+    bit emptied[N_Q], pending_reactivation[N_Q];
     covergroup policy_cg with function sample(int collision, bit busy, bit reactivation, int relation);
         option.per_instance=1;
         update_kind: coverpoint collision { bins none={0}; bins singleton={1}; bins longer={2}; bins different={3}; }
@@ -13,6 +14,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         activated: coverpoint reactivation;
         fit: coverpoint relation { bins insufficient={0}; bins equal={1}; bins surplus={2}; }
         replacement_busy: cross update_kind, tx_busy;
+        reactivation_fit: cross activated, fit;
     endgroup
     function new(string name, uvm_component parent);
         super.new(name,parent);
@@ -53,6 +55,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         vif.rst_n=0; vif.commit='0; vif.tx_done='0; vif.cfg='0;
         vif.tx_ready=1; transmitting=null; tx_offset=0; next_id=0;
         model.flush(); model.quanta[0]=q0;
+        foreach(emptied[q]) begin emptied[q]=0; pending_reactivation[q]=0; end
         for(int q=1;q<N_Q;q++) model.quanta[q]=q1;
         repeat(2) @(posedge vif.clk);
         @(negedge vif.clk);
@@ -65,7 +68,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         monitor_batch_t b='0;
         tm_frame committed=null;
         int collision, relation, q, credit;
-        bit activation;
+        bit activation, reactivated_head, inspect;
         @(negedge vif.clk);
         vif.cfg.run=run; vif.tx_ready=ready;
         vif.commit='0; vif.tx_done='0;
@@ -94,8 +97,14 @@ class tm_scheduler_rtl_test extends uvm_test;
         end
         relation=model.queues[q].frames.size()==0 ? 0 :
             (model.queues[q].frames[0].length>credit ? 0 : (model.queues[q].frames[0].length==credit ? 1 : 2));
-        activation=cq>=0 && model.queues[cq].frames.size()==0;
-        if(activation) reactivations++;
+        inspect=run && model.active==null && model.queues[q].frames.size()>0;
+        reactivated_head=inspect && pending_reactivation[q];
+        if(inspect) pending_reactivation[q]=0;
+        activation=vif.commit.valid && model.queues[vif.commit.qid].frames.size()==0;
+        if(activation && emptied[vif.commit.qid]) begin
+            pending_reactivation[vif.commit.qid]=1;
+            reactivations++;
+        end
         if(vif.dispatch.valid) begin
             grants++;
             served[vif.dispatch.qid]=1;
@@ -106,7 +115,9 @@ class tm_scheduler_rtl_test extends uvm_test;
             end else if(cq>=0) begin collision=3; different++; end
         end
         if(run && model.active==null && !ready && (SCHED_MODE==0 || relation>0)) waiting++;
-        policy_cg.sample(collision,model.active!=null,activation,relation);
+        if(vif.dispatch.valid && model.queues[vif.dispatch.qid].frames.size()==1 &&
+           !(vif.commit.valid && vif.commit.qid==vif.dispatch.qid)) emptied[vif.dispatch.qid]=1;
+        policy_cg.sample(collision,model.active!=null,reactivated_head,relation);
         model.apply(b,committed,run,ready);
         // The independent model rejects illegal or omitted dispatches before
         // this endpoint consumes any observed grant.
@@ -171,13 +182,24 @@ class tm_scheduler_rtl_test extends uvm_test;
     endtask
     task run_phase(uvm_phase phase);
         phase.raise_objection(this);
+        if($test$plusargs("PACKET_QUANTUM_PROBE")) begin
+            // Isolate the seeded per-packet fault after an actual TX completion,
+            // with no initial readiness wait and no empty-credit discard.
+            reset_case(64,64);
+            step(0,1,0); step(0,1,0);
+            until_eligible(); step(); finish_tx();
+            until_eligible(); step(0,1);
+            `uvm_fatal("SCHEDULER_MUTATION", "extra packet quantum was not detected")
+        end
         reset_case(64,128);
         step(0,65,0); // No same-edge visibility.
         until_eligible();
         // Fitting head waits; the first addition is not repeated per wait.
         repeat(4) step(-1,1,1,1,0);
         step(0,1); // Actual singleton dequeue/commit replacement.
-        repeat(7) step(-1,1,1,0);
+        repeat(3) step(-1,1,1,0);
+        step(1,1,1,0); // A busy-time activation cannot move the scan cursor.
+        repeat(3) step(-1,1,1,0);
         finish_tx();
         until_eligible(); step(); // Continuing visit, then true empty.
         step(0,MAX_PACKET_BYTES); // Reactivation while prior packet is TX-owned.
@@ -198,6 +220,13 @@ class tm_scheduler_rtl_test extends uvm_test;
         drain();
         saturated(MAX_PACKET_BYTES,MAX_PACKET_BYTES);
         saturated(64,128);
+        // First inspected head after a true empty/reactivation: below, equal
+        // and above the new visit credit. Initial activation is a separate case.
+        reset_case(64,64);
+        step(0,1,0); drain();
+        step(0,1,0); drain();
+        step(0,64,0); drain();
+        step(0,65,0); drain();
         reset_case(64,64);
         for(int q=0;q<N_Q;q++) step(q,1,0);
         drain();

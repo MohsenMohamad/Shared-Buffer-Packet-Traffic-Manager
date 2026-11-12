@@ -67,7 +67,7 @@
       ]
     }
   },
-  "scope": "Local production storage, queue/link and CSR APIs at named reduced configurations. No integrated RX/TX ownership or payload-path composition.",
+  "scope": "Local production storage, queue/link, scheduler and CSR APIs at named reduced configurations. No integrated RX/TX ownership or payload-path composition.",
   "symbolic_qualification": {
     "handler": "formal-symbols",
     "top": "symbolic_inputs",

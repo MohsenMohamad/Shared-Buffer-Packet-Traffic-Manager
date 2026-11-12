@@ -65,6 +65,6 @@ package tm_bench_pkg;
     `include "tm_foundation_test.svh"
     `include "tm_batch_test.svh"
     `include "tm_packet_test.svh"
-    `include "tm_schedule_test.svh"
 `endif
+    `include "tm_schedule_test.svh"
 endpackage

@@ -379,7 +379,7 @@ def main(argv=None):
     run.versions['rtl_frontend'] = args.frontend
     if action == 'formal-rtl':
         from formal_storage import formal_rtl, selection as formal_selection
-        run.scope = 'Local production storage/queues/CSR properties and reachability; no integrated TM proof'
+        run.scope = 'Local production storage/queues/scheduler/CSR properties and reachability; no integrated TM proof'
         try:
             if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
                 raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
