@@ -8,6 +8,7 @@
     "dv/tests"
   ],
   "sources": [
+    "rtl/include/tm_fixed.sv",
     "dv/env/tm_bench_pkg.sv",
     "dv/fixtures/tm_foundation_fixture.sv",
     "dv/fixtures/tm_foundation_top.sv"

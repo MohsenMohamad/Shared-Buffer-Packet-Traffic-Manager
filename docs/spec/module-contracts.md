@@ -11,17 +11,34 @@ external semantics in [interfaces.md](interfaces.md) remain normative.
 
 ## Representation and configuration
 
-[tm_parameters.svh](../../rtl/include/tm_parameters.svh) is the common parameter
-list. [tm_types.svh](../../rtl/include/tm_types.svh) defines module-local packed
-records, enumerations and width constants. These are the current production representations, inherited from the original
-frontend constraints. The selected frontend now qualifies ANSI headers, fixed
-packages, type parameters, `$bits(type)` and packed-record memories; the
-[representation follow-up](../implementation/tasks/P01-followup-representation.md)
-converts production in a separate PR. Packed lane order remains the public API;
-interface support alone does not justify changing it. Production RTL is consumed
-directly; the formal adapter changes only arbitrary-input harness declarations.
-See [decision 0002](../decisions/0002-module-contracts.md) and
-[the current capability decisions](../implementation/modern-toolchain-decisions.md).
+[tm_parameters.svh](../../rtl/include/tm_parameters.svh) retains the common
+scalar parameter list. [tm_fixed.sv](../../rtl/include/tm_fixed.sv) is the single
+fixed enum/metadata/status/AXI type package. [tm_types.svh](../../rtl/include/tm_types.svh)
+declares parameter-dependent packed types and guarded widths once per scope.
+ANSI headers import the fixed package and include dependent `localparam type`
+defaults before port use. Types and derived widths cannot be overridden;
+existing scalar width overrides remain checked. `$bits(beat_t)` and
+`$bits(descriptor_t)` replace mirrored record-width sums.
+
+`TM_ANSI_TYPES` selects parameter-list separators in the shared type include;
+body/package inclusion uses semicolons and imports the fixed package. This small
+lexical adaptation prevents a second set of dependent records. The bench's
+fixed configuration package exports fixed names for its consumers. There are no
+parameterized packages, forward typedefs, mirror records or cast bridges.
+
+Packed lane order remains the public API. The FIFO retains vector beat ports
+and memory because its operations copy complete bits without interpreting fields;
+it needs no other profile-dependent records. Record-array inference is accepted,
+not prohibited. The bitmap kernel retains generic packed return lanes. All
+remaining APIs and top use ANSI declarations while retaining their original
+implementation/declaration boundary. See [decision 0007](../decisions/0007-rtl-representation.md)
+and [current evidence](../results/rtl-representation.md).
+
+Production formal/synthesis reads the registered sources directly with Slang;
+the formal adapter changes only arbitrary-input harness declarations. Native
+`read_verilog` remains a diagnostic on the supported historical subset, never a
+reason to flatten the current types. Immutable baseline comparisons preserve
+property/assumption checks and supplementary sequential equivalence.
 
 The six production profiles and defaults are owned by
 [profiles.json](../../verification/profiles.json), matching architecture.md.
@@ -31,7 +48,9 @@ itself, requiring clog2(capacity+1). `DEFICIT_W` holds
 `4096+MAX_PACKET_BYTES-1`. `tm_validate.svh` rejects unsupported parameters,
 insufficient widths and TX depth less than read latency+2 by instantiating an
 unresolved `TM_INVALID_CONFIGURATION` only in the invalid generate branch.
-Both Verilator elaboration and Yosys `hierarchy -check` must reject that branch.
+Both Verilator elaboration and the selected Yosys elaboration must reject that branch.
+The contracts suite also rejects counter widths outside 1..64 and the bitmap
+kernel's invalid capacity, index/count widths and return-lane counts.
 Reduced formal kernels are separately named harness configurations in later
 proof work; they do not extend the supported production range.
 
@@ -254,7 +273,7 @@ suite independently of production, storage, formal and synthesis lists.
 `make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'`
 executes real UVM agents/RAL, the declared behavioral fixture, independent
 observed-transaction models, saved coverage and exact seeded detections.
-The P01 packed records remain unchanged. See [bench reuse](../../dv/README.md)
+The P01 packed field layouts remain unchanged; the representation uses shared fixed types and scoped dependent types. See [bench reuse](../../dv/README.md)
 and [fixture evidence](../results/P07-verification-foundation.md); fixture
 qualification never substitutes for production TM requirement closure.
 

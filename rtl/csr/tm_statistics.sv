@@ -1,16 +1,24 @@
-module tm_statistics_api #(
+module tm_statistics_api import tm_fixed::*; #(
 `include "tm_parameters.svh"
 , parameter integer COUNTER_W=64
-) (clk, rst_n, events, input_stalled, output_stalled, output_fire, output_beat, run, live, command, live_stats, shadow_stats);
+,
+`define TM_ANSI_TYPES
 `include "tm_types.svh"
-input logic clk, rst_n;
-input trace_t events;
-input logic [N_RX-1:0] input_stalled;
-input logic output_stalled, output_fire, run;
-input beat_t output_beat;
-input live_t live;
-input stats_command_t command;
-output statistics_t live_stats, shadow_stats;
+`undef TM_ANSI_TYPES
+) (
+    input logic clk,
+    input logic rst_n,
+    input trace_t events,
+    input logic [N_RX-1:0] input_stalled,
+    input logic output_stalled,
+    input logic output_fire,
+    input beat_t output_beat,
+    input logic run,
+    input live_t live,
+    input stats_command_t command,
+    output statistics_t live_stats,
+    output statistics_t shadow_stats
+);
 `include "tm_validate.svh"
 generate if (COUNTER_W<1 || COUNTER_W>64) begin : g_invalid_counter
     TM_INVALID_CONFIGURATION invalid_counter_width();

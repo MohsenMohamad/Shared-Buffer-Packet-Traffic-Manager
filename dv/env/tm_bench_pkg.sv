@@ -2,6 +2,7 @@
 package tm_bench_types;
     `include "tm_bench_config.svh"
     `include "tm_types.svh"
+    export tm_fixed::*;
     `include "tm_monitor_types.svh"
 endpackage
 

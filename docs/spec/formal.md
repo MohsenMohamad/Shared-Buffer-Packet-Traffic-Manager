@@ -54,7 +54,8 @@ symbolic cells. `tools/frontend.py` exposes the unchanged production harness's
 arbitrary internals as free top-level inputs; it preserves every expression,
 assumption, assertion, cover and state update. Do not apply it to DUT state.
 `make bridge` compares property inventories/source locations and proves mutual
-inclusion of the complete assumption predicates against the native control,
+inclusion of the complete assumption predicates against the native-supported pre-migration Git control in
+`verification/representation.json`,
 including startup reset and arbitrary later resets. Its additional control-state
 equalities are proved invariants, not new environmental assumptions. Retain
 production unbounded/cover/mutation checks; bridge equivalence alone is insufficient.

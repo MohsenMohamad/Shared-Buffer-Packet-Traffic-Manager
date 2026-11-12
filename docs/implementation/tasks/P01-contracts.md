@@ -57,3 +57,7 @@ Consume the [current frontend qualification](P00-followup-modern-toolchain.md),
 then complete [the focused representation change](P01-followup-representation.md)
 before allocator characterization. Existing API/parameter/ownership contracts
 remain normative; old frontend limitations are reassessed by executable evidence.
+
+The [representation migration report](../../results/rtl-representation.md) records
+the ANSI/shared-type conversion and new checks. Original behavioral acceptance
+and historical evidence remain in force; no later hardware stage is started.

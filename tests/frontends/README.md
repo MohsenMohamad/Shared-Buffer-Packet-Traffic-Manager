@@ -13,3 +13,12 @@ recorded separately from accepted slang elaboration and completed synthesis.
 Generated copies and commands live under ignored `.build/frontends`. Saved
 results must distinguish parsing/elaboration from synthesis and actual execution.
 Neither these fixtures nor declaration checks validate the integrated TM.
+
+Current production conversion is checked separately from the historical
+capability candidates. `generate.py` retrieves the immutable baseline in
+`verification/representation.json` with `git show`; missing history is an error.
+No mutable production duplicate is maintained. Current registered sources are
+used by the `production` parse/elaboration/synthesis/profile/heterogeneous cases.
+`representation-formal` runs actual registered proofs and supplementary old/new
+sequential equivalence; `fifo-mapping` also checks the current record-array
+alternative. See [migration evidence](../../docs/results/rtl-representation.md).

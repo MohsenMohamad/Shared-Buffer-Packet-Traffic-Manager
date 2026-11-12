@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        profile: [E0, F0]
+        profile: [F0, F1, I0, I1, E0, E1]
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:

@@ -1,5 +1,7 @@
 from pathlib import Path
-import re, json
+import re, json, sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[2]/"tools"))
+from representation import baseline_text
 
 import argparse
 HERE=Path(__file__).resolve().parent
@@ -13,8 +15,8 @@ OUT.mkdir(parents=True,exist_ok=True)
 FIXTURES=HERE/'fixtures'
 for filename in ['probe_unit.sv','test.sv','formal_probe.sv','bits_type.sv','synth_top.sv']:
     (OUT/filename).write_bytes((FIXTURES/filename).read_bytes())
-types=(ROOT/'rtl/include/tm_types.svh').read_text()
-params=(ROOT/'rtl/include/tm_parameters.svh').read_text()
+types=baseline_text('rtl/include/tm_types.svh')
+params=baseline_text('rtl/include/tm_parameters.svh')
 decls=dict((name,body.strip()) for body,name in re.findall(r'typedef\s+(.*?)\s+(\w+_t);',types,re.S))
 # The first match includes preceding comments/localparams. Extract only the type.
 decls['cell_id_t']='logic [CELL_ID_W-1:0]'
@@ -39,7 +41,7 @@ for candidate in ['baseline','ansi_vectors','package_vectors','inline_struct','t
     folder=OUT/candidate;folder.mkdir(exist_ok=True)
     info=[]
     for path in modules:
-        original=(ROOT/path).read_text()
+        original=baseline_text(path)
         match=re.search(r'\) \((.*?)\);\n`include "tm_types.svh"\n(.*?)`include "tm_validate.svh"',original,re.S)
         if not match:raise ValueError(path)
         portnames=[x.strip() for x in match[1].split(',')]

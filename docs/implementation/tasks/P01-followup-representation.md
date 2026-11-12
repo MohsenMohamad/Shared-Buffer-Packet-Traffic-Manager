@@ -34,21 +34,31 @@ verification regression. The [P02 scaling study](P02-followup-scaling.md) then
 measures that actual production source under precommitted matched conditions.
 It must not characterize a temporary duplicate or change allocator semantics.
 
-## Executable accepted recipe
+## Integrated recipe and acceptance
 
-`tests/frontends/generate.py` generates `type_parameter` and `named_widths`
-copies from the real FIFO/CSR/statistics sources. Use `type_parameter` where
-parameter-dependent named records improve readability: ANSI vector ports with
-record-derived default type parameters declared before use, fixed shared package
-imports, and guarded scalar/index widths. `make representation-formal` additionally
-changes the FIFO storage element to `beat_t`, retaining its full width and
-bitwise behavior. Both depth-2/depth-4 FIFO proofs/covers and CSR proof/cover/
-mutation pass on those copies; `make fifo-mapping` includes every payload bit.
-`make frontends` checks all six profiles, invalid contracts and two heterogeneous
-instances. Rerun these commands on the converted registered production sources.
+The conversion uses ANSI headers, the fixed `tm_fixed` package and scoped,
+non-overridable dependent type defaults declared before use. A focused executable
+probe and production checks qualify `localparam type` in ANSI/body/package scopes;
+shared separators avoid mirrored declarations. The FIFO remains a generic vector
+boundary because it only copies complete beats. See [decision 0007](../../decisions/0007-rtl-representation.md).
 
-Keep the explicit symbolic-input harness adapter. Native `read_verilog` still
-fails the richer forms and mislowers the minimized record-array fixture; it is
-a diagnostic control, not a portability veto. No parameterized packages or
-forward-referenced typedefs are part of the recipe. Source-relative filenames
-containing whitespace remain unqualified by the current Yosys command adapter.
+`make frontends` retains the toolchain PR's historical disposable candidates at
+the immutable pre-migration revision and adds the current registered production
+sources, six profiles, invalid contracts and heterogeneous simulation. The contracts
+suite additionally checks statistics counter-width and bitmap capacity/index/count/return-lane guards in both frontends. These are
+separate cases. `make representation-formal` now targets registered production
+FIFO/CSR proofs/covers/mutation and old/current sequential equivalence across all
+six profiles, both FIFO depths and full/reduced statistics counters.
+`make fifo-mapping` compares baseline, current and an actual current record-array
+alternative with every payload bit and explicit memory-port checks.
+
+Keep the explicit symbolic-input harness adapter. `make bridge` compares current
+Slang production against the native-supported immutable baseline, preserving
+complete assumption predicates and property identities. Native richer-type
+support remains a diagnostic limitation. Checkouts must contain the baseline Git
+object named in `verification/representation.json`; CI fetches full history.
+Source-relative filenames containing whitespace remain unqualified.
+
+The [migration report](../../results/rtl-representation.md) records actual results;
+acceptance requires applicable final-candidate CI, including independent
+CSR/statistics regression on all six profiles and the existing E0/I0 P07 fixtures. P03+ stays paused.

@@ -6,6 +6,7 @@ from pathlib import Path
 from evidence import Case, ROOT, output, sha
 from frontend import read_sources, expose_symbolic_inputs
 from registry import sources
+from representation import stage_baseline, baseline_revision
 
 
 def comparable(data, top, names):
@@ -81,12 +82,18 @@ def bridge(run,args):
         artifacts={}
         for variant,frontend in (('native-symbolic','verilog'),('slang-ports','slang')):
             case=Case(run,'bridge-'+name+'-'+variant)
-            files=[ROOT/p for p in registered['sources'] if not p.startswith('formal/')]
+            if variant=='native-symbolic':
+                files,includes=stage_baseline(case.path/'baseline')
+                includes += [ROOT/'formal/pools',ROOT/'formal/csr']
+            else:
+                files=[ROOT/p for p in registered['sources'] if not p.startswith('formal/')]
+                includes=[ROOT/p for p in registered['include_dirs']]
+            case.data['baseline_revision']=baseline_revision()
             source=case.path/harness.name
             source.write_text(harness.read_text() if variant=='native-symbolic' else adapted)
             files.append(source)
             script=case.path/'lower.ys'; net=case.path/'raw.json'
-            script.write_text(read_sources(files,top,[ROOT/p for p in registered['include_dirs']],spec['defines'],frontend=frontend,formal=True)+
+            script.write_text(read_sources(files,top,includes,spec['defines'],frontend=frontend,formal=True)+
                               f'prep -top {top}\nflatten\nasync2sync\ndffunmap\nchformal -lower\nwrite_json {net}\n')
             step=case.execute(['yosys','-Q','-T','-s',str(script)],timeout=args.timeout)
             if step['result']!='PASS' or not net.is_file():
