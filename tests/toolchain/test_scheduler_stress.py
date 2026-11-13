@@ -3,10 +3,14 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scheduler_stress import inspect_stress, intended_failure
+from scheduler_stress import inspect_stress, intended_failure, mutate
 
 
 class SchedulerStressEvidenceTests(unittest.TestCase):
+    def test_wrong_length_seed_uses_the_incoming_packet(self):
+        original="credit-(DEFICIT_W+1)'(selected_info.length)"
+        self.assertEqual(mutate(original,'wrong-length'),"credit-(DEFICIT_W+1)'(commit.info.length)")
+
     def test_named_diagnostic_trace_and_failure_required(self):
         with tempfile.TemporaryDirectory() as folder:
             wave=Path(folder)/'wave.vcd'; wave.write_text('trace')

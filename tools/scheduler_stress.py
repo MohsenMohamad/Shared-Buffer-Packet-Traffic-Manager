@@ -26,7 +26,7 @@ def mutate(text,kind):
         'missing-dispatch': ('else if (tx_ready) begin',"else if (tx_ready && 1'b0) begin",2),
         'lost-carry': ("if (credit < (DEFICIT_W+1)'(selected_info.length)) begin", "if (credit < (DEFICIT_W+1)'(selected_info.length)) begin\n                    deficits_next[cursor*DEFICIT_W +: DEFICIT_W] = '0;",1),
         'wait-quantum': ('if (!visit_active)','if (!visit_active || !tx_ready)',1),
-        'wrong-length': ("credit-(DEFICIT_W+1)'(selected_info.length)","credit-((DEFICIT_W+1)'(selected_info.length)+1)",1),
+        'wrong-length': ("credit-(DEFICIT_W+1)'(selected_info.length)","credit-(DEFICIT_W+1)'(commit.info.length)",1),
         'busy-dispatch': ('if (rst_n && cfg.run && !tx_owned) begin','if (rst_n && cfg.run) begin',2),
         'replacement-clear': ('==1 && !replaced)', '==1)',1),
         'empty-retain': ('if (counts[cursor*DESC_COUNT_W +: DESC_COUNT_W]==1 && !replaced)', "if (1'b0 && counts[cursor*DESC_COUNT_W +: DESC_COUNT_W]==1 && !replaced)",1),
