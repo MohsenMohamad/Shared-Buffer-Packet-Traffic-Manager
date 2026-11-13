@@ -105,6 +105,17 @@ production seeded-defect qualification remains NOT_RUN.
 
 ## Reproduction and source pairing
 
+The clean isolated replay tested DV commit
+`0d39a721521e3783e6cf5725cf6365e452fef69c` together with unchanged main/RTL source
+`8d66a92768f2c72236171731262563814e875352`. The DV commit contains that exact RTL
+ancestor; `git diff --quiet` confirmed no production RTL/source-list change.
+A detached worktree at the named DV commit therefore contains the named pair.
+All four commands below passed there, with a clean tracked/untracked state.
+This pairing tests the offline baseline only; it is not candidate RTL qualification.
+The later evidence-only commit records this replay and does not replace its
+tested revision. The execution record retains both source IDs, assembly commands,
+command results and output digests.
+
 Use the prepared environment; setup/install is not part of these commands.
 On the recorded main base, `make doctor` passed versions, source identity, C++20
 and solver SAT/UNSAT checks. On the policy commit, repository checks and light

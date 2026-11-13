@@ -59,5 +59,68 @@
   "production_simulation": "NOT_RUN",
   "production_formal": "NOT_RUN",
   "production_coverage": "NOT_RUN",
-  "failure_capture": "../../verification/failures/memory-tx-baseline-missing-record.json"
+  "failure_capture": "../../verification/failures/memory-tx-baseline-missing-record.json",
+  "isolated_replay": {
+    "rtl_commit": "8d66a92768f2c72236171731262563814e875352",
+    "dv_commit": "0d39a721521e3783e6cf5725cf6365e452fef69c",
+    "tested_commit": "0d39a721521e3783e6cf5725cf6365e452fef69c",
+    "dirty": false,
+    "assembly": [
+      "git merge-base --is-ancestor 8d66a92768f2c72236171731262563814e875352 0d39a721521e3783e6cf5725cf6365e452fef69c",
+      "git diff --quiet 8d66a92768f2c72236171731262563814e875352 0d39a721521e3783e6cf5725cf6365e452fef69c -- rtl verification/sources/production.json",
+      "git worktree add --detach work/memory-tx-baseline-qualification 0d39a721521e3783e6cf5725cf6365e452fef69c"
+    ],
+    "assembly_note": "DV commit descends from the named main/RTL commit with no production RTL/source-list changes; isolated worktree checks only the offline baseline, not production hardware.",
+    "cwd": "/workspace/Shared-Buffer-Packet-Traffic-Manager/work/memory-tx-baseline-qualification",
+    "commands": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "dv/tests",
+          "-p",
+          "test_memory_tx_baseline.py",
+          "-v"
+        ],
+        "returncode": 0,
+        "status": "PASS",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "f5d2effee2996819c2d6501a9daa1d39d27150e845725db7947eb38857acd372"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/check_repository.py"
+        ],
+        "returncode": 0,
+        "status": "PASS",
+        "stdout_sha256": "4c9a5832fb3087e795768dc33254a26a9dc9937fc1723b3479b806bb61c99a37",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "python3",
+          "tools/check_light.py"
+        ],
+        "returncode": 0,
+        "status": "PASS",
+        "stdout_sha256": "34564c4ba7a00419965d5cd3f2fc81a8967bc9351080d5175120e71f3d1a6a7b",
+        "stderr_sha256": "832aa52c067e87d7cd867b39e2d93a58e8d59ad31a457b2b958120fbb71bfd09"
+      },
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "returncode": 0,
+        "status": "PASS",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  }
 }
