@@ -145,12 +145,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -216,12 +231,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -307,12 +337,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -337,12 +382,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -367,12 +427,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -397,12 +472,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -437,12 +527,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -731,12 +836,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -782,12 +902,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -967,12 +1102,27 @@
         "evidence": "docs/results/P03-queues.json"
       },
       "independent_queue_verification": {
-        "status": "NOT_RUN",
+        "status": "PASS",
         "suite": "queues-independent",
         "formal_selection": "formal-rtl --test queues-independent",
         "coverage_selection": "coverage --test queues-independent",
         "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md"
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {

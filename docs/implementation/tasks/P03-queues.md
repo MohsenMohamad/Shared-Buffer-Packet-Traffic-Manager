@@ -62,3 +62,7 @@ Steps 1–4, production controller/link child and embedded assertions belong to 
 Steps 5–7 and every required transition/reuse/order check belong to a separate DV PR. Audit retained models/properties, derive an API-event ownership/FIFO model from specs, strengthen production FP-QUEUE/FP-ORDER with qualified witnesses and explicit caller assumptions, and qualify order/link/count detectors. Final runs target merged production RTL. Status: implemented awaiting independent DV; only merge of this passing DV PR establishes its scope.
 
 Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.
+
+Local independent checks pass in the [P03 independent DV report](../../results/P03-independent-dv.md).
+The verified scope remains pending until the separate passing DV PR merges;
+P11A caller composition remains open.
