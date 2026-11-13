@@ -26,7 +26,7 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
         super.new(name,parent);
         foreach(visit_packets[q]) visit_packets[q]=0;
         coverage_counts["backlog.zero"]=0; coverage_counts["backlog.one"]=0; coverage_counts["backlog.multiple"]=0; coverage_counts["backlog.all"]=0;
-        coverage_counts["cursor.wrap"]=0;
+        coverage_counts["cursor.wrap"]=0; coverage_counts["reactivation.round_all"]=0;
         coverage_counts["quantum.less"]=0; coverage_counts["quantum.equal"]=0; coverage_counts["quantum.greater"]=0;
         coverage_counts["stall.none"]=0; coverage_counts["stall.short"]=0; coverage_counts["stall.medium"]=0; coverage_counts["stall.long"]=0;
         coverage_counts["visit.zero"]=0; coverage_counts["visit.one"]=0; coverage_counts["visit.many"]=0;
@@ -185,16 +185,22 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
         drain();
     endtask
     task all_and_sparse();
+        bit [N_Q-1:0] reactivated='0;
         reset_case(64,64); configure_quanta(1);
-        for(int q=0;q<N_Q;q++) step(q,q%2==0 ? 1 : MAX_PACKET_BYTES,0);
+        for(int q=0;q<N_Q;q++) step(q,1,0);
         // Several queues empty and reactivate during one round, behind the scan.
         repeat(N_Q) begin
             int selected;
             until_eligible(); selected=model.cursor;
             step();
-            finish_tx();
-            step(selected,1);
+            step(selected,1); // One-byte completion plus reactivation; no scan.
+            if(!last_batch.policy.tx_done.valid || !last_batch.policy.commit.valid ||
+               last_batch.policy.dispatch.valid || int'(last_batch.policy.commit.qid)!=selected)
+                `uvm_fatal("SCHED_ROUND_REACTIVATE","reactivation did not coincide with that packet's completion")
+            reactivated[last_batch.policy.commit.qid]=1;
         end
+        if(!(&reactivated)) `uvm_fatal("SCHED_ROUND_REACTIVATE","not every queue reactivated during the round")
+        coverage_counts["reactivation.round_all"]++;
         drain();
         reset_case(64,64); configure_quanta(1);
         for(int q=0;q<N_Q;q+=2) step(q,MAX_PACKET_BYTES,0);

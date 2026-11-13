@@ -62,7 +62,7 @@ def inspect_stress(path,mode,nq):
         return data
     data=json.loads(Path(path).read_text(),object_pairs_hook=unique)
     expected={'backlog.'+s for s in ('zero','one','multiple','all')}
-    expected|={'cursor.wrap','quantum.minimum','quantum.maximum','final.stall'}
+    expected|={'cursor.wrap','reactivation.round_all','quantum.minimum','quantum.maximum','final.stall'}
     expected|={'quantum.'+s for s in ('less','equal','greater')}
     expected|={'stall.'+s for s in ('none','short','medium','long')}
     expected|={'visit.'+s for s in ('zero','one','many')}

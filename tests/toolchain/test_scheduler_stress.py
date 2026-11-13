@@ -24,7 +24,7 @@ class SchedulerStressEvidenceTests(unittest.TestCase):
             self.assertFalse(intended_failure(step,text,wave,{'SCHED_INPUT_DONE'})[0])
 
     def test_required_bins_impossible_bins_and_random_counts_fail_closed(self):
-        counters={key:1 for key in ['backlog.'+k for k in ('zero','one','multiple','all')]+['cursor.wrap','quantum.minimum','quantum.maximum','final.stall']+['quantum.'+k for k in ('less','equal','greater')]+['stall.'+k for k in ('none','short','medium','long')]+['visit.'+k for k in ('zero','one','many')]}
+        counters={key:1 for key in ['backlog.'+k for k in ('zero','one','multiple','all')]+['cursor.wrap','reactivation.round_all','quantum.minimum','quantum.maximum','final.stall']+['quantum.'+k for k in ('less','equal','greater')]+['stall.'+k for k in ('none','short','medium','long')]+['visit.'+k for k in ('zero','one','many')]}
         allowed={(0,0),(1,0),(2,0),(2,1),(3,0),(4,1),(5,1)}
         counters.update({f'reset.{p}.{b}':int((p,b) in allowed) for p in range(6) for b in (0,1)})
         data=dict(mode=1,coverage_counts=counters,random_publications=100,random_steps=4800,progress_checks=1,reconfigurations=1,behind=1,ahead=1,completion_commits=1,skip_commits=1,reactivation_boundary=1,random_quanta=[[64,4096],[65,127],[512,1024]],random_qids=[50,50],length_choices=[10]*10)
