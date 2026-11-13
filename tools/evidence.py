@@ -100,6 +100,13 @@ class Case:
     def finish(self, result, reason=None, **fields):
         assert result in RESULTS
         self.data.update(result=result, first_failure=reason, end_utc=utc(), **fields)
+        if result in {'FAIL', 'TIMEOUT', 'INCONCLUSIVE', 'TOOL_ERROR', 'UNSUPPORTED'}:
+            from failure_capture import capture_failure
+            try:
+                self.data['failure_capture'] = capture_failure(self.data, self.path, ROOT)
+            except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+                self.data['failure_capture_error'] = str(error)
+                print(f'Failure capture failed: {error}', file=sys.stderr, flush=True)
         (self.path / 'manifest.json').write_text(json.dumps(self.data, indent=2) + '\n')
         print(f'{self.data["test"]}: {result}' + (f' ({reason})' if reason else ''), flush=True)
         return result == 'PASS'
