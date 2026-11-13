@@ -3361,10 +3361,15 @@
     ]
   },
   "session_scope_qualification": {
-    "initial_general_tooling": "repository-wide provenance hashing and source-policy reads preceded the preparation-specific identity path",
-    "initial_doctor_run": ".build/runs/doctor-2026-11-13T173239.521873+0000-63e9788c",
-    "implementation_file_digests": 11,
-    "qualification": "This is an exception to a literal whole-session prohibition on implementation-file reads. No implementation text was returned to the assistant or used to choose expected behavior. Scoped preparation execution uses only the approved declarations/DV inputs; no target/dependency RTL regression ran."
+    "status": "CONFIRMED_PRE_MODEL_EXPOSURE",
+    "acceptance": "INDEPENDENCE_NOT_ESTABLISHED",
+    "rtl_outside_include_entries": 11,
+    "dependency_implementations": 9,
+    "top_declarations": 1,
+    "guidance_files": 1,
+    "results_files": 33,
+    "exposure_record": "docs/results/P05-source-exposure.json",
+    "note": "Supersedes the inaccurate 11 implementation-file digests description; full-text source-policy and results parsing also occurred. Later passing tests do not cure exposure."
   },
   "pr": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/23",
   "oracle_negative_detectors": {

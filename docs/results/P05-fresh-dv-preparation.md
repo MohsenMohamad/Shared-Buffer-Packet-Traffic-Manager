@@ -5,15 +5,17 @@ The oracle and P07/UVM replay qualification pass at clean tested commit
 This is preparation evidence, not hardware acceptance. The PR remains draft
 for maintainer review of the scope qualification below; there is no RTL handover.
 
-**Scope qualification:** initial general `make doctor` and light checks used
-repository-wide provenance/source-policy inputs before the preparation-specific
-identity path was added. The initial doctor recorded 11 implementation-file
-digests. This is an exception to a literal whole-session prohibition on all
-implementation-file reads. No implementation text was returned to the assistant
-or used to choose expectations. The subsequent preparation modes restrict
-identity and compilation to approved declarations and DV inputs, reject production
-inheritance/mixed selections, and run no target or dependency RTL regression.
-The historical exception is retained for review, not relabeled as full isolation.
+**Independence breach:** early tooling read nine dependency RTL implementations
+and 33 results files before the expected-model commit. The initial “11
+implementation-file digests” description was inaccurate: that count also included
+one top declaration and one guidance file. The formal-source policy parsed RTL
+text; Markdown/JSON validators read results text. This was not merely metadata
+formatting. See the [exact exposure inventory](P05-source-exposure.md) and its
+per-file hashes/read mechanisms. No separate P05 implementation/results path is
+evidenced by pathname in the reconstructed early read set; P05 public declarations
+were read. P05 content in generically named results remains unknown, not cleared.
+The scoped checks pass, but independence acceptance is **not established**.
+Later tests do not cure the exposure. Keep the PR draft for independent review.
 
 ## Source and expectation identities
 
@@ -103,7 +105,7 @@ initially hit only source/qid zero. The final two-lifetime legal/corrupt UVM
 replays and raw-output metadata probe pass. The environment reconnect lost the
 parent orchestration handle while its two child runs completed PASS; its unknown
 exit status is retained as INCONCLUSIVE, followed by completed resumed execution.
-All final mandatory checks pass; the historical scope qualification remains.
+All final mandatory checks pass; the confirmed independence breach remains unresolved.
 
 ## Reproduction and artifacts
 

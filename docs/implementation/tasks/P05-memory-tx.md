@@ -10,8 +10,8 @@ hardware acceptance.
 Dependencies: [P03](P03-queues.md)
 
 Prepared evidence is in [PR #23 results](../../results/P05-fresh-dv-preparation.md).
-All six scoped oracle/UVM profiles pass; the report retains an initial general-
-tooling source-isolation exception for maintainer review. This remains a
+All six scoped oracle/UVM profiles pass; the report records a confirmed pre-model dependency RTL/results exposure.
+Independence acceptance is not established and requires independent review. This remains a
 preparation PR, with no hardware acceptance or automatic RTL handover.
 
 ## Sources and work boundary

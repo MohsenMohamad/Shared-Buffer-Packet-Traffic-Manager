@@ -1,7 +1,8 @@
 # P05 fresh RTL task entry
 
-This handoff provides public APIs, commands and scope only. Preparation merge
-establishes no hardware acceptance and does not automatically start RTL.
+This handoff provides public APIs, commands and scope only. Preparation has unresolved independence acceptance due to pre-model dependency
+RTL/results reads. Independent review must resolve this before relying on its
+provenance. Preparation merge establishes no hardware acceptance and does not automatically start RTL.
 The maintainer assigns a fresh RTL task under the
 [root workflow](../../AGENTS.md#preparation-implementation-and-independent-qualification).
 

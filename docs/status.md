@@ -8,8 +8,9 @@ results. P05 is at fresh independent DV preparation under the
 [root workflow](../AGENTS.md#preparation-implementation-and-independent-qualification).
 Preparation establishes no hardware acceptance.
 [PR #23 preparation evidence](results/P05-fresh-dv-preparation.md) records passing
-scoped oracle/UVM runs and an initial general-tooling isolation exception; it is
-not merged qualification or an RTL start. Remaining datapath declarations
+scoped oracle/UVM runs but a confirmed pre-model dependency RTL/results exposure.
+Independence acceptance is not established; it is not merged qualification or an
+RTL start. See the [exposure inventory](results/P05-source-exposure.md). Remaining datapath declarations
 do not establish a complete traffic manager.
 
 | Gate | Current scope | Evidence / owner |
