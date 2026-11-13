@@ -16,3 +16,5 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Python units and Python JSON shell syntax (no HDL toolchain)
         run: python3 tools/check_light.py
+      - name: Capture isolation and external-output regression
+        run: PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v
