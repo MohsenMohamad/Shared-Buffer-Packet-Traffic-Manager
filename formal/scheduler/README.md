@@ -46,7 +46,9 @@ constrained by ownership reconstructed from accepted dispatch events, rather
 than DUT internal ownership state.
 
 Additional covers reach completion with ready asserted and queued work, a
-paused funded visit (DRR only), and reset of an owned packet. The same command
+paused funded visit (DRR only), reset of an owned packet, replacement followed
+by a stall and completion of that same packet, and next-edge continuation
+without another quantum (DRR only). The same command
 also requires omitted production dispatches to fail `a_policy_timing` in both
 modes and a frozen production cursor to fail `a_policy_cursor`. Each intended
 failure requires engine FAIL and a nonempty counterexample. The existing

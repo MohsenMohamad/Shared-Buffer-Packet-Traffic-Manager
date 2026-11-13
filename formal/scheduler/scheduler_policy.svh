@@ -3,6 +3,7 @@
 // State equalities below are induction lemmas, not reference inputs.
 qid_t policy_queue;
 logic policy_open, policy_busy;
+logic replacement_pending, replacement_stalled;
 logic [N_Q*DEFICIT_W-1:0] policy_credit, policy_credit_next;
 qid_t policy_queue_next;
 logic policy_open_next, policy_eligible, policy_dispatch;
@@ -52,7 +53,16 @@ always_ff @(posedge clk) begin
         policy_open <= 0;
         policy_busy <= 0;
         policy_credit <= '0;
+        replacement_pending <= 0;
+        replacement_stalled <= 0;
     end else begin
+        if(dispatch.valid) begin
+            replacement_pending <= commit.valid && commit.qid==dispatch.qid &&
+                counts[dispatch.qid*DESC_COUNT_W +: DESC_COUNT_W]==1;
+            replacement_stalled <= 0;
+        end else if(replacement_pending && event_owned && !tx_done.valid)
+            replacement_stalled <= 1;
+        if(tx_done.valid) replacement_pending <= 0;
         policy_queue <= policy_queue_next;
         policy_open <= policy_open_next;
         policy_credit <= policy_credit_next;
@@ -66,6 +76,10 @@ always_ff @(posedge clk) begin
         a_policy_cursor: assert(dut.cursor==policy_queue);
         a_policy_visit: assert(dut.visit_active==policy_open);
         a_policy_busy: assert(dut.tx_owned==policy_busy);
+        c_replacement_stall: cover(replacement_pending && replacement_stalled && event_owned && tx_done.valid);
+        if(SCHED_MODE==1)
+            c_resume_continue: cover(history && $past(rst_n && policy_busy && tx_done.valid) &&
+                policy_open && policy_dispatch);
         c_completion_wait: cover(policy_busy && tx_done.valid && tx_ready &&
             counts[policy_queue*DESC_COUNT_W +: DESC_COUNT_W]!=0);
         if(SCHED_MODE==1) c_paused_visit: cover(!cfg.run && policy_open && !policy_busy);
