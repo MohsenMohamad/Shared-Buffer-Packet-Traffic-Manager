@@ -15,7 +15,7 @@ Dependencies: [P10](P10-concurrency.md)
 
 Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-`formal/tx/`, `formal/scheduler/`, `formal/csr/`, assertion correspondence, matching RTL/tests and control-proof selection.
+`formal/tx/`, `formal/scheduler/`, `formal/csr/`, assertion correspondence, matching DV tests/binds and control-proof selection.
 
 ## Execution sequence
 
@@ -59,3 +59,10 @@ resets; arbitrary sink or traffic inputs remain unconstrained except for explici
 legitimate protocol assumptions. Preserve property names, covers and intended
 negative detections when changing harness representation. Native diagnostics are
 historical/minimized controls, not the parser for current production types.
+
+## Role assignments
+
+Independent DV owns steps 1–8, TX/scheduler/CSR harnesses, assertion correspondence,
+matching tests, proof selection and all required checks.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

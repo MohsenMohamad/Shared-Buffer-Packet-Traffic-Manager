@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "extends": "production",
+  "include_dirs": [],
+  "headers": [
+    "dv/unit/queues_independent.vlt"
+  ],
+  "sources": [
+    "dv/model/queue_api_monitor.sv",
+    "dv/unit/queues_independent_tb.sv",
+    "dv/unit/queues_empty_tb.sv"
+  ],
+  "scope": "Independent passive API-event queue/descriptor ownership model and driver on real RTL"
+}

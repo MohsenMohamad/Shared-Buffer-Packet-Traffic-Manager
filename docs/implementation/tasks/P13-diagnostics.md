@@ -44,3 +44,10 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The diagnostic portion of G7 and AI-01 has a real failure-to-reviewed-report example and executable credential-free tests. A missing live session remains an explicit unfinished requirement rather than a fixture-based substitute.
 
 Requirement focus: `AI-01`
+
+## Role assignments
+
+Tooling/diagnostics owns steps 1–7, including fixture robustness checks and the
+actual reviewed diagnostic session.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

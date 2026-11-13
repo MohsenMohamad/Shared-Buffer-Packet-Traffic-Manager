@@ -62,3 +62,12 @@ API bandwidth remain correctness obligations under every candidate.
 A reviewed policy decision and measured disposition exist, implementation-independent pool safety
 remains checked, and any selected production change has affected correctness
 evidence. A01 must finish before P08; P03/P04/P05 can proceed independently.
+
+## Role assignments
+
+- Analysis: steps 1–2, candidate measurements/disposition in 4/6 and handoff 7.
+- RTL: real candidates/adoption in steps 4–6 and designer smoke.
+- Independent DV: the API live-ID model in step 3 and affected simulation,
+  proof, cover and defect qualification in step 5.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

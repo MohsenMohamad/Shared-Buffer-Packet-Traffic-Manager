@@ -353,6 +353,7 @@ def main(argv=None):
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
+    parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing independent queue case manifest for coverage extraction')
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')
     try:
@@ -377,6 +378,14 @@ def main(argv=None):
     from frontend import selected
     args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal','formal-symbols') else 'synthesis')
     run.versions['rtl_frontend'] = args.frontend
+    if action == 'coverage':
+        from queue_coverage import queue_coverage
+        run.scope = 'Independent queue coverage by elaboration; no integrated coverage closure'
+        try:
+            queue_coverage(run, args)
+        except (OSError, ValueError, KeyError) as error:
+            Case(run, 'coverage-selection-error').finish('TOOL_ERROR', str(error))
+        return run.finish()
     if action == 'formal-rtl':
         from formal_storage import formal_rtl, selection as formal_selection
         run.scope = 'Local production storage/queues/scheduler/CSR properties and reachability; no integrated TM proof'
@@ -397,6 +406,8 @@ def main(argv=None):
         from foundation import foundation
         from csr import csr
         from queues import queues
+        from queues_independent import queues_independent
+        from queue_dispatch_guard import queue_dispatch_guard
         from scheduler import scheduler
         run.scope = 'Selected contract/component suites; no integrated TM validation'
         try:
@@ -407,7 +418,7 @@ def main(argv=None):
                 raise ValueError('Regression accepts one positive 31-bit functional seed')
             from doctor import qualify
             qualify(run)
-            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler}
+            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler, 'queues-independent': queues_independent, 'queues-dispatch-guard': queue_dispatch_guard}
             for name in selected:
                 handlers[name](run, args)
         except (OSError, ValueError, KeyError) as error:

@@ -1,0 +1,2724 @@
+{
+  "schema_version": 1,
+  "scope": "Independent local production queue/link/pool API DV. Caller RX ownership is assumed in FP-QUEUE/FP-ORDER; integrated RX/TX/abort/payload composition remains P11A. Verified scope awaits passing DV PR merge.",
+  "pr": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/17",
+  "revisions": {
+    "base": "1c225525ba284ce694f1b234cb12cc514b9c0aee",
+    "delivered": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+    "p02": "b663f47de525e132f32afe621cff69ac82633478",
+    "p06": "a473b8c535d02b50b23604047f1bae64638c89df",
+    "f01": "068e2c64cbf43f0bece51ff9065ab470407b4efa",
+    "p03": "eccb9fb4cac71dd36b60a2b9d7e7f0836485b7a7",
+    "p04": "1c225525ba284ce694f1b234cb12cc514b9c0aee",
+    "p07": "0901ad7fead69eb6e56c49c1e8a75a125d414a91",
+    "p07_followup": "c32b3f1b79ac3412532e0564e038983aa2862112"
+  },
+  "tools": {
+    "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+    "rtl_frontend": "slang",
+    "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "verilator_coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator_coverage: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "sby": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+    "z3": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "compiler": "/usr/bin/g++: g++ (Debian 14.2.0-19) 14.2.0",
+    "slang_revision": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --\nsv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222\nslang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+  },
+  "dependency_digests": {
+    "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+  },
+  "simulation_source_digests": {
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "rtl/include/tm_module_ports.sv": "9115b422f8fc58a5c37789736dde59acb95aa3c2b40f37000f01657eb2d5a0f9",
+    "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+    "rtl/common/tm_axis_rx_fifo.sv": "40627938a5beb46fdbfe40054d6a16e2e7f1594e21749de8605493dfa5f24507",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+    "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+    "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+    "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+    "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+    "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+    "rtl/scheduler/tm_drr.sv": "f93079f4875a48e7de6f7a2336d8c9436d3de332767f0802d136a3a2fa84149a",
+    "dv/model/queue_api_monitor.sv": "88354cdb63fa737a6c0882240ccbd224982f64447cb60e478b7fc1dbb3ec8106",
+    "dv/unit/queues_independent_tb.sv": "f733cdf1cb4256ceaaf59a70260b7e1f159939f726af24341f347421c9a20059",
+    "dv/unit/queues_empty_tb.sv": "80c935d7f2f2ffaa1627a032f7fb2bab8bd2b491fe75d68a436b609deb8eefe6",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "dv/unit/queues_independent.vlt": "06daddd130fa4dafe3b705c1ce1ad38193e6422f3943b2bb8876990a0a6c6ea5"
+  },
+  "formal_source_digests": {
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "rtl/include/tm_module_ports.sv": "9115b422f8fc58a5c37789736dde59acb95aa3c2b40f37000f01657eb2d5a0f9",
+    "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+    "rtl/common/tm_axis_rx_fifo.sv": "40627938a5beb46fdbfe40054d6a16e2e7f1594e21749de8605493dfa5f24507",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+    "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+    "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+    "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+    "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+    "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+    "rtl/scheduler/tm_drr.sv": "f93079f4875a48e7de6f7a2336d8c9436d3de332767f0802d136a3a2fa84149a",
+    "formal/pools/storage_formal.sv": "21d7fd921b002bad7ca45f2c41ef8203f2435024f67e5fca7a2ac59266e7ce1b",
+    "formal/csr/csr_formal.sv": "b8a0bd3ad2ff2ae4ab61c3c8883db68e03ce62f13952d06fbc53ec2c67651495",
+    "formal/symbolic/symbolic_inputs.sv": "a8889c49a03570a8dfd8c161127c277cf3ceaf0e4ae41c256f150c04c3f1cf95",
+    "formal/queue/queue_formal.sv": "a4bad9c5bc63e5c1411c6f6ae13fef9c393df464f2a89cc794d8fa8ea972e043",
+    "formal/scheduler/scheduler_formal.sv": "04e328115455b477bda7cf7a5d100fc9777a2e9faf2b23e4f26879f960acccc5",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+    "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+    "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+    "formal/symbolic/symbolic_checks.svh": "6c0a3a76b97ab8828383decc8c3a7b16b50dee1bbc43eed04b59f8ee917949b2"
+  },
+  "commands": [
+    "make regression RUN_ARGS='--profile F0 --test queues-independent --seed 23 --timeout 120'",
+    "make regression RUN_ARGS='--profile F1 --test queues-independent --seed 23 --timeout 120'",
+    "make regression RUN_ARGS='--profile I0 --test queues-independent --seed 23 --timeout 120'",
+    "make regression RUN_ARGS='--profile I1 --test queues-independent --seed 23 --timeout 120'",
+    "make regression RUN_ARGS='--profile E0 --test queues-independent --seed 23 --timeout 120'",
+    "make regression RUN_ARGS='--profile E1 --test queues-independent --seed 23 --timeout 120'",
+    "make formal-rtl RUN_ARGS='--test queues-independent --test queues --timeout 300'",
+    "make formal-symbols RUN_ARGS='--timeout 120'",
+    "PYTHONPATH=tools python3 -m unittest discover -s tests/contracts -v",
+    "python3 tools/check_light.py",
+    "make repo-check",
+    "git diff --check",
+    "python3 tools/run.py coverage --profile F0 --test queues-independent --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-native/manifest.json --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-wide/manifest.json",
+    "python3 tools/run.py coverage --profile F1 --test queues-independent --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-native/manifest.json --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-wide/manifest.json",
+    "python3 tools/run.py coverage --profile I0 --test queues-independent --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-native/manifest.json --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-wide/manifest.json",
+    "python3 tools/run.py coverage --profile I1 --test queues-independent --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-native/manifest.json --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-wide/manifest.json",
+    "python3 tools/run.py coverage --profile E0 --test queues-independent --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-native/manifest.json --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-wide/manifest.json",
+    "python3 tools/run.py coverage --profile E1 --test queues-independent --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-native/manifest.json --coverage-manifest /workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-wide/manifest.json"
+  ],
+  "cases": [
+    {
+      "test": "queues-independent-native",
+      "profile": "F0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:32:05.325344+00:00",
+      "end_utc": "2026-11-13T04:34:59.457686+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-native/manifest.json",
+        "sha256": "dc54180a3a17ba24b17faef4d41f83cc7d8ac0ec2b0a0958d9029035641f6ade"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-native/coverage.dat",
+          "sha256": "77e787997b8a9b4003700e2d57f789b06d179c578f1de489582b6f09fa515e26"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-native/queue-coverage.json",
+          "sha256": "e86a82134dde5708775e47a3876bb7ff99d76f3233d4cd643482b43bcca6b6bb"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-native/api-events.jsonl",
+          "sha256": "23cf44a094aabe0373b50be2615a29b218cf341bbb5e39813093ab72782349ef"
+        }
+      },
+      "functional": {
+        "cycles": 17040,
+        "delayed_publish": 5114,
+        "reuse": 9255,
+        "tx_retained": 16110,
+        "full": 2,
+        "reset_active": 18,
+        "reset_collision": 5,
+        "read_checks": 7731,
+        "link_collision": 14,
+        "owner_peak": 256,
+        "same_singleton": 107,
+        "same_long": 238,
+        "different": 4823,
+        "empty_publish": 2389,
+        "required_bins": 160,
+        "hit_required": 160,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 174.132,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-wide",
+      "profile": "F0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:34:59.464322+00:00",
+      "end_utc": "2026-11-13T04:37:05.607924+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1,
+        "DESC_ID_W": 9,
+        "DESC_COUNT_W": 10
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-wide/manifest.json",
+        "sha256": "7843058f2d9fb782c83a8a0d55a6d3562faacf806368f0a478ffd36cd4014c4d"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-wide/coverage.dat",
+          "sha256": "44655dca80bf4bc4c71da2707d8f4ecb832affb1a9305f2c14c40a868af63f77"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-wide/queue-coverage.json",
+          "sha256": "e86a82134dde5708775e47a3876bb7ff99d76f3233d4cd643482b43bcca6b6bb"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-wide/api-events.jsonl",
+          "sha256": "23cf44a094aabe0373b50be2615a29b218cf341bbb5e39813093ab72782349ef"
+        }
+      },
+      "functional": {
+        "cycles": 17040,
+        "delayed_publish": 5114,
+        "reuse": 9255,
+        "tx_retained": 16110,
+        "full": 2,
+        "reset_active": 18,
+        "reset_collision": 5,
+        "read_checks": 7731,
+        "link_collision": 14,
+        "owner_peak": 256,
+        "same_singleton": 107,
+        "same_long": 238,
+        "different": 4823,
+        "empty_publish": 2389,
+        "required_bins": 160,
+        "hit_required": 160,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 126.144,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-empty",
+      "profile": "F0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:37:05.618410+00:00",
+      "end_utc": "2026-11-13T04:38:40.979228+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043156.326795+0000-b1d515ee/queues-independent-empty/manifest.json",
+        "sha256": "5cb5755b6fe7854c288cdac8dcde13d116c3ff80b7eeacf9bc448f4f263705ef"
+      },
+      "raw_artifacts": {},
+      "duration_seconds": 95.361,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_empty_tb",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-native",
+      "profile": "F1",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:38:49.000294+00:00",
+      "end_utc": "2026-11-13T04:40:27.100388+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-native/manifest.json",
+        "sha256": "db5924afef727ec922cf8dd93c19722bfaf59f2405c3a32c9d568b43b16c003f"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-native/coverage.dat",
+          "sha256": "77e787997b8a9b4003700e2d57f789b06d179c578f1de489582b6f09fa515e26"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-native/queue-coverage.json",
+          "sha256": "e86a82134dde5708775e47a3876bb7ff99d76f3233d4cd643482b43bcca6b6bb"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-native/api-events.jsonl",
+          "sha256": "23cf44a094aabe0373b50be2615a29b218cf341bbb5e39813093ab72782349ef"
+        }
+      },
+      "functional": {
+        "cycles": 17040,
+        "delayed_publish": 5114,
+        "reuse": 9255,
+        "tx_retained": 16110,
+        "full": 2,
+        "reset_active": 18,
+        "reset_collision": 5,
+        "read_checks": 7731,
+        "link_collision": 14,
+        "owner_peak": 256,
+        "same_singleton": 107,
+        "same_long": 238,
+        "different": 4823,
+        "empty_publish": 2389,
+        "required_bins": 160,
+        "hit_required": 160,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 98.1,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-wide",
+      "profile": "F1",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:40:27.104966+00:00",
+      "end_utc": "2026-11-13T04:42:13.765733+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2,
+        "DESC_ID_W": 9,
+        "DESC_COUNT_W": 10
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-wide/manifest.json",
+        "sha256": "d3242654dedd8f6a8f23b783ce3d705bf3cae5e5630698bba8d93d50084f42a9"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-wide/coverage.dat",
+          "sha256": "44655dca80bf4bc4c71da2707d8f4ecb832affb1a9305f2c14c40a868af63f77"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-wide/queue-coverage.json",
+          "sha256": "e86a82134dde5708775e47a3876bb7ff99d76f3233d4cd643482b43bcca6b6bb"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-wide/api-events.jsonl",
+          "sha256": "23cf44a094aabe0373b50be2615a29b218cf341bbb5e39813093ab72782349ef"
+        }
+      },
+      "functional": {
+        "cycles": 17040,
+        "delayed_publish": 5114,
+        "reuse": 9255,
+        "tx_retained": 16110,
+        "full": 2,
+        "reset_active": 18,
+        "reset_collision": 5,
+        "read_checks": 7731,
+        "link_collision": 14,
+        "owner_peak": 256,
+        "same_singleton": 107,
+        "same_long": 238,
+        "different": 4823,
+        "empty_publish": 2389,
+        "required_bins": 160,
+        "hit_required": 160,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 106.661,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-empty",
+      "profile": "F1",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:42:13.767726+00:00",
+      "end_utc": "2026-11-13T04:43:08.336745+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043841.256625+0000-3d2fbd5a/queues-independent-empty/manifest.json",
+        "sha256": "95ee67d3c7e1ff5d4ff51b27ec946dea6bf63de7fc73a9ff98bd8a64fede1a94"
+      },
+      "raw_artifacts": {},
+      "duration_seconds": 54.569,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_empty_tb",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-native",
+      "profile": "I0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:43:12.738150+00:00",
+      "end_utc": "2026-11-13T04:44:10.767158+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-native/manifest.json",
+        "sha256": "642fd3799eea37b2094050f405d31b6acdddb8f89bec21d6aad8a0077effabf7"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-native/coverage.dat",
+          "sha256": "6fb299a7a142a3afd477db4c63acc625852bcde04eeff62062ca85fe6d601fb6"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-native/queue-coverage.json",
+          "sha256": "9565bfd11c2959cbfca3519b972ddadec043d050dfb9e5747d4843e85e24da82"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-native/api-events.jsonl",
+          "sha256": "6bfafb8ab5cd517f565cfa797969a640435d41f3acea1f416a7c85779c50104e"
+        }
+      },
+      "functional": {
+        "cycles": 16128,
+        "delayed_publish": 1929,
+        "reuse": 5602,
+        "tx_retained": 15916,
+        "full": 2,
+        "reset_active": 17,
+        "reset_collision": 3,
+        "read_checks": 3055,
+        "link_collision": 107,
+        "owner_peak": 16,
+        "same_singleton": 254,
+        "same_long": 205,
+        "different": 1463,
+        "empty_publish": 3016,
+        "required_bins": 40,
+        "hit_required": 40,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 58.029,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-wide",
+      "profile": "I0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:44:10.769534+00:00",
+      "end_utc": "2026-11-13T04:44:51.374115+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "DESC_ID_W": 5,
+        "DESC_COUNT_W": 6
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-wide/manifest.json",
+        "sha256": "97614f9e3b2f97c76ef2192b954e71d568dbde86f302a4d3d383f2980b709de9"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-wide/coverage.dat",
+          "sha256": "8719348b1ee4cb8597220e8ed13877ca2edd4c2c0e8c0394a2ea5ee9a80c79ae"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-wide/queue-coverage.json",
+          "sha256": "9565bfd11c2959cbfca3519b972ddadec043d050dfb9e5747d4843e85e24da82"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-wide/api-events.jsonl",
+          "sha256": "6bfafb8ab5cd517f565cfa797969a640435d41f3acea1f416a7c85779c50104e"
+        }
+      },
+      "functional": {
+        "cycles": 16128,
+        "delayed_publish": 1929,
+        "reuse": 5602,
+        "tx_retained": 15916,
+        "full": 2,
+        "reset_active": 17,
+        "reset_collision": 3,
+        "read_checks": 3055,
+        "link_collision": 107,
+        "owner_peak": 16,
+        "same_singleton": 254,
+        "same_long": 205,
+        "different": 1463,
+        "empty_publish": 3016,
+        "required_bins": 40,
+        "hit_required": 40,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 40.605,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-empty",
+      "profile": "I0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:44:51.376042+00:00",
+      "end_utc": "2026-11-13T04:45:22.338627+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044308.518384+0000-fe537d71/queues-independent-empty/manifest.json",
+        "sha256": "638f9f2d5069833ea9175dfd7552272d15fae43ad3a06725174fd957293e0f33"
+      },
+      "raw_artifacts": {},
+      "duration_seconds": 30.963,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_empty_tb",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-native",
+      "profile": "I1",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:45:26.483735+00:00",
+      "end_utc": "2026-11-13T04:45:55.514833+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-native/manifest.json",
+        "sha256": "69b29f37f3eeba77801a5dce146d2aa918ec3017a9e25cb3553ee936c5585910"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-native/coverage.dat",
+          "sha256": "6fb299a7a142a3afd477db4c63acc625852bcde04eeff62062ca85fe6d601fb6"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-native/queue-coverage.json",
+          "sha256": "9565bfd11c2959cbfca3519b972ddadec043d050dfb9e5747d4843e85e24da82"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-native/api-events.jsonl",
+          "sha256": "6bfafb8ab5cd517f565cfa797969a640435d41f3acea1f416a7c85779c50104e"
+        }
+      },
+      "functional": {
+        "cycles": 16128,
+        "delayed_publish": 1929,
+        "reuse": 5602,
+        "tx_retained": 15916,
+        "full": 2,
+        "reset_active": 17,
+        "reset_collision": 3,
+        "read_checks": 3055,
+        "link_collision": 107,
+        "owner_peak": 16,
+        "same_singleton": 254,
+        "same_long": 205,
+        "different": 1463,
+        "empty_publish": 3016,
+        "required_bins": 40,
+        "hit_required": 40,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 29.031,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-wide",
+      "profile": "I1",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:45:55.518545+00:00",
+      "end_utc": "2026-11-13T04:46:22.274051+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "DESC_ID_W": 5,
+        "DESC_COUNT_W": 6
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-wide/manifest.json",
+        "sha256": "a30953d451ce54e74beb974f553676a53747342347cf728b9450a9a0e7f2fa54"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-wide/coverage.dat",
+          "sha256": "8719348b1ee4cb8597220e8ed13877ca2edd4c2c0e8c0394a2ea5ee9a80c79ae"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-wide/queue-coverage.json",
+          "sha256": "9565bfd11c2959cbfca3519b972ddadec043d050dfb9e5747d4843e85e24da82"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-wide/api-events.jsonl",
+          "sha256": "6bfafb8ab5cd517f565cfa797969a640435d41f3acea1f416a7c85779c50104e"
+        }
+      },
+      "functional": {
+        "cycles": 16128,
+        "delayed_publish": 1929,
+        "reuse": 5602,
+        "tx_retained": 15916,
+        "full": 2,
+        "reset_active": 17,
+        "reset_collision": 3,
+        "read_checks": 3055,
+        "link_collision": 107,
+        "owner_peak": 16,
+        "same_singleton": 254,
+        "same_long": 205,
+        "different": 1463,
+        "empty_publish": 3016,
+        "required_bins": 40,
+        "hit_required": 40,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 26.756,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-empty",
+      "profile": "I1",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": true,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:46:22.282315+00:00",
+      "end_utc": "2026-11-13T04:46:40.473673+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044522.419140+0000-b8777950/queues-independent-empty/manifest.json",
+        "sha256": "1ef42f6c92370ec08bc3b5244f6885ab70ac26cd468f45bbb3c440ac8680bcfb"
+      },
+      "raw_artifacts": {},
+      "duration_seconds": 18.191,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_empty_tb",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-native",
+      "profile": "E0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:32:28.258596+00:00",
+      "end_utc": "2026-11-13T04:35:21.505262+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-native/manifest.json",
+        "sha256": "abab658e640d18cecfba9492f5923bd49072bcc23ae5ddf9e4b2322e0a2b3119"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-native/coverage.dat",
+          "sha256": "5547524bb20ecc394ac958c5b429dcdc6ca7dd176bbdc3fb20d116cbe098c02d"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-native/queue-coverage.json",
+          "sha256": "28cb23226061cff1b094df4386a61da6fb92d528fd274fcfbda92abb2ccbc416"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-native/api-events.jsonl",
+          "sha256": "6298d0e8fba22e64f87db61c8d368db6a2d945312a447fa078de85749a3a3bcc"
+        }
+      },
+      "functional": {
+        "cycles": 16072,
+        "delayed_publish": 1693,
+        "reuse": 5363,
+        "tx_retained": 15849,
+        "full": 2,
+        "reset_active": 15,
+        "reset_collision": 3,
+        "read_checks": 2182,
+        "link_collision": 149,
+        "owner_peak": 8,
+        "same_singleton": 606,
+        "same_long": 302,
+        "different": 870,
+        "empty_publish": 3013,
+        "required_bins": 20,
+        "hit_required": 20,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 173.247,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-wide",
+      "profile": "E0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:35:21.512276+00:00",
+      "end_utc": "2026-11-13T04:37:07.455531+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "DESC_ID_W": 4,
+        "DESC_COUNT_W": 5
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-wide/manifest.json",
+        "sha256": "e510f1331ca9c08015ede189a6c501db509d3ed313f58df96b95e4e110277bd2"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-wide/coverage.dat",
+          "sha256": "24941c429f0eb1976ac024b632a71496f6996fdc3f8856bce25c9a3c8f7e2b04"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-wide/queue-coverage.json",
+          "sha256": "28cb23226061cff1b094df4386a61da6fb92d528fd274fcfbda92abb2ccbc416"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-wide/api-events.jsonl",
+          "sha256": "6298d0e8fba22e64f87db61c8d368db6a2d945312a447fa078de85749a3a3bcc"
+        }
+      },
+      "functional": {
+        "cycles": 16072,
+        "delayed_publish": 1693,
+        "reuse": 5363,
+        "tx_retained": 15849,
+        "full": 2,
+        "reset_active": 15,
+        "reset_collision": 3,
+        "read_checks": 2182,
+        "link_collision": 149,
+        "owner_peak": 8,
+        "same_singleton": 606,
+        "same_long": 302,
+        "different": 870,
+        "empty_publish": 3013,
+        "required_bins": 20,
+        "hit_required": 20,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 105.943,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-empty",
+      "profile": "E0",
+      "source_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:37:07.459936+00:00",
+      "end_utc": "2026-11-13T04:38:09.333437+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T043216.243681+0000-f13ef0d2/queues-independent-empty/manifest.json",
+        "sha256": "e0b3c999760c0e2efd8d4b2e4815afd79d16fa11b04f7f1a6f8f22bc1337d98e"
+      },
+      "raw_artifacts": {},
+      "duration_seconds": 61.874,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_empty_tb",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-native",
+      "profile": "E1",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:46:43.856999+00:00",
+      "end_utc": "2026-11-13T04:47:21.907536+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-native/manifest.json",
+        "sha256": "fddd9830f0bb8fbab3aeeab31a59f0960aec3408b9674b07e44c360a97b24809"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-native/coverage.dat",
+          "sha256": "c1312b19adbcff435bc7e3d939a89fefc5f893468daf60f3e304aa06f4eb295c"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-native/queue-coverage.json",
+          "sha256": "5c69328a03c6c5044542c701757551b359b043652e98746f7ce5bf2d77be595e"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-native/api-events.jsonl",
+          "sha256": "9797b979a4887ad961b1255d6e31cac59ec5e1025aaa4b0bb9a75cac0ae3e142"
+        }
+      },
+      "functional": {
+        "cycles": 16240,
+        "delayed_publish": 1995,
+        "reuse": 5657,
+        "tx_retained": 15877,
+        "full": 2,
+        "reset_active": 18,
+        "reset_collision": 2,
+        "read_checks": 3448,
+        "link_collision": 55,
+        "owner_peak": 32,
+        "same_singleton": 154,
+        "same_long": 115,
+        "different": 1739,
+        "empty_publish": 2937,
+        "required_bins": 80,
+        "hit_required": 80,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 38.051,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-wide",
+      "profile": "E1",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:47:21.912410+00:00",
+      "end_utc": "2026-11-13T04:48:30.657752+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2,
+        "DESC_ID_W": 6,
+        "DESC_COUNT_W": 7
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-wide/manifest.json",
+        "sha256": "e085e05e445d12358d60e7c34ea81020f55372f0f1685f39c44817f759793fb1"
+      },
+      "raw_artifacts": {
+        "coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-wide/coverage.dat",
+          "sha256": "b0c6de4a5f549046299e9eb4dafa3165959977c264a93656a757cfca3ede4d43"
+        },
+        "functional_coverage": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-wide/queue-coverage.json",
+          "sha256": "5c69328a03c6c5044542c701757551b359b043652e98746f7ce5bf2d77be595e"
+        },
+        "events": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-wide/api-events.jsonl",
+          "sha256": "9797b979a4887ad961b1255d6e31cac59ec5e1025aaa4b0bb9a75cac0ae3e142"
+        }
+      },
+      "functional": {
+        "cycles": 16240,
+        "delayed_publish": 1995,
+        "reuse": 5657,
+        "tx_retained": 15877,
+        "full": 2,
+        "reset_active": 18,
+        "reset_collision": 2,
+        "read_checks": 3448,
+        "link_collision": 55,
+        "owner_peak": 32,
+        "same_singleton": 154,
+        "same_long": 115,
+        "different": 1739,
+        "empty_publish": 2937,
+        "required_bins": 80,
+        "hit_required": 80,
+        "illegal_action_hits": 0
+      },
+      "duration_seconds": 68.745,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_independent_tb",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "verilator_coverage",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "queues-independent-empty",
+      "profile": "E1",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:48:30.659764+00:00",
+      "end_utc": "2026-11-13T04:49:07.315698+00:00",
+      "seed": 23,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2
+      },
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T044640.569441+0000-6c3afb33/queues-independent-empty/manifest.json",
+        "sha256": "259f30499796e2af3fec06c6e056477198e6ab0bc7a16c17269c103bf578d76d"
+      },
+      "raw_artifacts": {},
+      "duration_seconds": 36.656,
+      "process_results": [
+        {
+          "program": "verilator",
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "program": "Vqueues_empty_tb",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "rtl-queues-independent-prove",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:47:05.067255+00:00",
+      "end_utc": "2026-11-13T04:48:35.669658+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ],
+        "scope": "Independent audited harness qualification; explicit ownership model and fixed witnesses"
+      },
+      "engine_status": "PASS",
+      "method": "unbounded k-induction",
+      "assumptions": "Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Commit assumes external caller_rx_owned predicate, in-range ID/qid, absence from all pre-state queues and capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.",
+      "expected": "PROVE",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-prove/manifest.json",
+        "sha256": "0dd6e3e659852a6587b7afbe23f25edf7d3d881341618f4a324ca5b6325ec947"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-prove/engine/status",
+          "sha256": "89a53e765a1afa05ebb6253c4b1d4fc0183c4cfdd85b373a8b7fc89164830ac2"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-prove/queue.sby",
+          "sha256": "0fb3961d7978f4c22a04cf9604d520be56af34899bc8a9150c2b3ef60d4a29ae"
+        }
+      },
+      "reached_covers": [],
+      "failed_detectors": [],
+      "duration_seconds": 90.602,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "rtl-queues-independent-cover",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:48:35.674539+00:00",
+      "end_utc": "2026-11-13T04:48:41.656638+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ],
+        "scope": "Independent audited harness qualification; explicit ownership model and fixed witnesses"
+      },
+      "engine_status": "PASS",
+      "method": "bounded reachability depth 24",
+      "assumptions": "Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Commit assumes external caller_rx_owned predicate, in-range ID/qid, absence from all pre-state queues and capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.",
+      "expected": "COVER",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-cover/manifest.json",
+        "sha256": "31e6cb2e23a4e39adcf8423ea7fe93d7d5775b6ced4ed4c977965b86631dd78b"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-cover/engine/status",
+          "sha256": "c64cd1e86b7f62337279d990860d37ca6636f5812efd86b6d24dfd010434d5f0"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-cover/queue.sby",
+          "sha256": "0fb3961d7978f4c22a04cf9604d520be56af34899bc8a9150c2b3ef60d4a29ae"
+        }
+      },
+      "reached_covers": [
+        {
+          "name": "c_empty_attempt",
+          "step": 3
+        },
+        {
+          "name": "c_last_replace",
+          "step": 4
+        },
+        {
+          "name": "c_witness_pop",
+          "step": 4
+        },
+        {
+          "name": "c_reset_active",
+          "step": 4
+        },
+        {
+          "name": "c_reset_collision",
+          "step": 5
+        },
+        {
+          "name": "c_long_replace",
+          "step": 5
+        },
+        {
+          "name": "c_witness_live",
+          "step": 5
+        },
+        {
+          "name": "c_two_qids",
+          "step": 5
+        },
+        {
+          "name": "c_witness_reset",
+          "step": 6
+        },
+        {
+          "name": "c_full",
+          "step": 11
+        }
+      ],
+      "failed_detectors": [],
+      "duration_seconds": 5.982,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 8
+    },
+    {
+      "test": "rtl-queues-independent-order",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:48:41.659299+00:00",
+      "end_utc": "2026-11-13T04:48:46.664463+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ],
+        "scope": "Independent audited harness qualification; explicit ownership model and fixed witnesses"
+      },
+      "engine_status": "FAIL",
+      "method": "unbounded k-induction",
+      "assumptions": "Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Commit assumes external caller_rx_owned predicate, in-range ID/qid, absence from all pre-state queues and capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.",
+      "mutation": "order",
+      "intended_detector": "a_order",
+      "mutant_sha256": "44e8bdbe9acb086b0e6ff0dc95071519ec96c0b588431c9d03a2dda71d07c6c3",
+      "expected": "INTENDED_COUNTEREXAMPLE",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-order/manifest.json",
+        "sha256": "6f4c0f95465ed5ede13a430fd7452475728a7d5b74dea7913852d21963dc9beb"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-order/engine/status",
+          "sha256": "e60b8fd829076338003b8fd48a99c9b1190e367b783d7834c357631185325640"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-order/queue.sby",
+          "sha256": "f85ab858a46ab11e4b5eb7977825a2e00ee8d49d695241ef73172f3ff0b1ae42"
+        }
+      },
+      "reached_covers": [],
+      "failed_detectors": [
+        "a_link_port",
+        "a_order"
+      ],
+      "duration_seconds": 5.005,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "TOOL_ERROR",
+          "returncode": 2
+        }
+      ],
+      "trace_count": 1,
+      "counterexamples": [
+        {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-order/engine/engine_0/trace.vcd",
+          "sha256": "96666085110754f2ab255b744ce573b02d1b300ec978ef3328d2441784699685"
+        }
+      ]
+    },
+    {
+      "test": "rtl-queues-independent-link",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:48:46.700130+00:00",
+      "end_utc": "2026-11-13T04:48:50.668349+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ],
+        "scope": "Independent audited harness qualification; explicit ownership model and fixed witnesses"
+      },
+      "engine_status": "FAIL",
+      "method": "unbounded k-induction",
+      "assumptions": "Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Commit assumes external caller_rx_owned predicate, in-range ID/qid, absence from all pre-state queues and capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.",
+      "mutation": "link",
+      "intended_detector": "a_link_payload",
+      "mutant_sha256": "1fb0241dc72144ec124b4aec42e35da6f9652a1003b39b02d3392676627b5370",
+      "expected": "INTENDED_COUNTEREXAMPLE",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-link/manifest.json",
+        "sha256": "a040f16193d65b2e46b62162863b85fef35e218f2ff19b6a69681b70792d0263"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-link/engine/status",
+          "sha256": "e60b8fd829076338003b8fd48a99c9b1190e367b783d7834c357631185325640"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-link/queue.sby",
+          "sha256": "e709a05db7f619fbee235180a1cb7bec2f73e9e3c7016b6bbd1898c013b60157"
+        }
+      },
+      "reached_covers": [],
+      "failed_detectors": [
+        "a_link_payload"
+      ],
+      "duration_seconds": 3.968,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "TOOL_ERROR",
+          "returncode": 2
+        }
+      ],
+      "trace_count": 1,
+      "counterexamples": [
+        {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-link/engine/engine_0/trace.vcd",
+          "sha256": "18bd9cb1c98a528321608d80978be81f8ddb974348a246632a42383ad717c49d"
+        }
+      ]
+    },
+    {
+      "test": "rtl-queues-independent-count",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:48:50.670064+00:00",
+      "end_utc": "2026-11-13T04:48:56.460256+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ],
+        "scope": "Independent audited harness qualification; explicit ownership model and fixed witnesses"
+      },
+      "engine_status": "FAIL",
+      "method": "unbounded k-induction",
+      "assumptions": "Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Commit assumes external caller_rx_owned predicate, in-range ID/qid, absence from all pre-state queues and capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.",
+      "mutation": "count",
+      "intended_detector": "a_count",
+      "mutant_sha256": "999672cab96bdb413ddfd875f94d4e54301d49240b8260d92468d4688f4c7273",
+      "expected": "INTENDED_COUNTEREXAMPLE",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-count/manifest.json",
+        "sha256": "ac6462ab156c7e0e6448f527420060d8ea071900a7ed5bcd0714ceb287df01d3"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-count/engine/status",
+          "sha256": "abbded9d848a331dd2e62c607a4f416bdace13db614bfea00d79dd96387cdc84"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-count/queue.sby",
+          "sha256": "facc613753a593aec29a6630d7e1f8112a344466af33dab1fb37b60a41c1daca"
+        }
+      },
+      "reached_covers": [],
+      "failed_detectors": [
+        "a_count"
+      ],
+      "duration_seconds": 5.79,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "TOOL_ERROR",
+          "returncode": 2
+        }
+      ],
+      "trace_count": 1,
+      "counterexamples": [
+        {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-independent-count/engine/engine_0/trace.vcd",
+          "sha256": "faf3b04f40eee84e62b53e859038405f2964b51b939ee9d4f1eb8beb3e8728cc"
+        }
+      ]
+    },
+    {
+      "test": "rtl-queues-prove",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:48:56.552996+00:00",
+      "end_utc": "2026-11-13T04:49:44.805727+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ]
+      },
+      "engine_status": "PASS",
+      "method": "unbounded k-induction",
+      "assumptions": "Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Commit assumes external caller_rx_owned predicate; actual global owner transitions remain P11A. Fixed arbitrary witnesses held across later reset. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.",
+      "expected": "PROVE",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-prove/manifest.json",
+        "sha256": "b03e2bf7860c5da2c624f9a01dbac10e7f9f70c7e8b08fe0474dd00f4eb4cca2"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-prove/engine/status",
+          "sha256": "520095fe05536c20bdb404481a12d24ce9af9dbc13f2e4dbf4264ae4ae305b8e"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-prove/queue.sby",
+          "sha256": "c451c84129e7d109b9492345dc8a6f9a975afa895d375bdf346b2c37a86a5a74"
+        }
+      },
+      "reached_covers": [],
+      "failed_detectors": [],
+      "duration_seconds": 48.253,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 0
+    },
+    {
+      "test": "rtl-queues-cover",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:49:44.806751+00:00",
+      "end_utc": "2026-11-13T04:49:47.967328+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ]
+      },
+      "engine_status": "PASS",
+      "method": "bounded reachability depth 16",
+      "assumptions": "Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Commit assumes external caller_rx_owned predicate; actual global owner transitions remain P11A. Fixed arbitrary witnesses held across later reset. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.",
+      "expected": "COVER",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-cover/manifest.json",
+        "sha256": "2d9afe1899d7f3566850a3184f250734b76e29f9906300a67fd58b70969b5718"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-cover/engine/status",
+          "sha256": "b298a94f014b41c5fa58c0b45d4f815ade79215f4fcec0dffaa5b9cc1acfa2c1"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-cover/queue.sby",
+          "sha256": "c451c84129e7d109b9492345dc8a6f9a975afa895d375bdf346b2c37a86a5a74"
+        }
+      },
+      "reached_covers": [
+        {
+          "name": "c_empty_attempt",
+          "step": 3
+        },
+        {
+          "name": "c_last_replace",
+          "step": 4
+        },
+        {
+          "name": "c_witness_pop",
+          "step": 4
+        },
+        {
+          "name": "c_reset_active",
+          "step": 4
+        },
+        {
+          "name": "c_reset_collision",
+          "step": 5
+        },
+        {
+          "name": "c_long_replace",
+          "step": 5
+        },
+        {
+          "name": "c_witness_live",
+          "step": 5
+        },
+        {
+          "name": "c_two_qids",
+          "step": 5
+        },
+        {
+          "name": "c_witness_reset",
+          "step": 6
+        },
+        {
+          "name": "c_full",
+          "step": 11
+        }
+      ],
+      "failed_detectors": [],
+      "duration_seconds": 3.161,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "trace_count": 8
+    },
+    {
+      "test": "rtl-queues-mutation",
+      "profile": "E0",
+      "source_revision": "3b15d2d2c30a6508a447130639b7685c307b6a2b",
+      "dirty": false,
+      "result": "PASS",
+      "start_utc": "2026-11-13T04:49:47.969177+00:00",
+      "end_utc": "2026-11-13T04:49:51.601487+00:00",
+      "seed": null,
+      "configuration": {
+        "top": "queue_formal",
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "families": [
+          "FP-QUEUE",
+          "FP-ORDER"
+        ]
+      },
+      "engine_status": "FAIL",
+      "method": "unbounded k-induction",
+      "assumptions": "Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Commit assumes external caller_rx_owned predicate; actual global owner transitions remain P11A. Fixed arbitrary witnesses held across later reset. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.",
+      "mutation": "Singleton replacement follows stale old tail link",
+      "mutant_sha256": "44e8bdbe9acb086b0e6ff0dc95071519ec96c0b588431c9d03a2dda71d07c6c3",
+      "expected": "ORDER_COUNTEREXAMPLE",
+      "raw_manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-mutation/manifest.json",
+        "sha256": "1afc961c876892cc04128873e3ef650853c2db8c7f337533501323bd8d6bedad"
+      },
+      "raw_artifacts": {
+        "status": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-mutation/engine/status",
+          "sha256": "bcfb342b249c96a7a47d8afd338e0b2c8fe09b72b9c2529be2270c221285ee33"
+        },
+        "configuration": {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-mutation/queue.sby",
+          "sha256": "a805445c11b6a11c92f53dba08959dc7db689e4e8348371688e322a80d056a40"
+        }
+      },
+      "reached_covers": [],
+      "failed_detectors": [
+        "a_link_port",
+        "a_order"
+      ],
+      "duration_seconds": 3.632,
+      "process_results": [
+        {
+          "program": "sby",
+          "result": "TOOL_ERROR",
+          "returncode": 2
+        }
+      ],
+      "trace_count": 1,
+      "counterexamples": [
+        {
+          "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/formal-rtl-2026-11-13T044657.764649+0000-3cdd838e/rtl-queues-mutation/engine/engine_0/trace.vcd",
+          "sha256": "96666085110754f2ab255b744ce573b02d1b300ec978ef3328d2441784699685"
+        }
+      ]
+    }
+  ],
+  "nonqualifying_attempts": [
+    {
+      "run": ".build/runs/formal-rtl-2026-11-13T043044.119650+0000-fc91eea4/summary.json",
+      "result": "TIMEOUT",
+      "limit_seconds": 300,
+      "scope": "Auxiliary full caller ownership state model; not a proved ownership theorem. Final required local queue proof uses explicit caller contract; independent simulation checks endpoint lifetimes.",
+      "raw_summary_sha256": "af912069a15ad0a4f8e78d1c84fe0cfd3ca8b8502ed9b34447fcc2881f205325",
+      "harness_sha256": "2665badb04296e2cd90783d9eacc95b6825131c6f6f2c3b6a164ed7dfdc0b50b",
+      "retrieval_revision": "cef18efc52f916e9d7f489255f7b758c26c6a090"
+    },
+    {
+      "path": "work/pdr-check",
+      "result": "TOOL_ERROR",
+      "scope": "Exploratory ABC PDR AIG export rejected X bits; no PDR result claimed. Final qualification uses SMTBMC/Z3."
+    }
+  ],
+  "coverage_runs": [
+    {
+      "profile": "F0",
+      "result": "PASS",
+      "raw_summary": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045037.928672+0000-840ba41f/summary.json",
+        "sha256": "82691f8d08bb909da7eb561af654b0e2b51ed5f0fe39fb9042d286b69efe452c"
+      },
+      "cases": [
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045037.928672+0000-840ba41f/queue-coverage-0/manifest.json",
+            "sha256": "d6d8c55dae697472ff06e8213f9b9d6b361fe6014db0772fa169d213ef945d71"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045037.928672+0000-840ba41f/queue-coverage-0/coverage-summary.json",
+            "sha256": "eceb28c974e8cacbc17b5c63465d2e15227f1217dda28177e27c85f03e217697"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 68,
+                "total": 68
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 1674,
+                "total": 1950
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 285
+        },
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045037.928672+0000-840ba41f/queue-coverage-1/manifest.json",
+            "sha256": "c01a59a86eaf51033fc9d4c02e71572de8f2b7c8791a9d6a497576e325b5700a"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045037.928672+0000-840ba41f/queue-coverage-1/coverage-summary.json",
+            "sha256": "d508adeb265a505c28df6b1de2029cb89965852ea9eca938f5a8dc60de49923e"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "DESC_ID_W": 9,
+            "DESC_COUNT_W": 10
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 68,
+                "total": 76
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 1800,
+                "total": 2152
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 369
+        }
+      ]
+    },
+    {
+      "profile": "F1",
+      "result": "PASS",
+      "raw_summary": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.192051+0000-37bd4e97/summary.json",
+        "sha256": "be5e49057c2338a751d5e99a84ecfbc4abcb956e24a6042b12b111790f3bdf2d"
+      },
+      "cases": [
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.192051+0000-37bd4e97/queue-coverage-0/manifest.json",
+            "sha256": "9a474ba77e895943be07553236b835729fee3b3094463c947b85868668d4b650"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.192051+0000-37bd4e97/queue-coverage-0/coverage-summary.json",
+            "sha256": "70e4e07c66302244e8f70618464dcb5b42dd59b1e8626de5821ccff6de6e09c2"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 2
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 68,
+                "total": 68
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 1674,
+                "total": 1950
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 285
+        },
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.192051+0000-37bd4e97/queue-coverage-1/manifest.json",
+            "sha256": "d15b9b3dc0b096a6d0595b244ba10997d362513af782edcad6ee0ac37168b626"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.192051+0000-37bd4e97/queue-coverage-1/coverage-summary.json",
+            "sha256": "aa715bcec2a84aba5a95b0fb9ca5bdd8f8145b0180f8eb922e76f43c2be3cd7f"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 2,
+            "DESC_ID_W": 9,
+            "DESC_COUNT_W": 10
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 68,
+                "total": 76
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 1800,
+                "total": 2152
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 369
+        }
+      ]
+    },
+    {
+      "profile": "I0",
+      "result": "PASS",
+      "raw_summary": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.438397+0000-eb659740/summary.json",
+        "sha256": "14bcf8769a082602e0f124d3ca9204566de1c023b5955c34ecb9ac4da1c64b93"
+      },
+      "cases": [
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.438397+0000-eb659740/queue-coverage-0/manifest.json",
+            "sha256": "3175e2a8b8d0281c829dd252c18134a1f82f6e4ceecba2f93599791dc10ee91a"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.438397+0000-eb659740/queue-coverage-0/coverage-summary.json",
+            "sha256": "47c1911bc6dedcc9c816c047e2580189a4b238648ce022e23d0434eb3c812d0e"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 1
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 164,
+                "total": 164
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 264,
+                "total": 458
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 203
+        },
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.438397+0000-eb659740/queue-coverage-1/manifest.json",
+            "sha256": "9e2d28074fc2644ea7350f33b77b523cfec98821da0480ae0dd1253ffa47c061"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.438397+0000-eb659740/queue-coverage-1/coverage-summary.json",
+            "sha256": "a6fe304a1b062b618307c5e9da5af6d4733cf1e11cabd154e7d4d277260c11ed"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 1,
+            "DESC_ID_W": 5,
+            "DESC_COUNT_W": 6
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 164,
+                "total": 204
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 264,
+                "total": 516
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 301
+        }
+      ]
+    },
+    {
+      "profile": "I1",
+      "result": "PASS",
+      "raw_summary": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.597312+0000-628052c1/summary.json",
+        "sha256": "e1faac8874c82dd06e4b87e340e36046815b5ecd7a218fda8e06291cffb6d7d4"
+      },
+      "cases": [
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.597312+0000-628052c1/queue-coverage-0/manifest.json",
+            "sha256": "e9cb84dc91bd5e86fb425b617d62e5cee3db969e3b0ea50d9363fc4b07a8229c"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.597312+0000-628052c1/queue-coverage-0/coverage-summary.json",
+            "sha256": "afdf9b6ebf656d1dd9dbd9ad857802e94419d18f629096f23d9a394f37c21e9a"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 2
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 164,
+                "total": 164
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 264,
+                "total": 458
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 203
+        },
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.597312+0000-628052c1/queue-coverage-1/manifest.json",
+            "sha256": "cb7c9b4a1866f04f2c446ca92ddcbb8a26806b40e68cb055cce8862de1eeb203"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.597312+0000-628052c1/queue-coverage-1/coverage-summary.json",
+            "sha256": "6e54b76281eb868e5d8499812bcabe748a7a8298fb07f5714f0bafc7639aaa4b"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 2,
+            "DESC_ID_W": 5,
+            "DESC_COUNT_W": 6
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 164,
+                "total": 204
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 264,
+                "total": 516
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 301
+        }
+      ]
+    },
+    {
+      "profile": "E0",
+      "result": "PASS",
+      "raw_summary": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.768033+0000-87506ac6/summary.json",
+        "sha256": "fe2f107f21bed57d5f8c4ba987b692c5c732ad09368a083392597d6695896dda"
+      },
+      "cases": [
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.768033+0000-87506ac6/queue-coverage-0/manifest.json",
+            "sha256": "769c872c512c837dc8653f979fef46a5916fa18a76c8a606db03cc3f709c040e"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.768033+0000-87506ac6/queue-coverage-0/coverage-summary.json",
+            "sha256": "2bf06959be39d8acb48950a87da643f02c01add89538f0461bfcf32ee1b46af5"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 76,
+                "total": 76
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 130,
+                "total": 304
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 183
+        },
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.768033+0000-87506ac6/queue-coverage-1/manifest.json",
+            "sha256": "a8718a3624cefc794cfdda0f62e20d930b7b15566f6f95b0fe53449da10aca70"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.768033+0000-87506ac6/queue-coverage-1/coverage-summary.json",
+            "sha256": "e72d69c043f15bdd719b704d35c10203a50f49997ae6fb95feab183b2b3be899"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "DESC_ID_W": 4,
+            "DESC_COUNT_W": 5
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 76,
+                "total": 100
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 130,
+                "total": 338
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 241
+        }
+      ]
+    },
+    {
+      "profile": "E1",
+      "result": "PASS",
+      "raw_summary": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.895200+0000-52ca5880/summary.json",
+        "sha256": "6789bf1122395af299bcec3d68c35e393d925bd95a4faa85fc32e01038ae23ff"
+      },
+      "cases": [
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.895200+0000-52ca5880/queue-coverage-0/manifest.json",
+            "sha256": "ed3707d1132bdaa2d8966fcf3c26bd877f68d4f4a41eee1358b0e2a18fcd6377"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.895200+0000-52ca5880/queue-coverage-0/coverage-summary.json",
+            "sha256": "7dc4386440f2c6cd06bd839ed53cffd3b5f14cf22c27c0544c40f88ad42b739a"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 8,
+            "N_CELL": 64,
+            "CELL_BYTES": 32,
+            "N_DESC": 32,
+            "MAX_PACKET_BYTES": 512,
+            "MEM_RD_LATENCY": 2
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 364,
+                "total": 364
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 532,
+                "total": 792
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 269
+        },
+        {
+          "raw_manifest": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.895200+0000-52ca5880/queue-coverage-1/manifest.json",
+            "sha256": "c4f9e08f34224dac559a82e9492f3a95410b55823da7ab9f196e127f2a87d080"
+          },
+          "raw_summary": {
+            "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/coverage-2026-11-13T045038.895200+0000-52ca5880/queue-coverage-1/coverage-summary.json",
+            "sha256": "a79f0b52f4e5adbbb1e1bbe59a79e715f4f62a34c7c8d9b0f6dcc6a62bc2f0fe"
+          },
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 8,
+            "N_CELL": 64,
+            "CELL_BYTES": 32,
+            "N_DESC": 32,
+            "MAX_PACKET_BYTES": 512,
+            "MEM_RD_LATENCY": 2,
+            "DESC_ID_W": 6,
+            "DESC_COUNT_W": 7
+          },
+          "code": {
+            "tm_desc_links.sv": {
+              "toggle": {
+                "hit": 364,
+                "total": 436
+              },
+              "expr": {
+                "hit": 3,
+                "total": 5
+              },
+              "branch": {
+                "hit": 3,
+                "total": 4
+              },
+              "line": {
+                "hit": 1,
+                "total": 1
+              }
+            },
+            "tm_queue_ctrl.sv": {
+              "toggle": {
+                "hit": 532,
+                "total": 898
+              },
+              "line": {
+                "hit": 7,
+                "total": 7
+              },
+              "expr": {
+                "hit": 27,
+                "total": 33
+              },
+              "branch": {
+                "hit": 12,
+                "total": 12
+              }
+            }
+          },
+          "unhit_count": 447
+        }
+      ]
+    }
+  ]
+}

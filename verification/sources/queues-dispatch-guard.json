@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "extends": "production",
+  "include_dirs": [],
+  "sources": [
+    "dv/unit/queues_dispatch_guard_tb.sv"
+  ],
+  "headers": [
+    "dv/unit/queues_independent.vlt"
+  ],
+  "scope": "Isolated wrong-descriptor queue diagnostics on actual production controller and link child"
+}

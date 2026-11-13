@@ -42,3 +42,9 @@ One reviewed convention and executable recipe are shared by future studies,
 old violations remain visible, and data/reset results have separate scopes and
 owners. Unresolved physical assumptions are explicit. R01 is required before
 A01's measured comparison and P08; it does not block queue implementation.
+
+## Role assignments
+
+Analysis owns steps 1–5: reset constraints, matched timing checks and interpretation.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

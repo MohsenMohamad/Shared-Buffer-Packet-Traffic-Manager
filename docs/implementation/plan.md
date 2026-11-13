@@ -14,14 +14,13 @@ tested revisions and scopes remain in the linked reports. The main run
 [43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
 completed successfully. This statement records that hosted result, not a new local run.
 
-P03 is merged in PR #14 with [queue component results](../results/P03-queues.md).
-P04 is component-qualified in this branch with [scheduler results](../results/P04-scheduler.md).
-P05 remains the next hardware stage and P11A owns caller composition. [F01](tasks/F01-formal-symbols.md) closes
-its symbolic-input prerequisite with [executed recipe evidence](../results/F01-formal-symbols.md). [R01](tasks/R01-reset-timing.md) owns reset
-constraint interpretation before new allocator/P08 studies. [A01](tasks/A01-allocator-selection.md)
-owns measured allocator alternatives and a reviewed disposition before P08.
-[C01](tasks/C01-ci-economy.md) is integrated. Continue with P05;
-R01 and A01 remain prerequisites for P08.
+P03 RTL is merged in PR #14 and P04 RTL in PR #16. Their
+[queue](../results/P03-queues.md) and [scheduler](../results/P04-scheduler.md)
+reports retain their author scope; [status](../status.md) records independent
+qualification progress. P05 is the next RTL stage.
+[F01](tasks/F01-formal-symbols.md) is integrated; [R01](tasks/R01-reset-timing.md)
+and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
+[C01](tasks/C01-ci-economy.md) is integrated.
 
 ## Dependencies and owners
 
@@ -31,8 +30,8 @@ R01 and A01 remain prerequisites for P08.
 | Stabilization | [Toolchain refresh](tasks/P00-followup-toolchain.md), [representation](tasks/P01-followup-representation.md), [scaling](tasks/P02-followup-scaling.md), [stimulus](tasks/P07-followup-stimulus.md) | Integrated; consume results, do not recreate |
 | C01 | [CI iteration economy](tasks/C01-ci-economy.md) | Integrated; preserve all full suites |
 | F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Integrated; applies to every harness |
-| P03 | [Descriptor queues](tasks/P03-queues.md) | Integrated in PR #14 |
-| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | Component-qualified in this branch; P09/P11B own composition |
+| P03 | [Descriptor queues](tasks/P03-queues.md) | RTL integrated in PR #14; independent DV pending |
+| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | RTL integrated in PR #16; independent DV pending; P09/P11B own composition |
 | P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | P03 |
 | R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
 | A01 | [Allocator evaluation/disposition](tasks/A01-allocator-selection.md) | Existing characterization + R01; before P08 |
@@ -74,8 +73,8 @@ only for a concrete need, not to replace external checking.
 
 ## Implementation and decision checkpoints
 
-P03/P04/P05/P08 add their component simulation, assertions and local production
-proofs as they implement the hardware. P09 wires the real top and bench;
+P03/P04/P05/P08 deliver RTL/designer smoke and independent component DV in
+separate PRs under the ownership gates below. P09 wires the real top and bench;
 P10 establishes concurrency across F0/F1/I0/I1/E0/E1. P11 closes composition and
 coverage rather than deferring all verification until the end.
 
@@ -131,3 +130,50 @@ its callers/checkers and verification plan; do not silently freeze convenience
 choices or weaken safety to make an experiment pass. A01 is the assigned review
 of numeric allocation order; this does not reopen every accepted project scope
 decision without a concrete reason.
+
+## Ownership and verification gates
+
+The [root ownership policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership)
+defines file boundaries and the shared RTL/DV workflow.
+
+| Task | RTL PR | Independent DV / other PR |
+| --- | --- | --- |
+| P03 / P04 | Already merged #14 / #16 | Separate queue / scheduler independent qualification; both pending |
+| P05 | Store, metadata and TX implementation + designer smoke | API byte/port/credit/retirement/reset/performance tests, FP-TX, covers and negatives |
+| A01 | Adopted allocator candidate after coordinated policy decision | Independent safety/policy qualification; analysis owns frozen comparison and disposition |
+| P08 | RX/admission/reclaim implementation + designer smoke | Framing/admission/accounting/concurrency tests and local composition proofs |
+| P09 | Real top/config/event/ownership wiring | Real UVM path, binds, scoreboard qualification, coverage and subsystem CI |
+| P10 / P11A / P11B / P11C | Defects handled by separate fix PRs | DV concurrency, proof composition and coverage closure |
+| P12A | None | DV traffic/benchmark work (steps 1–4) |
+| P12B | Real matched memory variants (step 5) | Separate DV requalification (step 6); refresh affected G5 evidence |
+| P12C / R01 | None | Analysis: mapped synthesis/STA/comparison (steps 7–9) / reset constraints |
+| P13 | None | Tooling/diagnostics; actual reviewed session required |
+| Optional optimization | Separate scoped RTL optimization PR | Separate independent DV PR; refresh affected checks and G5 evidence |
+
+P09's verified G3 gate consumes passing merged component DV scope, including
+P03/P04/P05/P08 and applicable P02/P06 qualification. Wiring and early DV may
+begin earlier but cannot claim G3. P11 closure consumes verified P09/P10 and the
+reviewed packet-rate decision; an adopted optimization requires its passing DV
+merge before closure. Analysis and infrastructure cannot establish these gates.
+
+### Dependency evidence inventory
+
+P02 implementation is complete (PR #3, merge
+`b663f47de525e132f32afe621cff69ac82633478`). Its
+[storage report](../results/P02-storage-primitives.md) records live-ID/FIFO models,
+unbounded local proofs, covers and intended wrong-delta detections at tested
+`040863d055ba5fd70b3c09f18e3c268c67d3c1ef`; later representation/toolchain
+qualification and allocator characterization retain their own scopes. This is
+substantial reusable dependency evidence.
+Its report does not establish separate-owner independent qualification or global
+RX/TX/abort composition; inventory/review of that missing qualification remains
+DV work before the relevant verified integration gate.
+
+P06 implementation is complete (PR #5); the
+[CSR report](../results/P06-registers.md) records independent architectural-event
+models, bus coverage, FP-CSR and intended AW/W defect detection at tested
+`26bad4d0bdf52d8657b1a4cd3ea14061ab54e2cc`. Its independent model is useful evidence;
+separate-owner qualification is not demonstrated by that label alone. The genuine
+gaps are provenance review/independent signoff and actual datapath event/IDLE
+composition in P09/P10/P11B. Existing local evidence remains reusable with those
+scope boundaries.

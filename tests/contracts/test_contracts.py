@@ -129,6 +129,10 @@ class RegistrationTests(unittest.TestCase):
         self.assertEqual(selection('E0', ['pools']), ['pools'])
         self.assertEqual(selection('E0', ['csr']), ['csr'])
         self.assertEqual(selection('E0', ['queues']), ['queues'])
+        self.assertEqual(selection('E0', ['queues-dispatch-guard']), ['queues-dispatch-guard'])
+        self.assertIn('dv/unit/queues_dispatch_guard_tb.sv', sources('queues-dispatch-guard')['sources'])
+        self.assertNotIn('dv/unit/queues_dispatch_guard_tb.sv', sources('queues-independent')['sources'])
+        self.assertNotIn('dv/unit/queues_dispatch_guard_tb.sv', sources('formal')['sources'])
         self.assertIn('rtl/queue/tm_queue_ctrl.sv', sources('production')['sources'])
         self.assertIn('rtl/queue/tm_desc_links.sv', sources('synthesis')['sources'])
         self.assertIn('formal/queue/queue_formal.sv', sources('formal')['sources'])
@@ -170,7 +174,7 @@ class StorageRoutingTests(unittest.TestCase):
         from argparse import Namespace
         from formal_storage import selection as formal_selection
         specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
-        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues','scheduler'})
+        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues','scheduler','queues-independent'})
         for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
                 ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
             with self.assertRaises(ValueError):
@@ -196,5 +200,8 @@ class StorageRoutingTests(unittest.TestCase):
             with patch('queues.queues', side_effect=done) as queues:
                 self.assertEqual(main(['regression','--profile','E0','--test','queues','--seed','17','--output',folder]),0)
                 queues.assert_called_once()
+            with patch('queue_dispatch_guard.queue_dispatch_guard', side_effect=done) as dispatch_guard:
+                self.assertEqual(main(['regression','--profile','E0','--test','queues-dispatch-guard','--output',folder]),0)
+                dispatch_guard.assert_called_once()
 
 if __name__=='__main__': unittest.main()

@@ -57,3 +57,12 @@ Requirement focus: `IF-01`, `IF-03`, `LEN-01`, `LEN-02`, `LEN-03`, `Q-01`, `MEM-
 Measure saturated 64-byte and 1536-byte traffic on the real path with an always-ready output to characterize internal overhead. Keep one backlogged queue for the initial vertical baseline; also run representative multi-queue traffic once that path is available, with completion required in P10. Define reset/setup, warm-up and measurement windows explicitly; record sustained backlog, delivered packets/beats, elapsed measurement cycles, packets/cycle, beats/cycle and the interpacket-gap distribution. State how packets crossing window boundaries are counted. Define an interpacket gap as the output cycles strictly between the previous packet's final transfer and the next packet's first transfer; adjacent transfers have zero gap.
 
 Use the common [P09/P10 measurement accounting](P10-concurrency.md#packet-rate-diagnosis-and-decision) so overhead cycles are attributed once. This is early diagnosis, not P12 benchmark closure. No hard minimum-packet utilization target is agreed; do not invent one or apply the large-packet target to 64-byte traffic.
+
+## Role assignments
+
+- RTL: steps 1–3, actual top/control/event/ownership wiring and production sources.
+- Independent DV: steps 4–8, all required checks and early packet-rate measurements.
+
+The verified G3 entry requirements are in the [integration gates](../plan.md#ownership-and-verification-gates).
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

@@ -55,3 +55,14 @@ Requirement focus: `PERF-01`, `PERF-02`, `PERF-03`, `PERF-04`, `SCH-05`
 ## Earlier baseline
 
 Consume the P09/P10 packet-rate measurements and pre-P11 baseline decision, then perform the full study above. Early measurements do not replace the matched benchmark matrix or extend the 1536-byte utilization target to minimum packets.
+
+## Role assignments
+
+| Part | Owner | Existing steps |
+| --- | --- | --- |
+| P12A | Independent DV | 1–4: traffic benchmarks and accounting |
+| P12B | RTL | 5: real matched memory variants and designer smoke |
+| P12B | Independent DV | 6: byte/ownership/latency regression and affected proof/coverage refresh |
+| P12C | Analysis | 7–9: mapped synthesis/STA and matched implementation comparison |
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

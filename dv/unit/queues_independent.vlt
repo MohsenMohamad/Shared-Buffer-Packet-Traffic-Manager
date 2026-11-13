@@ -1,0 +1,5 @@
+`verilator_config
+// Legal widened descriptor IDs are guarded by range checks at these two array
+// accesses. Verilator warns about truncating the physical index. Keep this
+// waiver confined to this production child and these accesses; no RTL edits.
+lint_off -rule WIDTHTRUNC -file "*/rtl/queue/tm_desc_links.sv" -lines 17-20

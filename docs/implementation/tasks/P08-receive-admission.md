@@ -56,3 +56,11 @@ Requirement focus: `ADM-01`, `ADM-02`, `ADM-03`, `ADM-04`, `ADM-05`, `ADM-06`, `
 ## Additional entry and timing checks
 
 The P02 scaling and P07 stimulus follow-ups are integrated. Before P08, complete the [A01 allocator evaluation/disposition](A01-allocator-selection.md) and [R01 reset timing convention](R01-reset-timing.md). Use the actual selected allocator under its reviewed contract and the qualified [F01](F01-formal-symbols.md) harness recipe. Recheck the actual allocator consumer path through receive/admission at production capacity, including 1024 cells, under identified tool/library and timing constraints. Report selection-path and overall worst-path timing, fanout and constraint coverage; compare with the standalone findings and distinguish exploratory conditions from any agreed F0 acceptance requirement.
+
+## Role assignments
+
+- RTL: steps 1–8, RX/admission/reclaim, production wiring and embedded assertions.
+- Independent DV: step 9 and every admission/framing/cleanup/accounting acceptance row.
+- Analysis: the allocator consumer-path timing checks in the additional entry requirements.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

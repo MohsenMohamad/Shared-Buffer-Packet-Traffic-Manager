@@ -51,3 +51,10 @@ Requirement focus: `CSR-01`, `CSR-02`, `CSR-03`, `CSR-04`, `CSR-05`, `CSR-06`, `
 The [representation migration report](../../results/rtl-representation.md) records
 the ANSI/shared-type conversion and new checks. Original behavioral acceptance
 and historical evidence remain in force; no later hardware stage is started.
+
+## Role assignments
+
+Implementation is complete. Independent DV owns the remaining qualification and
+composition review in the [dependency evidence inventory](../plan.md#dependency-evidence-inventory).
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

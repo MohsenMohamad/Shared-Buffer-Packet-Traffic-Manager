@@ -55,3 +55,10 @@ The completed component work remains intact. Complete the [qualified representat
 The [representation migration report](../../results/rtl-representation.md) records
 the ANSI/shared-type conversion and new checks. Original behavioral acceptance
 and historical evidence remain in force; no later hardware stage is started.
+
+## Role assignments
+
+Implementation is complete. Independent DV owns the remaining qualification and
+composition review in the [dependency evidence inventory](../plan.md#dependency-evidence-inventory).
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

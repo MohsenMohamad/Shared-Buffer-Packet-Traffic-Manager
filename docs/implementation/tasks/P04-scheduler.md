@@ -42,6 +42,15 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Completion
 
-The scheduler portion of G2 implements both modes and passes independent policy checks without credit growth per stalled cycle or per packet in a continuing visit. System-level fairness measurements are completed in P12.
+Independent DV completion requires both implemented modes to pass separate-owner policy checks without credit growth per stalled cycle or per packet in a continuing visit. System-level fairness measurements are completed in P12.
 
 Requirement focus: `SCH-01`, `SCH-02`, `SCH-03`, `SCH-04`, `SCH-05`, `SCH-06`, `PERF-02`
+
+## Role assignments
+
+- RTL: steps 1–5, scheduler implementation and embedded assertions.
+- Independent DV: steps 6–7 and every visit/race/policy/checker acceptance row.
+
+[Current qualification state](../../status.md); P09/P11B retain composition.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

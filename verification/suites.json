@@ -92,6 +92,36 @@
         "scheduler"
       ],
       "scope": "Production DRR and packet RR with real P03 queues and independent P07 policy/timing checker; local TX endpoint, no payload proof."
+    },
+    "queues-independent": {
+      "handler": "queues-independent",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "queues-independent"
+      ],
+      "scope": "Independent queue/link/pool API FIFO and lifetime qualification, separate from historical author queues suite"
+    },
+    "queues-dispatch-guard": {
+      "handler": "queues-dispatch-guard",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "queues-dispatch-guard"
+      ],
+      "scope": "Independent wrong-descriptor rejection, sticky diagnostics, same/different-qid publication, reset and targeted guard mutation."
     }
   }
 }

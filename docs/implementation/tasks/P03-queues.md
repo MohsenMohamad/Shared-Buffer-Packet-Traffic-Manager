@@ -42,7 +42,8 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Completion
 
-The queue portion of G2 and required local FIFO-order proof are established. Caller ownership enforcement remains an explicit composition obligation, not an unproven implicit assumption.
+The RTL implementation and author-produced local evidence exist. Independent
+queue qualification remains pending until its separate passing DV PR merges. Caller ownership enforcement remains an explicit composition obligation, not an unproven implicit assumption.
 
 Requirement focus: `Q-01`, `Q-02`, `Q-03`, `Q-04`, `Q-05`, `MEM-01`, `PAR-01`
 
@@ -51,3 +52,16 @@ Requirement focus: `Q-01`, `Q-02`, `Q-03`, `Q-04`, `Q-05`, `MEM-01`, `PAR-01`
 Implemented with the production controller/link child and local verification in
 [P03 results](../../results/P03-queues.md). P04 scheduler, P05 metadata/TX
 integration and P11A caller-ownership discharge retain their separate scope.
+
+## Role assignments
+
+- RTL: steps 1–4, the production controller/link child and embedded assertions.
+- Independent DV: steps 5–7 and all required checks, including the API-event
+  queue/descriptor ownership model, audited FP-QUEUE/FP-ORDER harness, qualified
+  witnesses/caller assumptions and order/link/count detectors.
+
+Results: [designer evidence](../../results/P03-queues.md) and
+[independent DV evidence](../../results/P03-independent-dv.md).
+[Current qualification state](../../status.md) retains the P11A composition boundary.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

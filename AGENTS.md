@@ -43,3 +43,37 @@ remain integration gates; see [hosted CI policy](docs/spec/automation.md#hosted-
 Follow [documentation conventions](docs/documentation.md) for repository documents, PR bodies and delivery summaries. Lead with the behavior or result; give each paragraph, bullet or table row one purpose. Keep summaries, contracts, reproduction instructions and raw evidence separate.
 
 Use the PR template as a default. Keep validation concise, link to a focused report for full commands, revisions, seeds, digests and measurements, and keep material qualifications beside the result. Label expected seeded-defect detections explicitly. Preserve precise requirements and proof boundaries; never shorten by omitting necessary behavior or limitations. Check Markdown structure and links before delivery. Do not accumulate debugging chronology or duplicate evidence across documents.
+
+## Separate RTL and independent DV ownership
+
+RTL and independent DV have separate owners, branches and PRs; continue an
+existing task branch/PR. Role assignments divide the existing technical and
+acceptance obligations without dropping checks. Audits remain read-only.
+
+- RTL owns production `rtl/`, embedded designer assertions and designer smoke.
+  New smoke lives in `dv/designer/` with separate registration.
+- Independent DV owns `dv/` verification except designer smoke: tests, models,
+  scoreboards, passive monitors/binds and coverage; `formal/` harnesses, assumptions, covers and mutations; and test, proof,
+  coverage and requirement entries in `verification/{suites,formal,coverage,requirements}.json`
+  and `verification/sources/*.json`. It owns their handlers and dispatch in
+  `tools/run.py`, `tools/formal_storage.py`, suite-specific runner modules and
+  `.github/workflows/` selections. Coordinate production source membership with
+  RTL; toolchain/setup inputs remain tooling ownership.
+
+Develop independent DV early from shared specs/APIs, coordinating interface
+changes with RTL and labeling infrastructure-only results. RTL merges first;
+final DV qualification exercises the actual merged production implementation.
+Only merge of the passing independent DV PR establishes verified scope for
+acceptance gates. Reuse valid unchanged evidence, preserve author checks' original
+locations/provenance, and audit retained models/properties before reuse without
+relabeling historical results as independent.
+
+Keep hardware defects visible in the open DV PR with the detecting check,
+revision/configuration and evidence. Fix production RTL/embedded assertions in a
+separate RTL PR; after it merges, rebase DV and rerun affected checks without
+weakening expectations, assumptions or coverage. Continue independent work.
+
+Use the prepared environment and run `make doctor` on current main before
+tool-dependent checks. On failure, report the precise mismatch; do not run setup,
+rebuild/install/download tools, edit locks/stamps or bypass validation. Continue
+only independent work.

@@ -143,6 +143,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -206,6 +229,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -289,6 +335,49 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
+      },
+      "wrong_descriptor_guard": {
+        "status": "PASS",
+        "suite": "queues-dispatch-guard",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": null,
+        "tests": [
+          "queues_dispatch_guard_tb",
+          "descriptor-match guard-removal mutation"
+        ],
+        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
+        "evidence": "docs/results/P03-dispatch-guard.json",
+        "qualification_state": "AWAITING_DV_PR_MERGE"
       }
     },
     {
@@ -311,6 +400,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -333,6 +445,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -355,6 +490,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -387,6 +545,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -673,6 +854,49 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
+      },
+      "wrong_descriptor_guard": {
+        "status": "PASS",
+        "suite": "queues-dispatch-guard",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": null,
+        "tests": [
+          "queues_dispatch_guard_tb",
+          "descriptor-match guard-removal mutation"
+        ],
+        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
+        "evidence": "docs/results/P03-dispatch-guard.json",
+        "qualification_state": "AWAITING_DV_PR_MERGE"
       }
     },
     {
@@ -716,6 +940,29 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
       }
     },
     {
@@ -893,6 +1140,49 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "PASS",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md",
+        "qualification_state": "AWAITING_DV_PR_MERGE",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": 23,
+        "tests": [
+          "queue_api_monitor",
+          "queues_empty_tb",
+          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
+        ]
+      },
+      "wrong_descriptor_guard": {
+        "status": "PASS",
+        "suite": "queues-dispatch-guard",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": null,
+        "tests": [
+          "queues_dispatch_guard_tb",
+          "descriptor-match guard-removal mutation"
+        ],
+        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
+        "evidence": "docs/results/P03-dispatch-guard.json",
+        "qualification_state": "AWAITING_DV_PR_MERGE"
       }
     },
     {

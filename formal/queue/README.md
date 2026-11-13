@@ -56,3 +56,42 @@ Exact executed results and residual composition obligations are in the
 [P03 report](../../docs/results/P03-queues.md). This proof does not establish
 commit-to-output byte order, descriptor final-return timing, scheduler behavior,
 or whole-system resource conservation.
+
+## Independent review and strengthened harness
+
+The existing list and asserted live-link representation invariants originate in
+P03 PR #14. Independent review found that expected order/count do not come from
+DUT links and that non-tail link equality is asserted rather than assumed.
+The model remains specification-derived; the historical report retains its
+original author/tested scope.
+
+`make formal-rtl RUN_ARGS='--test queues-independent --timeout 300'` adds exact
+link-write payload and named count detectors, an explicit `caller_rx_owned`
+publication assumption, and arbitrary fixed qid/descriptor witnesses. F01 witness
+stability is held across later resets by a history bit that is never reset.
+Lists reset; descriptor links remain stale. The reference list and count state
+are packed to avoid solver arrays without changing the event rules or dimensions.
+The finite production link RAM is mapped to registers by Yosys `memory_map`;
+it remains the actual child, with unreset contents and pre-state read semantics.
+
+Publication assumes an in-range ID/qid, absence from every pre-state list,
+available global descriptor capacity and the caller's RX-ownership predicate.
+The local proof does not establish that this predicate is truthful: P11A must
+bind/discharge it against actual FREE/RX/QUEUED/TX/ABORT state, including complete
+payload storage before publication and no descriptor reuse before final return.
+The independent simulation separately checks observed allocation/publication/
+dispatch/return lifetimes against the real pool. A timed-out auxiliary formal
+model of caller ownership is not presented as a proved ownership theorem.
+P04/P11A must discharge scheduler eligibility, descriptor-info matching and TX
+acceptance. No sink-progress assumption is used.
+
+Safety is unbounded k-induction at N_Q=2/N_DESC=8 and the supported reduced
+production parameters above. Bounded covers include full, empty request with
+publication, same-queue singleton/long replacement, different qids, active reset,
+post-reset witness reuse and selected-witness dispatch. Disposable order/link/count
+mutations must fail `a_order`, `a_link_payload`, and `a_count` respectively with
+engine FAIL and a nonempty counterexample waveform. A parse error, timeout or
+unrelated assertion does not qualify a detector. The independent selection uses
+its own SBY task configuration; historical `queues` registration is retained.
+Actual executed statuses, tool identities and any timeouts are reported in
+[P03 independent DV](../../docs/results/P03-independent-dv.md).

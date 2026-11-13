@@ -50,3 +50,11 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The memory/TX portion of G2 has real byte/latency/ownership checks for both response latencies and scoped safety evidence. Any missed specified timing/performance bound is identified before dependent integration.
 
 Requirement focus: `IF-01`, `LEN-01`, `LEN-02`, `MEM-03`, `MEM-04`, `MEM-05`, `RST-02`, `PERF-01`
+
+## Role assignments
+
+- RTL: steps 1–5, store/metadata/TX implementation, embedded assertions and designer smoke.
+- Independent DV: tests/models/scoreboards in steps 6–7, proof/cover/mutation and
+  registration in step 8, and all required acceptance rows.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

@@ -31,8 +31,26 @@ jobs:
         run: |
           set -euo pipefail
           for profile in F0 F1 I0 I1 E0 E1; do
-            make regression RUN_ARGS="--profile $profile --test pools --test queues --seed 17"
+            make regression RUN_ARGS="--profile $profile --test pools --test queues --test queues-independent --test queues-dispatch-guard --seed 17"
           done
+      - name: Validate saved independent queue coverage by elaboration
+        shell: bash
+        run: |
+          python3 - <<'PYCODE'
+          import json
+          from pathlib import Path
+          import subprocess
+          for profile in ('F0','F1','I0','I1','E0','E1'):
+              inputs=[]
+              for path in Path('.build/runs').glob('regression-*/queues-independent-*/manifest.json'):
+                  case=json.loads(path.read_text())
+                  if case['profile']==profile and case['test'] in ('queues-independent-native','queues-independent-wide'):
+                      inputs += ['--coverage-manifest',str(path)]
+              if len(inputs)!=4:
+                  raise SystemExit('Missing or duplicate independent coverage for '+profile)
+              subprocess.run(['python3','tools/run.py','coverage','--profile',profile,
+                              '--test','queues-independent',*inputs],check=True)
+          PYCODE
       - name: Prove production storage/queues and qualify seeded defect detection
         run: make formal-rtl RUN_ARGS='--timeout 240'
       - name: Preserve independent formal fixture route
