@@ -33,3 +33,23 @@ already fits and TX can accept it. Qualification requires an `a_credit`
 counterexample, a failed engine status and a nonempty trace. The UVM regression
 independently requires the corresponding `SCHEDULE_CREDIT` failure. Neither a
 frontend crash nor an unrelated property failure qualifies the mutation.
+
+## Independent policy-history extension
+
+The [independent DV audit](../../docs/results/P04-independent-dv.md) retains the
+author properties above and adds `scheduler_policy.svh`. Its own queue cursor,
+visit state, credit and TX ownership derive from reset, pre-state queries,
+configuration and expected dispatch. RTL cursor/visit equalities are asserted
+induction lemmas; they do not determine reference transitions. Expected grant
+legality and mandatory baseline timing are separate properties. Completion is
+constrained by ownership reconstructed from accepted dispatch events, rather
+than DUT internal ownership state.
+
+Additional covers reach completion with ready asserted and queued work, a
+paused funded visit (DRR only), and reset of an owned packet. The same command
+also requires omitted production dispatches to fail `a_policy_timing` in both
+modes and a frozen production cursor to fail `a_policy_cursor`. Each intended
+failure requires engine FAIL and a nonempty counterexample. The existing
+extra-quantum mutation must still fail `a_credit`. Safety retains arbitrary
+readiness, unbounded TX stalls and arbitrary later reset; no fairness assumption
+has been added.

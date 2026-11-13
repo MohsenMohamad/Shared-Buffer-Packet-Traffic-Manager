@@ -32,7 +32,20 @@ jobs:
           python3 tools/toolchain_cache.py validate
       - name: Exercise production scheduler, queues and both scheduling modes
         run: make regression RUN_ARGS='--profile ${{ matrix.profile }} --test scheduler --seed 17'
-      - name: Prove scheduler grant, credit and bounds; qualify extra quantum
+      - name: Check saved coverage against the exact elaboration and sources
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import subprocess
+          manifests=sorted(Path('.build/runs').glob('regression-*/scheduler-mode[01]/manifest.json'))
+          if len(manifests)!=2:
+              raise SystemExit('Expected one passing manifest for each scheduler mode')
+          argv=['python3','tools/run.py','coverage','--profile','${{ matrix.profile }}','--test','scheduler']
+          for manifest in manifests:
+              argv.extend(['--coverage-manifest',str(manifest)])
+          subprocess.run(argv,check=True)
+          PYCODE
+      - name: Prove independent policy, credit and bounds; qualify selected mutations
         if: matrix.profile == 'E0'
         run: make formal-rtl RUN_ARGS='--test scheduler --timeout 240'
       - name: Retain scheduler evidence, coverage and counterexamples

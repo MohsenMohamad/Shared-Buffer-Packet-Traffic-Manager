@@ -19,6 +19,11 @@ logic [N_Q*DEFICIT_W-1:0] deficits;
 `define PARAMS .N_RX(N_RX),.N_Q(N_Q),.N_CELL(N_CELL),.N_DESC(N_DESC),.CELL_BYTES(CELL_BYTES),.MAX_PACKET_BYTES(MAX_PACKET_BYTES),.SCHED_MODE(SCHED_MODE)
 tm_drr_api #(`PARAMS) dut(.*);
 `undef PARAMS
+logic event_owned;
+always_ff @(posedge clk) begin
+    if(!rst_n) event_owned <= 0;
+    else event_owned <= dispatch.valid || (event_owned && !tx_done.valid);
+end
 logic history=0;
 logic [1:0] startup=0;
 logic seen_replace=0, seen_empty=0, seen_busy=0;
@@ -46,7 +51,7 @@ always_ff @(posedge clk) begin
         // no bypass, immutable pre-state head until pop. No assumption removes
         // same/different-qid collisions or last replacement.
         if(commit.valid) assume(int'(commit.qid)<N_Q);
-        assume(!tx_done.valid || dut.tx_owned);
+        assume(!tx_done.valid || event_owned);
         a_cursor: assert(int'(dut.cursor)<N_Q);
         if(SCHED_MODE==1 && !dut.tx_owned && counts[dut.cursor*DESC_COUNT_W +: DESC_COUNT_W]!=0)
             a_add_bound: assert(expected_credit<=4096+MAX_PACKET_BYTES-1);
