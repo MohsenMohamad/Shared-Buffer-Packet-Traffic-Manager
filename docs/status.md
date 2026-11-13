@@ -6,7 +6,10 @@ P00/P01/P02/P06/P07, F01, C01 and PR #19 failure capture. Their reports retain
 original tested sources and scope; integration does not create new execution
 results. P05 is at fresh independent DV preparation under the
 [root workflow](../AGENTS.md#preparation-implementation-and-independent-qualification).
-Preparation establishes no hardware acceptance. Remaining datapath declarations
+Preparation establishes no hardware acceptance.
+[PR #23 preparation evidence](results/P05-fresh-dv-preparation.md) records passing
+scoped oracle/UVM runs and an initial general-tooling isolation exception; it is
+not merged qualification or an RTL start. Remaining datapath declarations
 do not establish a complete traffic manager.
 
 | Gate | Current scope | Evidence / owner |

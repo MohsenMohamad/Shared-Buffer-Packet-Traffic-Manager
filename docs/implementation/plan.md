@@ -33,7 +33,7 @@ and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 | F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Integrated; applies to every harness |
 | P03 | [Descriptor queues](tasks/P03-queues.md) | RTL #14 and independent DV #17 integrated |
 | P04 | [DRR and packet RR](tasks/P04-scheduler.md) | RTL #16 and independent DV #18 integrated; P09/P11B own composition |
-| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | Fresh independent DV preparation; P03 integrated |
+| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | Fresh independent DV preparation in PR #23; [results/scope qualification](../results/P05-fresh-dv-preparation.md); P03 integrated |
 | R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
 | A01 | [Allocator evaluation/disposition](tasks/A01-allocator-selection.md) | Existing characterization + R01; before P08 |
 | P08 | [Receive/admission/reclaim](tasks/P08-receive-admission.md) | P02/P03/P05/P07 + A01/R01; earlier follow-ups integrated |

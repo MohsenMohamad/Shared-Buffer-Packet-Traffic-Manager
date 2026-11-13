@@ -8,7 +8,9 @@ The maintainer assigns a fresh RTL task under the
 Use the current `origin/main` after the scoped preparation PR is merged.
 Freeze the exact base and new RTL head in that task. The initial preparation
 base is `8d66a92768f2c72236171731262563814e875352`; the initial expected-behavior
-commit is `db8bbec`. The preparation PR head supplies the later DV source identity.
+commit is `db8bbec`. Prepared execution is recorded at `290760486b627701a0555c0b98a27e4332ec9957`;
+later report/status edits do not replace that tested identity. The preparation
+PR head supplies the later delivered DV source identity.
 Do not consult withdrawn work or independent DV internals/implementation reports.
 
 Public APIs are `tm_packet_ram_api`, `tm_metadata_api` and `tm_tx_api` in
