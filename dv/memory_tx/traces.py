@@ -113,7 +113,8 @@ def legal_trace(profile, seed=17):
                                profile.cell_bytes+1,profile.max_length-1,profile.max_length]+list(range(1,9))))
     lengths += [trace.rng.randint(1,profile.max_length) for _ in range(12)]
     for ordinal,length in enumerate(lengths):
-        packet=trace.store(length,tag=7,salt=ordinal*29)
+        descriptor=profile.descriptors-1 if ordinal==len(lengths)-1 else ordinal%profile.descriptors
+        packet=trace.store(length,desc=descriptor,tag=7,salt=ordinal*29)
         trace.send(packet,'random' if ordinal>=len(lengths)-12 else 'pressure')
         trace.drain()
     return trace.samples

@@ -179,6 +179,8 @@ class Oracle:
                     self.counts['outputs'] += 1
                     self.counts['bytes'] += len(chunk)
                     self.bins[f'keep_{len(chunk)}'] += 1
+                    self.bins[f'source_{meta["source"]}'] += 1
+                    self.bins[f'qid_{meta["qid"]}'] += 1
         actual_free = a.get('free')
         self.check((actual_free is not None)==(expected_free is not None), 'cell_completion_presence')
         if actual_free is not None and expected_free is not None:
@@ -253,6 +255,7 @@ class Oracle:
             require(bool(pre_queues[q]) and pre_queues[q][0]==d, 'environment_dispatch_prestate')
             self.queues[q].popleft(); self.packets[d].state='TX'; self.active=d
             self.counts['dispatches'] += 1
+            if d==self.p.descriptors-1:self.bins['maximum_descriptor'] += 1
         if 'query' in a:
             q=a['query']; cell=q['cell']
             if cell in pre_owners and pre_owners[cell]==self.active:

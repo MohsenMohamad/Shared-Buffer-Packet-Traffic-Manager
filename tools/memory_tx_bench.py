@@ -15,7 +15,7 @@ from memory_tx import parameters
 def bench(run,args):
     sys.path.insert(0,str(ROOT/'dv/memory_tx'))
     from oracle import Profile, Violation, require
-    from qualification import replay, BASELINE_BINS
+    from qualification import replay, baseline_bins
     from traces import legal_trace, reset_traces, atomic_overlap_trace, reused_link_trace, Trace
     from adapter import write_replay, read_observed
     p=Profile(**parameters(args));seed=(args.seed or [17])[0]
@@ -157,7 +157,7 @@ def bench(run,args):
                     else:raise ValueError('Corrupt replay passed independent checker')
                     case.data.update(detector=expected,observed_detector=expected,sv_detection=sv_detection)
                 elif not expected:
-                    required=BASELINE_BINS if name=='legal' or name.startswith(('random-','replay-')) else ['complete']+(['packet_final_hold'] if name!='atomic-overlap' else ['atomic_store_retire'])
+                    required=baseline_bins(p) if name=='legal' or name.startswith(('random-','replay-')) else ['complete']+(['packet_final_hold'] if name!='atomic-overlap' else ['atomic_store_retire'])
                     case.data['observed_coverage']=replay(observed,p,required)
                     case.data['saved_sv_coverage']=saved_coverage(case.path/'coverage.dat')
                     case.data['artifacts']['coverage']=str(case.path/'coverage.dat')

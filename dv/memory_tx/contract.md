@@ -127,3 +127,9 @@ Link captures belong to the reservation ordinal, not a reusable descriptor/cell
 ID pair. Two packets reusing the same fragmented chain and duplicate tag must
 each establish their own pre-retirement capture. A legal/corrupt two-lifetime
 regression qualifies this rule through the oracle and passive UVM replay.
+
+Baseline metadata coverage requires sampled output from every configured source
+and qid, plus dispatch of the maximum descriptor ID. The fixture abstracts
+allocator selection and scheduler policy; it populates nonconflicting physical
+addresses and supplies valid committed memory/TX inputs. It does not qualify
+the dependency's lowest-free-ID policy or whole-top allocation history.

@@ -16,6 +16,10 @@ from hand_checks import qualify_hand, metamorphic
 BASELINE_BINS=['exact_full','full_stall','full_arrival','full_exchange','atomic_commit',
               'cell_final_hold','packet_final_hold','link_query','complete']+[f'keep_{i}' for i in range(1,9)]
 
+def baseline_bins(profile):
+    return BASELINE_BINS+['maximum_descriptor']+[f'source_{p}' for p in range(profile.sources)]+[f'qid_{q}' for q in range(profile.queues)]
+
+
 def replay(samples, profile, required=(), disabled=(), finish=True):
     oracle=Oracle(profile,disabled)
     ledger=Ledger(profile)
@@ -27,7 +31,7 @@ def replay(samples, profile, required=(), disabled=(), finish=True):
 
 def qualify(profile, seed):
     samples=legal_trace(profile,seed)
-    required=BASELINE_BINS
+    required=baseline_bins(profile)
     report=replay(samples,profile,required)
     report['trace_sha256']=hashlib.sha256(json.dumps(samples,sort_keys=True).encode()).hexdigest()
     resets={name:replay(trace,profile,['reset','complete']) for name,trace in reset_traces(profile,seed).items()}
