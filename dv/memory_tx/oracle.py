@@ -95,7 +95,7 @@ class Oracle:
         a, out = s['actions'], s['out']
         require(set(out) == {'valid', 'ready', 'data', 'keep', 'last', 'user'}, 'output_shape')
         require(set(a) <= {'reserve', 'allocate', 'write', 'info', 'link', 'commit',
-                           'dispatch', 'read', 'response', 'query', 'free', 'done'}, 'action_shape')
+                           'dispatch', 'read', 'response', 'query', 'free', 'done', 'commit_info', 'dispatch_info'}, 'action_shape')
         # Physical RAM is unreset. Capture its due response before control flush.
         due = self.physical_reads[0] if self.physical_reads and self.physical_reads[0]['due'] == self.cycle else None
         response = a.get('response')
@@ -110,12 +110,13 @@ class Oracle:
                 self.bins['reset'] += 1
                 self.bins['reset_pending' if self.pending else 'reset_idle'] += 1
                 self.bins['reset_full' if len(self.buffered)+len(self.pending)==self.p.depth else 'reset_nonfull'] += 1
+                if len(self.buffered)==self.p.depth:self.bins['reset_full_fifo'] += 1
                 if self.active is not None:
                     packet = self.packets[self.active]
                     idx = packet.output_index
                     if idx % (self.p.cell_bytes//8): self.bins['reset_partial_cell'] += 1
                     if self.held:
-                        self.bins['reset_packet_final_hold' if self.held['last'] else 'reset_cell_or_beat_hold'] += 1
+                        self.bins['reset_packet_final_hold' if self.held['last'] else 'reset_cell_final_hold' if (idx+1)%(self.p.cell_bytes//8)==0 else 'reset_beat_hold'] += 1
                 self.epoch += 1
             self._clear_control()
             self.in_reset = True
@@ -127,10 +128,12 @@ class Oracle:
             self.in_reset, self.reset_edges = False, 0
             require(not a and not out['valid'], 'environment_initialization')
             return
+        require(self.release_cycle is not None, 'environment_uninitialized')
         if self.held is not None:
             fields = ('valid','data','keep','last','user')
             self.check(all(out[k] == self.held[k] for k in fields), 'held_output')
         self.held = deepcopy(out) if out['valid'] and not out['ready'] else None
+        self.check(('info' in a)==('reserve' in a),'metadata_info_presence')
         pre_owners = dict(self.owners)
         pre_packets = set(self.packets)
         pre_queues = {q:list(v) for q,v in self.queues.items()}
@@ -151,7 +154,8 @@ class Oracle:
                 self.check(bool(chunk), 'output_extra')
                 keep = (1<<len(chunk))-1
                 self.check(out['keep']==keep, 'output_keep')
-                self.check(out['last']==(offset+8>=len(packet.image)), 'output_last')
+                expected_last=offset+8>=len(packet.image)
+                self.check(out['last']==expected_last, 'output_last')
                 meta = packet.info
                 user = meta['qid'] | meta['length']<<8 | meta['tag']<<24 | meta['source']<<40
                 self.check(out['user']==user, 'output_user')
@@ -159,7 +163,7 @@ class Oracle:
                     self.check((out['data']>>(lane*8))&255 == byte, 'output_data')
                 token = self.buffered[0]
                 self.check(token['desc']==self.active and token['index']==i, 'output_order')
-                final_cell = (offset+8) % self.p.cell_bytes == 0 or out['last']
+                final_cell = (offset+8) % self.p.cell_bytes == 0 or expected_last
                 if not out['ready']:
                     self.bins['packet_final_hold' if out['last'] else 'cell_final_hold' if final_cell else 'beat_hold'] += 1
                 if transfer:
@@ -167,9 +171,9 @@ class Oracle:
                     cell = packet.cells[offset//self.p.cell_bytes]
                     if final_cell:
                         expected_free = cell
-                        if not out['last']:
+                        if not expected_last:
                             self.check((self.active, cell) in self.captured_links, 'link_capture')
-                    if out['last']:
+                    if expected_last:
                         expected_done = self.active
                     packet.output_index += 1
                     self.counts['outputs'] += 1
@@ -177,11 +181,11 @@ class Oracle:
                     self.bins[f'keep_{len(chunk)}'] += 1
         actual_free = a.get('free')
         self.check((actual_free is not None)==(expected_free is not None), 'cell_completion_presence')
-        if actual_free is not None:
+        if actual_free is not None and expected_free is not None:
             self.check(actual_free==expected_free, 'cell_completion_id')
-            self.check(actual_free in pre_owners, 'cell_completion_owner')
+            self.check(expected_free in pre_owners, 'cell_completion_owner')
         self.check((a.get('done') is not None)==(expected_done is not None), 'descriptor_completion_presence')
-        if a.get('done') is not None:
+        if a.get('done') is not None and expected_done is not None:
             self.check(a['done']==expected_done, 'descriptor_completion_id')
         if 'reserve' in a:
             r = a['reserve']; d = r['desc']; length = r['length']
@@ -213,7 +217,7 @@ class Oracle:
         if 'info' in a:
             info=a['info']; d=info['desc']
             require('reserve' in a and d==a['reserve']['desc'], 'environment_info_writer')
-            self.check(info==a['reserve'] | {'head':self.packets[d].cells[0]}, 'metadata_info')
+            self.check(info==a['reserve'] | {'head':self.packets[d].cells[0], 'ncell':(self.packets[d].info['length']+self.p.cell_bytes-1)//self.p.cell_bytes}, 'metadata_info')
             self.info_array[d]=deepcopy(info)
         if 'link' in a:
             link=a['link']; cell,nxt=link['cell'],link['next']
@@ -226,6 +230,7 @@ class Oracle:
             packet=self.packets[d]; meta=packet.info
             n=(meta['length']+self.p.cell_bytes-1)//self.p.cell_bytes
             self.check(len(packet.cells)==n and d in self.info_array, 'commit_complete')
+            self.check(a.get('commit_info')==meta | {'head':packet.cells[0],'ncell':n},'metadata_commit')
             image=bytearray()
             for j in range(meta['length']):
                 cell=packet.cells[j//self.p.cell_bytes]
@@ -242,7 +247,9 @@ class Oracle:
             d=a['dispatch']
             require(self.active is None and not self.buffered and not self.pending, 'environment_dispatch_busy')
             require(d in pre_packets and self.packets[d].state=='QUEUED', 'environment_dispatch_owner')
-            q=self.packets[d].info['qid']
+            packet=self.packets[d]
+            self.check(a.get('dispatch_info')==packet.info | {'head':packet.cells[0],'ncell':len(packet.cells)},'metadata_dispatch')
+            q=packet.info['qid']
             require(bool(pre_queues[q]) and pre_queues[q][0]==d, 'environment_dispatch_prestate')
             self.queues[q].popleft(); self.packets[d].state='TX'; self.active=d
             self.counts['dispatches'] += 1
@@ -300,10 +307,13 @@ class Oracle:
             if arrival: self.bins['full_arrival'] += 1
             if arrival and transfer and 'read' in a: self.bins['full_exchange'] += 1
         if a.get('done') is not None: self.bins['complete'] += 1
+        if all(k in a for k in ('reserve','allocate','write','commit','free','done')):
+            self.bins['atomic_store_retire'] += 1
         if 'free' in a: self.bins['cell_retire'] += 1
         if 'reserve' in a and a['reserve']['tag']==7: self.bins['duplicate_tag_candidate'] += 1
 
     def finish(self, required=()):
+        self.check(self.cycle>=0 and self.release_cycle is not None,'shutdown_initialization')
         self.check(not self.in_reset, 'shutdown_reset')
         self.check(not self.packets and not self.owners and self.active is None and
                    not any(self.queues.values()), 'shutdown_ownership')

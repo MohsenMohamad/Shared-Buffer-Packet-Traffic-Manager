@@ -54,6 +54,7 @@ package tm_bench_pkg;
         endfunction
     endclass
     `include "tm_stream_agent.svh"
+`ifndef TM_MEMORY_TX_PREPARATION
     `include "tm_packet.svh"
     `include "tm_handshake_recorder.svh"
     `include "tm_axil_agent.svh"
@@ -67,4 +68,5 @@ package tm_bench_pkg;
     `include "tm_packet_test.svh"
 `endif
     `include "tm_schedule_test.svh"
+`endif
 endpackage

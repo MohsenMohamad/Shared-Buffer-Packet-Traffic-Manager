@@ -110,3 +110,15 @@ reset during pending and complete resource restoration. Use explicit arbitrary
 top inputs and history state that survives reset for fixed witnesses (F01).
 Production property binding, prove/cover/mutation, performance and RTL coverage
 are NOT_RUN until actual named RTL exists in a later task.
+
+## Qualified expectation corrections
+
+The DV-owned model uses contract length to determine expected final/cell
+completion, so a corrupt observed TLAST cannot define its own correct retirement.
+Full descriptor information (including head and ncell) is checked independently
+at reservation write, commit and dispatch. These are clarifications from the
+published interfaces and ownership table, made during checker qualification;
+no target implementation informed them. The P07 reuse audit is limited to
+`tm_sample`, `tm_stamp`, passive stream sampling, the held-stream assertion and
+report termination. No retained expected-byte/policy oracle or checker is reused.
+The preparation define excludes those unrelated checkers from compilation.

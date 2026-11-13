@@ -122,6 +122,51 @@
         "queues-dispatch-guard"
       ],
       "scope": "Independent wrong-descriptor rejection, sticky diagnostics, same/different-qid publication, reset and targeted guard mutation."
+    },
+    "memory-tx-oracle": {
+      "handler": "memory-tx-oracle",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "memory-tx-preparation"
+      ],
+      "scope": "Independent observed-write oracle qualification only"
+    },
+    "memory-tx-bench": {
+      "handler": "memory-tx-bench",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "memory-tx-preparation"
+      ],
+      "scope": "P07 passive monitor and UVM replay qualification only"
+    },
+    "memory-tx": {
+      "handler": "memory-tx",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "source_sets": [
+        "memory-tx-preparation"
+      ],
+      "scope": "Future actual memory/TX DUT qualification; NOT_IMPLEMENTED during preparation"
     }
   }
 }

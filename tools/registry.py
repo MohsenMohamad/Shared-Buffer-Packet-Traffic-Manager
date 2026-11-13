@@ -16,9 +16,16 @@ def profile(name):
 
 
 def sources(name, seen=()):
-    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard'):
+    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation'):
         raise ValueError('Unknown or cyclic source set: ' + name)
     data = read('sources/' + name + '.json')
+    if name == 'memory-tx-preparation':
+        if 'extends' in data:
+            raise ValueError('Preparation source set cannot inherit production or another list')
+        for filename in data['sources'] + data['headers'] + data['include_dirs']:
+            target=(ROOT/filename).resolve()
+            if target.is_relative_to((ROOT/'rtl').resolve()) and not target.is_relative_to((ROOT/'rtl/include').resolve()):
+                raise ValueError('Preparation source set includes implementation RTL: '+filename)
     inherited = sources(data['extends'], (*seen, name)) if 'extends' in data else dict(
         sources=[], headers=[], include_dirs=[])
     result = {key: list(dict.fromkeys(inherited[key] + data[key]))
@@ -44,10 +51,13 @@ def selection(profile_name, tests):
     selected = ['contracts'] if tests is None else tests
     if not selected or len(set(selected)) != len(selected):
         raise ValueError('Empty or duplicate regression selection')
+    preparation={'memory-tx-oracle','memory-tx-bench','memory-tx'}
+    if any(name in preparation for name in selected) and not all(name in preparation for name in selected):
+        raise ValueError('Preparation modes cannot be mixed with production suites')
     for name in selected:
         if name not in suites or profile_name not in suites[name]['profiles']:
             raise ValueError('Unknown suite/profile selection: ' + name)
-        if suites[name]['handler'] not in ('contracts', 'pools', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard'):
+        if suites[name]['handler'] not in ('contracts', 'pools', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-oracle', 'memory-tx-bench', 'memory-tx'):
             raise ValueError('Suite has no executable handler: ' + name)
         for source_set in suites[name]['source_sets']:
             sources(source_set)
