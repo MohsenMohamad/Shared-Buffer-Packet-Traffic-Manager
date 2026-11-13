@@ -41,7 +41,8 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
         if(log_fd==0) `uvm_fatal("SCHED_STRESS_LOG","cannot save passive events")
     endfunction
     function void observe_pre(monitor_batch_t batch);
-        int active_queues, length, quantum;
+        int active_queues=0;
+        int length, quantum;
         last_batch=batch;
         if(random_phase) begin
             random_steps++;
@@ -236,10 +237,21 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
         boundary_reactivations++;
         drain();
     endtask
+    function void begin_accounting_window();
+        model.check_accounting();
+        model.drained();
+        foreach(model.deficit[q]) begin
+            if(model.deficit[q]!=0) `uvm_fatal("SCHED_RECONFIGURE","old credit survives the drained boundary")
+            model.visit_entries[q]=0; model.completed_visits[q]=0;
+            model.added[q]=0; model.dispatched_bytes[q]=0;
+            model.delivered_bytes[q]=0; model.cleared[q]=0;
+        end
+    endfunction
     task reconfigure();
         reset_case(64,64);
         step(0,65,0); drain();
         step(-1,1,0); // Disable only after the component has drained.
+        begin_accounting_window();
         @(negedge vif.clk);
         for(int q=0;q<N_Q;q++) vif.cfg.quantum[q*13+:13]=13'(q==0 ? 4096 : 127);
         step(-1,1,0);
@@ -256,7 +268,7 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
         int needed, age, entries_at_start, last_entry_cycle, prior_entries;
         reset_case(64,4096);
         for(int q=0;q<N_Q;q++) step(q,MAX_PACKET_BYTES,0);
-        needed=(MAX_PACKET_BYTES+63)/64;
+        needed=SCHED_MODE==1 ? (MAX_PACKET_BYTES+63)/64 : 1;
         entries_at_start=model.visit_entries[0]; prior_entries=entries_at_start;
         age=0; last_entry_cycle=0;
         while(model.dispatched_bytes[0]==0) begin
@@ -266,6 +278,8 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
             age++;
             if(longint'(age)>longint'(needed)*ROUND_BOUND)
                 `uvm_fatal("SCHED_PROGRESS_CYCLES","head exceeded the concept-derived visit/round/retirement deadline")
+            if((longint'(age)-longint'(last_entry_cycle))>ROUND_BOUND)
+                `uvm_fatal("SCHED_PROGRESS_ROUND","backlogged queue did not enter its next bounded round")
             if(model.visit_entries[0]!=prior_entries) begin
                 if((longint'(age)-longint'(last_entry_cycle))>ROUND_BOUND)
                     `uvm_fatal("SCHED_PROGRESS_ROUND","backlogged queue missed a bounded cursor round")

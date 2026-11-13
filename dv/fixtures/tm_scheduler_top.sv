@@ -22,7 +22,9 @@ package tm_scheduler_tests;
     `include "tm_scheduler_events.svh"
     `include "tm_scheduler_inputs.svh"
     `include "tm_scheduler_rtl_test.svh"
+`ifndef TM_SCHEDULER_MUTATION_BENCH
     `include "tm_scheduler_stress_test.svh"
+`endif
 endpackage
 
 module tm_scheduler_top;

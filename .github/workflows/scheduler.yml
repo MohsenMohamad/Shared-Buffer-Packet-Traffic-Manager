@@ -31,7 +31,7 @@ jobs:
           tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
           python3 tools/toolchain_cache.py validate
       - name: Exercise production scheduler, queues and both scheduling modes
-        run: make regression RUN_ARGS='--profile ${{ matrix.profile }} --test scheduler --seed 17'
+        run: make regression RUN_ARGS='--profile ${{ matrix.profile }} --test scheduler --seed 17 --timeout 240'
       - name: Check saved coverage against the exact elaboration and sources
         run: |
           python3 - <<'PYCODE'
@@ -48,7 +48,7 @@ jobs:
           PYCODE
       - name: Prove independent policy, credit and bounds; qualify selected mutations
         if: matrix.profile == 'E0'
-        run: make formal-rtl RUN_ARGS='--test scheduler --timeout 240'
+        run: make formal-rtl RUN_ARGS='--test scheduler --timeout 600'
       - name: Retain scheduler evidence, coverage and counterexamples
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -98,6 +98,9 @@ def scheduler(run, args):
                 '--timescale', '1ns/1ps', '+define+UVM_NO_DPI', '+define+TM_SCHEDULER_BENCH', '--build-jobs', str(args.jobs),
                 '--output-groups', '4', '--output-split', '20000', '--output-split-cfuncs', '500',
                 '-CFLAGS', '-O0', '-I'+str(uvm), '-I'+str(build.path)]
+        if mutation:
+            argv += ['+define+TM_SCHEDULER_MUTATION_BENCH']
+            build.data['defines'].append('TM_SCHEDULER_MUTATION_BENCH')
         argv += ['-I'+str(ROOT/p) for p in registered['include_dirs']]
         source_paths = [ROOT/p for p in registered['sources']]
         if mutation:
