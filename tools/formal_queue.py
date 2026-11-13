@@ -14,7 +14,7 @@ def formal_queue(run, args, configuration):
         case.data.update(configuration=configuration, source_set='formal',
                          registered_source_digests=fingerprint('formal'), frontend='slang',
                          engine='smtbmc z3', method='bounded reachability depth 16' if task=='cover' else 'unbounded k-induction',
-                         assumptions='Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.')
+                         assumptions='Two startup reset samples; arbitrary later resets. Commit ID/qid in range, legal RX owner, not in any pre-state list; total queued below capacity on commit. Commit assumes external caller_rx_owned predicate; actual global owner transitions remain P11A. Fixed arbitrary witnesses held across later reset. Pop attempts arbitrary; accepted only on nonempty pre-state model. No fairness.')
         paths = ['rtl/include/tm_fixed.sv', 'rtl/queue/tm_queue_ctrl.sv',
                  'rtl/queue/tm_desc_links.sv', 'formal/queue/queue_formal.sv']
         files=[]
@@ -34,7 +34,7 @@ def formal_queue(run, args, configuration):
             files.append(source.name+' '+str(source))
         params={k:configuration[k] for k in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
         script=read_sources([Path(p).name for p in paths], 'queue_formal', params=params, frontend='slang',formal=True)
-        script+='prep -top queue_formal\nasync2sync\ndffunmap'
+        script+='prep -top queue_formal\nasync2sync\ndffunmap\nmemory_map\nopt_clean'
         config=case.path/'queue.sby'
         config.write_text((ROOT/'formal/queue/queue.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
         step=case.execute(['sby','-f','-d',str(case.path/'engine'),str(config),task], timeout=args.timeout,cwd=case.path)

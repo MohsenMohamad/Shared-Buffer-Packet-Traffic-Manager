@@ -10,8 +10,7 @@ module queue_formal import tm_fixed::*; #(
     input commit_t commit,
     input logic request_pop,
     input qid_t pop_qid,
-    input logic allocate, complete,
-    input desc_id_t allocate_id, complete_id,
+    input logic [N_DESC-1:0] caller_rx_owned,
     input qid_t witness_qid,
     input desc_id_t witness_desc
 );
@@ -22,23 +21,20 @@ desc_id_t old_head_next, read_id;
 dispatch_t dispatch;
 logic invariant_error;
 // Independent ordered lists. No expected value comes from a physical pointer.
-desc_id_t model [N_Q][N_DESC];
-logic [DESC_COUNT_W-1:0] length [N_Q];
+// Packed reference state avoids solver arrays; contents and API list rules
+// are identical to the audited ordered-list model, including unused slots.
+logic [N_Q-1:0][N_DESC-1:0][DESC_ID_W-1:0] model;
+logic [N_Q-1:0][DESC_COUNT_W-1:0] length;
 logic [1:0] startup=0;
 logic history_valid=0, reset_busy=0, seen_active=0;
 logic take_pop;
 integer total;
-localparam int FREE=0, RX=1, QUEUED=2, TX=3;
-logic [2*N_DESC-1:0] owner;
 logic witness_live;
-logic [N_DESC-1:0] queued_mask;
 always_comb begin
-    queued_mask='0;
     witness_live=0;
     for(integer q=0;q<N_Q;q++)
         for(integer k=0;k<N_DESC;k++)
             if(k<length[q]) begin
-                queued_mask[model[q][k]]=1;
                 if(model[q][k]==witness_desc) witness_live=1;
             end
 end
@@ -64,10 +60,6 @@ for(genvar q=0;q<N_Q;q=q+1) begin : g_order
                 a_order: assert(heads[q*DESC_ID_W +: DESC_ID_W]==model[q][0]);
         end
 end
-for(genvar id=0;id<N_DESC;id++) begin : g_owner
-    always_ff @(posedge clk)
-        if(rst_n) a_owner_membership: assert((owner[2*int'(id)+:2]==QUEUED)==queued_mask[id]);
-end
 always_ff @(posedge clk) begin
     history_valid<=1;
     // F01 fixed arbitrary witnesses are stable even across later DUT resets.
@@ -79,29 +71,14 @@ always_ff @(posedge clk) begin
     if (startup<2) begin assume(!rst_n); startup<=startup+1; end
     if (!rst_n) begin
         for (integer q=0;q<N_Q;q=q+1) length[q]<=0;
-        for(integer id=0;id<N_DESC;id++) owner[2*int'(id)+:2]<=FREE;
         if (history_valid && seen_active && total>0) reset_busy<=1;
         a_reset_write: assert(!next_write.valid);
         c_reset_active: cover(history_valid && seen_active && total>0 && commit.valid && take_pop);
     end else begin
         seen_active<=1;
-        // Local caller ownership model. Allocation/complete are abstract API
-        // actions, not proofs of real pools, packet completion or TX timing.
-        if(allocate) begin
-            assume(int'(allocate_id)<N_DESC);
-            assume(owner[2*int'(allocate_id)+:2]==FREE);
-            owner[2*int'(allocate_id)+:2]<=RX;
-        end
-        if(complete) begin
-            assume(int'(complete_id)<N_DESC);
-            assume(owner[2*int'(complete_id)+:2]==TX);
-            owner[2*int'(complete_id)+:2]<=FREE;
-        end
-        if(take_pop) owner[2*int'(dispatch.desc)+:2]<=TX;
-        if(commit.valid) begin
-            assume(owner[2*int'(commit.desc)+:2]==RX || (allocate && allocate_id==commit.desc));
-            owner[2*int'(commit.desc)+:2]<=QUEUED;
-        end
+        // Ownership is a caller predicate, not a rewritten RX/TX controller.
+        // P11A must bind/discharge this against actual FREE/RX/TX/ABORT state.
+        if(commit.valid) assume(caller_rx_owned[commit.desc]);
         // Caller contract: a commit is an RX-owned descriptor, disjoint
         // from ALL pre-state queues (including the descriptor being popped).
         if (commit.valid) begin
@@ -111,7 +88,6 @@ always_ff @(posedge clk) begin
                 for(integer k=0;k<N_DESC;k=k+1)
                     if(k<length[q]) assume(commit.desc!=model[q][k]);
         end
-        a_witness_owner: assert(witness_live==(owner[2*int'(witness_desc)+:2]==QUEUED));
         if(length[witness_qid]>0 && model[witness_qid][0]==witness_desc)
             a_witness_head: assert(heads[witness_qid*DESC_ID_W+:DESC_ID_W]==witness_desc);
         if(commit.valid && length[commit.qid]>0 &&
@@ -130,7 +106,6 @@ always_ff @(posedge clk) begin
             for(integer k=0;k<N_DESC;k=k+1) begin
                 if(k<length[q]) begin
                     assert(int'(model[q][k])<N_DESC);
-                    assert(owner[2*int'(model[q][k])+:2]==QUEUED);
                     // Inductive representation invariant on the ACTUAL child.
                     if(k+1<length[q])
                         assert(links.next_ids[model[q][k]]==model[q][k+1]);
@@ -152,7 +127,7 @@ always_ff @(posedge clk) begin
         c_two_qids: cover(length[0]>0 && length[1]>0 && take_pop && commit.valid && pop_qid!=commit.qid);
         c_witness_live: cover(witness_live && length[witness_qid]>1);
         c_witness_reset: cover(reset_busy && witness_live);
-        c_tx_owned: cover(owner[2*int'(witness_desc)+:2]==TX && total==0);
+        c_witness_pop: cover(take_pop && dispatch.desc==witness_desc);
         c_full: cover(total==N_DESC);
         c_empty_attempt: cover(request_pop && length[pop_qid]==0 && commit.valid && pop_qid==commit.qid);
         c_reset_collision: cover(reset_busy && total==0 && request_pop && commit.valid);

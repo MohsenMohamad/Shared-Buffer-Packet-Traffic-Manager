@@ -28,7 +28,7 @@ def formal_queue_independent(run, args, configuration):
         case.data.update(configuration=configuration, frontend='slang', engine='smtbmc z3',
                          method='bounded reachability depth 24' if task=='cover' else 'unbounded k-induction',
                          registered_source_digests=fingerprint('formal'),
-                         assumptions='Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Abstract allocation requires pre-state FREE; completion requires pre-state TX. Commit requires RX (or simultaneous fresh allocation), in-range, not queued, capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.')
+                         assumptions='Two startup reset samples, later resets arbitrary; fixed qid/descriptor witnesses stable across reset. Commit assumes external caller_rx_owned predicate, in-range ID/qid, absence from all pre-state queues and capacity. Dispatch uses independent pre-state head. P11A must discharge ownership, packet completion and real pool/TX caller contracts. No fairness.')
         files=[]
         for path in paths+registered['headers']:
             source=ROOT/path
@@ -45,7 +45,7 @@ def formal_queue_independent(run, args, configuration):
             files.append(source.name+' '+str(source))
         params={k:configuration[k] for k in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
         script=read_sources([Path(p).name for p in paths],'queue_formal',params=params,frontend='slang',formal=True)
-        script+='prep -top queue_formal\nasync2sync\ndffunmap'
+        script+='prep -top queue_formal\nasync2sync\ndffunmap\nmemory_map\nopt_clean'
         config=case.path/'queue.sby'
         config.write_text((ROOT/'formal/queue/independent.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
         step=case.execute(['sby','-f','-d',str(case.path/'engine'),str(config),task],timeout=args.timeout,cwd=case.path)
