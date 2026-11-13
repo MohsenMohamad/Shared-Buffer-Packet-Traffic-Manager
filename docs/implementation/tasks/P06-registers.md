@@ -52,10 +52,9 @@ The [representation migration report](../../results/rtl-representation.md) recor
 the ANSI/shared-type conversion and new checks. Original behavioral acceptance
 and historical evidence remain in force; no later hardware stage is started.
 
-## Dependency evidence and ownership
+## Role assignments
 
-Implementation is complete; do not reopen it for the role split. Preserve the
-original report and valid unchanged checks. The [dependency inventory](../plan.md#dependency-evidence-inventory)
-identifies reusable local evidence and the genuinely unestablished separate-owner
-qualification/composition scope before verified integration. An independent model
-inside an author PR does not alone establish separate-owner signoff.
+Implementation is complete. Independent DV owns the remaining qualification and
+composition review in the [dependency evidence inventory](../plan.md#dependency-evidence-inventory).
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

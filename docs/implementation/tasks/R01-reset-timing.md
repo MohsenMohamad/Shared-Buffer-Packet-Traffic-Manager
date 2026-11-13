@@ -43,9 +43,8 @@ old violations remain visible, and data/reset results have separate scopes and
 owners. Unresolved physical assumptions are explicit. R01 is required before
 A01's measured comparison and P08; it does not block queue implementation.
 
-## Analysis role
+## Role assignments
 
-This task is constraint/timing analysis, not RTL or independent functional DV.
-Keep all existing measured checks and reset-source qualifications. Any hardware
-change requires a separate RTL PR and affected independent DV; this card does
-not authorize a reset implementation change.
+Analysis owns steps 1–5: reset constraints, matched timing checks and interpretation.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

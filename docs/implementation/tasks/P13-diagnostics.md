@@ -45,9 +45,9 @@ The diagnostic portion of G7 and AI-01 has a real failure-to-reviewed-report exa
 
 Requirement focus: `AI-01`
 
-## Tooling and diagnostics role
+## Role assignments
 
-This is tooling/diagnostics work, separate from RTL and independent hardware DV.
-Preserve all fixture robustness checks and the required real reviewed diagnostic
-session. Do not repair RTL through the diagnostic utility; detected hardware
-failures remain visible for separate RTL fixes and DV reverification.
+Tooling/diagnostics owns steps 1–7, including fixture robustness checks and the
+actual reviewed diagnostic session.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

@@ -46,12 +46,11 @@ Independent DV completion requires both implemented modes to pass separate-owner
 
 Requirement focus: `SCH-01`, `SCH-02`, `SCH-03`, `SCH-04`, `SCH-05`, `SCH-06`, `PERF-02`
 
-## RTL implementation (merged PR #16)
+## Role assignments
 
-Steps 1–5, scheduler implementation and embedded assertions belong to the RTL owner. Existing scheduler report remains author evidence.
+- RTL: steps 1–5, scheduler implementation and embedded assertions.
+- Independent DV: steps 6–7 and every visit/race/policy/checker acceptance row.
 
-## Independent DV qualification
+[Current qualification state](../../status.md); P09/P11B retain composition.
 
-Steps 6–7 and every visit/race/policy/checker acceptance row require a separate DV PR on actual merged scheduler/queue RTL. Preserve independent policy timing and complete-visit byte accounting. Status: implemented awaiting independent DV; P09/P11B retain composition.
-
-Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

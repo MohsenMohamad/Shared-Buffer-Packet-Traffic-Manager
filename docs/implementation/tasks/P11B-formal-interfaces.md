@@ -60,12 +60,9 @@ legitimate protocol assumptions. Preserve property names, covers and intended
 negative detections when changing harness representation. Native diagnostics are
 historical/minimized controls, not the parser for current production types.
 
-## Independent DV role
+## Role assignments
 
-This is a DV task/PR: tests, models, binds, coverage, harnesses and registration.
-All existing behavior/check/acceptance obligations remain. Production RTL and
-embedded designer assertions are owned by separate RTL fix PRs. Develop DV early;
-final qualification targets the actual merged implementation. P11 closure requires
-verified P09/P10 and reviewed baseline/optimization disposition; adopted executable
-optimizations require passing independent DV merge and affected G5 refresh.
-Follow the [ownership gates](../plan.md#ownership-and-verification-gates).
+Independent DV owns steps 1–8, TX/scheduler/CSR harnesses, assertion correspondence,
+matching tests, proof selection and all required checks.
+
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

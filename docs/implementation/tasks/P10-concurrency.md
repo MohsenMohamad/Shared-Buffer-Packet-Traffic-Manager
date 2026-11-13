@@ -60,20 +60,10 @@ Define an exhaustive, non-double-counted per-cycle attribution over the measurem
 
 After P10, record an explicit reviewed decision to accept the measured baseline or propose a scoped optimization with its validation plan before P11 closure. There is no agreed hard minimum-packet utilization target; the 1536-byte target must not silently apply to 64-byte packets. This decision does not close P12's full benchmark, fairness, latency and implementation studies.
 
-## Independent DV role
+## Role assignments
 
-This is a DV task/PR: tests, models, binds, coverage, harnesses and registration.
-All existing behavior/check/acceptance obligations remain. Production RTL and
-embedded designer assertions are owned by separate RTL fix PRs. Develop DV early;
-final qualification targets the actual merged implementation. P11 closure requires
-verified P09/P10 and reviewed baseline/optimization disposition; adopted executable
-optimizations require passing independent DV merge and affected G5 refresh.
-Follow the [ownership gates](../plan.md#ownership-and-verification-gates).
+- Independent DV: steps 1–9, all required checks and the packet-rate diagnosis/decision.
+- Optional optimization: RTL owns its implementation and designer smoke; independent
+  DV owns measured benefit and affected regression, proof and coverage checks.
 
-## Optional optimization: separate RTL and DV PRs
-
-The packet-rate decision may retain the measured baseline. If optimization is
-adopted, the RTL owner supplies the scoped implementation/designer smoke PR;
-independent DV supplies a separate PR retaining all policy/data/ownership/timing
-expectations, checking measured benefit and rerunning affected regression,
-proof and coverage. Merge RTL first, then the passing DV PR before P11 closure.
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

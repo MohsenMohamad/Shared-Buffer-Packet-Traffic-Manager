@@ -51,12 +51,10 @@ The memory/TX portion of G2 has real byte/latency/ownership checks for both resp
 
 Requirement focus: `IF-01`, `LEN-01`, `LEN-02`, `MEM-03`, `MEM-04`, `MEM-05`, `RST-02`, `PERF-01`
 
-## RTL PR
+## Role assignments
 
-Steps 1–5 implement finite-port store/metadata/TX, embedded assertions and separate designer smoke. Coordinate API changes with DV.
+- RTL: steps 1–5, store/metadata/TX implementation, embedded assertions and designer smoke.
+- Independent DV: tests/models/scoreboards in steps 6–7, proof/cover/mutation and
+  registration in step 8, and all required acceptance rows.
 
-## Independent DV PR
-
-Develop early; own tests/models/scoreboards for steps 6–7, independent proof/cover/mutation and registration in step 8, and all required acceptance rows. Final qualification runs merged RTL at both latencies; RTL merge precedes passing DV merge. No delayed-memory fixture substitutes for structural hardware.
-
-Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

@@ -63,12 +63,11 @@ A reviewed policy decision and measured disposition exist, implementation-indepe
 remains checked, and any selected production change has affected correctness
 evidence. A01 must finish before P08; P03/P04/P05 can proceed independently.
 
-## Analysis and RTL PRs
+## Role assignments
 
-Analysis owns steps 1–2, candidate measurements/disposition in 4/6 and handoff 7. Coordinate any spec/API policy proposal explicitly. RTL owns real candidates/adoption in steps 4–6 and designer smoke in a separate implementation PR.
+- Analysis: steps 1–2, candidate measurements/disposition in 4/6 and handoff 7.
+- RTL: real candidates/adoption in steps 4–6 and designer smoke.
+- Independent DV: the API live-ID model in step 3 and affected simulation,
+  proof, cover and defect qualification in step 5.
 
-## Independent DV PR
-
-Own the independent API live-ID model in step 3 and affected simulation/proof/cover/negative qualification in step 5; preserve every ownership/return/capacity obligation under the reviewed policy. Final qualification runs the merged selected implementation; only its passing DV merge establishes verified scope. Measurements alone do not qualify it.
-
-Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.
+[Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).

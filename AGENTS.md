@@ -46,28 +46,34 @@ Use the PR template as a default. Keep validation concise, link to a focused rep
 
 ## Separate RTL and independent DV ownership
 
-RTL implementation and independent DV use separate owners, task branches and PRs.
-RTL owns production `rtl/`, embedded designer assertions and designer smoke;
-independent DV owns `dv/`, `formal/`, passive binds, models, scoreboards, coverage
-and test/proof/requirement registration. Designer smoke belongs in
-`dv/designer/` for new work, registered separately from independent selections.
-Existing author checks keep their original locations/provenance until an explicit
-migration; their names do not establish independent evidence.
+RTL and independent DV have separate owners, branches and PRs; continue an
+existing task branch/PR. Role assignments divide the existing technical and
+acceptance obligations without dropping checks. Audits remain read-only.
 
-DV may develop early against shared spec/API contracts, coordinating interface
-changes with the RTL owner. Infrastructure-only checks are labeled as such.
-RTL merges first; final DV qualification must exercise the actual merged
-production implementation. Only merge of the passing independent DV PR establishes
-its verified scope. P03/P04 are implemented awaiting separate independent DV PRs.
+- RTL owns production `rtl/`, embedded designer assertions and designer smoke.
+  New smoke lives in `dv/designer/` with separate registration.
+- Independent DV owns `dv/` verification except designer smoke: tests, models,
+  scoreboards, passive monitors/binds and coverage; `formal/` harnesses, assumptions, covers and mutations; and test, proof,
+  coverage and requirement entries in `verification/{suites,formal,coverage,requirements}.json`
+  and `verification/sources/*.json`. It owns their handlers and dispatch in
+  `tools/run.py`, `tools/formal_storage.py`, suite-specific runner modules and
+  `.github/workflows/` selections. Coordinate production source membership with
+  RTL; toolchain/setup inputs remain tooling ownership.
 
-A hardware defect stays visible in the open DV PR with the detecting check,
-revision/configuration and evidence. Report it for a separate RTL fix PR; do not
-repair production RTL or embedded designer assertions in DV. Continue other DV
-work, then rebase after the fix merges and rerun affected checks without weakening
-expectations, assumptions or required coverage. Audits remain read-only.
+Develop independent DV early from shared specs/APIs, coordinating interface
+changes with RTL and labeling infrastructure-only results. RTL merges first;
+final DV qualification exercises the actual merged production implementation.
+Only merge of the passing independent DV PR establishes verified scope for
+acceptance gates. Reuse valid unchanged evidence, preserve author checks' original
+locations/provenance, and audit retained models/properties before reuse without
+relabeling historical results as independent.
 
-Use the prepared toolchain and run `make doctor` on current main before
-tool-dependent checks. If it fails, report the precise mismatch before any setup,
-rebuild, install or download; do not edit locks/stamps or bypass validation.
-Continue independent work. Continue an existing task branch/PR when present.
-See [ownership and gates](docs/implementation/plan.md#ownership-and-verification-gates).
+Keep hardware defects visible in the open DV PR with the detecting check,
+revision/configuration and evidence. Fix production RTL/embedded assertions in a
+separate RTL PR; after it merges, rebase DV and rerun affected checks without
+weakening expectations, assumptions or coverage. Continue independent work.
+
+Use the prepared environment and run `make doctor` on current main before
+tool-dependent checks. On failure, report the precise mismatch; do not run setup,
+rebuild/install/download tools, edit locks/stamps or bypass validation. Continue
+only independent work.

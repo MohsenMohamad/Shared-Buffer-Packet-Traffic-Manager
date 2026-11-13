@@ -16,9 +16,8 @@ completed successfully. This statement records that hosted result, not a new loc
 
 P03 RTL is merged in PR #14 and P04 RTL in PR #16. Their
 [queue](../results/P03-queues.md) and [scheduler](../results/P04-scheduler.md)
-reports remain author-produced component evidence. Both are **implemented awaiting
-independent DV** until their separate passing DV PRs merge. P05 is the next RTL
-stage; P03 independent DV proceeds on `verify/p03-queues`.
+reports retain their author scope; [status](../status.md) records independent
+qualification progress. P05 is the next RTL stage.
 [F01](tasks/F01-formal-symbols.md) is integrated; [R01](tasks/R01-reset-timing.md)
 and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 [C01](tasks/C01-ci-economy.md) is integrated.
@@ -134,16 +133,8 @@ decision without a concrete reason.
 
 ## Ownership and verification gates
 
-All behavior, numbered execution steps and acceptance checks in existing mixed
-cards remain mandatory. The role sections divide that work; they remove no
-obligation. Each RTL/DV role has its own PR. Shared spec/API proposals are
-coordinated before incompatible implementation/checker changes. Early independent
-DV is encouraged, but fixture/declaration results are infrastructure-only. RTL
-merges first, final DV runs the merged implementation, and only merge of the
-passing DV PR establishes verified scope. Preserve original designer reports.
-A detected hardware bug remains in the open DV PR with a reproducible failing
-check; a separate RTL fix merges before DV rebases/rechecks. No weakened oracle,
-assumption or coverage substitutes for a fix.
+The [root ownership policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership)
+defines file boundaries and the shared RTL/DV workflow.
 
 | Task | RTL PR | Independent DV / other PR |
 | --- | --- | --- |
@@ -165,15 +156,6 @@ begin earlier but cannot claim G3. P11 closure consumes verified P09/P10 and the
 reviewed packet-rate decision; an adopted optimization requires its passing DV
 merge before closure. Analysis and infrastructure cannot establish these gates.
 
-Independent paths are `dv/` (excluding separately registered `dv/designer/`
-smoke), `formal/` harnesses/binds and `verification/` test/proof/coverage/requirement
-entries. Current executable registration is `verification/suites.json`,
-`verification/formal.json`, `verification/sources/`, `tools/run.py` handlers,
-`tools/formal_storage.py` formal dispatch and suite-specific `tools/queues.py` /
-`tools/formal_queue.py`; workflow suite selections live under `.github/workflows/`.
-These registration sections are DV-owned; toolchain locks/setup are not.
-Existing `queues` and `scheduler` selections retain their author provenance.
-
 ### Dependency evidence inventory
 
 P02 implementation is complete (PR #3, merge
@@ -182,7 +164,7 @@ P02 implementation is complete (PR #3, merge
 unbounded local proofs, covers and intended wrong-delta detections at tested
 `040863d055ba5fd70b3c09f18e3c268c67d3c1ef`; later representation/toolchain
 qualification and allocator characterization retain their own scopes. This is
-substantial reusable dependency evidence, not a reason to reopen P02 implementation.
+substantial reusable dependency evidence.
 Its report does not establish separate-owner independent qualification or global
 RX/TX/abort composition; inventory/review of that missing qualification remains
 DV work before the relevant verified integration gate.
@@ -193,5 +175,5 @@ models, bus coverage, FP-CSR and intended AW/W defect detection at tested
 `26bad4d0bdf52d8657b1a4cd3ea14061ab54e2cc`. Its independent model is useful evidence;
 separate-owner qualification is not demonstrated by that label alone. The genuine
 gaps are provenance review/independent signoff and actual datapath event/IDLE
-composition in P09/P10/P11B. Do not reopen CSR implementation or repeat unchanged
-valid checks merely to rename them. Historical reports/JSON remain unchanged.
+composition in P09/P10/P11B. Existing local evidence remains reusable with those
+scope boundaries.

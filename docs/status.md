@@ -4,9 +4,10 @@ Current main `1c225525ba284ce694f1b234cb12cc514b9c0aee` includes P03 RTL
 (PR #14) and P04 RTL (PR #16), alongside P00/P01/P02/P06/P07, F01 and C01.
 P03/P04 are **implemented awaiting independent DV** in separate PRs. Their
 existing author checks/reports retain their original scope and provenance.
-P03 DV is active on `verify/p03-queues`; no independent qualification is
-established until its passing PR merges. Remaining datapath declarations do not
-establish a complete traffic manager.
+P03 [local independent DV checks](results/P03-independent-dv.md) pass in
+[PR #17](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/17);
+its verified scope awaits the passing PR's merge. P04 independent DV remains
+pending. Remaining datapath declarations do not establish a complete traffic manager.
 
 | Gate | Current scope | Evidence / owner |
 | --- | --- | --- |
@@ -49,6 +50,6 @@ See the [role split and dependency inventory](implementation/plan.md#ownership-a
 P02/P06 implementation tasks remain complete; retain their valid local evidence.
 Separate-owner qualification not established by those reports and their pending
 integration/composition checks remain explicit DV gaps, not implementation rework.
-P09/P11 gates consume merged passing independent DV scope. Early fixture/harness
-work and designer checks do not close those gates. Hardware defects require a
-separate RTL fix PR, then DV rebase/reverification with the failure preserved.
+The plan retains the verified P09/P11 gates; the
+[root ownership policy](../AGENTS.md#separate-rtl-and-independent-dv-ownership)
+defines the shared workflow.
