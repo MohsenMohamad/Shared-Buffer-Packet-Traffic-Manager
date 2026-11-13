@@ -95,3 +95,15 @@ rollover with an unchanged 64-bit register ABI, then compiles a disposable
 coupled-AW/W production defect. See the
 [execution decision](../docs/decisions/0005-csr-events.md) and
 [local proof boundary](../formal/csr/README.md).
+
+## Production scheduler component bench
+
+`make regression RUN_ARGS='--profile E0 --test scheduler --seed 17'` connects
+production scheduler, queues and descriptor links to the P07 UVM policy checker.
+The fixture supplies immutable descriptor metadata and a TX retirement endpoint.
+Packet lists, lengths and architectural events determine expected grants and
+credit; policy legality remains distinct from baseline timing checks. Both DRR
+and packet RR run, with unequal/small/maximum quanta, maximum lengths, replacement,
+true empty/reactivation, longer/different-qid updates and output stalls.
+Finite byte accounting includes the unretired TX remainder. Saved coverage and
+an intended extra-quantum mutation are described in [P04 results](../docs/results/P04-scheduler.md).

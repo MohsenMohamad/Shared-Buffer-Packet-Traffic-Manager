@@ -14,12 +14,13 @@
     "rtl/csr/tm_axil_regs.sv",
     "rtl/csr/tm_statistics.sv",
     "rtl/queue/tm_queue_ctrl.sv",
-    "rtl/queue/tm_desc_links.sv"
+    "rtl/queue/tm_desc_links.sv",
+    "rtl/scheduler/tm_drr.sv"
   ],
   "headers": [
     "rtl/include/tm_parameters.svh",
     "rtl/include/tm_types.svh",
     "rtl/include/tm_validate.svh"
   ],
-  "scope": "Storage, queues and CSR/statistics APIs implemented; remaining APIs and top are declarations."
+  "scope": "Storage, queues, scheduler and CSR/statistics APIs implemented; remaining APIs and top are declarations."
 }

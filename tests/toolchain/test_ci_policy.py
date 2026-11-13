@@ -132,7 +132,7 @@ class PolicyTests(unittest.TestCase):
         self.assertIn("group: ${{ github.event.action == 'labeled' && github.event.label.name != 'full-ci' && format('label-{0}-', github.run_id) || '' }}ci-", workflow)
         self.assertIn("needs: policy\n    if: ${{ needs.policy.outputs.full == 'true' }}", workflow)
         self.assertIn('fetch-depth: 0', workflow.split('  policy:')[1].split('  prepare:')[0])
-        self.assertIn('needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation]', workflow)
+        self.assertIn('needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation, scheduler]', workflow)
         self.assertIn('CI_SUMMARY_NEEDS: ${{ toJSON(needs) }}', workflow)
         light = (ROOT / '.github/workflows/repository.yml').read_text()
         self.assertIn('python3 tools/check_repository.py', light)

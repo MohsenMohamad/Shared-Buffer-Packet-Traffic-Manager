@@ -421,6 +421,22 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
+        "evidence": "docs/results/P04-scheduler.json"
       }
     },
     {
@@ -438,6 +454,22 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
+        "evidence": "docs/results/P04-scheduler.json"
       }
     },
     {
@@ -455,6 +487,22 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
+        "evidence": "docs/results/P04-scheduler.json"
       }
     },
     {
@@ -462,21 +510,69 @@
       "name": "Empty/reactivation",
       "requirement": "Deficit resets on true empty transition; same-cycle enqueue/dequeue uses merged count; later arrival cannot inherit idle credit.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
+        "evidence": "docs/results/P04-scheduler.json"
+      }
     },
     {
       "id": "SCH-05",
       "name": "Mixed packet sizes",
       "requirement": "Saturated 64/1536-byte flows with equal and unequal quanta; compare delivered bytes, not packet counts.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
+        "evidence": "docs/results/P04-scheduler.json"
+      }
     },
     {
       "id": "SCH-06",
       "name": "Progress",
       "requirement": "Under explicit progressing-sink assumptions, continuously backlogged queues obtain service; no lost activation. No unconditional latency claim under infinite external stalls.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Progress is finite simulation under a progressing fixture sink, not an unbounded liveness theorem.",
+        "evidence": "docs/results/P04-scheduler.json"
+      }
     },
     {
       "id": "FMT-01",
@@ -811,7 +907,23 @@
       "name": "Fairness",
       "requirement": "Complete-round/visit service accounting; distinguish dispatched from delivered bytes at finite endpoints.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "scheduler_component_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "status": "PASS",
+        "profiles": [
+          "E0",
+          "F0"
+        ],
+        "tests": [
+          "tm_scheduler_rtl_test",
+          "tm_schedule_test",
+          "FP-SCHED prove/cover/extra-quantum mutation"
+        ],
+        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
+        "evidence": "docs/results/P04-scheduler.json"
+      }
     },
     {
       "id": "PERF-03",

@@ -170,7 +170,7 @@ class StorageRoutingTests(unittest.TestCase):
         from argparse import Namespace
         from formal_storage import selection as formal_selection
         specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
-        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues'})
+        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues','scheduler'})
         for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
                 ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
             with self.assertRaises(ValueError):

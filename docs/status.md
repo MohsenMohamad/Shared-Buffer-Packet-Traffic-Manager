@@ -1,7 +1,9 @@
 # Integration status
 
 Main includes P00/P01/P02/P03/P06/P07, F01 and C01 through
-`eccb9fb4cac71dd36b60a2b9d7e7f0836485b7a7` (PR #14).
+`0c65e26cfd81f4f4111e1da00ada2aaa022f2ab0` (PR #15).
+This branch adds [P04 scheduler component qualification](results/P04-scheduler.md);
+it does not close the integrated G2 gate.
 The qualified toolchain, ANSI declarations and shared types, allocator characterization and P07
 constrained-stimulus/readability follow-up are merged. The top and unimplemented
 components remain declarations; complete traffic-manager behavior is pending.
@@ -10,7 +12,7 @@ components remain declarations; complete traffic-manager behavior is pending.
 | --- | --- | --- |
 | G0 | Qualified toolchain fixtures and selected frontend | [Toolchain qualification](results/modern-toolchain.md) |
 | G1 | Qualified declarations/configurations; qualified types and declarations | [P01](results/P01-contracts.md), [RTL representation](results/rtl-representation.md) |
-| G2 | Partial: FIFOs/pools, descriptor queues, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P03](results/P03-queues.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P04/P05/P08 pending |
+| G2 | Partial: FIFOs/pools, descriptor queues, DRR/packet RR, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P03](results/P03-queues.md), [P04](results/P04-scheduler.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P05/P08 and composition pending |
 | G3 | Pending real vertical path | P09 |
 | G4 | Pending integrated concurrency/profile evidence | P10 |
 | G5 | Pending composition proofs and coverage closure | P11A/P11B/P11C |
@@ -27,7 +29,7 @@ was addressed by the runner race fix merged with PR #10; preserve its history.
 
 - [F01](implementation/tasks/F01-formal-symbols.md) qualifies fixed symbolic
   witnesses and fail-closed source guards. [Local results](results/F01-formal-symbols.md)
-  close this prerequisite for P03; queue RTL/proofs remain P03 work.
+  close this prerequisite; local queue RTL/proofs are delivered in P03.
 - [R01](implementation/tasks/R01-reset-timing.md) establishes shared reset timing
   interpretation; original negative removal measurements remain recorded.
 - [A01](implementation/tasks/A01-allocator-selection.md) evaluates the demonstrated

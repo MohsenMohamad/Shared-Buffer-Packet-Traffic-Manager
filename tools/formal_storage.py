@@ -20,6 +20,10 @@ def formal_rtl(run, args):
     specs, selected = selection(args)
     registered = sources('formal')
     for name in selected:
+        if name == 'scheduler':
+            from formal_scheduler import formal_scheduler
+            formal_scheduler(run, args, specs[name])
+            continue
         if name == 'queues':
             from formal_queue import formal_queue
             formal_queue(run, args, specs[name])
