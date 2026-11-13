@@ -1,0 +1,5223 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scope": "Independent production P03/P04 scheduler component qualification; fixture metadata and TX endpoint. No integrated payload, caller composition or P12 system fairness closure.",
+  "base_revision": "395ff2ddb5af9c5cb9ac9b3a703d6e6d64a0f281",
+  "tested_revision": "97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+  "tested_pr_head": "89a615e0b192e1c3a5a0ad6dcbf5b2a613fdbe51",
+  "tested_tree": "468356bb754a5ec510e5c784719be40c84b2f8c8",
+  "dirty": false,
+  "tested_revision_note": "Hosted synthetic merge and PR head have identical Git trees. Later evidence/requirements edits do not substitute for the tested revision.",
+  "workflow": {
+    "id": 43384557984,
+    "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984",
+    "conclusion": "success"
+  },
+  "provenance": {
+    "dependencies": {
+      "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38",
+      "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+    },
+    "constraints": {
+      "experiments/allocator-scaling/timing.sdc": "f829bf3133ad3b358e9465db4ca7e24b0d4a848f0648835814d6b1c97081527b",
+      "formal/csr/csr.sby": "75f6bb9e3604159a73b1cb2fede8e84b991edbb4dde67ee3557ff9d5170c86b2",
+      "formal/pools/storage.sby": "84b2e314bd5757e5d59f23e7033bb0b00bff5069350b5411c3174cefab9fadd0",
+      "formal/queue/independent.sby": "1faf681f275eb0e6332e1857e8c4d6c1c455df0094ec7ae96f5659c0ca95251d",
+      "formal/queue/queue.sby": "744a8b44b99b0651703d3cf3533e07b1e893b7c3d26c733f77118eca73e726c1",
+      "formal/scheduler/scheduler.sby": "744a8b44b99b0651703d3cf3533e07b1e893b7c3d26c733f77118eca73e726c1",
+      "formal/scheduler/scheduler_progress.sby": "2a4a9b39a4e9cd72ab272277d12a4cb033a7165bbd8772f149448d196661081d",
+      "tests/toolchain/counter.sby": "3aa6cf2d25564a9bb488216c9014616d1ca1bf77ec7dd84ba0ba0dcc6bee4d9e",
+      "tests/toolchain/timing.sdc": "034b72bc26e5121856a1ef7a11adc54d5bd69b9b9bfecc02402e82844c59c824"
+    },
+    "source_digests": {
+      "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+      "rtl/include/tm_module_ports.sv": "9115b422f8fc58a5c37789736dde59acb95aa3c2b40f37000f01657eb2d5a0f9",
+      "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+      "rtl/common/tm_axis_rx_fifo.sv": "40627938a5beb46fdbfe40054d6a16e2e7f1594e21749de8605493dfa5f24507",
+      "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+      "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+      "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+      "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+      "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+      "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+      "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+      "rtl/scheduler/tm_drr.sv": "f93079f4875a48e7de6f7a2336d8c9436d3de332767f0802d136a3a2fa84149a",
+      "formal/pools/storage_formal.sv": "21d7fd921b002bad7ca45f2c41ef8203f2435024f67e5fca7a2ac59266e7ce1b",
+      "formal/csr/csr_formal.sv": "b8a0bd3ad2ff2ae4ab61c3c8883db68e03ce62f13952d06fbc53ec2c67651495",
+      "formal/symbolic/symbolic_inputs.sv": "a8889c49a03570a8dfd8c161127c277cf3ceaf0e4ae41c256f150c04c3f1cf95",
+      "formal/queue/queue_formal.sv": "a4bad9c5bc63e5c1411c6f6ae13fef9c393df464f2a89cc794d8fa8ea972e043",
+      "formal/scheduler/scheduler_formal.sv": "7edf7cbddf97b20068018aeb26fcaa9389f4be2e42ef5940a715fe94288c57cb",
+      "formal/scheduler/scheduler_progress.sv": "67cc8f2ad316e7bbe3dd96ab64850d2817ac41c3f1a08fb4ce6ce4e96f437e36",
+      "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+      "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+      "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+      "formal/pools/bitmap_properties.svh": "67f9345be37be68eb45f92f907318ecf558746e1f9e1f1505827a9e972ac22c1",
+      "formal/pools/fifo_properties.svh": "217efdeb18837811085c664ba69339e59eac24437544ad5ce627b96880d47ee4",
+      "formal/csr/csr_properties.svh": "e92fa865d55e763630d45c99460bdb3c7d7cfdf7f99331cf6f8f5129688a0919",
+      "formal/symbolic/symbolic_checks.svh": "6c0a3a76b97ab8828383decc8c3a7b16b50dee1bbc43eed04b59f8ee917949b2",
+      "formal/scheduler/scheduler_policy.svh": "933ab95156a72eff097ac8d595008fd003fbc966e95a9357e6d533fb7f232507",
+      "dv/env/tm_bench_pkg.sv": "c292cb32f8e5742556a8d916e9d5c4849685c26da4637c1f0b8f17df9175e222",
+      "dv/fixtures/tm_scheduler_top.sv": "837169e4709d6b375c3e6535bad3b0c1988fbf0b22c2602bbec179a9304bf54b",
+      "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+      "dv/model/tm_checkers.svh": "287573bf0c99b7f558b677d0cad3d815b9d4905ba0717c2084d0187eb89513c9",
+      "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+      "dv/agents/tm_axil_agent.svh": "de2e94b21dfe7c12cf53537008dc77ac11d028b70b145b4197ba88fb2609d852",
+      "dv/env/tm_environment.svh": "881b05f662c00e9f8c55f01c819ad38af3adb3b96165b05a9c8ed13c68ec34ce",
+      "dv/tests/tm_foundation_test.svh": "6ce1e2f88a47921dfd7c5a61a5a561c219411af156a90d3cdde599673c5a145e",
+      "dv/tests/tm_batch_test.svh": "83e4b8b30ff8c18a0f8ec8df5ecc398edb821a7bc2a925d61973f5f9a9bec5c8",
+      "dv/agents/tm_packet.svh": "76191c6614105a072967da23ef81693fddff9a176bfa76745843fb7b581390ca",
+      "dv/model/tm_handshake_recorder.svh": "1428185814aa0fc59ab3ab7e599cd5e26a69e33de0a224a92e6678fb17678860",
+      "dv/tests/tm_packet_test.svh": "79409504006e96794c0c8198a45d7b58a87b5245acf29f4123c7b52f8c8934f4",
+      "dv/tests/tm_schedule_test.svh": "cec5f26622a2a90d4d862b5c43ea9cc42736b2fe7cbcbebc0a5b572b80454b32",
+      "dv/tests/tm_scheduler_rtl_test.svh": "e9186e1b97690196122d915462e9b85ddcccbee28add5bb273862f3938738341",
+      "dv/model/tm_scheduler_events.svh": "351d056e7ec26e17dbcbc2c4369299b9659e397913eec0c85977fa77e162fc21",
+      "dv/model/tm_scheduler_inputs.svh": "9e8f3f19ed1f3e61f9f6705c36067d7a0b4a06bb08bc3237ece98705b16cf65c",
+      "dv/tests/tm_scheduler_stress_test.svh": "71c4bcb7d5de6108e2339a8ecc0bff6b4c634b9a1617851c7f2b439ff4c27b60"
+    },
+    "tools": {
+      "python": "/usr/bin/python3: Python 3.12.3",
+      "verilator": "/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+      "yosys": "/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+      "sby": "/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sby: SBY v0.71",
+      "z3": "/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+      "compiler": "/usr/bin/g++-14: g++-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0",
+      "slang_revision": "/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --\nsv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222\nslang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+    },
+    "runner_and_registry_digests": {
+      "tools/scheduler.py": "8265216dc5fac68a5766cb2d5e9925feeb47738e12028770e8bb19e9dfb3a56e",
+      "tools/scheduler_stress.py": "5f328abc808f7258564255f3e1a71f11a7a681f47ae5b3c3fceebda8f7436545",
+      "tools/formal_scheduler.py": "1a39dcda72eb234c917a896f01c2cb290e6e735730163da5c361d22b62b63320",
+      "tools/scheduler_coverage.py": "0b1cd1d2831a7d1722f1158e826631c6c29373ac7bc09b3a8f1ec4f042cd027a",
+      "tools/scheduler_summary.py": "5c1f766cb5e4ab20c449ad001fcc49b427e530036f3adda4a73fed7ca2d1fc99",
+      "tools/run.py": "7ce541e74cd0d320fdc528f6ddd9c5cf90db0a5cab015bd061a018d1c0f685cf",
+      "verification/suites.json": "97b40e2f80a66fe1a5b531ca5eabb11a730db912a2b8e5c0e897eb87d9037fc6",
+      "verification/formal.json": "e5ed4dd89c259d4bad3ca7df220b22078dde2b6e75b4d9a8fa3460fd3d831b9c",
+      "verification/coverage.json": "3e820758dc930cf3f56d413def8e8ae590c07f04dfe4e904c88818be54d6eac9",
+      "verification/sources/scheduler.json": "720e8e558f5cd820a2a762840da3f729b09bb53c7198bd842858f072fd5ba2c9",
+      "verification/sources/formal.json": "7ccb1fea0d2ba795cdba0a4a5a94cc6ca57eb608e5b50e3ee5da1e0894d7da1b",
+      "verification/requirements.json": "729777efd612ed9e667248f7612345ff4feddcf5565d52927066026dfc7a67d0"
+    }
+  },
+  "commands": {
+    "regression": "CXX=g++-14 python3 tools/run.py regression --profile PROFILE --test scheduler --seed 17 --jobs 2 --timeout 240",
+    "formal": "CXX=g++-14 python3 tools/run.py formal-rtl --test scheduler --timeout 600",
+    "coverage": "python3 tools/run.py coverage --profile PROFILE --test scheduler --coverage-manifest CASE_MANIFEST",
+    "targeted_evidence_tests": "PYTHONPATH=tools python3 -m unittest discover -s tests/toolchain -p 'test_scheduler*.py'"
+  },
+  "seed_policy": {
+    "distinct": [
+      17,
+      31,
+      53
+    ],
+    "replay": 17,
+    "random_cycles_per_case": 4800
+  },
+  "profiles": {
+    "E0": {
+      "runs": [
+        {
+          "run": "coverage-2026-11-13T073617.798372+0000-bc4ca064",
+          "result": "PASS",
+          "cases": 10
+        },
+        {
+          "run": "formal-rtl-2026-11-13T073618.763850+0000-0e50164f",
+          "result": "PASS",
+          "cases": 13
+        },
+        {
+          "run": "regression-2026-11-13T071749.344952+0000-724c3bba",
+          "result": "PASS",
+          "cases": 43
+        }
+      ],
+      "modes": {
+        "1": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 1,
+            "grants": 444,
+            "replacement": 421,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 13,
+            "reactivation": 4,
+            "continuing": 159,
+            "max_credit": 4223,
+            "bound_hits": 9,
+            "qids": 2,
+            "cycles": 6173,
+            "paused_wait": 6,
+            "reset_owned": 1,
+            "detached": 445
+          },
+          "baseline_mandatory": {
+            "hit": 22,
+            "total": 22
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 272,
+              "total": 750
+            },
+            "branch": {
+              "hit": 18,
+              "total": 18
+            },
+            "expr": {
+              "hit": 18,
+              "total": 18
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "229b10215e7933ef04cd8eb7deca717835e7d7dc19217995095810c6825c1a78"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 128,
+              "quantum1": 128,
+              "dispatch0": 6848,
+              "dispatch1": 6784,
+              "delivered0": 6784,
+              "delivered1": 6784,
+              "deficit0": 64,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 53,
+              "visits1": 53
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 10240,
+              "delivered0": 5120,
+              "delivered1": 10112,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 128,
+              "visits0": 80,
+              "visits1": 79
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode1-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "13b1b875fa122957529d1aa19deeb252096a4fca59fa86f711f26510ceb402fb",
+                "events_sha256": "d7e452104fd3dab9ec59f1371c52fe247134a6c098e9dc01ba3bff356d1cec9d",
+                "coverage_sha256": "243972fd098ffb79b29542a5c7c2c17862f374677137e61d83541e7980e68531"
+              },
+              "observed_publications": 101,
+              "observed_cycles": 4800,
+              "length_choices": [
+                7,
+                7,
+                12,
+                15,
+                10,
+                6,
+                12,
+                9,
+                10,
+                13
+              ],
+              "qid_publications": [
+                60,
+                41
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 5
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "fa416bafb6f638747e0fa13987034dec1c11e20c31d5750a298b07797209d8df",
+                "events_sha256": "cdd7cec7f4942ffde78afe4f4f69ad0018cd2f33755d00800e68a4fcd58d5043",
+                "coverage_sha256": "81c2c9d541ca7d10915a61ee35b9d3d35e109356d09da206da81038544783959"
+              },
+              "observed_publications": 109,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                11,
+                10,
+                8,
+                12,
+                11,
+                9,
+                13,
+                17,
+                10
+              ],
+              "qid_publications": [
+                77,
+                32
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 5
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "72c4091f7e332a5f74ed968593561357c9fb3718a9276a02a8a5537ac2b7b5a6",
+                "events_sha256": "09f2a89546a14d448cfe666d7754044cf47778d6710eb355945bd117f46d6c97",
+                "coverage_sha256": "6737d8ae5a724b2567868f6c5074eaaf735c2b9f29a3afad29a6788df44bbc86"
+              },
+              "observed_publications": 119,
+              "observed_cycles": 4800,
+              "length_choices": [
+                13,
+                15,
+                11,
+                8,
+                10,
+                9,
+                15,
+                12,
+                9,
+                17
+              ],
+              "qid_publications": [
+                64,
+                55
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 4
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "13b1b875fa122957529d1aa19deeb252096a4fca59fa86f711f26510ceb402fb",
+                "events_sha256": "d7e452104fd3dab9ec59f1371c52fe247134a6c098e9dc01ba3bff356d1cec9d",
+                "coverage_sha256": "243972fd098ffb79b29542a5c7c2c17862f374677137e61d83541e7980e68531"
+              },
+              "observed_publications": 101,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 128,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 48,
+            "visits": 2,
+            "round_bound": 3140,
+            "response_bound": 6280
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 8230,
+              "backlog.multiple": 8230,
+              "backlog.one": 4437,
+              "backlog.zero": 262,
+              "cursor.wrap": 194,
+              "final.stall": 2400,
+              "quantum.equal": 441,
+              "quantum.greater": 483,
+              "quantum.less": 52,
+              "quantum.maximum": 189,
+              "quantum.minimum": 284,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 1,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 114,
+              "stall.medium": 81,
+              "stall.none": 6258,
+              "stall.short": 543,
+              "visit.many": 87,
+              "visit.one": 266,
+              "visit.zero": 14
+            },
+            "random_quanta": [
+              [
+                64,
+                4096
+              ],
+              [
+                304,
+                1898
+              ],
+              [
+                4096,
+                3303
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 1,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 1,
+            "reactivation_boundary": 1
+          }
+        },
+        "0": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 0,
+            "TRACE_ENABLE": 1,
+            "N_RX": 1,
+            "N_Q": 2,
+            "N_CELL": 16,
+            "CELL_BYTES": 16,
+            "N_DESC": 8,
+            "MAX_PACKET_BYTES": 128,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 4,
+            "CELL_COUNT_W": 5,
+            "DESC_ID_W": 3,
+            "DESC_COUNT_W": 4,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 0,
+            "grants": 444,
+            "replacement": 421,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 7,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 2,
+            "cycles": 6203,
+            "paused_wait": 0,
+            "reset_owned": 1,
+            "detached": 445
+          },
+          "baseline_mandatory": {
+            "hit": 13,
+            "total": 13
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 186,
+              "total": 750
+            },
+            "branch": {
+              "hit": 12,
+              "total": 12
+            },
+            "expr": {
+              "hit": 13,
+              "total": 13
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "3c07b54046866783dbc9c245265f8e295d1078eea7ebb9c8a3ce45fccf1783d9"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 128,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 10240,
+              "delivered0": 5120,
+              "delivered1": 10112,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 128,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 10240,
+              "delivered0": 5120,
+              "delivered1": 10112,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 128,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode0-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "9f4209ee561d8a52d0b32da13f17ad0c7ce3f98e85df686a82d0e66d9a25ba58",
+                "events_sha256": "1b786af4429fe08a5851ff6c365c52ab5a64f28efdd015d62a452123a116c4e0",
+                "coverage_sha256": "e3d8cc1c874d39c030a1bb1c41eea9d5cb22fadc12075dcb1233a97d2925d40e"
+              },
+              "observed_publications": 116,
+              "observed_cycles": 4800,
+              "length_choices": [
+                15,
+                13,
+                6,
+                11,
+                11,
+                9,
+                11,
+                10,
+                15,
+                15
+              ],
+              "qid_publications": [
+                65,
+                51
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 5
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "1fe1af8d1ff84e9ead1d3bc3a1048bcd1cb950f14c3002055d8d63892e3af330",
+                "events_sha256": "51c912eedd4c9a93613702402cc510de9811c313bbed511f233ac79f1a88b555",
+                "coverage_sha256": "6674997a848a01cd5aeb68a86589d018f98c631fed5b3950a0ad2ed510eba3bf"
+              },
+              "observed_publications": 109,
+              "observed_cycles": 4800,
+              "length_choices": [
+                11,
+                16,
+                10,
+                13,
+                9,
+                8,
+                16,
+                11,
+                8,
+                7
+              ],
+              "qid_publications": [
+                58,
+                51
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 4
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "a82d69d8869d56a48e6e0e334681560d21655e33c57c4b479ef1a56c8f405d59",
+                "events_sha256": "b1a74a66f8e56f4ddcc474a804d993a4270fa89559264e38a41113a86ee7471e",
+                "coverage_sha256": "fdff150da7f042caf6753d75c7a4bd60d3057412b2355f5618994ae554a9fcc3"
+              },
+              "observed_publications": 100,
+              "observed_cycles": 4800,
+              "length_choices": [
+                11,
+                10,
+                19,
+                4,
+                8,
+                18,
+                6,
+                8,
+                7,
+                9
+              ],
+              "qid_publications": [
+                52,
+                48
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 6
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "9f4209ee561d8a52d0b32da13f17ad0c7ce3f98e85df686a82d0e66d9a25ba58",
+                "events_sha256": "1b786af4429fe08a5851ff6c365c52ab5a64f28efdd015d62a452123a116c4e0",
+                "coverage_sha256": "e3d8cc1c874d39c030a1bb1c41eea9d5cb22fadc12075dcb1233a97d2925d40e"
+              },
+              "observed_publications": 116,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 128,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 48,
+            "visits": 1,
+            "round_bound": 102,
+            "response_bound": 102
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 7196,
+              "backlog.multiple": 7196,
+              "backlog.one": 4054,
+              "backlog.zero": 292,
+              "cursor.wrap": 373,
+              "final.stall": 2615,
+              "quantum.equal": 255,
+              "quantum.greater": 374,
+              "quantum.less": 32,
+              "quantum.maximum": 160,
+              "quantum.minimum": 168,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 0,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 120,
+              "stall.medium": 77,
+              "stall.none": 6569,
+              "stall.short": 26,
+              "visit.many": 0,
+              "visit.one": 607,
+              "visit.zero": 154
+            },
+            "random_quanta": [
+              [
+                64,
+                4096
+              ],
+              [
+                3404,
+                4096
+              ],
+              [
+                2141,
+                560
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 0,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 0,
+            "reactivation_boundary": 1
+          }
+        }
+      },
+      "input_probes": [
+        {
+          "test": "scheduler-input-done_unowned",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-done_mismatch",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-duplicate_commit",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_COMMIT",
+          "observed_fatals": [
+            "SCHED_INPUT_COMMIT"
+          ]
+        },
+        {
+          "test": "scheduler-input-config",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_CONFIG",
+          "observed_fatals": [
+            "SCHED_INPUT_CONFIG"
+          ]
+        },
+        {
+          "test": "scheduler-input-stale_done",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        }
+      ],
+      "seeded_defects": [
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-lost-carry",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-wait-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-wrong-length",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-busy-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULER_GRANT/SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-replacement-clear",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-empty-retain",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-rr-no-advance",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14018893435,
+          "name": "scheduler-E0-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:659bf15081e4528808c7dc98675f40805a06a7698d9a680ab753b18985d7eea2",
+          "size_bytes": 1888638615,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018893435"
+        },
+        {
+          "id": 14018783886,
+          "name": "scheduler-summary-E0-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:4a12008c5a37db5021ed6ea4d3bb39433f1b5d513192fdea690219da0ef77ef8",
+          "size_bytes": 62614,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018783886"
+        }
+      ]
+    },
+    "I0": {
+      "runs": [
+        {
+          "run": "coverage-2026-11-13T072946.025429+0000-7136147c",
+          "result": "PASS",
+          "cases": 10
+        },
+        {
+          "run": "regression-2026-11-13T071756.821901+0000-d0653b2e",
+          "result": "PASS",
+          "cases": 29
+        }
+      ],
+      "modes": {
+        "1": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 5,
+            "CELL_COUNT_W": 6,
+            "DESC_ID_W": 4,
+            "DESC_COUNT_W": 5,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 1,
+            "grants": 398,
+            "replacement": 373,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 13,
+            "reactivation": 4,
+            "continuing": 153,
+            "max_credit": 4351,
+            "bound_hits": 9,
+            "qids": 4,
+            "cycles": 7603,
+            "paused_wait": 6,
+            "reset_owned": 1,
+            "detached": 399
+          },
+          "baseline_mandatory": {
+            "hit": 22,
+            "total": 22
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 437,
+              "total": 1208
+            },
+            "branch": {
+              "hit": 18,
+              "total": 18
+            },
+            "expr": {
+              "hit": 18,
+              "total": 18
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "8c2d996699454d0aedb8bdeb2c79a3cd1f3a0cccb8f124840b5341f389b000de"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 256,
+              "quantum1": 256,
+              "dispatch0": 8192,
+              "dispatch1": 8192,
+              "delivered0": 8192,
+              "delivered1": 7936,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 256,
+              "visits0": 32,
+              "visits1": 31
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 6848,
+              "dispatch1": 13568,
+              "delivered0": 6784,
+              "delivered1": 13568,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 106,
+              "visits1": 106
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode1-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "feb0e29a69133fa72d9868266f8bf1c39b55e911fdbec9ef9edd64f48746d905",
+                "events_sha256": "4e6a135f5efb1a944a177eda3a2b4c0572d890e029e52269aba6fe1df1369f96",
+                "coverage_sha256": "c54b914142cbf43da6ed62eaf6e8fa6c448605c80827924a7970ad243f9308b9"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800,
+              "length_choices": [
+                11,
+                11,
+                10,
+                7,
+                14,
+                4,
+                11,
+                11,
+                14,
+                9
+              ],
+              "qid_publications": [
+                34,
+                28,
+                27,
+                13
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 10
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "f727f065f2d5be819428a8a18cfa365bcd79713c9cb01694d54cabae96091b62",
+                "events_sha256": "b225e450cc92505803dbeb39adfadddd3e16be11b483a7560f28a35dc8ed2cc0",
+                "coverage_sha256": "b548932e572b56f7db6b04e448fb9f459c010921b58341ade4179055559cce5a"
+              },
+              "observed_publications": 100,
+              "observed_cycles": 4800,
+              "length_choices": [
+                13,
+                8,
+                12,
+                9,
+                11,
+                15,
+                8,
+                7,
+                13,
+                4
+              ],
+              "qid_publications": [
+                44,
+                20,
+                12,
+                24
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 8
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "a401d47c731c90a293f36fb9d98b6c083b31b31d107b93c624b341b5060c9e52",
+                "events_sha256": "c8b21d195bf1be5e43438659e868e8037f795d1ed0c5d6e610e2bb9d1bdb1c2a",
+                "coverage_sha256": "1a3f023b65743637f023e88fb6f4659748015eb764dbaadeea9c3df13d61e604"
+              },
+              "observed_publications": 103,
+              "observed_cycles": 4800,
+              "length_choices": [
+                9,
+                7,
+                11,
+                8,
+                16,
+                11,
+                12,
+                11,
+                5,
+                13
+              ],
+              "qid_publications": [
+                30,
+                23,
+                22,
+                28
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 7
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "feb0e29a69133fa72d9868266f8bf1c39b55e911fdbec9ef9edd64f48746d905",
+                "events_sha256": "4e6a135f5efb1a944a177eda3a2b4c0572d890e029e52269aba6fe1df1369f96",
+                "coverage_sha256": "c54b914142cbf43da6ed62eaf6e8fa6c448605c80827924a7970ad243f9308b9"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 256,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 96,
+            "visits": 4,
+            "round_bound": 6216,
+            "response_bound": 24864
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 15614,
+              "backlog.multiple": 24319,
+              "backlog.one": 2797,
+              "backlog.zero": 403,
+              "cursor.wrap": 211,
+              "final.stall": 1861,
+              "quantum.equal": 289,
+              "quantum.greater": 540,
+              "quantum.less": 230,
+              "quantum.maximum": 242,
+              "quantum.minimum": 334,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 1,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 93,
+              "stall.medium": 125,
+              "stall.none": 8335,
+              "stall.short": 4644,
+              "visit.many": 72,
+              "visit.one": 258,
+              "visit.zero": 92
+            },
+            "random_quanta": [
+              [
+                64,
+                1099,
+                1289,
+                4096
+              ],
+              [
+                2417,
+                64,
+                1426,
+                2358
+              ],
+              [
+                3485,
+                4072,
+                4096,
+                3690
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 1,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 1,
+            "reactivation_boundary": 1
+          }
+        },
+        "0": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 0,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 5,
+            "CELL_COUNT_W": 6,
+            "DESC_ID_W": 4,
+            "DESC_COUNT_W": 5,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 0,
+            "grants": 398,
+            "replacement": 373,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 7,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 4,
+            "cycles": 9271,
+            "paused_wait": 0,
+            "reset_owned": 1,
+            "detached": 399
+          },
+          "baseline_mandatory": {
+            "hit": 13,
+            "total": 13
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 352,
+              "total": 1208
+            },
+            "branch": {
+              "hit": 12,
+              "total": 12
+            },
+            "expr": {
+              "hit": 13,
+              "total": 13
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "ca4ed223d26899bf51d5fc034ea9abeb22458ced7123953567faee943198a8eb"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 256,
+              "quantum1": 256,
+              "dispatch0": 5120,
+              "dispatch1": 20480,
+              "delivered0": 5120,
+              "delivered1": 20224,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 256,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 20480,
+              "delivered0": 5120,
+              "delivered1": 20224,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 256,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode0-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "32bf3843384fe9586196c14dae2c23bc502c23a3f46e777954bb936d539be74f",
+                "events_sha256": "39837e45c944ba6882f4cb9e878928ea1f26af96c35fed54f824e3b89d6c4e89",
+                "coverage_sha256": "dd06acfcdb0d2c240f2531db39188000bb80e08bf5af103b0120f5b11aced7f2"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                10,
+                9,
+                8,
+                14,
+                16,
+                9,
+                13,
+                9,
+                6
+              ],
+              "qid_publications": [
+                23,
+                15,
+                42,
+                22
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 8
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "40fdfef61cdb1e3eaf5a102ea2fb91680da19b23f8b78749c344e0f2bdfcf15e",
+                "events_sha256": "06711ea144d893383e59fbfa10b20116ec9f30af1bbc31020bf67b49256f350e",
+                "coverage_sha256": "088bde81d9d1eebbc0e5c9e88832ac144fca8f86838dc06f3b823d61b51395b7"
+              },
+              "observed_publications": 103,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                8,
+                6,
+                14,
+                12,
+                13,
+                9,
+                8,
+                11,
+                14
+              ],
+              "qid_publications": [
+                40,
+                15,
+                29,
+                19
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 7
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "0e3636d172eda515f0cace465b8bf084dbbefb17d435727fdde9cd50b5b5e28e",
+                "events_sha256": "6727d489c24072be2b1e77c146968bf41bee90c5f8533328f95a999cabd86c8f",
+                "coverage_sha256": "fa01d90920c7a99a108c4944a8738700ca8309d59de09627a0773327e538a828"
+              },
+              "observed_publications": 103,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                10,
+                8,
+                11,
+                17,
+                12,
+                7,
+                9,
+                12,
+                9
+              ],
+              "qid_publications": [
+                44,
+                12,
+                32,
+                15
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 8
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "32bf3843384fe9586196c14dae2c23bc502c23a3f46e777954bb936d539be74f",
+                "events_sha256": "39837e45c944ba6882f4cb9e878928ea1f26af96c35fed54f824e3b89d6c4e89",
+                "coverage_sha256": "dd06acfcdb0d2c240f2531db39188000bb80e08bf5af103b0120f5b11aced7f2"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 256,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 96,
+            "visits": 1,
+            "round_bound": 396,
+            "response_bound": 396
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 1778,
+              "backlog.multiple": 12785,
+              "backlog.one": 2726,
+              "backlog.zero": 502,
+              "cursor.wrap": 281,
+              "final.stall": 1638,
+              "quantum.equal": 176,
+              "quantum.greater": 283,
+              "quantum.less": 146,
+              "quantum.maximum": 97,
+              "quantum.minimum": 198,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 0,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 96,
+              "stall.medium": 111,
+              "stall.none": 10774,
+              "stall.short": 29,
+              "visit.many": 0,
+              "visit.one": 568,
+              "visit.zero": 591
+            },
+            "random_quanta": [
+              [
+                64,
+                4096,
+                64,
+                4096
+              ],
+              [
+                1912,
+                3717,
+                2479,
+                2939
+              ],
+              [
+                64,
+                122,
+                64,
+                2481
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 0,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 0,
+            "reactivation_boundary": 1
+          }
+        }
+      },
+      "input_probes": [
+        {
+          "test": "scheduler-input-done_unowned",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-done_mismatch",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-duplicate_commit",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_COMMIT",
+          "observed_fatals": [
+            "SCHED_INPUT_COMMIT"
+          ]
+        },
+        {
+          "test": "scheduler-input-config",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_CONFIG",
+          "observed_fatals": [
+            "SCHED_INPUT_CONFIG"
+          ]
+        },
+        {
+          "test": "scheduler-input-stale_done",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        }
+      ],
+      "seeded_defects": [
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14018312924,
+          "name": "scheduler-summary-I0-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:8d5e0444dc02dc595faf55ea53256e3123762a0574366aa1d737138534cafe62",
+          "size_bytes": 70224,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018312924"
+        },
+        {
+          "id": 14017998714,
+          "name": "scheduler-I0-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:5d0570f6305aac9df6d9ebcc6f765f320428442c96204889db17821304953573",
+          "size_bytes": 790845694,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14017998714"
+        }
+      ]
+    },
+    "I1": {
+      "runs": [
+        {
+          "run": "coverage-2026-11-13T072809.915311+0000-3b7ee5b1",
+          "result": "PASS",
+          "cases": 10
+        },
+        {
+          "run": "regression-2026-11-13T071755.781499+0000-86be2ef4",
+          "result": "PASS",
+          "cases": 29
+        }
+      ],
+      "modes": {
+        "1": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 2,
+            "CELL_ID_W": 5,
+            "CELL_COUNT_W": 6,
+            "DESC_ID_W": 4,
+            "DESC_COUNT_W": 5,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 1,
+            "grants": 398,
+            "replacement": 373,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 13,
+            "reactivation": 4,
+            "continuing": 153,
+            "max_credit": 4351,
+            "bound_hits": 9,
+            "qids": 4,
+            "cycles": 7603,
+            "paused_wait": 6,
+            "reset_owned": 1,
+            "detached": 399
+          },
+          "baseline_mandatory": {
+            "hit": 22,
+            "total": 22
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 437,
+              "total": 1208
+            },
+            "branch": {
+              "hit": 18,
+              "total": 18
+            },
+            "expr": {
+              "hit": 18,
+              "total": 18
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "8c2d996699454d0aedb8bdeb2c79a3cd1f3a0cccb8f124840b5341f389b000de"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 256,
+              "quantum1": 256,
+              "dispatch0": 8192,
+              "dispatch1": 8192,
+              "delivered0": 8192,
+              "delivered1": 7936,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 256,
+              "visits0": 32,
+              "visits1": 31
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 6848,
+              "dispatch1": 13568,
+              "delivered0": 6784,
+              "delivered1": 13568,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 106,
+              "visits1": 106
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode1-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "feb0e29a69133fa72d9868266f8bf1c39b55e911fdbec9ef9edd64f48746d905",
+                "events_sha256": "4e6a135f5efb1a944a177eda3a2b4c0572d890e029e52269aba6fe1df1369f96",
+                "coverage_sha256": "c54b914142cbf43da6ed62eaf6e8fa6c448605c80827924a7970ad243f9308b9"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800,
+              "length_choices": [
+                11,
+                11,
+                10,
+                7,
+                14,
+                4,
+                11,
+                11,
+                14,
+                9
+              ],
+              "qid_publications": [
+                34,
+                28,
+                27,
+                13
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 10
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "f727f065f2d5be819428a8a18cfa365bcd79713c9cb01694d54cabae96091b62",
+                "events_sha256": "b225e450cc92505803dbeb39adfadddd3e16be11b483a7560f28a35dc8ed2cc0",
+                "coverage_sha256": "b548932e572b56f7db6b04e448fb9f459c010921b58341ade4179055559cce5a"
+              },
+              "observed_publications": 100,
+              "observed_cycles": 4800,
+              "length_choices": [
+                13,
+                8,
+                12,
+                9,
+                11,
+                15,
+                8,
+                7,
+                13,
+                4
+              ],
+              "qid_publications": [
+                44,
+                20,
+                12,
+                24
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 8
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "a401d47c731c90a293f36fb9d98b6c083b31b31d107b93c624b341b5060c9e52",
+                "events_sha256": "c8b21d195bf1be5e43438659e868e8037f795d1ed0c5d6e610e2bb9d1bdb1c2a",
+                "coverage_sha256": "1a3f023b65743637f023e88fb6f4659748015eb764dbaadeea9c3df13d61e604"
+              },
+              "observed_publications": 103,
+              "observed_cycles": 4800,
+              "length_choices": [
+                9,
+                7,
+                11,
+                8,
+                16,
+                11,
+                12,
+                11,
+                5,
+                13
+              ],
+              "qid_publications": [
+                30,
+                23,
+                22,
+                28
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 7
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "feb0e29a69133fa72d9868266f8bf1c39b55e911fdbec9ef9edd64f48746d905",
+                "events_sha256": "4e6a135f5efb1a944a177eda3a2b4c0572d890e029e52269aba6fe1df1369f96",
+                "coverage_sha256": "c54b914142cbf43da6ed62eaf6e8fa6c448605c80827924a7970ad243f9308b9"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 256,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 96,
+            "visits": 4,
+            "round_bound": 6216,
+            "response_bound": 24864
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 15614,
+              "backlog.multiple": 24319,
+              "backlog.one": 2797,
+              "backlog.zero": 403,
+              "cursor.wrap": 211,
+              "final.stall": 1861,
+              "quantum.equal": 289,
+              "quantum.greater": 540,
+              "quantum.less": 230,
+              "quantum.maximum": 242,
+              "quantum.minimum": 334,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 1,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 93,
+              "stall.medium": 125,
+              "stall.none": 8335,
+              "stall.short": 4644,
+              "visit.many": 72,
+              "visit.one": 258,
+              "visit.zero": 92
+            },
+            "random_quanta": [
+              [
+                64,
+                1099,
+                1289,
+                4096
+              ],
+              [
+                2417,
+                64,
+                1426,
+                2358
+              ],
+              [
+                3485,
+                4072,
+                4096,
+                3690
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 1,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 1,
+            "reactivation_boundary": 1
+          }
+        },
+        "0": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 0,
+            "TRACE_ENABLE": 1,
+            "N_RX": 2,
+            "N_Q": 4,
+            "N_CELL": 32,
+            "CELL_BYTES": 16,
+            "N_DESC": 16,
+            "MAX_PACKET_BYTES": 256,
+            "MEM_RD_LATENCY": 2,
+            "CELL_ID_W": 5,
+            "CELL_COUNT_W": 6,
+            "DESC_ID_W": 4,
+            "DESC_COUNT_W": 5,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 0,
+            "grants": 398,
+            "replacement": 373,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 7,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 4,
+            "cycles": 9271,
+            "paused_wait": 0,
+            "reset_owned": 1,
+            "detached": 399
+          },
+          "baseline_mandatory": {
+            "hit": 13,
+            "total": 13
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 352,
+              "total": 1208
+            },
+            "branch": {
+              "hit": 12,
+              "total": 12
+            },
+            "expr": {
+              "hit": 13,
+              "total": 13
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "ca4ed223d26899bf51d5fc034ea9abeb22458ced7123953567faee943198a8eb"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 256,
+              "quantum1": 256,
+              "dispatch0": 5120,
+              "dispatch1": 20480,
+              "delivered0": 5120,
+              "delivered1": 20224,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 256,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 20480,
+              "delivered0": 5120,
+              "delivered1": 20224,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 256,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode0-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "32bf3843384fe9586196c14dae2c23bc502c23a3f46e777954bb936d539be74f",
+                "events_sha256": "39837e45c944ba6882f4cb9e878928ea1f26af96c35fed54f824e3b89d6c4e89",
+                "coverage_sha256": "dd06acfcdb0d2c240f2531db39188000bb80e08bf5af103b0120f5b11aced7f2"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                10,
+                9,
+                8,
+                14,
+                16,
+                9,
+                13,
+                9,
+                6
+              ],
+              "qid_publications": [
+                23,
+                15,
+                42,
+                22
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 8
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "40fdfef61cdb1e3eaf5a102ea2fb91680da19b23f8b78749c344e0f2bdfcf15e",
+                "events_sha256": "06711ea144d893383e59fbfa10b20116ec9f30af1bbc31020bf67b49256f350e",
+                "coverage_sha256": "088bde81d9d1eebbc0e5c9e88832ac144fca8f86838dc06f3b823d61b51395b7"
+              },
+              "observed_publications": 103,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                8,
+                6,
+                14,
+                12,
+                13,
+                9,
+                8,
+                11,
+                14
+              ],
+              "qid_publications": [
+                40,
+                15,
+                29,
+                19
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 7
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "0e3636d172eda515f0cace465b8bf084dbbefb17d435727fdde9cd50b5b5e28e",
+                "events_sha256": "6727d489c24072be2b1e77c146968bf41bee90c5f8533328f95a999cabd86c8f",
+                "coverage_sha256": "fa01d90920c7a99a108c4944a8738700ca8309d59de09627a0773327e538a828"
+              },
+              "observed_publications": 103,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                10,
+                8,
+                11,
+                17,
+                12,
+                7,
+                9,
+                12,
+                9
+              ],
+              "qid_publications": [
+                44,
+                12,
+                32,
+                15
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 8
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "32bf3843384fe9586196c14dae2c23bc502c23a3f46e777954bb936d539be74f",
+                "events_sha256": "39837e45c944ba6882f4cb9e878928ea1f26af96c35fed54f824e3b89d6c4e89",
+                "coverage_sha256": "dd06acfcdb0d2c240f2531db39188000bb80e08bf5af103b0120f5b11aced7f2"
+              },
+              "observed_publications": 102,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 256,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 96,
+            "visits": 1,
+            "round_bound": 396,
+            "response_bound": 396
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 1778,
+              "backlog.multiple": 12785,
+              "backlog.one": 2726,
+              "backlog.zero": 502,
+              "cursor.wrap": 281,
+              "final.stall": 1638,
+              "quantum.equal": 176,
+              "quantum.greater": 283,
+              "quantum.less": 146,
+              "quantum.maximum": 97,
+              "quantum.minimum": 198,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 0,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 96,
+              "stall.medium": 111,
+              "stall.none": 10774,
+              "stall.short": 29,
+              "visit.many": 0,
+              "visit.one": 568,
+              "visit.zero": 591
+            },
+            "random_quanta": [
+              [
+                64,
+                4096,
+                64,
+                4096
+              ],
+              [
+                1912,
+                3717,
+                2479,
+                2939
+              ],
+              [
+                64,
+                122,
+                64,
+                2481
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 0,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 0,
+            "reactivation_boundary": 1
+          }
+        }
+      },
+      "input_probes": [
+        {
+          "test": "scheduler-input-done_unowned",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-done_mismatch",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-duplicate_commit",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_COMMIT",
+          "observed_fatals": [
+            "SCHED_INPUT_COMMIT"
+          ]
+        },
+        {
+          "test": "scheduler-input-config",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_CONFIG",
+          "observed_fatals": [
+            "SCHED_INPUT_CONFIG"
+          ]
+        },
+        {
+          "test": "scheduler-input-stale_done",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        }
+      ],
+      "seeded_defects": [
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14018677227,
+          "name": "scheduler-I1-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:15d44fc08f8fcdbd483c4a845c42845eefc2d2cc106f3d96c633c4de92b3a881",
+          "size_bytes": 790651155,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018677227"
+        },
+        {
+          "id": 14017664816,
+          "name": "scheduler-summary-I1-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:d1099f9f78a4a3830f4e43960ca052bbbdf9be311ed7a1a812003da981234e65",
+          "size_bytes": 70235,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14017664816"
+        }
+      ]
+    },
+    "E1": {
+      "runs": [
+        {
+          "run": "coverage-2026-11-13T072839.264677+0000-bd77ee60",
+          "result": "PASS",
+          "cases": 10
+        },
+        {
+          "run": "regression-2026-11-13T071805.952190+0000-f9662b30",
+          "result": "PASS",
+          "cases": 29
+        }
+      ],
+      "modes": {
+        "1": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 8,
+            "N_CELL": 64,
+            "CELL_BYTES": 32,
+            "N_DESC": 32,
+            "MAX_PACKET_BYTES": 512,
+            "MEM_RD_LATENCY": 2,
+            "CELL_ID_W": 6,
+            "CELL_COUNT_W": 7,
+            "DESC_ID_W": 5,
+            "DESC_COUNT_W": 6,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 1,
+            "grants": 378,
+            "replacement": 349,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 13,
+            "reactivation": 4,
+            "continuing": 159,
+            "max_credit": 4607,
+            "bound_hits": 9,
+            "qids": 8,
+            "cycles": 9395,
+            "paused_wait": 6,
+            "reset_owned": 1,
+            "detached": 379
+          },
+          "baseline_mandatory": {
+            "hit": 22,
+            "total": 22
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 623,
+              "total": 1360
+            },
+            "branch": {
+              "hit": 18,
+              "total": 18
+            },
+            "expr": {
+              "hit": 18,
+              "total": 18
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "c32889f9151687721b52f22d2999900a4d250681a3848f4eb0f3e69e208bd216"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 512,
+              "quantum1": 512,
+              "dispatch0": 9152,
+              "dispatch1": 8704,
+              "delivered0": 9088,
+              "delivered1": 8704,
+              "deficit0": 64,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 17,
+              "visits1": 17
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 8192,
+              "dispatch1": 16384,
+              "delivered0": 8192,
+              "delivered1": 15872,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 512,
+              "visits0": 128,
+              "visits1": 127
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode1-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "8f3d5c240f55734d1dc683520c54601113606f90c997a2d0eae102a981f34382",
+                "events_sha256": "c6560def9c1a25b5dba45097a32ec5d791a3756c061bb6a21e189c18eaa7c42b",
+                "coverage_sha256": "bb0fd5db24b55bc18efebfa87aad0d69a71c37b19db48742cab898a001a68a9c"
+              },
+              "observed_publications": 126,
+              "observed_cycles": 4800,
+              "length_choices": [
+                12,
+                13,
+                20,
+                9,
+                17,
+                14,
+                9,
+                15,
+                11,
+                6
+              ],
+              "qid_publications": [
+                27,
+                16,
+                16,
+                19,
+                15,
+                17,
+                8,
+                8
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 12
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "c5d9486bb24d2d1b8b41524fd59d926955ac3fcdb924a6c399406e0737714573",
+                "events_sha256": "2f10cbcddb3f45050645b8305543fc795238523d1d110301fce1e6ac9e1edcf2",
+                "coverage_sha256": "d9ba03d258cfbd4d64cdbb1cbc2747a823f863a7446d56e574d92332630d3639"
+              },
+              "observed_publications": 127,
+              "observed_cycles": 4800,
+              "length_choices": [
+                8,
+                11,
+                11,
+                17,
+                12,
+                13,
+                12,
+                14,
+                11,
+                18
+              ],
+              "qid_publications": [
+                43,
+                15,
+                4,
+                3,
+                7,
+                40,
+                3,
+                12
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 14
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "aeb964a4c0a7b26f15b2a6640b60637a912c6f632a897246898f0b888fa41686",
+                "events_sha256": "b401c587ce01f60e26f88ebda8c8d716ae7b179ef91362eb1ec0a8d10efee4b4",
+                "coverage_sha256": "549a4972a62584eee80523f8e20c026914ddea0d0197f7d8b938ee8e8ec2dfa1"
+              },
+              "observed_publications": 127,
+              "observed_cycles": 4800,
+              "length_choices": [
+                10,
+                11,
+                18,
+                8,
+                8,
+                17,
+                6,
+                16,
+                19,
+                14
+              ],
+              "qid_publications": [
+                17,
+                10,
+                29,
+                12,
+                13,
+                16,
+                18,
+                12
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 13
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "8f3d5c240f55734d1dc683520c54601113606f90c997a2d0eae102a981f34382",
+                "events_sha256": "c6560def9c1a25b5dba45097a32ec5d791a3756c061bb6a21e189c18eaa7c42b",
+                "coverage_sha256": "bb0fd5db24b55bc18efebfa87aad0d69a71c37b19db48742cab898a001a68a9c"
+              },
+              "observed_publications": 126,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 512,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 192,
+            "visits": 8,
+            "round_bound": 12368,
+            "response_bound": 98944
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 75360,
+              "backlog.multiple": 90501,
+              "backlog.one": 3503,
+              "backlog.zero": 677,
+              "cursor.wrap": 253,
+              "final.stall": 1765,
+              "quantum.equal": 302,
+              "quantum.greater": 843,
+              "quantum.less": 270,
+              "quantum.maximum": 558,
+              "quantum.minimum": 413,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 1,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 85,
+              "stall.medium": 142,
+              "stall.none": 13046,
+              "stall.short": 25080,
+              "visit.many": 101,
+              "visit.one": 255,
+              "visit.zero": 175
+            },
+            "random_quanta": [
+              [
+                64,
+                4096,
+                2289,
+                4096,
+                4096,
+                848,
+                64,
+                4096
+              ],
+              [
+                3567,
+                3350,
+                2906,
+                923,
+                4096,
+                4096,
+                1448,
+                4096
+              ],
+              [
+                4096,
+                4096,
+                64,
+                1335,
+                64,
+                3949,
+                1497,
+                64
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 1,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 1,
+            "reactivation_boundary": 1
+          }
+        },
+        "0": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 0,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 8,
+            "N_CELL": 64,
+            "CELL_BYTES": 32,
+            "N_DESC": 32,
+            "MAX_PACKET_BYTES": 512,
+            "MEM_RD_LATENCY": 2,
+            "CELL_ID_W": 6,
+            "CELL_COUNT_W": 7,
+            "DESC_ID_W": 5,
+            "DESC_COUNT_W": 6,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 0,
+            "grants": 378,
+            "replacement": 349,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 7,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 8,
+            "cycles": 15411,
+            "paused_wait": 0,
+            "reset_owned": 1,
+            "detached": 379
+          },
+          "baseline_mandatory": {
+            "hit": 13,
+            "total": 13
+          },
+          "baseline_owned_code_points": {
+            "toggle": {
+              "hit": 371,
+              "total": 1360
+            },
+            "branch": {
+              "hit": 12,
+              "total": 12
+            },
+            "expr": {
+              "hit": 13,
+              "total": 13
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "94ee2ab619dece1412021ee37f2bde7985ebff26d5c38bad098ff9ba1bf1da5f"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 512,
+              "quantum1": 512,
+              "dispatch0": 5120,
+              "dispatch1": 40960,
+              "delivered0": 5120,
+              "delivered1": 40448,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 512,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 40960,
+              "delivered0": 5120,
+              "delivered1": 40448,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 512,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode0-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "ec380b0ddad89fb6a9161dc1118d793a831fdbdc298005bfc183b2e63bb6802e",
+                "events_sha256": "50cebe27ade6ea1337287472de82aee6926da5dff0b5b435b978002d0c7b1f32",
+                "coverage_sha256": "10f6b3664edb9074b0b57d7634986793bee58c44ba2e5857444041a681ba7c03"
+              },
+              "observed_publications": 132,
+              "observed_cycles": 4800,
+              "length_choices": [
+                16,
+                12,
+                9,
+                18,
+                13,
+                10,
+                11,
+                14,
+                17,
+                12
+              ],
+              "qid_publications": [
+                17,
+                19,
+                7,
+                20,
+                18,
+                19,
+                12,
+                20
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 12
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "7c3d59bf66ecd62682c05ab07c787c511fcd68ee042caa3687b5ec1f9c5a00b3",
+                "events_sha256": "7b017a032763944473f2d978d83137afafd10defdd3122746972405516e0c247",
+                "coverage_sha256": "d969ba76809af085e3c05129ef6e6e5f46ce7b4087586cab2cec9baf7aa2e7a1"
+              },
+              "observed_publications": 125,
+              "observed_cycles": 4800,
+              "length_choices": [
+                9,
+                15,
+                14,
+                14,
+                15,
+                9,
+                7,
+                10,
+                12,
+                20
+              ],
+              "qid_publications": [
+                7,
+                9,
+                6,
+                13,
+                21,
+                10,
+                42,
+                17
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 15
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "2709d6f8f5f88d2c237791894d5138485300c1575f94aecb9f06c2a5550da181",
+                "events_sha256": "52539d84ce8a335cf751604e0e78a7c2cefb34e9d7871252b8d45ad5eb23ee95",
+                "coverage_sha256": "39078e8b8e0f92a68f60a960a54a722082a996380342654ec65c8a868e98eb67"
+              },
+              "observed_publications": 134,
+              "observed_cycles": 4800,
+              "length_choices": [
+                17,
+                12,
+                12,
+                12,
+                14,
+                15,
+                12,
+                12,
+                12,
+                16
+              ],
+              "qid_publications": [
+                13,
+                15,
+                2,
+                18,
+                44,
+                24,
+                10,
+                8
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 12
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "ec380b0ddad89fb6a9161dc1118d793a831fdbdc298005bfc183b2e63bb6802e",
+                "events_sha256": "50cebe27ade6ea1337287472de82aee6926da5dff0b5b435b978002d0c7b1f32",
+                "coverage_sha256": "10f6b3664edb9074b0b57d7634986793bee58c44ba2e5857444041a681ba7c03"
+              },
+              "observed_publications": 132,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 512,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 192,
+            "visits": 1,
+            "round_bound": 1560,
+            "response_bound": 1560
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 2614,
+              "backlog.multiple": 23262,
+              "backlog.one": 2766,
+              "backlog.zero": 830,
+              "cursor.wrap": 248,
+              "final.stall": 1214,
+              "quantum.equal": 174,
+              "quantum.greater": 345,
+              "quantum.less": 141,
+              "quantum.maximum": 107,
+              "quantum.minimum": 208,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 0,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 78,
+              "stall.medium": 146,
+              "stall.none": 20874,
+              "stall.short": 47,
+              "visit.many": 0,
+              "visit.one": 620,
+              "visit.zero": 1407
+            },
+            "random_quanta": [
+              [
+                64,
+                4096,
+                4096,
+                3658,
+                2097,
+                64,
+                2402,
+                4096
+              ],
+              [
+                2500,
+                64,
+                3101,
+                64,
+                4096,
+                64,
+                3898,
+                955
+              ],
+              [
+                4096,
+                64,
+                4096,
+                3520,
+                64,
+                4096,
+                2030,
+                1198
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 0,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 0,
+            "reactivation_boundary": 1
+          }
+        }
+      },
+      "input_probes": [
+        {
+          "test": "scheduler-input-done_unowned",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-done_mismatch",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-duplicate_commit",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_COMMIT",
+          "observed_fatals": [
+            "SCHED_INPUT_COMMIT"
+          ]
+        },
+        {
+          "test": "scheduler-input-config",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_CONFIG",
+          "observed_fatals": [
+            "SCHED_INPUT_CONFIG"
+          ]
+        },
+        {
+          "test": "scheduler-input-stale_done",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        }
+      ],
+      "seeded_defects": [
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14018661653,
+          "name": "scheduler-summary-E1-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:a01c859e3234e0f94a5b5910f6bc19a7f8adebc87e71be6fadb0b83f80548a28",
+          "size_bytes": 76945,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018661653"
+        },
+        {
+          "id": 14018612988,
+          "name": "scheduler-E1-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:a1b8ce4f3982989d3440782376072585f78fa202f93fd97549202ca50fb59ea4",
+          "size_bytes": 792774454,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018612988"
+        }
+      ]
+    },
+    "F0": {
+      "runs": [
+        {
+          "run": "coverage-2026-11-13T073631.188640+0000-d084061c",
+          "result": "PASS",
+          "cases": 10
+        },
+        {
+          "run": "regression-2026-11-13T071755.791328+0000-7d208c3f",
+          "result": "PASS",
+          "cases": 29
+        }
+      ],
+      "modes": {
+        "1": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 1,
+            "grants": 368,
+            "replacement": 331,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 9,
+            "reactivation": 4,
+            "continuing": 161,
+            "max_credit": 5631,
+            "bound_hits": 3,
+            "qids": 16,
+            "cycles": 13117,
+            "paused_wait": 6,
+            "reset_owned": 1,
+            "detached": 369
+          },
+          "baseline_mandatory": {
+            "hit": 22,
+            "total": 22
+          },
+          "baseline_owned_code_points": {
+            "branch": {
+              "hit": 18,
+              "total": 18
+            },
+            "toggle": {
+              "hit": 962,
+              "total": 1900
+            },
+            "expr": {
+              "hit": 18,
+              "total": 18
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "348ac4edfdefe588dcadce3d6c23501053d1763ecae69a5b99452a610d5b56e0"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 1536,
+              "quantum1": 1536,
+              "dispatch0": 9856,
+              "dispatch1": 9216,
+              "delivered0": 9792,
+              "delivered1": 9216,
+              "deficit0": 896,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 6,
+              "visits1": 6
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 9472,
+              "dispatch1": 18432,
+              "delivered0": 9408,
+              "delivered1": 18432,
+              "deficit0": 0,
+              "deficit1": 384,
+              "inflight": 64,
+              "visits0": 147,
+              "visits1": 147
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode1-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "698dab9f1a0637c17af259bc4cd223903e1f498d473cac56825fa1a149637ada",
+                "events_sha256": "16ace9e6e42ca0071db56c3f8e989c574df06aa341ba1e93a2a9a9237221d270",
+                "coverage_sha256": "ff8a74e09545a60db984fc8f006cc8dbd5e9d77102bda352a952acd35d80d8a6"
+              },
+              "observed_publications": 783,
+              "observed_cycles": 4800,
+              "length_choices": [
+                65,
+                80,
+                76,
+                58,
+                78,
+                85,
+                82,
+                92,
+                75,
+                92
+              ],
+              "qid_publications": [
+                46,
+                48,
+                92,
+                39,
+                68,
+                56,
+                44,
+                30,
+                71,
+                20,
+                45,
+                51,
+                40,
+                47,
+                38,
+                48
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 30
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "d2312acf2367e2707f56f84854bf4054b75d417260e7af92f6e03ebae1846c7f",
+                "events_sha256": "c95d2e1f143220db1192c7ebfd2042d40d0e7e683d9b1b99bc7c6c97e357236c",
+                "coverage_sha256": "04f5bf728b9a7e37983ae3adf2fbc5f77ea9e33938a17a1a8ac00de1b3c7476b"
+              },
+              "observed_publications": 781,
+              "observed_cycles": 4800,
+              "length_choices": [
+                74,
+                80,
+                85,
+                82,
+                85,
+                68,
+                79,
+                72,
+                76,
+                80
+              ],
+              "qid_publications": [
+                60,
+                27,
+                25,
+                58,
+                36,
+                75,
+                50,
+                33,
+                56,
+                86,
+                28,
+                55,
+                52,
+                45,
+                49,
+                46
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 21
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "4070de1207a43372e43c7e851e6536414e2bbc89e946eab7674c509a8272b4fa",
+                "events_sha256": "5f229b28905a25a9b9435a880b108e76ff6c18d256d038c29634063b00a3406a",
+                "coverage_sha256": "8730a021dde657053cf0d8d8f2b00345d463225331b702b1ff2f90df5a3f2af9"
+              },
+              "observed_publications": 779,
+              "observed_cycles": 4800,
+              "length_choices": [
+                76,
+                70,
+                73,
+                72,
+                78,
+                78,
+                76,
+                87,
+                86,
+                83
+              ],
+              "qid_publications": [
+                43,
+                37,
+                47,
+                50,
+                38,
+                44,
+                48,
+                66,
+                57,
+                64,
+                35,
+                46,
+                60,
+                41,
+                49,
+                54
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 24
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "698dab9f1a0637c17af259bc4cd223903e1f498d473cac56825fa1a149637ada",
+                "events_sha256": "16ace9e6e42ca0071db56c3f8e989c574df06aa341ba1e93a2a9a9237221d270",
+                "coverage_sha256": "ff8a74e09545a60db984fc8f006cc8dbd5e9d77102bda352a952acd35d80d8a6"
+              },
+              "observed_publications": 783,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 1536,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 576,
+            "visits": 24,
+            "round_bound": 27728,
+            "response_bound": 665472
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 546007,
+              "backlog.multiple": 623179,
+              "backlog.one": 11482,
+              "backlog.zero": 1811,
+              "cursor.wrap": 817,
+              "final.stall": 2352,
+              "quantum.equal": 360,
+              "quantum.greater": 2313,
+              "quantum.less": 1559,
+              "quantum.maximum": 1474,
+              "quantum.minimum": 1483,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 1,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 70,
+              "stall.medium": 160,
+              "stall.none": 92054,
+              "stall.short": 175410,
+              "visit.many": 553,
+              "visit.one": 443,
+              "visit.zero": 1228
+            },
+            "random_quanta": [
+              [
+                64,
+                2627,
+                64,
+                4096,
+                188,
+                1476,
+                4096,
+                64,
+                4096,
+                64,
+                4096,
+                3759,
+                2242,
+                779,
+                64,
+                4096
+              ],
+              [
+                1990,
+                64,
+                4030,
+                64,
+                2303,
+                4096,
+                3180,
+                381,
+                1466,
+                171,
+                4096,
+                64,
+                4007,
+                64,
+                4096,
+                3601
+              ],
+              [
+                387,
+                3974,
+                3164,
+                739,
+                3464,
+                2579,
+                4096,
+                3225,
+                893,
+                617,
+                2058,
+                64,
+                775,
+                4096,
+                3362,
+                1608
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 1,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 1,
+            "reactivation_boundary": 1
+          }
+        },
+        "0": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 0,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 1,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 0,
+            "grants": 368,
+            "replacement": 331,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 7,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 16,
+            "cycles": 38091,
+            "paused_wait": 0,
+            "reset_owned": 1,
+            "detached": 369
+          },
+          "baseline_mandatory": {
+            "hit": 13,
+            "total": 13
+          },
+          "baseline_owned_code_points": {
+            "branch": {
+              "hit": 12,
+              "total": 12
+            },
+            "toggle": {
+              "hit": 451,
+              "total": 1900
+            },
+            "expr": {
+              "hit": 13,
+              "total": 13
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "91939ae84f9748c41eb996f3a39bb4ab0e95c46d016d9e14f48a6b01d281a657"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 1536,
+              "quantum1": 1536,
+              "dispatch0": 5120,
+              "dispatch1": 122880,
+              "delivered0": 5120,
+              "delivered1": 121344,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 1536,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 122880,
+              "delivered0": 5120,
+              "delivered1": 121344,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 1536,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode0-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "8250ebbb64ae3baed0264c83f9d91ed6d893d4fcb223670fc37c7103b080dc2d",
+                "events_sha256": "47c410e223d6149043937be8335b834add619d722311ac5dd08e1e5ee55dd502",
+                "coverage_sha256": "67d5cbe43cf1d173e8a56670bf6379847fd657a63c7074a4581acef105827dbf"
+              },
+              "observed_publications": 777,
+              "observed_cycles": 4800,
+              "length_choices": [
+                91,
+                73,
+                90,
+                56,
+                86,
+                62,
+                84,
+                69,
+                86,
+                80
+              ],
+              "qid_publications": [
+                43,
+                37,
+                39,
+                82,
+                13,
+                59,
+                45,
+                48,
+                58,
+                54,
+                45,
+                63,
+                28,
+                48,
+                54,
+                61
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 30
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "2785a0798721306e96cbc5ed4891e31d5f387a6467a772f819755fd02b937570",
+                "events_sha256": "97eab0aac5ded1e612a9b666847b77ab71fc83463a93ce9055ec43a99adabe96",
+                "coverage_sha256": "4db61003a8e32f665dcf6a252dd4cf5e63b32e66ab0aa19de974d25dbec4740b"
+              },
+              "observed_publications": 781,
+              "observed_cycles": 4800,
+              "length_choices": [
+                73,
+                71,
+                70,
+                79,
+                94,
+                66,
+                91,
+                84,
+                83,
+                70
+              ],
+              "qid_publications": [
+                29,
+                47,
+                49,
+                24,
+                52,
+                55,
+                61,
+                70,
+                44,
+                35,
+                53,
+                47,
+                35,
+                66,
+                33,
+                81
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 21
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "759589f81fd261284128ae08253cb29f759ede2fb891f4d4960b0cc176d55e53",
+                "events_sha256": "75f92f19f2b6e9526c997fc5ec1cfe96fc368c922a20a6e7def296e622d23b51",
+                "coverage_sha256": "5a5907f5ac5dbac03513e3e2ddad1f491db599e1be30642c1af7204510358ae3"
+              },
+              "observed_publications": 779,
+              "observed_cycles": 4800,
+              "length_choices": [
+                72,
+                78,
+                71,
+                70,
+                90,
+                96,
+                73,
+                81,
+                73,
+                75
+              ],
+              "qid_publications": [
+                33,
+                65,
+                46,
+                51,
+                51,
+                48,
+                87,
+                40,
+                72,
+                40,
+                54,
+                28,
+                24,
+                46,
+                58,
+                36
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 25
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "8250ebbb64ae3baed0264c83f9d91ed6d893d4fcb223670fc37c7103b080dc2d",
+                "events_sha256": "47c410e223d6149043937be8335b834add619d722311ac5dd08e1e5ee55dd502",
+                "coverage_sha256": "67d5cbe43cf1d173e8a56670bf6379847fd657a63c7074a4581acef105827dbf"
+              },
+              "observed_publications": 777,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 1536,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 576,
+            "visits": 1,
+            "round_bound": 9264,
+            "response_bound": 9264
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 27593,
+              "backlog.multiple": 127211,
+              "backlog.one": 4588,
+              "backlog.zero": 2170,
+              "cursor.wrap": 294,
+              "final.stall": 314,
+              "quantum.equal": 190,
+              "quantum.greater": 901,
+              "quantum.less": 268,
+              "quantum.maximum": 265,
+              "quantum.minimum": 345,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 0,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 71,
+              "stall.medium": 162,
+              "stall.none": 125401,
+              "stall.short": 42,
+              "visit.many": 0,
+              "visit.one": 1339,
+              "visit.zero": 3434
+            },
+            "random_quanta": [
+              [
+                64,
+                64,
+                64,
+                1651,
+                2639,
+                1102,
+                2624,
+                2160,
+                4096,
+                1585,
+                1841,
+                736,
+                64,
+                3064,
+                64,
+                4096
+              ],
+              [
+                1024,
+                1226,
+                1339,
+                4096,
+                2470,
+                3488,
+                2920,
+                64,
+                3786,
+                4096,
+                64,
+                149,
+                64,
+                3810,
+                658,
+                64
+              ],
+              [
+                1082,
+                2966,
+                64,
+                3416,
+                566,
+                4096,
+                4096,
+                231,
+                4096,
+                4096,
+                2579,
+                2053,
+                64,
+                4096,
+                4026,
+                1496
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 0,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 0,
+            "reactivation_boundary": 1
+          }
+        }
+      },
+      "input_probes": [
+        {
+          "test": "scheduler-input-done_unowned",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-done_mismatch",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-duplicate_commit",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_COMMIT",
+          "observed_fatals": [
+            "SCHED_INPUT_COMMIT"
+          ]
+        },
+        {
+          "test": "scheduler-input-config",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_CONFIG",
+          "observed_fatals": [
+            "SCHED_INPUT_CONFIG"
+          ]
+        },
+        {
+          "test": "scheduler-input-stale_done",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        }
+      ],
+      "seeded_defects": [
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14019465474,
+          "name": "scheduler-F0-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:b53336b7f610159eca13f347ac59303b6b16d31609332dbc95f066f1f1bf7dc2",
+          "size_bytes": 796096695,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14019465474"
+        },
+        {
+          "id": 14019201461,
+          "name": "scheduler-summary-F0-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:3886b6bb734972d30f09c12bcdc9dc202bfc83df45c91dfe699627c550a0304d",
+          "size_bytes": 86188,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14019201461"
+        }
+      ]
+    },
+    "F1": {
+      "runs": [
+        {
+          "run": "coverage-2026-11-13T073644.144571+0000-68e9287c",
+          "result": "PASS",
+          "cases": 10
+        },
+        {
+          "run": "regression-2026-11-13T071759.888711+0000-1469819b",
+          "result": "PASS",
+          "cases": 29
+        }
+      ],
+      "modes": {
+        "1": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 1,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 2,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 1,
+            "grants": 368,
+            "replacement": 331,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 9,
+            "reactivation": 4,
+            "continuing": 161,
+            "max_credit": 5631,
+            "bound_hits": 3,
+            "qids": 16,
+            "cycles": 13117,
+            "paused_wait": 6,
+            "reset_owned": 1,
+            "detached": 369
+          },
+          "baseline_mandatory": {
+            "hit": 22,
+            "total": 22
+          },
+          "baseline_owned_code_points": {
+            "branch": {
+              "hit": 18,
+              "total": 18
+            },
+            "toggle": {
+              "hit": 962,
+              "total": 1900
+            },
+            "expr": {
+              "hit": 18,
+              "total": 18
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "348ac4edfdefe588dcadce3d6c23501053d1763ecae69a5b99452a610d5b56e0"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 1536,
+              "quantum1": 1536,
+              "dispatch0": 9856,
+              "dispatch1": 9216,
+              "delivered0": 9792,
+              "delivered1": 9216,
+              "deficit0": 896,
+              "deficit1": 0,
+              "inflight": 64,
+              "visits0": 6,
+              "visits1": 6
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 9472,
+              "dispatch1": 18432,
+              "delivered0": 9408,
+              "delivered1": 18432,
+              "deficit0": 0,
+              "deficit1": 384,
+              "inflight": 64,
+              "visits0": 147,
+              "visits1": 147
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode1-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "698dab9f1a0637c17af259bc4cd223903e1f498d473cac56825fa1a149637ada",
+                "events_sha256": "16ace9e6e42ca0071db56c3f8e989c574df06aa341ba1e93a2a9a9237221d270",
+                "coverage_sha256": "ff8a74e09545a60db984fc8f006cc8dbd5e9d77102bda352a952acd35d80d8a6"
+              },
+              "observed_publications": 783,
+              "observed_cycles": 4800,
+              "length_choices": [
+                65,
+                80,
+                76,
+                58,
+                78,
+                85,
+                82,
+                92,
+                75,
+                92
+              ],
+              "qid_publications": [
+                46,
+                48,
+                92,
+                39,
+                68,
+                56,
+                44,
+                30,
+                71,
+                20,
+                45,
+                51,
+                40,
+                47,
+                38,
+                48
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 30
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "d2312acf2367e2707f56f84854bf4054b75d417260e7af92f6e03ebae1846c7f",
+                "events_sha256": "c95d2e1f143220db1192c7ebfd2042d40d0e7e683d9b1b99bc7c6c97e357236c",
+                "coverage_sha256": "04f5bf728b9a7e37983ae3adf2fbc5f77ea9e33938a17a1a8ac00de1b3c7476b"
+              },
+              "observed_publications": 781,
+              "observed_cycles": 4800,
+              "length_choices": [
+                74,
+                80,
+                85,
+                82,
+                85,
+                68,
+                79,
+                72,
+                76,
+                80
+              ],
+              "qid_publications": [
+                60,
+                27,
+                25,
+                58,
+                36,
+                75,
+                50,
+                33,
+                56,
+                86,
+                28,
+                55,
+                52,
+                45,
+                49,
+                46
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 21
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "4070de1207a43372e43c7e851e6536414e2bbc89e946eab7674c509a8272b4fa",
+                "events_sha256": "5f229b28905a25a9b9435a880b108e76ff6c18d256d038c29634063b00a3406a",
+                "coverage_sha256": "8730a021dde657053cf0d8d8f2b00345d463225331b702b1ff2f90df5a3f2af9"
+              },
+              "observed_publications": 779,
+              "observed_cycles": 4800,
+              "length_choices": [
+                76,
+                70,
+                73,
+                72,
+                78,
+                78,
+                76,
+                87,
+                86,
+                83
+              ],
+              "qid_publications": [
+                43,
+                37,
+                47,
+                50,
+                38,
+                44,
+                48,
+                66,
+                57,
+                64,
+                35,
+                46,
+                60,
+                41,
+                49,
+                54
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 24
+              }
+            },
+            {
+              "test": "scheduler-mode1-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 26,
+              "mandatory_total": 26,
+              "artifact_digests": {
+                "functional_coverage_sha256": "698dab9f1a0637c17af259bc4cd223903e1f498d473cac56825fa1a149637ada",
+                "events_sha256": "16ace9e6e42ca0071db56c3f8e989c574df06aa341ba1e93a2a9a9237221d270",
+                "coverage_sha256": "ff8a74e09545a60db984fc8f006cc8dbd5e9d77102bda352a952acd35d80d8a6"
+              },
+              "observed_publications": 783,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 1536,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 576,
+            "visits": 24,
+            "round_bound": 27728,
+            "response_bound": 665472
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 546007,
+              "backlog.multiple": 623179,
+              "backlog.one": 11482,
+              "backlog.zero": 1811,
+              "cursor.wrap": 817,
+              "final.stall": 2352,
+              "quantum.equal": 360,
+              "quantum.greater": 2313,
+              "quantum.less": 1559,
+              "quantum.maximum": 1474,
+              "quantum.minimum": 1483,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 1,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 70,
+              "stall.medium": 160,
+              "stall.none": 92054,
+              "stall.short": 175410,
+              "visit.many": 553,
+              "visit.one": 443,
+              "visit.zero": 1228
+            },
+            "random_quanta": [
+              [
+                64,
+                2627,
+                64,
+                4096,
+                188,
+                1476,
+                4096,
+                64,
+                4096,
+                64,
+                4096,
+                3759,
+                2242,
+                779,
+                64,
+                4096
+              ],
+              [
+                1990,
+                64,
+                4030,
+                64,
+                2303,
+                4096,
+                3180,
+                381,
+                1466,
+                171,
+                4096,
+                64,
+                4007,
+                64,
+                4096,
+                3601
+              ],
+              [
+                387,
+                3974,
+                3164,
+                739,
+                3464,
+                2579,
+                4096,
+                3225,
+                893,
+                617,
+                2058,
+                64,
+                775,
+                4096,
+                3362,
+                1608
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 1,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 1,
+            "reactivation_boundary": 1
+          }
+        },
+        "0": {
+          "parameters": {
+            "DATA_W": 64,
+            "RX_FIFO_DEPTH": 2,
+            "TX_FIFO_DEPTH": 4,
+            "SCHED_MODE": 0,
+            "TRACE_ENABLE": 1,
+            "N_RX": 4,
+            "N_Q": 16,
+            "N_CELL": 1024,
+            "CELL_BYTES": 64,
+            "N_DESC": 256,
+            "MAX_PACKET_BYTES": 1536,
+            "MEM_RD_LATENCY": 2,
+            "CELL_ID_W": 10,
+            "CELL_COUNT_W": 11,
+            "DESC_ID_W": 8,
+            "DESC_COUNT_W": 9,
+            "DEFICIT_W": 13
+          },
+          "baseline_metrics": {
+            "mode": 0,
+            "grants": 368,
+            "replacement": 331,
+            "longer": 1,
+            "different": 1,
+            "stalls": 13,
+            "waiting": 7,
+            "reactivation": 3,
+            "continuing": 0,
+            "max_credit": 0,
+            "bound_hits": 0,
+            "qids": 16,
+            "cycles": 38091,
+            "paused_wait": 0,
+            "reset_owned": 1,
+            "detached": 369
+          },
+          "baseline_mandatory": {
+            "hit": 13,
+            "total": 13
+          },
+          "baseline_owned_code_points": {
+            "branch": {
+              "hit": 12,
+              "total": 12
+            },
+            "toggle": {
+              "hit": 451,
+              "total": 1900
+            },
+            "expr": {
+              "hit": 13,
+              "total": 13
+            },
+            "line": {
+              "hit": 4,
+              "total": 4
+            }
+          },
+          "baseline_artifact_digests": {
+            "coverage_sha256": "91939ae84f9748c41eb996f3a39bb4ab0e95c46d016d9e14f48a6b01d281a657"
+          },
+          "finite_endpoints": [
+            {
+              "quantum0": 1536,
+              "quantum1": 1536,
+              "dispatch0": 5120,
+              "dispatch1": 122880,
+              "delivered0": 5120,
+              "delivered1": 121344,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 1536,
+              "visits0": 0,
+              "visits1": 0
+            },
+            {
+              "quantum0": 64,
+              "quantum1": 128,
+              "dispatch0": 5120,
+              "dispatch1": 122880,
+              "delivered0": 5120,
+              "delivered1": 121344,
+              "deficit0": 0,
+              "deficit1": 0,
+              "inflight": 1536,
+              "visits0": 0,
+              "visits1": 0
+            }
+          ],
+          "stress": [
+            {
+              "test": "scheduler-mode0-stress-17",
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "8250ebbb64ae3baed0264c83f9d91ed6d893d4fcb223670fc37c7103b080dc2d",
+                "events_sha256": "47c410e223d6149043937be8335b834add619d722311ac5dd08e1e5ee55dd502",
+                "coverage_sha256": "67d5cbe43cf1d173e8a56670bf6379847fd657a63c7074a4581acef105827dbf"
+              },
+              "observed_publications": 777,
+              "observed_cycles": 4800,
+              "length_choices": [
+                91,
+                73,
+                90,
+                56,
+                86,
+                62,
+                84,
+                69,
+                86,
+                80
+              ],
+              "qid_publications": [
+                43,
+                37,
+                39,
+                82,
+                13,
+                59,
+                45,
+                48,
+                58,
+                54,
+                45,
+                63,
+                28,
+                48,
+                54,
+                61
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 30
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-31",
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "2785a0798721306e96cbc5ed4891e31d5f387a6467a772f819755fd02b937570",
+                "events_sha256": "97eab0aac5ded1e612a9b666847b77ab71fc83463a93ce9055ec43a99adabe96",
+                "coverage_sha256": "4db61003a8e32f665dcf6a252dd4cf5e63b32e66ab0aa19de974d25dbec4740b"
+              },
+              "observed_publications": 781,
+              "observed_cycles": 4800,
+              "length_choices": [
+                73,
+                71,
+                70,
+                79,
+                94,
+                66,
+                91,
+                84,
+                83,
+                70
+              ],
+              "qid_publications": [
+                29,
+                47,
+                49,
+                24,
+                52,
+                55,
+                61,
+                70,
+                44,
+                35,
+                53,
+                47,
+                35,
+                66,
+                33,
+                81
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 21
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-53",
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "759589f81fd261284128ae08253cb29f759ede2fb891f4d4960b0cc176d55e53",
+                "events_sha256": "75f92f19f2b6e9526c997fc5ec1cfe96fc368c922a20a6e7def296e622d23b51",
+                "coverage_sha256": "5a5907f5ac5dbac03513e3e2ddad1f491db599e1be30642c1af7204510358ae3"
+              },
+              "observed_publications": 779,
+              "observed_cycles": 4800,
+              "length_choices": [
+                72,
+                78,
+                71,
+                70,
+                90,
+                96,
+                73,
+                81,
+                73,
+                75
+              ],
+              "qid_publications": [
+                33,
+                65,
+                46,
+                51,
+                51,
+                48,
+                87,
+                40,
+                72,
+                40,
+                54,
+                28,
+                24,
+                46,
+                58,
+                36
+              ],
+              "random_quantum_summary": {
+                "min": 64,
+                "max": 4096,
+                "distinct": 25
+              }
+            },
+            {
+              "test": "scheduler-mode0-stress-replay",
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "mandatory_hit": 24,
+              "mandatory_total": 24,
+              "artifact_digests": {
+                "functional_coverage_sha256": "8250ebbb64ae3baed0264c83f9d91ed6d893d4fcb223670fc37c7103b080dc2d",
+                "events_sha256": "47c410e223d6149043937be8335b834add619d722311ac5dd08e1e5ee55dd502",
+                "coverage_sha256": "67d5cbe43cf1d173e8a56670bf6379847fd657a63c7074a4581acef105827dbf"
+              },
+              "observed_publications": 777,
+              "observed_cycles": 4800
+            }
+          ],
+          "simulation_progress": {
+            "packet_length": 1536,
+            "quanta": "q0=64; every other queue=4096",
+            "ready": "continuous",
+            "sink": "one accepted beat every three clocks",
+            "tx_bound": 576,
+            "visits": 1,
+            "round_bound": 9264,
+            "response_bound": 9264
+          },
+          "extended_example_seed17": {
+            "functional_counters": {
+              "backlog.all": 27593,
+              "backlog.multiple": 127211,
+              "backlog.one": 4588,
+              "backlog.zero": 2170,
+              "cursor.wrap": 294,
+              "final.stall": 314,
+              "quantum.equal": 190,
+              "quantum.greater": 901,
+              "quantum.less": 268,
+              "quantum.maximum": 265,
+              "quantum.minimum": 345,
+              "reactivation.round_all": 1,
+              "reset.0.0": 1,
+              "reset.0.1": 0,
+              "reset.1.0": 0,
+              "reset.1.1": 0,
+              "reset.2.0": 1,
+              "reset.2.1": 1,
+              "reset.3.0": 1,
+              "reset.3.1": 0,
+              "reset.4.0": 0,
+              "reset.4.1": 1,
+              "reset.5.0": 0,
+              "reset.5.1": 1,
+              "stall.long": 71,
+              "stall.medium": 162,
+              "stall.none": 125401,
+              "stall.short": 42,
+              "visit.many": 0,
+              "visit.one": 1339,
+              "visit.zero": 3434
+            },
+            "random_quanta": [
+              [
+                64,
+                64,
+                64,
+                1651,
+                2639,
+                1102,
+                2624,
+                2160,
+                4096,
+                1585,
+                1841,
+                736,
+                64,
+                3064,
+                64,
+                4096
+              ],
+              [
+                1024,
+                1226,
+                1339,
+                4096,
+                2470,
+                3488,
+                2920,
+                64,
+                3786,
+                4096,
+                64,
+                149,
+                64,
+                3810,
+                658,
+                64
+              ],
+              [
+                1082,
+                2966,
+                64,
+                3416,
+                566,
+                4096,
+                4096,
+                231,
+                4096,
+                4096,
+                2579,
+                2053,
+                64,
+                4096,
+                4026,
+                1496
+              ]
+            ]
+          },
+          "extended_scenarios": {
+            "mode": 0,
+            "progress_checks": 1,
+            "reconfigurations": 1,
+            "behind": 1,
+            "ahead": 1,
+            "completion_commits": 1,
+            "skip_commits": 0,
+            "reactivation_boundary": 1
+          }
+        }
+      },
+      "input_probes": [
+        {
+          "test": "scheduler-input-done_unowned",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-done_mismatch",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        },
+        {
+          "test": "scheduler-input-duplicate_commit",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_COMMIT",
+          "observed_fatals": [
+            "SCHED_INPUT_COMMIT"
+          ]
+        },
+        {
+          "test": "scheduler-input-config",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_CONFIG",
+          "observed_fatals": [
+            "SCHED_INPUT_CONFIG"
+          ]
+        },
+        {
+          "test": "scheduler-input-stale_done",
+          "result": "PASS",
+          "detector": "SCHED_INPUT_DONE",
+          "observed_fatals": [
+            "SCHED_INPUT_DONE"
+          ]
+        }
+      ],
+      "seeded_defects": [
+        {
+          "test": "scheduler-checker-bypass",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-credit",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-checker-missing",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-checker-head",
+          "result": "PASS",
+          "detector": "SCHEDULE_HEAD",
+          "observed_fatals": [
+            "SCHEDULE_HEAD"
+          ]
+        },
+        {
+          "test": "scheduler-checker-busy",
+          "result": "PASS",
+          "detector": "SCHEDULE_GRANT",
+          "observed_fatals": [
+            "SCHEDULE_GRANT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-extra-quantum",
+          "result": "PASS",
+          "detector": "SCHEDULE_CREDIT",
+          "observed_fatals": [
+            "SCHEDULE_CREDIT"
+          ]
+        },
+        {
+          "test": "scheduler-mode1-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        },
+        {
+          "test": "scheduler-mode0-missing-dispatch",
+          "result": "PASS",
+          "detector": "SCHEDULE_TIMING",
+          "observed_fatals": [
+            "SCHEDULE_TIMING"
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14018788512,
+          "name": "scheduler-summary-F1-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:f85a175de1ac9bddff5cf8812a3a0b3f82e53c9a525355c3a9817ad67fefee15",
+          "size_bytes": 86196,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018788512"
+        },
+        {
+          "id": 14018278755,
+          "name": "scheduler-F1-97f4a4640cacfe1b05a0988b139d8ac8cd82c3fe",
+          "digest": "sha256:97ed85dff4eef59a5284ffde46d8a7e68d2d2ca55b44f3d80a3c61799025b2dd",
+          "size_bytes": 796776739,
+          "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43384557984/artifacts/14018278755"
+        }
+      ]
+    }
+  },
+  "formal": [
+    {
+      "test": "rtl-scheduler-mode1-prove",
+      "result": "PASS",
+      "seed": null,
+      "expected": "PROVE",
+      "detector": null,
+      "observed_basecase_assertions": [],
+      "engine_status": "PASS",
+      "reached_covers": [],
+      "method": "unbounded k-induction"
+    },
+    {
+      "test": "rtl-scheduler-mode1-cover",
+      "result": "PASS",
+      "seed": null,
+      "expected": "COVER",
+      "detector": null,
+      "observed_basecase_assertions": [],
+      "engine_status": "PASS",
+      "reached_covers": [
+        {
+          "step": 4,
+          "name": "c_wait"
+        },
+        {
+          "step": 4,
+          "name": "c_different"
+        },
+        {
+          "step": 5,
+          "name": "c_long"
+        },
+        {
+          "step": 5,
+          "name": "c_completion_wait"
+        },
+        {
+          "step": 5,
+          "name": "c_continue"
+        },
+        {
+          "step": 5,
+          "name": "c_paused_visit"
+        },
+        {
+          "step": 5,
+          "name": "c_reactivate"
+        },
+        {
+          "step": 6,
+          "name": "c_reset_owned"
+        },
+        {
+          "step": 6,
+          "name": "c_replace"
+        },
+        {
+          "step": 6,
+          "name": "c_replacement_stall"
+        },
+        {
+          "step": 6,
+          "name": "c_resume_continue"
+        },
+        {
+          "step": 6,
+          "name": "c_carry"
+        }
+      ],
+      "method": "bounded reachability depth 16"
+    },
+    {
+      "test": "rtl-scheduler-mode1-mutation",
+      "result": "PASS",
+      "seed": null,
+      "expected": "SEEDED_DEFECT_DETECTION",
+      "detector": "a_credit",
+      "observed_basecase_assertions": [
+        "a_policy_credit",
+        "g_credit[0].a_credit"
+      ],
+      "engine_status": "FAIL",
+      "reached_covers": [],
+      "method": "intended base-case counterexample through depth 8"
+    },
+    {
+      "test": "rtl-scheduler-mode1-missing",
+      "result": "PASS",
+      "seed": null,
+      "expected": "SEEDED_DEFECT_DETECTION",
+      "detector": "a_policy_timing",
+      "observed_basecase_assertions": [
+        "a_policy_timing",
+        "a_presence"
+      ],
+      "engine_status": "FAIL",
+      "reached_covers": [],
+      "method": "intended base-case counterexample through depth 8"
+    },
+    {
+      "test": "rtl-scheduler-mode1-cursor",
+      "result": "PASS",
+      "seed": null,
+      "expected": "SEEDED_DEFECT_DETECTION",
+      "detector": "a_policy_cursor",
+      "observed_basecase_assertions": [
+        "a_policy_cursor",
+        "a_policy_timing"
+      ],
+      "engine_status": "FAIL",
+      "reached_covers": [],
+      "method": "intended base-case counterexample through depth 8"
+    },
+    {
+      "test": "rtl-scheduler-mode1-progress",
+      "result": "PASS",
+      "seed": null,
+      "engine_status": "PASS",
+      "method": "unbounded k-induction of conditional bounded-response property, maximum induction depth 110",
+      "response_bound": 96,
+      "tx_retirement_bound": 20
+    },
+    {
+      "test": "rtl-scheduler-mode1-progress-cover",
+      "result": "PASS",
+      "seed": null,
+      "engine_status": "PASS",
+      "method": "bounded reachability depth 110",
+      "response_bound": 96,
+      "tx_retirement_bound": 20
+    },
+    {
+      "test": "rtl-scheduler-mode0-prove",
+      "result": "PASS",
+      "seed": null,
+      "expected": "PROVE",
+      "detector": null,
+      "observed_basecase_assertions": [],
+      "engine_status": "PASS",
+      "reached_covers": [],
+      "method": "unbounded k-induction"
+    },
+    {
+      "test": "rtl-scheduler-mode0-cover",
+      "result": "PASS",
+      "seed": null,
+      "expected": "COVER",
+      "detector": null,
+      "observed_basecase_assertions": [],
+      "engine_status": "PASS",
+      "reached_covers": [
+        {
+          "step": 4,
+          "name": "c_wait"
+        },
+        {
+          "step": 4,
+          "name": "c_different"
+        },
+        {
+          "step": 5,
+          "name": "c_long"
+        },
+        {
+          "step": 5,
+          "name": "c_completion_wait"
+        },
+        {
+          "step": 5,
+          "name": "c_reactivate"
+        },
+        {
+          "step": 6,
+          "name": "c_reset_owned"
+        },
+        {
+          "step": 6,
+          "name": "c_replace"
+        },
+        {
+          "step": 6,
+          "name": "c_replacement_stall"
+        }
+      ],
+      "method": "bounded reachability depth 16"
+    },
+    {
+      "test": "rtl-scheduler-mode0-missing",
+      "result": "PASS",
+      "seed": null,
+      "expected": "SEEDED_DEFECT_DETECTION",
+      "detector": "a_policy_timing",
+      "observed_basecase_assertions": [
+        "a_policy_timing",
+        "a_presence"
+      ],
+      "engine_status": "FAIL",
+      "reached_covers": [],
+      "method": "intended base-case counterexample through depth 8"
+    },
+    {
+      "test": "rtl-scheduler-mode0-cursor",
+      "result": "PASS",
+      "seed": null,
+      "expected": "SEEDED_DEFECT_DETECTION",
+      "detector": "a_policy_cursor",
+      "observed_basecase_assertions": [
+        "a_policy_cursor",
+        "a_policy_timing"
+      ],
+      "engine_status": "FAIL",
+      "reached_covers": [],
+      "method": "intended base-case counterexample through depth 8"
+    },
+    {
+      "test": "rtl-scheduler-mode0-progress",
+      "result": "PASS",
+      "seed": null,
+      "engine_status": "PASS",
+      "method": "unbounded k-induction of conditional bounded-response property, maximum induction depth 110",
+      "response_bound": 48,
+      "tx_retirement_bound": 20
+    },
+    {
+      "test": "rtl-scheduler-mode0-progress-cover",
+      "result": "PASS",
+      "seed": null,
+      "engine_status": "PASS",
+      "method": "bounded reachability depth 110",
+      "response_bound": 48,
+      "tx_retirement_bound": 20
+    }
+  ],
+  "qualification_limits": [
+    "Production scheduler, queues and descriptor links only; metadata and packet retirement are local fixtures.",
+    "Safety has arbitrary TX readiness/stalls and no sink-progress assumption; progress is a separate reduced task with readiness high and retirement within20 clocks.",
+    "Stale unowned completion is a diagnosed neighbor violation; epoch filtering and invalid completions during newly owned work remain P09/P11B caller obligations.",
+    "Finite fairness includes open-visit credit and in-flight work; P12 owns system fairness.",
+    "Mandatory functional bins are closed for executed component elaborations; code/toggle holes remain visible in raw coverage, without system coverage signoff.",
+    "P09/P10 retain metadata/TX composition, packet-rate attribution and a reviewed baseline/optimization decision; P11B retains integrated proof closure.",
+    "Only merge of the passing independent DV PR establishes its verified acceptance scope."
+  ],
+  "coverage_exclusions": {
+    "1": {
+      "baseline": {
+        "replacement_busy.<singleton,auto_1>": "Dispatch collisions require free pre-state TX",
+        "replacement_busy.<longer,auto_1>": "Dispatch collisions require free pre-state TX",
+        "replacement_busy.<different,auto_1>": "Dispatch collisions require free pre-state TX"
+      },
+      "extended": {
+        "reset.0.1": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.1.1": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.3.1": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.4.0": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.5.0": "Reset phase has incompatible pre-state ownership or no RR byte visit"
+      }
+    },
+    "0": {
+      "baseline": {
+        "replacement_busy.<singleton,auto_1>": "Dispatch collisions require free pre-state TX",
+        "replacement_busy.<longer,auto_1>": "Dispatch collisions require free pre-state TX",
+        "replacement_busy.<different,auto_1>": "Dispatch collisions require free pre-state TX",
+        "reactivation_fit.<auto_1,equal>": "Byte credit is absent in packet RR",
+        "reactivation_fit.<auto_0,surplus>": "Byte credit is absent in packet RR",
+        "reactivation_fit.<auto_1,insufficient>": "Byte credit is absent in packet RR",
+        "reactivation_fit.<auto_1,surplus>": "Byte credit is absent in packet RR",
+        "reactivation_fit.<auto_0,insufficient>": "Byte credit is absent in packet RR",
+        "reactivation_fit.<auto_0,equal>": "Byte credit is absent in packet RR",
+        "fit.insufficient": "Byte credit is absent in packet RR",
+        "fit.equal": "Byte credit is absent in packet RR",
+        "fit.surplus": "Byte credit is absent in packet RR"
+      },
+      "extended": {
+        "reset.0.1": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.1.0": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.1.1": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.3.1": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.4.0": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "reset.5.0": "Reset phase has incompatible pre-state ownership or no RR byte visit",
+        "visit.many": "Packet RR closes a visit after exactly one dispatch"
+      }
+    }
+  },
+  "reset_phase_ids": {
+    "0": "idle",
+    "1": "funded visit without TX owner",
+    "2": "pending publication",
+    "3": "eligible dispatch canceled by reset",
+    "4": "TX completion canceled by reset",
+    "5": "owned stalled packet"
+  },
+  "formal_scope": {
+    "configuration": {
+      "N_RX": 1,
+      "N_Q": 2,
+      "N_CELL": 16,
+      "N_DESC": 8,
+      "CELL_BYTES": 16,
+      "MAX_PACKET_BYTES": 128
+    },
+    "safety_assumptions": "Two startup reset samples; arbitrary later reset. Legal static 64..4096 per-qid quanta. Abstract P03 merged count transitions (0..2), immutable pre-state heads until pop, legal selected packet length 1..MAX. Completion only while TX owns; readiness/completion have no progress bound.",
+    "progress_assumptions": "Two startup reset samples, arbitrary later resets. Two continuously backlogged 128-byte queues after legal initial publications; q0 quantum64, q1 quantum128; distinct alternating descriptor IDs. TX ready always high; accepted packets retire within20 clocks, only while event-owned. These progress assumptions are absent from safety tasks."
+  },
+  "source_copy_digests": {
+    "extra-quantum": "9f100d3cb689bb86ddb330467162e05c94a8bbbdb0ee9bce467175b5f9ed70d1",
+    "missing-dispatch": "a2dce32a46d97b5e6f2a3308a09abad4b01d1b582364cfab7feee90fe524d761",
+    "lost-carry": "a81141f28d8fba648d6069cb381d5d2a3108db844466923ea834ebd24a290fd9",
+    "wait-quantum": "f33e18d616c297af5882d9a9ef9f7fd0daffd0ffc83d4e01794afb81fab6dfc2",
+    "wrong-length": "7442b3e9798ca4193734f4b838052a57dada979728f898a53cf2ec9c52dce171",
+    "busy-dispatch": "859f5607a43853043d269a5c0708039ba54bdb94efdefe02df080b9c2d573e65",
+    "replacement-clear": "026d40b328db761ad5616fbad2567fdd154964b25f4ae40d813a2d77b2937a1c",
+    "empty-retain": "e65dce23e78c5e3c4273702445d1a03f60cf8f894f671e8f97598a3542cbb144",
+    "rr-no-advance": "2e8708bbdfbd08136a03fec0fb0263904fe2b1ac1ec72d591dbe1ace7bdd18f6",
+    "formal-frozen-cursor": "59995b6dfbbd6f90f59440383e3a4614aaad122dd8250d680073ef5749e16da9"
+  }
+}

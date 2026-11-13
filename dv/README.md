@@ -167,3 +167,12 @@ make coverage RUN_ARGS='--profile E0 --test scheduler --coverage-manifest .build
 Substitute a passing run. Extraction verifies profile/parameters, current source
 and raw artifact hashes, exact mandatory bins and exclusions. It reports code
 holes without merging different elaborations or claiming system closure.
+
+The scheduler handler also executes `tm_scheduler_stress_test` at seeds 17, 31
+and 53 plus a seed-17 replay when invoked with `--seed 17`. It requires passive
+event replay, observed random publication counts, all-queue/sparse activation,
+finite fairness and explicit progress bounds, lifecycle/reset cases and extended
+coverage. Use `--timeout 240` for these cases. Input ownership/configuration
+probes and source-copy defects have named intended detectors; seven additional
+scheduler defects run at E0. See the same independent report for the six-profile
+execution and conditional formal progress boundary.

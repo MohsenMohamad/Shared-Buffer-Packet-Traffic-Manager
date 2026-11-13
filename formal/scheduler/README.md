@@ -1,6 +1,6 @@
 # FP-SCHED scope
 
-`make formal-rtl RUN_ARGS='--test scheduler --timeout 240'` targets the production
+`make formal-rtl RUN_ARGS='--test scheduler --timeout 600'` targets the production
 `tm_drr_api` in DRR and packet-RR elaborations at N_RX=1, N_Q=2, N_CELL=16,
 N_DESC=8, CELL_BYTES=16, MAX_PACKET_BYTES=128. This is a named reduced formal
 configuration, not the full E0/F0 system.
@@ -55,3 +55,17 @@ failure requires engine FAIL and a nonempty counterexample. The existing
 extra-quantum mutation must still fail `a_credit`. Safety retains arbitrary
 readiness, unbounded TX stalls and arbitrary later reset; no fairness assumption
 has been added.
+
+## Conditional progress
+
+The same selection runs `scheduler_progress.sv` separately from safety. Its
+reduced two-queue window has continuously backlogged 128-byte heads and quanta
+64/128. TX readiness is continuous and each accepted packet retires within
+20 clocks. The asserted response deadlines are 96 clocks for DRR and 48 for
+packet RR. Startup/later resets abandon the window. Alternating descriptor IDs
+model legal publication/replacement without recycling the currently owned ID.
+
+These progress assumptions are confined to that harness. The task attempts
+unbounded k-induction through depth 110 and separately reaches its response
+cover. A missing proof remains INCONCLUSIVE. The [independent results](../../docs/results/P04-independent-dv.md)
+record the completed safety/progress proofs, covers and actual budgets.
