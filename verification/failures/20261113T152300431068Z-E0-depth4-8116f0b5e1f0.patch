@@ -1,0 +1,773 @@
+diff --git a/rtl/include/tm_module_ports.sv b/rtl/include/tm_module_ports.sv
+index 8688656..dc7b0ba 100644
+--- a/rtl/include/tm_module_ports.sv
++++ b/rtl/include/tm_module_ports.sv
+@@ -76,68 +76,11 @@ module tm_resource_accounting_api import tm_fixed::*; #(
+ `include "tm_validate.svh"
+ endmodule
+ 
+-module tm_metadata_api import tm_fixed::*; #(
+-`include "tm_parameters.svh"
+-,
+-`define TM_ANSI_TYPES
+-`include "tm_types.svh"
+-`undef TM_ANSI_TYPES
+-) (
+-    input logic clk,
+-    input cell_link_write_t cell_write,
+-    input desc_link_write_t queue_write,
+-    input desc_write_t info_write,
+-    input cell_id_t tx_cell,
+-    input cell_id_t abort_cell,
+-    output cell_id_t tx_next,
+-    output cell_id_t abort_next,
+-    input logic [N_Q*DESC_ID_W-1:0] queue_heads,
+-    output logic [N_Q*DESC_INFO_W-1:0] head_info,
+-    input desc_id_t queue_head,
+-    output desc_id_t queue_next
+-);
+-`include "tm_validate.svh"
+-endmodule
+ 
+-module tm_packet_ram_api import tm_fixed::*; #(
+-`include "tm_parameters.svh"
+-,
+-`define TM_ANSI_TYPES
+-`include "tm_types.svh"
+-`undef TM_ANSI_TYPES
+-) (
+-    input logic clk,
+-    input ram_write_t write_req,
+-    input ram_read_t read_req,
+-    output ram_response_t response
+-);
+-`include "tm_validate.svh"
+-endmodule
+ 
+-module tm_tx_api import tm_fixed::*; #(
+-`include "tm_parameters.svh"
+-,
+-`define TM_ANSI_TYPES
+-`include "tm_types.svh"
+-`undef TM_ANSI_TYPES
+-) (
+-    input logic clk,
+-    input logic rst_n,
+-    input dispatch_t dispatch,
+-    output logic dispatch_ready,
+-    output ram_read_t read_req,
+-    input ram_response_t response,
+-    output cell_id_t link_cell,
+-    input cell_id_t next_cell,
+-    output logic m_valid,
+-    output beat_t m_beat,
+-    input logic m_ready,
+-    output cell_return_t cell_return,
+-    output tx_done_t tx_done,
+-    output logic idle
+-);
+-`include "tm_validate.svh"
+-endmodule
++
++
++
+ 
+ module tm_abort_reclaim_api import tm_fixed::*; #(
+ `include "tm_parameters.svh"
+diff --git a/verification/sources/production.json b/verification/sources/production.json
+index 5436061..8cd78eb 100644
+--- a/verification/sources/production.json
++++ b/verification/sources/production.json
+@@ -15,12 +15,15 @@
+     "rtl/csr/tm_statistics.sv",
+     "rtl/queue/tm_queue_ctrl.sv",
+     "rtl/queue/tm_desc_links.sv",
+-    "rtl/scheduler/tm_drr.sv"
++    "rtl/scheduler/tm_drr.sv",
++    "rtl/memory/tm_packet_ram.sv",
++    "rtl/memory/tm_metadata.sv",
++    "rtl/tx/tm_tx.sv"
+   ],
+   "headers": [
+     "rtl/include/tm_parameters.svh",
+     "rtl/include/tm_types.svh",
+     "rtl/include/tm_validate.svh"
+   ],
+-  "scope": "Storage, queues, scheduler and CSR/statistics APIs implemented; remaining APIs and top are declarations."
++  "scope": "Storage, queues, scheduler, CSR/statistics and memory/metadata/TX APIs implemented; remaining APIs and top are declarations."
+ }
+diff --git a/dv/designer/memory_tx_tb.sv b/dv/designer/memory_tx_tb.sv
+new file mode 100644
+index 0000000..0aedb41
+--- /dev/null
++++ b/dv/designer/memory_tx_tb.sv
+@@ -0,0 +1,300 @@
++// Designer smoke only; independent P05 qualification belongs to its DV PR.
++module memory_tx_tb import tm_fixed::*; #(
++`include "tm_parameters.svh"
++,
++`define TM_ANSI_TYPES
++`include "tm_types.svh"
++`undef TM_ANSI_TYPES
++) ();
++localparam integer CELL_WORDS=CELL_BYTES/8;
++logic clk=0;
++always #5 clk=~clk;
++logic rst_n=0;
++ram_write_t write_req;
++ram_read_t read_req;
++ram_response_t response;
++cell_link_write_t cell_write;
++desc_link_write_t queue_write;
++desc_write_t info_write;
++cell_id_t link_cell, next_cell, abort_cell, abort_next;
++logic [N_Q*DESC_ID_W-1:0] queue_heads;
++logic [N_Q*DESC_INFO_W-1:0] head_info;
++desc_id_t queue_head, queue_next;
++dispatch_t dispatch;
++logic dispatch_ready, m_valid, m_ready, idle;
++beat_t m_beat;
++cell_return_t cell_return;
++tx_done_t tx_done;
++`define PARAMS .DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BYTES), \
++    .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_PACKET_BYTES(MAX_PACKET_BYTES), \
++    .RX_FIFO_DEPTH(RX_FIFO_DEPTH), .MEM_RD_LATENCY(MEM_RD_LATENCY), .TX_FIFO_DEPTH(TX_FIFO_DEPTH)
++tm_packet_ram_api #(`PARAMS) ram (.clk, .write_req, .read_req, .response);
++tm_metadata_api #(`PARAMS) metadata (.clk, .cell_write, .queue_write, .info_write,
++    .tx_cell(link_cell), .tx_next(next_cell), .abort_cell, .abort_next,
++    .queue_heads, .head_info, .queue_head, .queue_next);
++tm_tx_api #(`PARAMS) tx (.clk, .rst_n, .dispatch, .dispatch_ready, .read_req,
++    .response, .link_cell, .next_cell, .m_valid, .m_ready, .m_beat,
++    .cell_return, .tx_done, .idle);
++`undef PARAMS
++
++function automatic cell_id_t chain_cell(input int ordinal);
++    return cell_id_t'((ordinal*5+3)%N_CELL);
++endfunction
++function automatic logic [63:0] pattern(input int ordinal, input int salt);
++    logic [63:0] value;
++    for (int b=0; b<8; b++) value[b*8 +: 8]=8'(ordinal*8+b+salt);
++    return value;
++endfunction
++function automatic logic [63:0] packet_user(input int length);
++    output_user_t user_value;
++    user_value='0;
++    user_value.qid=8'(N_Q-1);
++    user_value.length=16'(length);
++    user_value.tag=16'habcd;
++    user_value.source=8'(N_RX-1);
++    return user_value;
++endfunction
++
++int edge_number=0, dispatch_edge, first_valid_edge, previous_accept;
++int expected_length=0, expected_salt=0, sent=0, read_ordinal=0, credits=0;
++int full_pending_hits=0, triple_hits=0, cells_freed=0, packets_done=0;
++bit packet_live=0, held=0, continuous=0;
++beat_t held_beat;
++logic [63:0] memory_model [N_CELL*CELL_WORDS];
++logic [MEM_RD_LATENCY-1:0] due_valid='0;
++logic [63:0] due_data [MEM_RD_LATENCY];
++bit captured [N_CELL];
++
++// Sample actual requests/output at the API edge, independently of TX state.
++always @(posedge clk) begin
++    edge_number++;
++    if (edge_number>MEM_RD_LATENCY) begin
++        assert (response.valid==due_valid[MEM_RD_LATENCY-1]) else $fatal(1,"RAM latency");
++        if (response.valid) assert (response.data==due_data[MEM_RD_LATENCY-1])
++            else $fatal(1,"RAM data");
++    end
++    for (int i=MEM_RD_LATENCY-1; i>0; i--) begin
++        due_valid[i]=due_valid[i-1];
++        due_data[i]=due_data[i-1];
++    end
++    due_valid[0]=read_req.valid;
++    if (read_req.valid) due_data[0]=memory_model[read_req.addr];
++    if (write_req.valid) begin
++        assert (!(read_req.valid && write_req.addr==read_req.addr)) else $fatal(1,"collision");
++        memory_model[write_req.addr]=write_req.data;
++    end
++    if (!rst_n) begin
++        assert (!m_valid && !read_req.valid && !cell_return.valid && !tx_done.valid && !dispatch_ready)
++            else $fatal(1,"reset controls");
++        packet_live=0;
++        held=0;
++        sent=0;
++        read_ordinal=0;
++        credits=0;
++        foreach (captured[c]) captured[c]=0;
++    end else begin
++        if (dispatch.valid) begin
++            assert (dispatch_ready && !packet_live) else $fatal(1,"dispatch");
++            packet_live=1;
++            dispatch_edge=edge_number;
++            first_valid_edge=-1;
++            previous_accept=-1;
++            sent=0;
++            read_ordinal=0;
++            foreach (captured[c]) captured[c]=0;
++        end
++        if (held) assert (m_valid && m_beat==held_beat) else $fatal(1,"stalled fields");
++        held=m_valid && !m_ready;
++        held_beat=m_beat;
++        if (read_req.valid) begin
++            assert (packet_live) else $fatal(1,"read without packet");
++            assert (int'(read_req.addr)==int'(chain_cell(read_ordinal/CELL_WORDS))*CELL_WORDS+read_ordinal%CELL_WORDS)
++                else $fatal(1,"read order");
++            if (read_ordinal%CELL_WORDS==0 && (read_ordinal/CELL_WORDS+1)*CELL_BYTES<expected_length) begin
++                assert (next_cell==chain_cell(read_ordinal/CELL_WORDS+1)) else $fatal(1,"next link");
++                captured[chain_cell(read_ordinal/CELL_WORDS)]=1;
++            end
++            read_ordinal++;
++        end
++        if (m_valid && first_valid_edge<0) begin
++            first_valid_edge=edge_number;
++            assert (first_valid_edge-dispatch_edge<=MEM_RD_LATENCY+4) else $fatal(1,"first valid");
++        end
++        if (m_valid && m_ready) begin : check_output
++            int left;
++            bit final_word, boundary;
++            logic [7:0] keep_mask;
++            logic [63:0] expected_data;
++            assert (packet_live) else $fatal(1,"output without packet");
++            left=expected_length-sent*8;
++            final_word=left<=8;
++            boundary=final_word || sent%CELL_WORDS==CELL_WORDS-1;
++            keep_mask=left>=8 ? 8'hff : 8'((1<<left)-1);
++            expected_data=pattern(sent,expected_salt);
++            for (int b=0; b<8; b++) if (keep_mask[b])
++                assert (m_beat.data[b*8 +: 8]==expected_data[b*8 +: 8]) else $fatal(1,"output byte");
++            assert (m_beat.keep==keep_mask && m_beat.last==final_word && m_beat.user==packet_user(expected_length))
++                else $fatal(1,"framing/user");
++            assert (cell_return.valid==boundary && tx_done.valid==final_word) else $fatal(1,"retirement edge");
++            if (boundary) begin
++                assert (cell_return.id==chain_cell(sent/CELL_WORDS) && !cell_return.abort_source &&
++                        cell_return.desc==desc_id_t'(2) && cell_return.qid==qid_t'(N_Q-1))
++                    else $fatal(1,"return owner");
++                if (!final_word) assert (captured[cell_return.id]) else $fatal(1,"uncaptured link");
++                cells_freed++;
++            end
++            if (continuous && previous_accept>=0)
++                assert (edge_number==previous_accept+1) else $fatal(1,"within-packet bubble");
++            previous_accept=edge_number;
++            sent++;
++            if (final_word) begin
++                assert (tx_done.desc==desc_id_t'(2) && tx_done.qid==qid_t'(N_Q-1) && tx_done.length==16'(expected_length))
++                    else $fatal(1,"completion fields");
++                packet_live=0;
++                packets_done++;
++            end
++        end else assert (!cell_return.valid && !tx_done.valid) else $fatal(1,"early return");
++        credits+=int'(read_req.valid)-int'(m_valid && m_ready);
++        assert (credits>=0 && credits<=TX_FIFO_DEPTH) else $fatal(1,"credit overflow");
++        if (credits==TX_FIFO_DEPTH && !m_ready && read_req.valid) full_pending_hits++;
++        if (read_req.valid && response.valid && m_valid && m_ready) triple_hits++;
++    end
++end
++
++task automatic cycle;
++    @(posedge clk);
++    #1;
++    @(negedge clk);
++endtask
++
++task automatic reset_tx;
++    rst_n=0;
++    dispatch='0;
++    write_req='0;
++    cell_write='0;
++    info_write='0;
++    queue_write='0;
++    m_ready=0;
++    cycle(); cycle();
++    rst_n=1;
++    cycle();
++    assert (idle && dispatch_ready) else $fatal(1,"reset not idle");
++endtask
++
++task automatic load_packet(input int length, input int salt);
++    expected_length=length;
++    expected_salt=salt;
++    for (int c=0; c<(length+CELL_BYTES-1)/CELL_BYTES-1; c++) begin
++        cell_write='{valid:1'b1,id:chain_cell(c),next_id:chain_cell(c+1)};
++        cycle();
++    end
++    cell_write='0;
++    for (int w=0; w<(length+7)/8; w++) begin
++        write_req='{valid:1'b1,addr:ADDR_W'(int'(chain_cell(w/CELL_WORDS))*CELL_WORDS+w%CELL_WORDS),data:pattern(w,salt)};
++        cycle();
++    end
++    write_req='0;
++    info_write='0;
++    info_write.valid=1;
++    info_write.id=desc_id_t'(2);
++    info_write.info='{head:chain_cell(0),ncell:cell_count_t'((length+CELL_BYTES-1)/CELL_BYTES),
++        length:16'(length),qid:qid_t'(N_Q-1),tag:16'habcd,source:port_id_t'(N_RX-1)};
++    queue_heads='0;
++    for (int q=0; q<N_Q; q++) queue_heads[q*DESC_ID_W +: DESC_ID_W]=desc_id_t'(2);
++    cycle();
++    for (int q=0; q<N_Q; q++)
++        assert (head_info[q*DESC_INFO_W +: DESC_INFO_W]==info_write.info) else $fatal(1,"head info mux");
++    info_write.valid=0;
++endtask
++
++task automatic start_packet;
++    assert (dispatch_ready) else $fatal(1,"busy before start");
++    dispatch='{valid:1'b1,qid:qid_t'(N_Q-1),desc:desc_id_t'(2),info:info_write.info};
++    cycle();
++    dispatch='0;
++endtask
++
++task automatic send_packet(input int length, input int salt, input bit stall);
++    int start_done, steps;
++    bit reuse;
++    cell_id_t reuse_id;
++    continuous=!stall;
++    load_packet(length,salt);
++    m_ready=!stall;
++    start_done=packets_done;
++    start_packet();
++    if (stall) repeat (TX_FIFO_DEPTH+MEM_RD_LATENCY+4) cycle();
++    steps=0;
++    while (packets_done==start_done && steps<2000) begin
++        // Independent repeatable stalls include cell and final-beat holds.
++        m_ready=!stall || (steps%11>=4 && steps%7!=0);
++        #1;
++        reuse=cell_return.valid && !tx_done.valid;
++        reuse_id=cell_return.id;
++        cycle();
++        write_req='0;
++        cell_write='0;
++        if (reuse) begin
++            // First legal following edge: overwrite returned payload/link
++            // while the previous packet still owns later buffered cells.
++            write_req='{valid:1'b1,addr:ADDR_W'(int'(reuse_id)*CELL_WORDS),data:64'hfeedfacecafef00d};
++            cell_write='{valid:1'b1,id:reuse_id,next_id:reuse_id};
++        end
++        steps++;
++    end
++    assert (packets_done==start_done+1) else $fatal(1,"TX timeout");
++    write_req='0;
++    cell_write='0;
++    m_ready=0;
++    assert (idle && dispatch_ready) else $fatal(1,"not idle after EOF");
++    cycle();
++endtask
++
++initial begin
++    write_req='0; cell_write='0; queue_write='0; info_write='0;
++    dispatch='0; abort_cell='0; queue_head='0; queue_heads='0; m_ready=0;
++    reset_tx();
++    queue_write='{valid:1'b1,id:desc_id_t'(1),next_id:desc_id_t'(3)};
++    queue_head=desc_id_t'(1);
++    cycle();
++    queue_write='0;
++    assert (queue_next==desc_id_t'(3)) else $fatal(1,"P03 link child");
++    cell_write='{valid:1'b1,id:cell_id_t'(0),next_id:cell_id_t'(7)};
++    abort_cell=cell_id_t'(0);
++    cycle();
++    cell_write='0;
++    assert (abort_next==cell_id_t'(7)) else $fatal(1,"abort link mux");
++    // Exact keeps and boundaries, repeated descriptor/tag/physical IDs.
++    for (int length=1; length<=9; length++) send_packet(length,19+length,1);
++    send_packet(CELL_BYTES-1,41,1);
++    send_packet(CELL_BYTES,43,1);
++    send_packet(CELL_BYTES+1,47,1);
++    send_packet(MAX_PACKET_BYTES-1,71,1);
++    send_packet(MAX_PACKET_BYTES,83,0);
++    // Pending read reset without resetting RAM or its response pipeline.
++    load_packet(MAX_PACKET_BYTES,101);
++    start_packet();
++    cycle();
++    reset_tx();
++    send_packet(9,153,0);
++    // Full FIFO reset; then reset while the last beat is stalled.
++    load_packet(MAX_PACKET_BYTES,171);
++    start_packet();
++    repeat (TX_FIFO_DEPTH+MEM_RD_LATENCY+3) cycle();
++    reset_tx();
++    load_packet(1,191);
++    start_packet();
++    repeat (MEM_RD_LATENCY+4) cycle();
++    assert (m_valid && m_beat.last) else $fatal(1,"missing stalled EOF");
++    reset_tx();
++    send_packet(MAX_PACKET_BYTES,211,1);
++    assert (full_pending_hits>0 && triple_hits>0) else $fatal(1,"missing pressure case");
++    $display("TM_DESIGNER_MEMORY_TX_PASS packets=%0d cells=%0d full_pending=%0d triple=%0d latency=%0d depth=%0d",
++        packets_done,cells_freed,full_pending_hits,triple_hits,MEM_RD_LATENCY,TX_FIFO_DEPTH);
++    $finish;
++end
++initial begin
++    #200000;
++    $fatal(1,"watchdog");
++end
++endmodule
+diff --git a/dv/designer/run_memory_tx.py b/dv/designer/run_memory_tx.py
+new file mode 100644
+index 0000000..9476912
+--- /dev/null
++++ b/dv/designer/run_memory_tx.py
+@@ -0,0 +1,52 @@
++#!/usr/bin/env python3
++"""Separate designer smoke registration; uses existing evidence/failure capture."""
++import argparse
++import json
++from pathlib import Path
++import sys
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / 'tools'))
++from evidence import Case, Run, completed, utc  # noqa: E402
++from registry import profile, sources  # noqa: E402
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--profile', action='append', choices=['F0', 'F1', 'I0', 'I1', 'E0', 'E1'])
++    parser.add_argument('--depth', action='append', type=int, choices=[4, 8])
++    parser.add_argument('--jobs', type=int, default=2)
++    args = parser.parse_args()
++    run = Run(ROOT / '.build/runs' / ('designer-memory-tx-' + utc().replace(':', '')),
++              profile='designer')
++    run.scope = 'Designer smoke of production RAM/metadata/TX; independent qualification remains P05-DV.'
++    registered = sources('production')
++    designer = json.loads((ROOT / 'dv/designer/sources.json').read_text())
++    for name in args.profile or ['E0', 'I1']:
++        for depth in args.depth or [4, 8]:
++            case = Case(run, f'{name}-depth{depth}')
++            params = dict(profile(name), TX_FIFO_DEPTH=depth)
++            case.data.update(parameters=params, source_set='production + dv/designer/sources.json')
++            binary = case.path / 'obj/Vmemory_tx_tb'
++            argv = ['verilator', '--binary', '--timing', '--assert', '--timescale', '1ns/1ps',
++                    '--build-jobs', str(args.jobs), '--top-module', 'memory_tx_tb',
++                    '--Mdir', str(binary.parent)]
++            argv += ['-I' + str(ROOT / p) for p in registered['include_dirs']]
++            argv += [f'-G{k}={v}' for k, v in params.items()]
++            argv += [str(ROOT / p) for p in registered['sources'] + designer['sources']]
++            build = case.execute(argv, timeout=240)
++            if build['result'] != 'PASS' or not binary.is_file():
++                case.finish('TOOL_ERROR', 'Designer compilation failed or executable missing')
++                break
++            step = case.execute([str(binary)], timeout=60, cwd=case.path)
++            result, why = completed(step, 'TM_DESIGNER_MEMORY_TX_PASS')
++            case.finish(result, why)
++            if result != 'PASS':
++                break
++        if case.data['result'] != 'PASS':
++            break
++    return run.finish()
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+diff --git a/dv/designer/sources.json b/dv/designer/sources.json
+new file mode 100644
+index 0000000..984b22f
+--- /dev/null
++++ b/dv/designer/sources.json
+@@ -0,0 +1,6 @@
++{
++  "schema_version": 1,
++  "extends": "production",
++  "sources": ["dv/designer/memory_tx_tb.sv"],
++  "scope": "RTL-owner memory/metadata/TX designer smoke; separate from independent DV suites."
++}
+diff --git a/rtl/memory/tm_metadata.sv b/rtl/memory/tm_metadata.sv
+new file mode 100644
+index 0000000..af62e2a
+--- /dev/null
++++ b/rtl/memory/tm_metadata.sv
+@@ -0,0 +1,63 @@
++module tm_metadata_api import tm_fixed::*; #(
++`include "tm_parameters.svh"
++,
++`define TM_ANSI_TYPES
++`include "tm_types.svh"
++`undef TM_ANSI_TYPES
++) (
++    input logic clk,
++    input cell_link_write_t cell_write,
++    input desc_link_write_t queue_write,
++    input desc_write_t info_write,
++    input cell_id_t tx_cell,
++    input cell_id_t abort_cell,
++    output cell_id_t tx_next,
++    output cell_id_t abort_next,
++    input logic [N_Q*DESC_ID_W-1:0] queue_heads,
++    output logic [N_Q*DESC_INFO_W-1:0] head_info,
++    input desc_id_t queue_head,
++    output desc_id_t queue_next
++);
++`include "tm_validate.svh"
++cell_id_t cell_next [N_CELL];
++descriptor_t info [N_DESC];
++
++// Register arrays: one RX extension writer and two independent read muxes.
++assign tx_next = int'(tx_cell)<N_CELL ? cell_next[tx_cell] : '0;
++assign abort_next = int'(abort_cell)<N_CELL ? cell_next[abort_cell] : '0;
++// Immutable reservation info: one writer and N_Q queue-head read muxes.
++for (genvar q=0; q<N_Q; q++) begin : g_head
++    wire [DESC_ID_W-1:0] id = queue_heads[q*DESC_ID_W +: DESC_ID_W];
++    assign head_info[q*DESC_INFO_W +: DESC_INFO_W] =
++        int'(id)<N_DESC ? info[id] : '0;
++end
++
++// The sole descriptor-next owner is the qualified P03 child: one enqueue
++// writer, one old-head read mux. No duplicate descriptor-link array.
++tm_desc_links #(
++    .DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BYTES),
++    .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_PACKET_BYTES(MAX_PACKET_BYTES),
++    .RX_FIFO_DEPTH(RX_FIFO_DEPTH), .MEM_RD_LATENCY(MEM_RD_LATENCY),
++    .TX_FIFO_DEPTH(TX_FIFO_DEPTH), .SCHED_MODE(SCHED_MODE),
++    .QUANTUM_DEFAULT(QUANTUM_DEFAULT), .TRACE_ENABLE(TRACE_ENABLE),
++    .CELL_ID_W(CELL_ID_W), .DESC_ID_W(DESC_ID_W),
++    .CELL_COUNT_W(CELL_COUNT_W), .DESC_COUNT_W(DESC_COUNT_W), .DEFICIT_W(DEFICIT_W)
++) descriptor_links (.clk, .write_req(queue_write), .read_id(queue_head), .read_next(queue_next));
++
++// No reset or write-through. Owner/count validity guards all callers.
++always_ff @(posedge clk) begin
++    if (cell_write.valid) cell_next[cell_write.id] <= cell_write.next_id;
++    if (info_write.valid) info[info_write.id] <= info_write.info;
++end
++always @(posedge clk) begin
++    if (cell_write.valid) begin
++        assert (int'(cell_write.id)<N_CELL);
++        assert (int'(cell_write.next_id)<N_CELL);
++    end
++    if (info_write.valid) assert (int'(info_write.id)<N_DESC);
++    if (queue_write.valid) begin
++        assert (int'(queue_write.id)<N_DESC);
++        assert (int'(queue_write.next_id)<N_DESC);
++    end
++end
++endmodule
+diff --git a/rtl/memory/tm_packet_ram.sv b/rtl/memory/tm_packet_ram.sv
+new file mode 100644
+index 0000000..26d18be
+--- /dev/null
++++ b/rtl/memory/tm_packet_ram.sv
+@@ -0,0 +1,35 @@
++module tm_packet_ram_api import tm_fixed::*; #(
++`include "tm_parameters.svh"
++,
++`define TM_ANSI_TYPES
++`include "tm_types.svh"
++`undef TM_ANSI_TYPES
++) (
++    input logic clk,
++    input ram_write_t write_req,
++    input ram_read_t read_req,
++    output ram_response_t response
++);
++`include "tm_validate.svh"
++localparam integer WORDS=N_CELL*CELL_BYTES/8;
++logic [63:0] words [WORDS];
++ram_response_t pipeline [MEM_RD_LATENCY];
++
++// A request sampled at e is sampled as a response at e+L. Data and valid
++// traverse the same L registers; there is no response-ready or reset port.
++assign response = pipeline[MEM_RD_LATENCY-1];
++always_ff @(posedge clk) begin
++    pipeline[0].valid <= read_req.valid;
++    if (read_req.valid) pipeline[0].data <= words[read_req.addr];
++    for (int i=1; i<MEM_RD_LATENCY; i++) pipeline[i] <= pipeline[i-1];
++    if (write_req.valid) words[write_req.addr] <= write_req.data;
++end
++
++// Ownership/commit must prohibit the collision. No read-during-write mode
++// or simulator scheduling result is part of the data-integrity contract.
++always @(posedge clk) begin
++    if (read_req.valid) assert (int'(read_req.addr)<WORDS);
++    if (write_req.valid) assert (int'(write_req.addr)<WORDS);
++    assert (!(read_req.valid && write_req.valid && read_req.addr==write_req.addr));
++end
++endmodule
+diff --git a/rtl/tx/tm_tx.sv b/rtl/tx/tm_tx.sv
+new file mode 100644
+index 0000000..a7be8ee
+--- /dev/null
++++ b/rtl/tx/tm_tx.sv
+@@ -0,0 +1,183 @@
++module tm_tx_api import tm_fixed::*; #(
++`include "tm_parameters.svh"
++,
++`define TM_ANSI_TYPES
++`include "tm_types.svh"
++`undef TM_ANSI_TYPES
++) (
++    input logic clk,
++    input logic rst_n,
++    input dispatch_t dispatch,
++    output logic dispatch_ready,
++    output ram_read_t read_req,
++    input ram_response_t response,
++    output cell_id_t link_cell,
++    input cell_id_t next_cell,
++    output logic m_valid,
++    output beat_t m_beat,
++    input logic m_ready,
++    output cell_return_t cell_return,
++    output tx_done_t tx_done,
++    output logic idle
++);
++`include "tm_validate.svh"
++localparam integer CELL_WORDS=CELL_BYTES/8;
++localparam integer PTR_W=(TX_FIFO_DEPTH>1 ? $clog2(TX_FIFO_DEPTH) : 1);
++localparam integer COUNT_W=$clog2(TX_FIFO_DEPTH+1);
++typedef struct packed {
++    cell_id_t cell;
++    logic cell_end;
++    logic last;
++    logic [7:0] keep;
++} read_tag_t;
++typedef struct packed {
++    beat_t beat;
++    cell_id_t cell;
++    logic cell_end;
++} entry_t;
++
++logic active;
++dispatch_t packet;
++cell_id_t read_cell, captured_next;
++logic [WORD_OFF_W-1:0] read_word;
++logic [15:0] bytes_to_read;
++read_tag_t tags [MEM_RD_LATENCY];
++logic [MEM_RD_LATENCY-1:0] tag_valid;
++entry_t fifo [TX_FIFO_DEPTH];
++logic [PTR_W-1:0] rd_ptr, wr_ptr;
++logic [COUNT_W-1:0] buffered, outstanding;
++logic [COUNT_W:0] buffered_next, outstanding_next, credits_after_retire;
++logic issue, arrival, retire;
++read_tag_t issued_tag;
++entry_t response_entry;
++output_user_t user_fields;
++
++function automatic logic [PTR_W-1:0] advance(input logic [PTR_W-1:0] ptr);
++    return int'(ptr)==TX_FIFO_DEPTH-1 ? '0 : ptr+PTR_W'(1);
++endfunction
++
++assign idle = !active && buffered==0 && outstanding==0;
++assign dispatch_ready = rst_n && idle;
++assign m_valid = rst_n && buffered!=0;
++assign m_beat = fifo[rd_ptr].beat;
++assign retire = m_valid && m_ready;
++assign link_cell = read_cell;
++// Invalidated tags discard physical RAM responses from the previous epoch.
++// Both the tag and data path advance unconditionally at identical latency.
++assign arrival = rst_n && tag_valid[MEM_RD_LATENCY-1] && response.valid;
++
++always_comb begin
++    // Reserve for every issued read. Arrival transfers one reservation from
++    // outstanding to buffered; it never creates a free slot. Sink retirement
++    // can fund this edge's issue, including at exact capacity.
++    credits_after_retire = {1'b0,buffered}+{1'b0,outstanding}-(COUNT_W+1)'(retire);
++    issue = rst_n && active && bytes_to_read!=0 &&
++            credits_after_retire<(COUNT_W+1)'(TX_FIFO_DEPTH);
++    buffered_next = {1'b0,buffered}+(COUNT_W+1)'(arrival)-(COUNT_W+1)'(retire);
++    outstanding_next = {1'b0,outstanding}+(COUNT_W+1)'(issue)-(COUNT_W+1)'(arrival);
++
++    read_req = '0;
++    read_req.valid = issue;
++    read_req.addr = ADDR_W'(int'(read_cell)*CELL_WORDS+int'(read_word));
++    issued_tag.cell = read_cell;
++    issued_tag.last = bytes_to_read<=16'd8;
++    issued_tag.cell_end = issued_tag.last || int'(read_word)==CELL_WORDS-1;
++    issued_tag.keep = bytes_to_read>=16'd8 ? 8'hff :
++                      8'((9'd1 << bytes_to_read[3:0])-9'd1);
++
++    user_fields = '0;
++    user_fields.qid = 8'(packet.qid);
++    user_fields.length = packet.info.length;
++    user_fields.tag = packet.info.tag;
++    user_fields.source = 8'(packet.info.source);
++    response_entry = '0;
++    response_entry.beat.data = response.data;
++    response_entry.beat.keep = tags[MEM_RD_LATENCY-1].keep;
++    response_entry.beat.last = tags[MEM_RD_LATENCY-1].last;
++    response_entry.beat.user = user_fields;
++    response_entry.cell = tags[MEM_RD_LATENCY-1].cell;
++    response_entry.cell_end = tags[MEM_RD_LATENCY-1].cell_end;
++
++    // Only the externally accepted FIFO head can release an owner. The
++    // prefetch cursor may already be several cells ahead of this entry.
++    cell_return = '0;
++    cell_return.valid = retire && fifo[rd_ptr].cell_end;
++    cell_return.id = fifo[rd_ptr].cell;
++    cell_return.qid = packet.qid;
++    cell_return.desc = packet.desc;
++    tx_done = '0;
++    tx_done.valid = retire && m_beat.last;
++    tx_done.desc = packet.desc;
++    tx_done.qid = packet.qid;
++    tx_done.length = packet.info.length;
++end
++
++always_ff @(posedge clk or negedge rst_n) begin
++    if (!rst_n) begin
++        active <= 1'b0;
++        packet <= '0;
++        read_cell <= '0;
++        captured_next <= '0;
++        read_word <= '0;
++        bytes_to_read <= '0;
++        tag_valid <= '0;
++        rd_ptr <= '0;
++        wr_ptr <= '0;
++        buffered <= '0;
++        outstanding <= '0;
++    end else begin
++        buffered <= COUNT_W'(buffered_next);
++        outstanding <= COUNT_W'(outstanding_next);
++        tag_valid[0] <= issue;
++        for (int i=1; i<MEM_RD_LATENCY; i++) tag_valid[i] <= tag_valid[i-1];
++        if (retire) rd_ptr <= advance(rd_ptr);
++        if (arrival) wr_ptr <= advance(wr_ptr);
++        if (tx_done.valid) active <= 1'b0;
++        if (dispatch.valid && dispatch_ready) begin
++            active <= 1'b1;
++            packet <= dispatch;
++            read_cell <= dispatch.info.head;
++            read_word <= '0;
++            bytes_to_read <= dispatch.info.length;
++        end
++        if (issue) begin
++            bytes_to_read <= issued_tag.last ? 16'd0 : bytes_to_read-16'd8;
++            // CELL_WORDS>=2: capture on the first read, before the cell's
++            // last read/response/retirement. Never capture a stale tail link.
++            if (read_word==0 && bytes_to_read>16'(CELL_BYTES)) captured_next <= next_cell;
++            if (int'(read_word)==CELL_WORDS-1) begin
++                read_word <= '0;
++                if (!issued_tag.last) read_cell <= captured_next;
++            end else read_word <= read_word+WORD_OFF_W'(1);
++        end
++    end
++end
++
++// Unreset storage: tag_valid and buffered alone establish current-epoch
++// validity. Reset never clears payload, link arrays or FIFO/tag data arrays.
++always_ff @(posedge clk) begin
++    tags[0] <= issued_tag;
++    for (int i=1; i<MEM_RD_LATENCY; i++) tags[i] <= tags[i-1];
++    if (arrival) fifo[wr_ptr] <= response_entry;
++end
++
++always @(posedge clk) if (rst_n) begin
++    assert (int'(buffered)+int'(outstanding)<=TX_FIFO_DEPTH);
++    assert (int'(buffered_next)+int'(outstanding_next)<=TX_FIFO_DEPTH);
++    assert (int'(outstanding)==$countones(tag_valid));
++    if (tag_valid[MEM_RD_LATENCY-1]) assert (response.valid);
++    if (arrival) assert (buffered<TX_FIFO_DEPTH || retire);
++    if (dispatch.valid) begin
++        assert (dispatch_ready);
++        assert (dispatch.info.length>0 && int'(dispatch.info.length)<=MAX_PACKET_BYTES);
++        assert (int'(dispatch.info.ncell)==(int'(dispatch.info.length)+CELL_BYTES-1)/CELL_BYTES);
++        assert (dispatch.qid==dispatch.info.qid);
++        assert (int'(dispatch.info.head)<N_CELL && int'(dispatch.desc)<N_DESC);
++    end
++    if (issue) assert (int'(read_cell)<N_CELL);
++    if (tx_done.valid) begin
++        assert (cell_return.valid);
++        assert (buffered==1 && outstanding==0 && bytes_to_read==0);
++    end
++end
++endmodule

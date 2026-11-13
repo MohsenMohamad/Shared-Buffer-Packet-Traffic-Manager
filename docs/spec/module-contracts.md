@@ -5,6 +5,7 @@ These APIs freeze component boundaries. P02 implements `tm_axis_rx_fifo_api`,
 P06 implements `tm_axil_regs_api` and `tm_statistics_api` under `rtl/csr/`.
 P03 implements the queue controller/link array under `rtl/queue/`; P04
 implements `tm_drr_api` under `rtl/scheduler/`.
+P05 implements payload RAM/metadata under `rtl/memory/` and TX under `rtl/tx/`.
 `rtl/tm_top.sv` and the remaining APIs in `rtl/include/tm_module_ports.sv` are
 **declarations only**. Their elaboration proves frontend compatibility and
 parameter checks. Component implementations retain the `_api` names, fields and

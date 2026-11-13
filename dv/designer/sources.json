@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "extends": "production",
+  "sources": ["dv/designer/memory_tx_tb.sv"],
+  "scope": "RTL-owner memory/metadata/TX designer smoke; separate from independent DV suites."
+}

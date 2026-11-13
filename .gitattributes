@@ -3,3 +3,5 @@
 *.sby text eol=lf
 *.tcl text eol=lf
 *.sh text eol=lf
+# Captured unified patches preserve context-line spaces as source evidence.
+verification/failures/*.patch -whitespace
