@@ -200,3 +200,47 @@ JSON. Full hosted storage CI runs the same independent simulation, proof and
 coverage selections and retains `.build/runs/` as a 14-day artifact. Reproduction
 regenerates raw evidence after expiry; historical P03/P04/P02/P06 reports retain
 their original identities and scope.
+
+## Wrong-descriptor dispatch guard
+
+The separate `queues-dispatch-guard` selection closes the wrong-descriptor
+negative-test gap. It deliberately drives an in-range non-head ID on a nonempty
+production queue and requires `invariant_error`, rejected dequeue and unchanged
+queue/link state apart from an independent successful publication. It never
+copies dispatch IDs or expected heads from DUT queries. The legal-operation
+monitor, existing empty-dispatch tests and formal caller assumptions are unchanged.
+
+| Check | Result |
+| --- | --- |
+| F0/F1/I0/I1/E0/E1, native and wider ID/count widths | PASS, 1,500 directed scenarios in 12 elaborations |
+| Sticky diagnostic and reset clearing | PASS, two checked idle edges and two resets per scenario |
+| Descriptor-match guard removed from a disposable RTL copy | Intended `QUEUE_DV_WRONG_DESC_ERROR` failure and nonempty VCD |
+| Python qualification / registration | PASS, 79 tooling and 12 contract/routing tests |
+
+The matrix crosses every qid, singleton/three-entry queues, wrong IDs from the
+same queue or another queue or an unqueued ID, and no/same-qid/different-qid
+publication. A singleton has no queued non-head ID, so that combination is
+excluded. There are 15 scenarios per qid per elaboration. The unqueued ID is
+N_DESC/2, differing from the expected head only in the highest valid descriptor
+bit; the other queue uses N_DESC-1. All malformed IDs are in range, so neither
+empty detection nor range rejection can hide a missing descriptor-match check.
+Known link values and the write port are checked independently of DUT pointers.
+
+The mutation replaces only the production descriptor comparison with `1'b1` in
+an ignored disposable copy. The first malformed dispatch must fail the named
+error detector; a generic crash, unrelated assertion, timeout or empty trace
+cannot qualify it. No hardware defect was observed in the unmodified RTL.
+
+[Dispatch-guard evidence](P03-dispatch-guard.json) records exact commands,
+configurations, source/tool identities, actual tested revisions/dirty states,
+coverage counters and hashed manifests/trace. These are deterministic tests with
+no random seed. Existing legal simulation/coverage and formal source fingerprints
+still match their earlier evidence, which is reused without relabeling it as a
+new execution. This remains local controller/link diagnostic qualification;
+scheduler eligibility and integrated ownership remain composition obligations.
+
+```sh
+for profile in F0 F1 I0 I1 E0 E1; do
+  make regression JOBS=1 RUN_ARGS="--profile $profile --test queues-dispatch-guard --timeout 120"
+done
+```

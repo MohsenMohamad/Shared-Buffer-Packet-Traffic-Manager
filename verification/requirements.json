@@ -358,6 +358,26 @@
           "queues_empty_tb",
           "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
         ]
+      },
+      "wrong_descriptor_guard": {
+        "status": "PASS",
+        "suite": "queues-dispatch-guard",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": null,
+        "tests": [
+          "queues_dispatch_guard_tb",
+          "descriptor-match guard-removal mutation"
+        ],
+        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
+        "evidence": "docs/results/P03-dispatch-guard.json",
+        "qualification_state": "AWAITING_DV_PR_MERGE"
       }
     },
     {
@@ -857,6 +877,26 @@
           "queues_empty_tb",
           "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
         ]
+      },
+      "wrong_descriptor_guard": {
+        "status": "PASS",
+        "suite": "queues-dispatch-guard",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": null,
+        "tests": [
+          "queues_dispatch_guard_tb",
+          "descriptor-match guard-removal mutation"
+        ],
+        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
+        "evidence": "docs/results/P03-dispatch-guard.json",
+        "qualification_state": "AWAITING_DV_PR_MERGE"
       }
     },
     {
@@ -1123,6 +1163,26 @@
           "queues_empty_tb",
           "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
         ]
+      },
+      "wrong_descriptor_guard": {
+        "status": "PASS",
+        "suite": "queues-dispatch-guard",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seed": null,
+        "tests": [
+          "queues_dispatch_guard_tb",
+          "descriptor-match guard-removal mutation"
+        ],
+        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
+        "evidence": "docs/results/P03-dispatch-guard.json",
+        "qualification_state": "AWAITING_DV_PR_MERGE"
       }
     },
     {

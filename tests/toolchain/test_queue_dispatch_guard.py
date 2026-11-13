@@ -19,13 +19,14 @@ class DispatchGuardEvidenceTests(unittest.TestCase):
         self.assertEqual(mutation_outcome(self.step,self.text,self.wave),('PASS',None))
 
     def test_timeout_crash_wrong_assertion_success_and_empty_trace_fail(self):
-        for name in ('timeout','crash','other_assertion','no_injection','success','empty_trace','missing_trace'):
+        for name in ('timeout','crash','other_assertion','detector_suffix','no_injection','success','empty_trace','missing_trace'):
             with self.subTest(name=name):
                 step=dict(self.step); text=self.text
                 self.wave.write_text('counterexample')
                 if name=='timeout': step['result']='TIMEOUT'
                 elif name=='crash': text='Segmentation fault'
                 elif name=='other_assertion': text=text.replace(DETECTOR,'QUEUE_DV_WRONG_DESC_COUNT')
+                elif name=='detector_suffix': text=text.replace(DETECTOR,DETECTOR+'_UNRELATED')
                 elif name=='no_injection': text=text.split('\n')[1]
                 elif name=='success': step.update(result='PASS',returncode=0)
                 elif name=='empty_trace': self.wave.write_text('')

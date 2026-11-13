@@ -1,0 +1,802 @@
+{
+  "schema_version": 1,
+  "scope": "Independent malformed in-range non-head dispatch simulation on actual production queue/link RTL. Legal-operation monitor, empty-dispatch tests and formal caller assumptions are unchanged.",
+  "base": "357b05c7bfc5cc7d453581c0eec75446590db50d",
+  "production_main": "1c225525ba284ce694f1b234cb12cc514b9c0aee",
+  "pr": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/17",
+  "seed": null,
+  "stimulus": "Directed deterministic",
+  "tools": {
+    "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+    "verilator": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "verilator_coverage": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/verilator_coverage: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "compiler": "/usr/bin/g++: g++ (Debian 14.2.0-19) 14.2.0",
+    "slang_revision": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --\nsv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222\nslang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+  },
+  "dependency_digests": {
+    "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+  },
+  "source_digests": {
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "rtl/include/tm_module_ports.sv": "9115b422f8fc58a5c37789736dde59acb95aa3c2b40f37000f01657eb2d5a0f9",
+    "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+    "rtl/common/tm_axis_rx_fifo.sv": "40627938a5beb46fdbfe40054d6a16e2e7f1594e21749de8605493dfa5f24507",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+    "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+    "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+    "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+    "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+    "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+    "rtl/scheduler/tm_drr.sv": "f93079f4875a48e7de6f7a2336d8c9436d3de332767f0802d136a3a2fa84149a",
+    "dv/unit/queues_dispatch_guard_tb.sv": "4b11995c15826f72366042623949c2f8df9aa424cd60fae3cad6ad9ba4df3be0",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "dv/unit/queues_independent.vlt": "06daddd130fa4dafe3b705c1ce1ad38193e6422f3943b2bb8876990a0a6c6ea5"
+  },
+  "commands": [
+    "make regression JOBS=1 RUN_ARGS='--profile F0 --test queues-dispatch-guard --timeout 120'",
+    "make regression JOBS=1 RUN_ARGS='--profile F1 --test queues-dispatch-guard --timeout 120'",
+    "make regression JOBS=1 RUN_ARGS='--profile I0 --test queues-dispatch-guard --timeout 120'",
+    "make regression JOBS=1 RUN_ARGS='--profile I1 --test queues-dispatch-guard --timeout 120'",
+    "make regression JOBS=1 RUN_ARGS='--profile E0 --test queues-dispatch-guard --timeout 120'",
+    "make regression JOBS=1 RUN_ARGS='--profile E1 --test queues-dispatch-guard --timeout 120'"
+  ],
+  "runner_digests": {
+    "tools/queue_dispatch_guard.py": "ca8db1791086767e9f68f3f882f9ef23fe599808ddc95a9ee5162bdd06bc0969",
+    "tools/run.py": "e81d540deb9fbe38f5ba9bf541641ee473bb6bef5830880ca53d04f7c7d50eb9",
+    "tools/registry.py": "eec2e003e767d08e3dbab99747a397f78638e89c2497b5a6dc7fd0674f12d333",
+    "verification/suites.json": "05eabf609e8501f95ba2b1e1b74a7cfb5d16fa51c181d672e074035c2a75d5b6",
+    "verification/sources/queues-dispatch-guard.json": "74963a5040eda85ac06ca5fa35ebe98adecff9b8a28f424c2d53a089110ce03c"
+  },
+  "cases": [
+    {
+      "test": "queues-dispatch-guard-native",
+      "profile": "F0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:44:49.320618+00:00",
+      "end_utc": "2026-11-13T05:50:22.104081+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.424501+0000-c53b7552/queues-dispatch-guard-native/manifest.json",
+        "sha256": "c31eef1354fcf30089b5753555e3631c220bffdf742f40934c26cad8dadaee3e"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 240,
+        "sticky_checks": 480,
+        "resets": 480,
+        "publications": 928
+      },
+      "mandatory_bins": 240,
+      "hit_mandatory_bins": 240,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.424501+0000-c53b7552/queues-dispatch-guard-native/dispatch-guard-coverage.json",
+        "sha256": "45ff3980f249e56901f4b541c409120b6a25c71f04fb1f46404df6870c6aa8e0"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.424501+0000-c53b7552/queues-dispatch-guard-native/coverage.dat",
+        "sha256": "1951d1722eadd4a1f495f856f8b01b36870cbd2297a332e94bb488021b2ebf6f"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-wide",
+      "profile": "F0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1,
+        "DESC_ID_W": 9,
+        "DESC_COUNT_W": 10
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:50:22.123448+00:00",
+      "end_utc": "2026-11-13T05:54:51.061400+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.424501+0000-c53b7552/queues-dispatch-guard-wide/manifest.json",
+        "sha256": "8fd04a70057f1fb719a6be3bce3bc2186b78a2f85803ed7d78f8b3d1d7308ce4"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 240,
+        "sticky_checks": 480,
+        "resets": 480,
+        "publications": 928
+      },
+      "mandatory_bins": 240,
+      "hit_mandatory_bins": 240,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.424501+0000-c53b7552/queues-dispatch-guard-wide/dispatch-guard-coverage.json",
+        "sha256": "45ff3980f249e56901f4b541c409120b6a25c71f04fb1f46404df6870c6aa8e0"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.424501+0000-c53b7552/queues-dispatch-guard-wide/coverage.dat",
+        "sha256": "6b5cfa09e53096cc7eda0e6cadaba25b69c780cbfbb9dc4b11a0d56649b5df81"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-native",
+      "profile": "F1",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:44:46.301798+00:00",
+      "end_utc": "2026-11-13T05:50:52.150107+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.808929+0000-d5c0bff3/queues-dispatch-guard-native/manifest.json",
+        "sha256": "33949f42ef7315376f9d58510a00208a0bf8ba7ec361ca27204361272638d290"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 240,
+        "sticky_checks": 480,
+        "resets": 480,
+        "publications": 928
+      },
+      "mandatory_bins": 240,
+      "hit_mandatory_bins": 240,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.808929+0000-d5c0bff3/queues-dispatch-guard-native/dispatch-guard-coverage.json",
+        "sha256": "45ff3980f249e56901f4b541c409120b6a25c71f04fb1f46404df6870c6aa8e0"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.808929+0000-d5c0bff3/queues-dispatch-guard-native/coverage.dat",
+        "sha256": "1951d1722eadd4a1f495f856f8b01b36870cbd2297a332e94bb488021b2ebf6f"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-wide",
+      "profile": "F1",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2,
+        "DESC_ID_W": 9,
+        "DESC_COUNT_W": 10
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:50:52.160147+00:00",
+      "end_utc": "2026-11-13T05:54:53.156691+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.808929+0000-d5c0bff3/queues-dispatch-guard-wide/manifest.json",
+        "sha256": "469465be690afeaf6eeb3ba8ad4e4763a97f012a9f6cef5f2d70b6fa6088d147"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 240,
+        "sticky_checks": 480,
+        "resets": 480,
+        "publications": 928
+      },
+      "mandatory_bins": 240,
+      "hit_mandatory_bins": 240,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.808929+0000-d5c0bff3/queues-dispatch-guard-wide/dispatch-guard-coverage.json",
+        "sha256": "45ff3980f249e56901f4b541c409120b6a25c71f04fb1f46404df6870c6aa8e0"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.808929+0000-d5c0bff3/queues-dispatch-guard-wide/coverage.dat",
+        "sha256": "6b5cfa09e53096cc7eda0e6cadaba25b69c780cbfbb9dc4b11a0d56649b5df81"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-native",
+      "profile": "I0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:44:44.607628+00:00",
+      "end_utc": "2026-11-13T05:48:54.435268+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.513458+0000-df3d3cec/queues-dispatch-guard-native/manifest.json",
+        "sha256": "28786a31cb48fabaeecbec52632f60f3ec6d99742bda4116e0c68bf06f3d1e81"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 60,
+        "sticky_checks": 120,
+        "resets": 120,
+        "publications": 232
+      },
+      "mandatory_bins": 60,
+      "hit_mandatory_bins": 60,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.513458+0000-df3d3cec/queues-dispatch-guard-native/dispatch-guard-coverage.json",
+        "sha256": "a92b6b552ef9ab7e5c3e2b4561c18e99a0f33a01554ddfac24cf10fb341bcfff"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.513458+0000-df3d3cec/queues-dispatch-guard-native/coverage.dat",
+        "sha256": "7d93fc9e185770f4f02fdc42503f1ecf48c2d94e675108f03d80f4588f0da631"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-wide",
+      "profile": "I0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "DESC_ID_W": 5,
+        "DESC_COUNT_W": 6
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:48:54.453243+00:00",
+      "end_utc": "2026-11-13T05:53:42.024555+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.513458+0000-df3d3cec/queues-dispatch-guard-wide/manifest.json",
+        "sha256": "b21ff76d0a3cfe71581f65ae23b3d322e19c920e87db29121d6d0f62d6ea5802"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 60,
+        "sticky_checks": 120,
+        "resets": 120,
+        "publications": 232
+      },
+      "mandatory_bins": 60,
+      "hit_mandatory_bins": 60,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.513458+0000-df3d3cec/queues-dispatch-guard-wide/dispatch-guard-coverage.json",
+        "sha256": "a92b6b552ef9ab7e5c3e2b4561c18e99a0f33a01554ddfac24cf10fb341bcfff"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.513458+0000-df3d3cec/queues-dispatch-guard-wide/coverage.dat",
+        "sha256": "580e5fc4d807f86ba546a0afeaee53c0ee7068f6006f36011c35b8c134adfcbd"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-native",
+      "profile": "I1",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:44:44.709706+00:00",
+      "end_utc": "2026-11-13T05:48:54.701793+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.700633+0000-2619883d/queues-dispatch-guard-native/manifest.json",
+        "sha256": "90519d6ef43a05dd4442f65204985df5da853f671073c31f8ec6b6c9d709b6c7"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 60,
+        "sticky_checks": 120,
+        "resets": 120,
+        "publications": 232
+      },
+      "mandatory_bins": 60,
+      "hit_mandatory_bins": 60,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.700633+0000-2619883d/queues-dispatch-guard-native/dispatch-guard-coverage.json",
+        "sha256": "a92b6b552ef9ab7e5c3e2b4561c18e99a0f33a01554ddfac24cf10fb341bcfff"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.700633+0000-2619883d/queues-dispatch-guard-native/coverage.dat",
+        "sha256": "7d93fc9e185770f4f02fdc42503f1ecf48c2d94e675108f03d80f4588f0da631"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-wide",
+      "profile": "I1",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "DESC_ID_W": 5,
+        "DESC_COUNT_W": 6
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:48:54.705511+00:00",
+      "end_utc": "2026-11-13T05:53:22.405117+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.700633+0000-2619883d/queues-dispatch-guard-wide/manifest.json",
+        "sha256": "cfcdccbd3603c270d5d6c56f339ae265b7723ac89ef595594f05daa38caca1da"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 60,
+        "sticky_checks": 120,
+        "resets": 120,
+        "publications": 232
+      },
+      "mandatory_bins": 60,
+      "hit_mandatory_bins": 60,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.700633+0000-2619883d/queues-dispatch-guard-wide/dispatch-guard-coverage.json",
+        "sha256": "a92b6b552ef9ab7e5c3e2b4561c18e99a0f33a01554ddfac24cf10fb341bcfff"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.700633+0000-2619883d/queues-dispatch-guard-wide/coverage.dat",
+        "sha256": "580e5fc4d807f86ba546a0afeaee53c0ee7068f6006f36011c35b8c134adfcbd"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-native",
+      "profile": "E0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:44:50.803545+00:00",
+      "end_utc": "2026-11-13T05:48:00.405759+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-native/manifest.json",
+        "sha256": "d6d7173538e40498330eeb5ce2bf406e6311d2ea850c7bde73e208411f2398e9"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 30,
+        "sticky_checks": 60,
+        "resets": 60,
+        "publications": 116
+      },
+      "mandatory_bins": 30,
+      "hit_mandatory_bins": 30,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-native/dispatch-guard-coverage.json",
+        "sha256": "62d0d058b565286f7f3a82697a4f9b7cd8003bda15765a1639a63ae87d798860"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-native/coverage.dat",
+        "sha256": "bc7b8a45621a69726942d244d287cf13ce313aff2e21db923750df070deac540"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-wide",
+      "profile": "E0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "DESC_ID_W": 4,
+        "DESC_COUNT_W": 5
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:48:00.432653+00:00",
+      "end_utc": "2026-11-13T05:50:53.204657+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-wide/manifest.json",
+        "sha256": "3f51bf00e8be66c10335d6f53418918ba166a4f4a150dcc915b132cec184d7e4"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 30,
+        "sticky_checks": 60,
+        "resets": 60,
+        "publications": 116
+      },
+      "mandatory_bins": 30,
+      "hit_mandatory_bins": 30,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-wide/dispatch-guard-coverage.json",
+        "sha256": "62d0d058b565286f7f3a82697a4f9b7cd8003bda15765a1639a63ae87d798860"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-wide/coverage.dat",
+        "sha256": "3b5b9c5585401fcd636f8df28586b3f4fb1c24ef3cdef77d405ba63198d7ce9d"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-mutation",
+      "profile": "E0",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:50:53.215185+00:00",
+      "end_utc": "2026-11-13T05:53:37.901661+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-mutation/manifest.json",
+        "sha256": "88ce7a3fa77dfb3e316c0da6c5886ac1929f34ad54bc5382bf4838afd1410872"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "TOOL_ERROR",
+          "returncode": 1
+        }
+      ],
+      "mutation": "Remove dispatch descriptor-match guard",
+      "mutant_sha256": "f1cf728e5140cc4e8657cf49ba2396ea375413e7383e3d3140b475f569d56620",
+      "intended_detector": "QUEUE_DV_WRONG_DESC_ERROR",
+      "counterexample": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054432.230075+0000-aaa339b6/queues-dispatch-guard-mutation/wave.vcd",
+        "sha256": "43fe3ebda047725f852ff9b5734b54758283fb882fb0764c4a6472d26c54e161"
+      },
+      "detector_revalidation": "PASS"
+    },
+    {
+      "test": "queues-dispatch-guard-native",
+      "profile": "E1",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:44:48.340265+00:00",
+      "end_utc": "2026-11-13T05:49:48.002684+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.702247+0000-fd07e0ab/queues-dispatch-guard-native/manifest.json",
+        "sha256": "e727fbc66da79a83174be142d34da8551d1495000b434f3d7202f313cc85a0d8"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 120,
+        "sticky_checks": 240,
+        "resets": 240,
+        "publications": 464
+      },
+      "mandatory_bins": 120,
+      "hit_mandatory_bins": 120,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.702247+0000-fd07e0ab/queues-dispatch-guard-native/dispatch-guard-coverage.json",
+        "sha256": "df3b7ab5e41791889b399208c7cbd2cd29a83a2c2977d0629c04a4723bb05a48"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.702247+0000-fd07e0ab/queues-dispatch-guard-native/coverage.dat",
+        "sha256": "07282ca040e91116e98d69392be37ee78280facfdf46bb12584a81b9859cfda0"
+      }
+    },
+    {
+      "test": "queues-dispatch-guard-wide",
+      "profile": "E1",
+      "seed": null,
+      "source_revision": "bb5e91a54119e0e6d16a7e202654e1ffe53df37c",
+      "dirty": true,
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 8,
+        "N_CELL": 64,
+        "CELL_BYTES": 32,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2,
+        "DESC_ID_W": 6,
+        "DESC_COUNT_W": 7
+      },
+      "result": "PASS",
+      "stimulus": "Directed deterministic API events; seed-independent",
+      "start_utc": "2026-11-13T05:49:48.011124+00:00",
+      "end_utc": "2026-11-13T05:54:19.415810+00:00",
+      "manifest": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.702247+0000-fd07e0ab/queues-dispatch-guard-wide/manifest.json",
+        "sha256": "363c1ad66f00cef6993e18832750fb2a96ad6200b84fe01079434976d2d8505e"
+      },
+      "process_results": [
+        {
+          "result": "PASS",
+          "returncode": 0
+        },
+        {
+          "result": "PASS",
+          "returncode": 0
+        }
+      ],
+      "coverage": {
+        "rejected": 120,
+        "sticky_checks": 240,
+        "resets": 240,
+        "publications": 464
+      },
+      "mandatory_bins": 120,
+      "hit_mandatory_bins": 120,
+      "saved_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.702247+0000-fd07e0ab/queues-dispatch-guard-wide/dispatch-guard-coverage.json",
+        "sha256": "df3b7ab5e41791889b399208c7cbd2cd29a83a2c2977d0629c04a4723bb05a48"
+      },
+      "code_coverage": {
+        "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-13T054431.702247+0000-fd07e0ab/queues-dispatch-guard-wide/coverage.dat",
+        "sha256": "ff0c6780ab18d6511a96836b2b83b4c6b5c5ad4931dad524bb08b5ff56739d20"
+      }
+    }
+  ],
+  "reused_evidence": {
+    "report": "docs/results/P03-independent-dv.json",
+    "simulation_source_fingerprint_unchanged": true,
+    "formal_source_fingerprint_unchanged": true,
+    "full_ci": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43368684332"
+  },
+  "checks": [
+    {
+      "command": "python3 tools/check_light.py",
+      "result": "PASS",
+      "tests": 79,
+      "log": {
+        "path": "work/dispatch-light-final.log",
+        "sha256": "e52fc8751750d3ff2f721fb6e86c4cfd98a9b343e60bfb365f55a3af5a9943d5"
+      }
+    },
+    {
+      "command": "PYTHONPATH=tools python3 -m unittest discover -s tests/contracts -v",
+      "result": "PASS",
+      "tests": 12,
+      "log": {
+        "path": "work/dispatch-contracts-final.log",
+        "sha256": "9e0bddc1c6418aef3e13471cc84aaaf390a01b38df88c0bc870f249691807ae1"
+      }
+    }
+  ]
+}

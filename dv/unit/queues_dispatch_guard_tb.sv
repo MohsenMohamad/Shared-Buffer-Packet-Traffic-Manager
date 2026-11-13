@@ -17,7 +17,10 @@ tm_queue_ctrl_api #(`GUARD_PARAMS) dut(.*);
 tm_desc_links #(`GUARD_PARAMS) links(.clk(clk),.write_req(next_write),.read_id(read_id),.read_next(old_head_next));
 `undef GUARD_PARAMS
 
-localparam int HEAD_ID=0, TAIL_ID=2, APPEND_ID=3, OTHER_ID=4, UNQUEUED_ID=5;
+localparam int HEAD_ID=0, TAIL_ID=2, APPEND_ID=3;
+// A free ID differing from head only in its highest supported ID bit catches
+// truncated comparisons; the other queue also exercises the maximum valid ID.
+localparam int OTHER_ID=N_DESC-1, UNQUEUED_ID=N_DESC/2;
 // Expected state comes only from the fixture's successful publication events.
 int fifo[N_Q][N_DESC], size[N_Q];
 bit expected_error=0;

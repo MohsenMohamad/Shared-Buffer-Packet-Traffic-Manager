@@ -132,3 +132,20 @@ wrong profile, failed runs, altered/missing artifacts, duplicate/missing bins an
 unhit mandatory transitions/lifetime cases. It reports code holes by elaboration;
 collection is not integrated coverage closure. See the
 [independent report](../docs/results/P03-independent-dv.md) for results and scope.
+
+## Wrong-descriptor dispatch diagnostics
+
+`make regression RUN_ARGS='--profile E0 --test queues-dispatch-guard --timeout 120'`
+runs the isolated `queues_dispatch_guard_tb` on actual production queue/link RTL.
+The directed suite checks a wrong in-range ID from the same queue, another queue
+or an unqueued descriptor, crossed with singleton/long queues and no/same-qid/
+different-qid publication. It checks rejected dequeue, head/tail/count and links,
+sticky error and reset clearing. Expected IDs come from observed fixture
+publication events; dispatch stimulus is never copied from DUT head outputs.
+
+All six profiles run native and wider descriptor ID/count widths. E0 also runs
+a disposable guard-removal mutation, which must fail
+`QUEUE_DV_WRONG_DESC_ERROR` after an actual malformed dispatch and produce a
+nonempty trace. Coverage counters are saved in `dispatch-guard-coverage.json`;
+the suite is deterministic and uses no random seed. Its source selection is
+separate from `queues-independent`, preserving existing legal-path evidence.

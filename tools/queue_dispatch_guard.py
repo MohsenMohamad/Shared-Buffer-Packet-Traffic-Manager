@@ -14,7 +14,8 @@ def mutation_outcome(step, text, wave):
         return 'TIMEOUT', step['first_failure']
     if IGNORED.search(text):
         return 'UNSUPPORTED', 'Required construct ignored'
-    named_failure = any('Assertion failed' in line and DETECTOR in line for line in text.splitlines())
+    named_failure = any('Assertion failed' in line and re.search(r'\b'+re.escape(DETECTOR)+r'\b', line)
+                        for line in text.splitlines())
     detected = (step['returncode'] not in (None,0) and named_failure and
                 'QUEUE_DV_WRONG_DESC_INJECT' in text and wave.is_file() and wave.stat().st_size>0)
     return ('PASS',None) if detected else ('FAIL','Missing intended '+DETECTOR+' assertion and trace')
