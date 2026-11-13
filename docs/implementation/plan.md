@@ -46,9 +46,9 @@ and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 | P14 | [Independent release audit](tasks/P14-release.md) | P12/P13 and current integrated evidence |
 
 The remaining serial route is P05, R01, A01, P08, P09, P10,
-P11A, P11B, P11C, P12, P13, P14. C01 and independent analysis can run alongside
-hardware work when shared file ownership is explicit. P11A/P11B and P12/P13
-remain possible independent waves; serial work is simpler by default.
+P11A, P11B, P11C, P12, P13, P14. Use one active task through the [root RTL/DV cycle](../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
+The P11A/P11B and P12/P13 dependency structure permits separate waves when
+assigned explicitly; it does not authorize multiple active tasks by default.
 
 ## Active tool and representation contract
 
@@ -134,7 +134,9 @@ decision without a concrete reason.
 ## Ownership and verification gates
 
 The [root ownership policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership)
-defines file boundaries and the shared RTL/DV workflow.
+defines file boundaries, the baseline checkpoint, candidate checks before RTL
+merge and merged-source confirmation. Apply that cycle to each assignment below;
+the technical deliverables and role assignments remain in force.
 
 | Task | RTL PR | Independent DV / other PR |
 | --- | --- | --- |

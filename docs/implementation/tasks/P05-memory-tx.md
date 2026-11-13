@@ -14,7 +14,11 @@ Dependencies: [P03](P03-queues.md)
 - [formal.md](../../spec/formal.md)
 - [implementation.md](../../spec/implementation.md)
 
-Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
+Read the relevant APIs in `docs/spec/module-contracts.md`, created by P01.
+Independent DV first commits its spec-derived baseline under the
+[root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership),
+then checkpoints before target/dependency RTL or retained-checker inspection.
+During candidate work, inspect integrated dependencies before changing their boundaries.
 
 `rtl/memory/`, `rtl/tx/`, memory/TX benches, `formal/tx/` and memory-TX suite registration.
 

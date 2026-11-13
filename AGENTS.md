@@ -80,18 +80,31 @@ acceptance obligations without dropping checks. Audits remain read-only.
   `.github/workflows/` selections. Coordinate production source membership with
   RTL; toolchain/setup inputs remain tooling ownership.
 
-Develop independent DV early from shared specs/APIs, coordinating interface
-changes with RTL and labeling infrastructure-only results. RTL merges first;
-final DV qualification exercises the actual merged production implementation.
-Only merge of the passing independent DV PR establishes verified scope for
-acceptance gates. Reuse valid unchanged evidence, preserve author checks' original
-locations/provenance, and audit retained models/properties before reuse without
-relabeling historical results as independent.
+Use one active task and this cycle across the separate RTL/DV branches:
+
+1. Independent DV establishes a spec-derived baseline: a self-checked model,
+   risk/check/cover matrix and first usable tests, then a checkpoint. This is
+   not a full DUT campaign. Commit the model, matrix and self-check/test commands
+   before inspecting target RTL, designer results or retained checker internals.
+2. RTL develops the candidate and runs available DV checks as well as designer
+   smoke. Share bounded policy/documentation commits independently of test work.
+3. Independent DV qualifies the exact candidate production source before RTL
+   merge. Alternate RTL repair and independent DV retest until required candidate
+   checks pass; retain failures and before/fix/retest evidence.
+4. After maintainer integration, confirm the merged production source and refresh
+   checks affected by merge changes. Only merge of the passing independent DV PR
+   establishes verified scope for acceptance gates.
+
+Coordinate interface changes through shared specs/APIs and label infrastructure-only
+results. Reuse valid unchanged evidence, preserve author checks' original
+locations/provenance, and audit retained models/properties after the independent
+baseline before reuse without relabeling historical results as independent.
 
 Keep hardware defects visible in the open DV PR with the detecting check,
-revision/configuration and evidence. Fix production RTL/embedded assertions in a
-separate RTL PR; after it merges, rebase DV and rerun affected checks without
-weakening expectations, assumptions or coverage. Continue independent work.
+revision/configuration and captured evidence. RTL repairs unmerged production
+RTL/embedded assertions on its existing PR; a defect in merged RTL requires a
+separate fix PR. Independent DV retests the repaired candidate before merge,
+then confirms merged source without weakening expectations, assumptions or coverage.
 
 Use the prepared environment and run `make doctor` on current main before
 tool-dependent checks. On failure, report the precise mismatch; do not run setup,
