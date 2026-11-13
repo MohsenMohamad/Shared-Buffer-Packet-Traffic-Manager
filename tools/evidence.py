@@ -24,12 +24,12 @@ def sha(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
-def provenance():
+def provenance(source_paths=None):
     def git(*args):
         return subprocess.check_output(['git', *args], cwd=ROOT, text=True, timeout=30).strip()
-    files = git('ls-files', '--cached', '--others', '--exclude-standard').splitlines()
+    files = git('ls-files', '--cached', '--others', '--exclude-standard', '--', *(source_paths or ['.'])).splitlines()
     digests = {p: sha(ROOT / p) for p in files if (ROOT / p).is_file() and not p.startswith('work/')}
-    return dict(source_revision=git('rev-parse', 'HEAD'), dirty=bool(git('status', '--porcelain')),
+    return dict(**({'source_identity_paths': source_paths} if source_paths else {}), source_revision=git('rev-parse', 'HEAD'), dirty=bool(git('status', '--porcelain')),
                 source_digests=digests, dependency_digests={p: digests[p] for p in digests
                 if p in ('tools/dependencies.json', 'tools/packages.lock.json')},
                 constraint_digests={p: d for p, d in digests.items() if p.endswith(('.sdc', '.sby'))})
@@ -113,10 +113,10 @@ class Case:
 
 
 class Run:
-    def __init__(self, path, profile='toolchain'):
+    def __init__(self, path, profile='toolchain', source_paths=None):
         self.path, self.profile = Path(path).resolve(), profile
         self.path.mkdir(parents=True, exist_ok=True)
-        self.provenance = provenance()
+        self.provenance = provenance(source_paths)
         self.versions, self.cases = {'python': sys.version.splitlines()[0]}, []
 
     def finish(self):

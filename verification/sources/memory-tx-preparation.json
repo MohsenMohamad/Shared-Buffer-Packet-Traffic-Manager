@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "include_dirs": [
+    "rtl/include",
+    "dv/agents",
+    "dv/model",
+    "dv/memory_tx"
+  ],
+  "sources": [
+    "rtl/include/tm_fixed.sv",
+    "dv/env/tm_bench_pkg.sv",
+    "dv/memory_tx/replay.sv",
+    "formal/tx/memory_tx_obligations.sv",
+    "dv/memory_tx/parameters.sv"
+  ],
+  "headers": [
+    "rtl/include/tm_types.svh",
+    "dv/model/tm_monitor_types.svh",
+    "dv/agents/tm_stream_agent.svh",
+    "dv/memory_tx/wires.svh",
+    "rtl/include/tm_parameters.svh",
+    "rtl/include/tm_validate.svh"
+  ],
+  "scope": "Public types and P07 passive stream infrastructure only; no production inheritance or RTL implementation."
+}

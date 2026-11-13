@@ -1,0 +1,3535 @@
+{
+  "schema_version": 1,
+  "report_base_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+  "report_base_tree": "86bd98bc1618e2c47249448bd0803a1aa70a7537",
+  "implementation_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+  "dirty": false,
+  "tested_revisions": [
+    "290760486b627701a0555c0b98a27e4332ec9957"
+  ],
+  "scope": "Independent preparation only; no target/dependency RTL execution",
+  "profiles": {
+    "F0": {
+      "parameters": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "oracle_seeds": [
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "e92305bdb7ce6b8d10e4c8c4e8b4a6793d3de4644a058348928567b66e0222c1",
+          "manifest": ".build/runs/regression-2026-11-13T212842.055783+0000-64e21303/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 31,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "dea7806135f4c474999c0968f3252a47e7d4920ad2635e0b9fc296b2b3e64069",
+          "manifest": ".build/runs/regression-2026-11-13T212912.366901+0000-0bb82b15/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 53,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "0cd9b2e4dc030b3b2147702ad752ba95da139c18a67604cf3b6c2a7c070b841b",
+          "manifest": ".build/runs/regression-2026-11-13T212916.294573+0000-3a826e8d/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "e92305bdb7ce6b8d10e4c8c4e8b4a6793d3de4644a058348928567b66e0222c1",
+          "manifest": ".build/runs/regression-2026-11-13T212921.858271+0000-256b9c82/memory-tx-oracle/manifest.json"
+        }
+      ],
+      "baseline_counts": {
+        "edges": 4639,
+        "reserves": 26,
+        "allocations": 229,
+        "writes": 1724,
+        "commits": 26,
+        "dispatches": 26,
+        "reads": 1724,
+        "responses": 1724,
+        "outputs": 1724,
+        "bytes": 13696,
+        "frees": 229,
+        "done": 26
+      },
+      "baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_1": 4639,
+        "depth_4": 4639,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 86,
+        "keep_1": 4,
+        "source_0": 533,
+        "qid_0": 79,
+        "complete": 26,
+        "cell_retire": 229,
+        "keep_7": 3,
+        "source_1": 286,
+        "qid_1": 95,
+        "keep_8": 1701,
+        "source_2": 359,
+        "qid_2": 76,
+        "beat_hold": 504,
+        "source_3": 546,
+        "qid_3": 47,
+        "exact_full": 2563,
+        "full_stall": 900,
+        "full_arrival": 1663,
+        "qid_4": 189,
+        "full_exchange": 1151,
+        "qid_5": 189,
+        "link_query": 2570,
+        "qid_6": 148,
+        "cell_final_hold": 445,
+        "qid_7": 362,
+        "qid_8": 264,
+        "keep_2": 4,
+        "qid_9": 1,
+        "keep_3": 4,
+        "qid_10": 1,
+        "keep_4": 1,
+        "qid_11": 1,
+        "keep_5": 3,
+        "qid_12": 1,
+        "keep_6": 4,
+        "qid_13": 1,
+        "qid_14": 134,
+        "qid_15": 136,
+        "maximum_descriptor": 1
+      },
+      "hand_witnesses": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        }
+      ],
+      "bounded_configurations": 12,
+      "bounded_sink_patterns": 192,
+      "reset_bins": {
+        "dispatch": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2
+        },
+        "pending": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 2,
+          "reset_pending": 1
+        },
+        "full": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_beat_hold": 1
+        },
+        "partial": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1
+        },
+        "cell_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_partial_cell": 1,
+          "reset_cell_final_hold": 1
+        },
+        "packet_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2,
+          "reset_partial_cell": 1,
+          "reset_packet_final_hold": 1
+        }
+      },
+      "environment_rejections": {
+        "latency": "parameter_latency",
+        "depth": "parameter_depth",
+        "cell": "parameter_cell",
+        "length": "parameter_length",
+        "same_edge_return_reuse": "environment_cell_reuse",
+        "short_reset": "environment_reset_width",
+        "uninitialized": "environment_uninitialized"
+      },
+      "metamorphic": {
+        "tag_bijection": "PASS",
+        "unused_output_lanes": "PASS"
+      },
+      "atomic_overlap": {
+        "counts": {
+          "edges": 30,
+          "reserves": 3,
+          "allocations": 3,
+          "writes": 3,
+          "commits": 3,
+          "dispatches": 3,
+          "reads": 3,
+          "responses": 3,
+          "outputs": 3,
+          "bytes": 3,
+          "frees": 3,
+          "done": 3
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_1": 30,
+          "depth_4": 30,
+          "atomic_commit": 3,
+          "duplicate_tag_candidate": 3,
+          "packet_final_hold": 13,
+          "keep_1": 3,
+          "source_0": 2,
+          "qid_0": 2,
+          "complete": 3,
+          "atomic_store_retire": 1,
+          "cell_retire": 3,
+          "source_1": 1,
+          "qid_1": 1
+        }
+      },
+      "link_lifetime_baseline": {
+        "counts": {
+          "edges": 104,
+          "reserves": 2,
+          "allocations": 6,
+          "writes": 34,
+          "commits": 2,
+          "dispatches": 2,
+          "reads": 34,
+          "responses": 34,
+          "outputs": 34,
+          "bytes": 262,
+          "frees": 6,
+          "done": 2
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_1": 104,
+          "depth_4": 104,
+          "duplicate_tag_candidate": 2,
+          "link_query": 56,
+          "beat_hold": 12,
+          "exact_full": 40,
+          "full_stall": 12,
+          "full_arrival": 28,
+          "keep_8": 32,
+          "source_0": 34,
+          "qid_0": 34,
+          "full_exchange": 22,
+          "cell_final_hold": 8,
+          "cell_retire": 6,
+          "packet_final_hold": 4,
+          "keep_3": 2,
+          "complete": 2
+        }
+      },
+      "bench_baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_1": 4639,
+        "depth_4": 4639,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 86,
+        "keep_1": 4,
+        "source_0": 533,
+        "qid_0": 79,
+        "complete": 26,
+        "cell_retire": 229,
+        "keep_7": 3,
+        "source_1": 286,
+        "qid_1": 95,
+        "keep_8": 1701,
+        "source_2": 359,
+        "qid_2": 76,
+        "beat_hold": 504,
+        "source_3": 546,
+        "qid_3": 47,
+        "exact_full": 2563,
+        "full_stall": 900,
+        "full_arrival": 1663,
+        "qid_4": 189,
+        "full_exchange": 1151,
+        "qid_5": 189,
+        "link_query": 2570,
+        "qid_6": 148,
+        "cell_final_hold": 445,
+        "qid_7": 362,
+        "qid_8": 264,
+        "keep_2": 4,
+        "qid_9": 1,
+        "keep_3": 4,
+        "qid_10": 1,
+        "keep_4": 1,
+        "qid_11": 1,
+        "keep_5": 3,
+        "qid_12": 1,
+        "keep_6": 4,
+        "qid_13": 1,
+        "qid_14": 134,
+        "qid_15": 136,
+        "maximum_descriptor": 1
+      },
+      "saved_sv_coverage": {
+        "bench_points": {
+          "branch": {
+            "hit": 53,
+            "total": 120
+          },
+          "expr": {
+            "hit": 30,
+            "total": 45
+          },
+          "line": {
+            "hit": 28,
+            "total": 51
+          },
+          "toggle": {
+            "hit": 8,
+            "total": 8
+          },
+          "covergroup": {
+            "hit": 20,
+            "total": 20
+          }
+        },
+        "functional_bins": {
+          "issue.auto_0": 2916,
+          "issue.auto_1": 1724,
+          "response.auto_0": 2916,
+          "response.auto_1": 1724,
+          "output_transfer.auto_0": 2916,
+          "output_transfer.auto_1": 1724,
+          "output_hold.auto_0": 3605,
+          "output_hold.auto_1": 1035,
+          "cell_return.auto_0": 4411,
+          "cell_return.auto_1": 229,
+          "descriptor_done.auto_0": 4614,
+          "descriptor_done.auto_1": 26,
+          "overlap.<auto_0,auto_0,auto_0>": 2330,
+          "overlap.<auto_0,auto_0,auto_1>": 26,
+          "overlap.<auto_0,auto_1,auto_0>": 65,
+          "overlap.<auto_0,auto_1,auto_1>": 495,
+          "overlap.<auto_1,auto_0,auto_0>": 508,
+          "overlap.<auto_1,auto_0,auto_1>": 52,
+          "overlap.<auto_1,auto_1,auto_0>": 13,
+          "overlap.<auto_1,auto_1,auto_1>": 1151
+        },
+        "scope": "Replay bench only; DUT coverage NOT_RUN"
+      },
+      "bench_cases": {
+        "memory-tx-bench-build": "PASS",
+        "memory-tx-bench-legal": "PASS",
+        "memory-tx-bench-atomic-overlap": "PASS",
+        "memory-tx-bench-random-31": "PASS",
+        "memory-tx-bench-random-53": "PASS",
+        "memory-tx-bench-replay-17": "PASS",
+        "memory-tx-bench-reset-dispatch": "PASS",
+        "memory-tx-bench-reset-pending": "PASS",
+        "memory-tx-bench-reset-full": "PASS",
+        "memory-tx-bench-reset-partial": "PASS",
+        "memory-tx-bench-reset-cell_hold": "PASS",
+        "memory-tx-bench-reset-packet_hold": "PASS",
+        "memory-tx-bench-wrong-response": "PASS",
+        "memory-tx-bench-missing-response": "PASS",
+        "memory-tx-bench-wrong-output": "PASS",
+        "memory-tx-bench-missing-done": "PASS",
+        "memory-tx-bench-missing-free": "PASS",
+        "memory-tx-bench-missing-final": "PASS",
+        "memory-tx-bench-link-lifetime-legal": "PASS",
+        "memory-tx-bench-link-lifetime-missing": "PASS",
+        "memory-tx-bench-held-data": "PASS",
+        "memory-tx-bench-absent-trigger": "PASS",
+        "memory-tx-bench-nonempty-end": "PASS",
+        "memory-tx-bench-missing-final-sample": "PASS",
+        "memory-tx-bench-collector-omission": "PASS",
+        "memory-tx-bench-collector-duplicate": "PASS",
+        "memory-tx-bench-collector-mixed": "PASS",
+        "memory-tx-bench-seed-replay": "PASS"
+      },
+      "sampled_trace_replay": {
+        "legal": "0b3ffbf419cb1c40738ca92cdace8d02fec06334a414e4dc81a83cbb0f378427",
+        "replay-17": "0b3ffbf419cb1c40738ca92cdace8d02fec06334a414e4dc81a83cbb0f378427",
+        "random-31": "6a5b8e9278a1f17be4f184594af0213dc15395b699f07dff6fc9af06c456f883",
+        "random-53": "6e03d642be1d0cb81f21415ef8c1ea277d0f379c64f4844757c32d65ecf1d383"
+      },
+      "baseline_artifacts": {
+        "stimulus": {
+          "path": ".build/runs/regression-2026-11-13T212842.055783+0000-64e21303/memory-tx-bench-legal/replay.txt",
+          "sha256": "017c0cb9a80290e3e5810c18c1bfb1502f6a939fc8db86479577cae4e9e16468"
+        },
+        "observed": {
+          "path": ".build/runs/regression-2026-11-13T212842.055783+0000-64e21303/memory-tx-bench-legal/observed.jsonl",
+          "sha256": "0b3ffbf419cb1c40738ca92cdace8d02fec06334a414e4dc81a83cbb0f378427"
+        },
+        "coverage": {
+          "path": ".build/runs/regression-2026-11-13T212842.055783+0000-64e21303/memory-tx-bench-legal/coverage.dat",
+          "sha256": "04c764be3e20b597d748da0c625f047ff8b22abfb93a9914c5a4e6d414cb9e82"
+        }
+      },
+      "bench_source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+      "compile_reuse": {
+        "manifest": ".build/runs/regression-2026-11-13T182037.114985+0000-8d829789/memory-tx-bench-build/manifest.json",
+        "manifest_sha256": "2b16c6d05a544f40cf1f5291ac06c7e8e68094f21b50947bc413cc5cc43dc860",
+        "binary": ".build/runs/regression-2026-11-13T182037.114985+0000-8d829789/memory-tx-bench-build/obj/Vmemory_tx_replay_top",
+        "binary_sha256": "07d8445603bae6a849286a75d0e4a8e12e01a5e41fea148d98932711132b6733",
+        "compiled_source_revision": "033b016a8a43c7781853b1642894c992e7005dfd",
+        "compiled_dirty": true,
+        "validation": "Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source"
+      },
+      "generated_config_sha256": "28620d0c54441cd2140418fd1e0c6cdc46583677b47a9a488bd0d2e890560b1f",
+      "case_results": {
+        "PASS": 48
+      },
+      "oracle_negative_count": 36
+    },
+    "F1": {
+      "parameters": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "oracle_seeds": [
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "a4601cf3ce5d0f9fb0d9de532d437ea35aa1e3c66423740bba86752d9e5fdcc9",
+          "manifest": ".build/runs/regression-2026-11-13T212854.317094+0000-dbd0255e/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 31,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "90e5cfdc89ab4b093786e7d4a6c2f553e20cd8f9e7bd3d69c1cb00474f11b53e",
+          "manifest": ".build/runs/regression-2026-11-13T212924.907128+0000-2ba9ec39/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 53,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "dad98417810e9d8b6ff80ca371e25654b0c87b43b2235e9c7b5e4ec99ffd30bd",
+          "manifest": ".build/runs/regression-2026-11-13T212929.210800+0000-e7092e4b/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "a4601cf3ce5d0f9fb0d9de532d437ea35aa1e3c66423740bba86752d9e5fdcc9",
+          "manifest": ".build/runs/regression-2026-11-13T212934.533198+0000-206810b6/memory-tx-oracle/manifest.json"
+        }
+      ],
+      "baseline_counts": {
+        "edges": 4691,
+        "reserves": 26,
+        "allocations": 229,
+        "writes": 1724,
+        "commits": 26,
+        "dispatches": 26,
+        "reads": 1724,
+        "responses": 1724,
+        "outputs": 1724,
+        "bytes": 13696,
+        "frees": 229,
+        "done": 26
+      },
+      "baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_2": 4691,
+        "depth_4": 4691,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 86,
+        "keep_1": 4,
+        "source_0": 533,
+        "qid_0": 79,
+        "complete": 26,
+        "cell_retire": 229,
+        "keep_7": 3,
+        "source_1": 286,
+        "qid_1": 95,
+        "keep_8": 1701,
+        "source_2": 359,
+        "qid_2": 76,
+        "beat_hold": 504,
+        "source_3": 546,
+        "qid_3": 47,
+        "exact_full": 2580,
+        "full_stall": 917,
+        "full_arrival": 1667,
+        "qid_4": 189,
+        "full_exchange": 998,
+        "qid_5": 189,
+        "link_query": 2585,
+        "qid_6": 148,
+        "cell_final_hold": 445,
+        "qid_7": 362,
+        "qid_8": 264,
+        "keep_2": 4,
+        "qid_9": 1,
+        "keep_3": 4,
+        "qid_10": 1,
+        "keep_4": 1,
+        "qid_11": 1,
+        "keep_5": 3,
+        "qid_12": 1,
+        "keep_6": 4,
+        "qid_13": 1,
+        "qid_14": 134,
+        "qid_15": 136,
+        "maximum_descriptor": 1
+      },
+      "hand_witnesses": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        }
+      ],
+      "bounded_configurations": 12,
+      "bounded_sink_patterns": 192,
+      "reset_bins": {
+        "dispatch": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2
+        },
+        "pending": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 2,
+          "reset_pending": 1
+        },
+        "full": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_beat_hold": 1
+        },
+        "partial": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1
+        },
+        "cell_hold": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1,
+          "reset_cell_final_hold": 1
+        },
+        "packet_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2,
+          "reset_partial_cell": 1,
+          "reset_packet_final_hold": 1
+        }
+      },
+      "environment_rejections": {
+        "latency": "parameter_latency",
+        "depth": "parameter_depth",
+        "cell": "parameter_cell",
+        "length": "parameter_length",
+        "same_edge_return_reuse": "environment_cell_reuse",
+        "short_reset": "environment_reset_width",
+        "uninitialized": "environment_uninitialized"
+      },
+      "metamorphic": {
+        "tag_bijection": "PASS",
+        "unused_output_lanes": "PASS"
+      },
+      "atomic_overlap": {
+        "counts": {
+          "edges": 34,
+          "reserves": 3,
+          "allocations": 3,
+          "writes": 3,
+          "commits": 3,
+          "dispatches": 3,
+          "reads": 3,
+          "responses": 3,
+          "outputs": 3,
+          "bytes": 3,
+          "frees": 3,
+          "done": 3
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_2": 34,
+          "depth_4": 34,
+          "atomic_commit": 3,
+          "duplicate_tag_candidate": 3,
+          "packet_final_hold": 13,
+          "keep_1": 3,
+          "source_0": 2,
+          "qid_0": 2,
+          "complete": 3,
+          "atomic_store_retire": 1,
+          "cell_retire": 3,
+          "source_1": 1,
+          "qid_1": 1
+        }
+      },
+      "link_lifetime_baseline": {
+        "counts": {
+          "edges": 108,
+          "reserves": 2,
+          "allocations": 6,
+          "writes": 34,
+          "commits": 2,
+          "dispatches": 2,
+          "reads": 34,
+          "responses": 34,
+          "outputs": 34,
+          "bytes": 262,
+          "frees": 6,
+          "done": 2
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_2": 108,
+          "depth_4": 108,
+          "duplicate_tag_candidate": 2,
+          "link_query": 58,
+          "beat_hold": 12,
+          "exact_full": 42,
+          "full_stall": 14,
+          "full_arrival": 28,
+          "keep_8": 32,
+          "source_0": 34,
+          "qid_0": 34,
+          "full_exchange": 18,
+          "cell_final_hold": 8,
+          "cell_retire": 6,
+          "packet_final_hold": 4,
+          "keep_3": 2,
+          "complete": 2
+        }
+      },
+      "bench_baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_2": 4691,
+        "depth_4": 4691,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 86,
+        "keep_1": 4,
+        "source_0": 533,
+        "qid_0": 79,
+        "complete": 26,
+        "cell_retire": 229,
+        "keep_7": 3,
+        "source_1": 286,
+        "qid_1": 95,
+        "keep_8": 1701,
+        "source_2": 359,
+        "qid_2": 76,
+        "beat_hold": 504,
+        "source_3": 546,
+        "qid_3": 47,
+        "exact_full": 2580,
+        "full_stall": 917,
+        "full_arrival": 1667,
+        "qid_4": 189,
+        "full_exchange": 998,
+        "qid_5": 189,
+        "link_query": 2585,
+        "qid_6": 148,
+        "cell_final_hold": 445,
+        "qid_7": 362,
+        "qid_8": 264,
+        "keep_2": 4,
+        "qid_9": 1,
+        "keep_3": 4,
+        "qid_10": 1,
+        "keep_4": 1,
+        "qid_11": 1,
+        "keep_5": 3,
+        "qid_12": 1,
+        "keep_6": 4,
+        "qid_13": 1,
+        "qid_14": 134,
+        "qid_15": 136,
+        "maximum_descriptor": 1
+      },
+      "saved_sv_coverage": {
+        "bench_points": {
+          "branch": {
+            "hit": 53,
+            "total": 120
+          },
+          "expr": {
+            "hit": 30,
+            "total": 45
+          },
+          "line": {
+            "hit": 28,
+            "total": 51
+          },
+          "toggle": {
+            "hit": 8,
+            "total": 8
+          },
+          "covergroup": {
+            "hit": 20,
+            "total": 20
+          }
+        },
+        "functional_bins": {
+          "issue.auto_0": 2968,
+          "issue.auto_1": 1724,
+          "response.auto_0": 2968,
+          "response.auto_1": 1724,
+          "output_transfer.auto_0": 2968,
+          "output_transfer.auto_1": 1724,
+          "output_hold.auto_0": 3657,
+          "output_hold.auto_1": 1035,
+          "cell_return.auto_0": 4463,
+          "cell_return.auto_1": 229,
+          "descriptor_done.auto_0": 4666,
+          "descriptor_done.auto_1": 26,
+          "overlap.<auto_0,auto_0,auto_0>": 2219,
+          "overlap.<auto_0,auto_0,auto_1>": 44,
+          "overlap.<auto_0,auto_1,auto_0>": 57,
+          "overlap.<auto_0,auto_1,auto_1>": 648,
+          "overlap.<auto_1,auto_0,auto_0>": 671,
+          "overlap.<auto_1,auto_0,auto_1>": 34,
+          "overlap.<auto_1,auto_1,auto_0>": 21,
+          "overlap.<auto_1,auto_1,auto_1>": 998
+        },
+        "scope": "Replay bench only; DUT coverage NOT_RUN"
+      },
+      "bench_cases": {
+        "memory-tx-bench-build": "PASS",
+        "memory-tx-bench-legal": "PASS",
+        "memory-tx-bench-atomic-overlap": "PASS",
+        "memory-tx-bench-random-31": "PASS",
+        "memory-tx-bench-random-53": "PASS",
+        "memory-tx-bench-replay-17": "PASS",
+        "memory-tx-bench-reset-dispatch": "PASS",
+        "memory-tx-bench-reset-pending": "PASS",
+        "memory-tx-bench-reset-full": "PASS",
+        "memory-tx-bench-reset-partial": "PASS",
+        "memory-tx-bench-reset-cell_hold": "PASS",
+        "memory-tx-bench-reset-packet_hold": "PASS",
+        "memory-tx-bench-wrong-response": "PASS",
+        "memory-tx-bench-missing-response": "PASS",
+        "memory-tx-bench-wrong-output": "PASS",
+        "memory-tx-bench-missing-done": "PASS",
+        "memory-tx-bench-missing-free": "PASS",
+        "memory-tx-bench-missing-final": "PASS",
+        "memory-tx-bench-link-lifetime-legal": "PASS",
+        "memory-tx-bench-link-lifetime-missing": "PASS",
+        "memory-tx-bench-held-data": "PASS",
+        "memory-tx-bench-absent-trigger": "PASS",
+        "memory-tx-bench-nonempty-end": "PASS",
+        "memory-tx-bench-missing-final-sample": "PASS",
+        "memory-tx-bench-collector-omission": "PASS",
+        "memory-tx-bench-collector-duplicate": "PASS",
+        "memory-tx-bench-collector-mixed": "PASS",
+        "memory-tx-bench-seed-replay": "PASS"
+      },
+      "sampled_trace_replay": {
+        "legal": "1fef6067cf0e725c9848336e70c9e47e7735790027fe7fa083633489f0687be3",
+        "replay-17": "1fef6067cf0e725c9848336e70c9e47e7735790027fe7fa083633489f0687be3",
+        "random-31": "d7e522ebd72b3eabf352380944738a3e2283949db46828dd033a76d8063c1e1b",
+        "random-53": "fcf8e89d49697580199e1e7eb7356ffe0bf71f3879d2e25c165d451e3039a3e0"
+      },
+      "baseline_artifacts": {
+        "stimulus": {
+          "path": ".build/runs/regression-2026-11-13T212854.317094+0000-dbd0255e/memory-tx-bench-legal/replay.txt",
+          "sha256": "f0d248d04179dbb18b92d4df933325b4750c8f4950de69dc6b6fc484ed33ef43"
+        },
+        "observed": {
+          "path": ".build/runs/regression-2026-11-13T212854.317094+0000-dbd0255e/memory-tx-bench-legal/observed.jsonl",
+          "sha256": "1fef6067cf0e725c9848336e70c9e47e7735790027fe7fa083633489f0687be3"
+        },
+        "coverage": {
+          "path": ".build/runs/regression-2026-11-13T212854.317094+0000-dbd0255e/memory-tx-bench-legal/coverage.dat",
+          "sha256": "fcc5a0026feda1bb6759683a46c3155c936c9fec98a31fe34be8b679f512da2c"
+        }
+      },
+      "bench_source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+      "compile_reuse": {
+        "manifest": ".build/runs/regression-2026-11-13T182052.112025+0000-1952b1b0/memory-tx-bench-build/manifest.json",
+        "manifest_sha256": "832e828c6373a21b07cbf307abb4614fbbf8742133210e25e76539e6daf47fd7",
+        "binary": ".build/runs/regression-2026-11-13T182052.112025+0000-1952b1b0/memory-tx-bench-build/obj/Vmemory_tx_replay_top",
+        "binary_sha256": "980f43ab9088a211d2595c1f998653e0903b4f80130dfdd66a906d3531f3953d",
+        "compiled_source_revision": "033b016a8a43c7781853b1642894c992e7005dfd",
+        "compiled_dirty": true,
+        "validation": "Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source"
+      },
+      "generated_config_sha256": "d63392107f7061a4a1427cd48f8f3e70f8f82c0b459992f3bf182892424014bf",
+      "case_results": {
+        "PASS": 48
+      },
+      "oracle_negative_count": 36
+    },
+    "I0": {
+      "parameters": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "oracle_seeds": [
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "cfdef5852ac1a65a4dda53d5e0673be55060482fab2b12576082b5fc1bcffe08",
+          "manifest": ".build/runs/regression-2026-11-13T212814.344082+0000-40381004/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 31,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "cad3ad41b7dc3a89f5b9a68dc9b6c4fabe0dc8dd47ba5b9e35c7976becf74b9a",
+          "manifest": ".build/runs/regression-2026-11-13T212834.560533+0000-9d791ec6/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 53,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "64c32c548a937db86af3aab38a89a06f78c04618c3b992cbac4115624ee471da",
+          "manifest": ".build/runs/regression-2026-11-13T212836.921748+0000-7e1317b4/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "cfdef5852ac1a65a4dda53d5e0673be55060482fab2b12576082b5fc1bcffe08",
+          "manifest": ".build/runs/regression-2026-11-13T212839.492649+0000-2e13ce41/memory-tx-oracle/manifest.json"
+        }
+      ],
+      "baseline_counts": {
+        "edges": 1262,
+        "reserves": 26,
+        "allocations": 155,
+        "writes": 296,
+        "commits": 26,
+        "dispatches": 26,
+        "reads": 296,
+        "responses": 296,
+        "outputs": 296,
+        "bytes": 2284,
+        "frees": 155,
+        "done": 26
+      },
+      "baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_1": 1262,
+        "depth_4": 1262,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 85,
+        "keep_1": 4,
+        "source_0": 155,
+        "qid_0": 95,
+        "complete": 26,
+        "cell_retire": 155,
+        "keep_7": 5,
+        "source_1": 141,
+        "qid_1": 26,
+        "keep_8": 274,
+        "qid_2": 60,
+        "beat_hold": 136,
+        "qid_3": 115,
+        "link_query": 688,
+        "cell_final_hold": 293,
+        "exact_full": 571,
+        "full_stall": 333,
+        "full_arrival": 238,
+        "full_exchange": 88,
+        "keep_2": 3,
+        "keep_3": 1,
+        "keep_4": 3,
+        "keep_5": 4,
+        "keep_6": 2,
+        "maximum_descriptor": 2
+      },
+      "hand_witnesses": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        }
+      ],
+      "bounded_configurations": 12,
+      "bounded_sink_patterns": 192,
+      "reset_bins": {
+        "dispatch": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2
+        },
+        "pending": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 2,
+          "reset_pending": 1
+        },
+        "full": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_beat_hold": 1
+        },
+        "partial": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1
+        },
+        "cell_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_partial_cell": 1,
+          "reset_cell_final_hold": 1
+        },
+        "packet_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2,
+          "reset_partial_cell": 1,
+          "reset_packet_final_hold": 1
+        }
+      },
+      "environment_rejections": {
+        "latency": "parameter_latency",
+        "depth": "parameter_depth",
+        "cell": "parameter_cell",
+        "length": "parameter_length",
+        "same_edge_return_reuse": "environment_cell_reuse",
+        "short_reset": "environment_reset_width",
+        "uninitialized": "environment_uninitialized"
+      },
+      "metamorphic": {
+        "tag_bijection": "PASS",
+        "unused_output_lanes": "PASS"
+      },
+      "atomic_overlap": {
+        "counts": {
+          "edges": 30,
+          "reserves": 3,
+          "allocations": 3,
+          "writes": 3,
+          "commits": 3,
+          "dispatches": 3,
+          "reads": 3,
+          "responses": 3,
+          "outputs": 3,
+          "bytes": 3,
+          "frees": 3,
+          "done": 3
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_1": 30,
+          "depth_4": 30,
+          "atomic_commit": 3,
+          "duplicate_tag_candidate": 3,
+          "packet_final_hold": 13,
+          "keep_1": 3,
+          "source_0": 2,
+          "qid_0": 2,
+          "complete": 3,
+          "atomic_store_retire": 1,
+          "cell_retire": 3,
+          "source_1": 1,
+          "qid_1": 1
+        }
+      },
+      "link_lifetime_baseline": {
+        "counts": {
+          "edges": 56,
+          "reserves": 2,
+          "allocations": 6,
+          "writes": 10,
+          "commits": 2,
+          "dispatches": 2,
+          "reads": 10,
+          "responses": 10,
+          "outputs": 10,
+          "bytes": 70,
+          "frees": 6,
+          "done": 2
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_1": 56,
+          "depth_4": 56,
+          "duplicate_tag_candidate": 2,
+          "link_query": 32,
+          "beat_hold": 12,
+          "exact_full": 16,
+          "full_stall": 12,
+          "full_arrival": 4,
+          "keep_8": 8,
+          "source_0": 10,
+          "qid_0": 10,
+          "cell_final_hold": 8,
+          "cell_retire": 6,
+          "packet_final_hold": 4,
+          "keep_3": 2,
+          "complete": 2
+        }
+      },
+      "bench_baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_1": 1262,
+        "depth_4": 1262,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 85,
+        "keep_1": 4,
+        "source_0": 155,
+        "qid_0": 95,
+        "complete": 26,
+        "cell_retire": 155,
+        "keep_7": 5,
+        "source_1": 141,
+        "qid_1": 26,
+        "keep_8": 274,
+        "qid_2": 60,
+        "beat_hold": 136,
+        "qid_3": 115,
+        "link_query": 688,
+        "cell_final_hold": 293,
+        "exact_full": 571,
+        "full_stall": 333,
+        "full_arrival": 238,
+        "full_exchange": 88,
+        "keep_2": 3,
+        "keep_3": 1,
+        "keep_4": 3,
+        "keep_5": 4,
+        "keep_6": 2,
+        "maximum_descriptor": 2
+      },
+      "saved_sv_coverage": {
+        "bench_points": {
+          "branch": {
+            "hit": 53,
+            "total": 120
+          },
+          "expr": {
+            "hit": 30,
+            "total": 45
+          },
+          "line": {
+            "hit": 28,
+            "total": 51
+          },
+          "toggle": {
+            "hit": 8,
+            "total": 8
+          },
+          "covergroup": {
+            "hit": 20,
+            "total": 20
+          }
+        },
+        "functional_bins": {
+          "issue.auto_0": 967,
+          "issue.auto_1": 296,
+          "response.auto_0": 967,
+          "response.auto_1": 296,
+          "output_transfer.auto_0": 967,
+          "output_transfer.auto_1": 296,
+          "output_hold.auto_0": 749,
+          "output_hold.auto_1": 514,
+          "cell_return.auto_0": 1108,
+          "cell_return.auto_1": 155,
+          "descriptor_done.auto_0": 1237,
+          "descriptor_done.auto_1": 26,
+          "overlap.<auto_0,auto_0,auto_0>": 740,
+          "overlap.<auto_0,auto_0,auto_1>": 26,
+          "overlap.<auto_0,auto_1,auto_0>": 64,
+          "overlap.<auto_0,auto_1,auto_1>": 137,
+          "overlap.<auto_1,auto_0,auto_0>": 156,
+          "overlap.<auto_1,auto_0,auto_1>": 45,
+          "overlap.<auto_1,auto_1,auto_0>": 7,
+          "overlap.<auto_1,auto_1,auto_1>": 88
+        },
+        "scope": "Replay bench only; DUT coverage NOT_RUN"
+      },
+      "bench_cases": {
+        "memory-tx-bench-build": "PASS",
+        "memory-tx-bench-legal": "PASS",
+        "memory-tx-bench-atomic-overlap": "PASS",
+        "memory-tx-bench-random-31": "PASS",
+        "memory-tx-bench-random-53": "PASS",
+        "memory-tx-bench-replay-17": "PASS",
+        "memory-tx-bench-reset-dispatch": "PASS",
+        "memory-tx-bench-reset-pending": "PASS",
+        "memory-tx-bench-reset-full": "PASS",
+        "memory-tx-bench-reset-partial": "PASS",
+        "memory-tx-bench-reset-cell_hold": "PASS",
+        "memory-tx-bench-reset-packet_hold": "PASS",
+        "memory-tx-bench-wrong-response": "PASS",
+        "memory-tx-bench-missing-response": "PASS",
+        "memory-tx-bench-wrong-output": "PASS",
+        "memory-tx-bench-missing-done": "PASS",
+        "memory-tx-bench-missing-free": "PASS",
+        "memory-tx-bench-missing-final": "PASS",
+        "memory-tx-bench-link-lifetime-legal": "PASS",
+        "memory-tx-bench-link-lifetime-missing": "PASS",
+        "memory-tx-bench-held-data": "PASS",
+        "memory-tx-bench-absent-trigger": "PASS",
+        "memory-tx-bench-nonempty-end": "PASS",
+        "memory-tx-bench-missing-final-sample": "PASS",
+        "memory-tx-bench-collector-omission": "PASS",
+        "memory-tx-bench-collector-duplicate": "PASS",
+        "memory-tx-bench-collector-mixed": "PASS",
+        "memory-tx-bench-seed-replay": "PASS"
+      },
+      "sampled_trace_replay": {
+        "legal": "23123ae7c3471d8cc9659263df3692c779017ad2d8b4df1deb77f34b33baf975",
+        "replay-17": "23123ae7c3471d8cc9659263df3692c779017ad2d8b4df1deb77f34b33baf975",
+        "random-31": "bbbd30e1887c00728e81276e51d339fde0d8a3ed6865ef09c032c29702f09c61",
+        "random-53": "44a5b1c31fc89b95be56733e87b436cb3f5a40064f4aa15f5b405fca418e17d4"
+      },
+      "baseline_artifacts": {
+        "stimulus": {
+          "path": ".build/runs/regression-2026-11-13T212814.344082+0000-40381004/memory-tx-bench-legal/replay.txt",
+          "sha256": "4575669d436daf2a5d4fe9477b3bde0fade6ee301d176afda00ffed307a198b7"
+        },
+        "observed": {
+          "path": ".build/runs/regression-2026-11-13T212814.344082+0000-40381004/memory-tx-bench-legal/observed.jsonl",
+          "sha256": "23123ae7c3471d8cc9659263df3692c779017ad2d8b4df1deb77f34b33baf975"
+        },
+        "coverage": {
+          "path": ".build/runs/regression-2026-11-13T212814.344082+0000-40381004/memory-tx-bench-legal/coverage.dat",
+          "sha256": "aab177e72d8118e1339a2484a583d015483ccbb29e262d3c06175addd9a807fb"
+        }
+      },
+      "bench_source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+      "compile_reuse": {
+        "manifest": ".build/runs/regression-2026-11-13T181538.694410+0000-b14bcafa/memory-tx-bench-build/manifest.json",
+        "manifest_sha256": "13a581d236025599e05a6c49788dd6d0491f7280d9f46ac4d41dab59ea29e711",
+        "binary": ".build/runs/regression-2026-11-13T181538.694410+0000-b14bcafa/memory-tx-bench-build/obj/Vmemory_tx_replay_top",
+        "binary_sha256": "3cd6a5574064fa0a1f1a639bbf61a522dee86b7e6e3f8ad87578dbf538e3b10c",
+        "compiled_source_revision": "033b016a8a43c7781853b1642894c992e7005dfd",
+        "compiled_dirty": false,
+        "validation": "Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source"
+      },
+      "generated_config_sha256": "6145ddefb98055ba5f941d879b93b9abd19b8e8bfd00526a8721e84a20ecc7c0",
+      "case_results": {
+        "PASS": 48
+      },
+      "oracle_negative_count": 36
+    },
+    "I1": {
+      "parameters": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "oracle_seeds": [
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "c8d04556f370abea315428774fa7244999c733b640a79a8e9fa29eb8e3fab49a",
+          "manifest": ".build/runs/regression-2026-11-13T212746.037225+0000-53b4c4b9/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 31,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "45533464947fc7cef8a24d6e28298aad578b8e231a8956a463480751967a6e5a",
+          "manifest": ".build/runs/regression-2026-11-13T212806.396560+0000-446c549b/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 53,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "923fac4cf4e4d8ec365374111140c299122010f48a11f438e80328d0d9d6f323",
+          "manifest": ".build/runs/regression-2026-11-13T212809.032448+0000-44809270/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "c8d04556f370abea315428774fa7244999c733b640a79a8e9fa29eb8e3fab49a",
+          "manifest": ".build/runs/regression-2026-11-13T212811.512356+0000-a45e97d5/memory-tx-oracle/manifest.json"
+        }
+      ],
+      "baseline_counts": {
+        "edges": 1314,
+        "reserves": 26,
+        "allocations": 155,
+        "writes": 296,
+        "commits": 26,
+        "dispatches": 26,
+        "reads": 296,
+        "responses": 296,
+        "outputs": 296,
+        "bytes": 2284,
+        "frees": 155,
+        "done": 26
+      },
+      "baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_2": 1314,
+        "depth_4": 1314,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 85,
+        "keep_1": 4,
+        "source_0": 155,
+        "qid_0": 95,
+        "complete": 26,
+        "cell_retire": 155,
+        "keep_7": 5,
+        "source_1": 141,
+        "qid_1": 26,
+        "keep_8": 274,
+        "qid_2": 60,
+        "beat_hold": 136,
+        "qid_3": 115,
+        "link_query": 702,
+        "cell_final_hold": 293,
+        "exact_full": 584,
+        "full_stall": 346,
+        "full_arrival": 244,
+        "keep_2": 3,
+        "keep_3": 1,
+        "keep_4": 3,
+        "keep_5": 4,
+        "keep_6": 2,
+        "full_exchange": 12,
+        "maximum_descriptor": 2
+      },
+      "hand_witnesses": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        }
+      ],
+      "bounded_configurations": 12,
+      "bounded_sink_patterns": 192,
+      "reset_bins": {
+        "dispatch": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2
+        },
+        "pending": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 2,
+          "reset_pending": 1
+        },
+        "full": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_beat_hold": 1
+        },
+        "partial": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1
+        },
+        "cell_hold": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1,
+          "reset_cell_final_hold": 1
+        },
+        "packet_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2,
+          "reset_partial_cell": 1,
+          "reset_packet_final_hold": 1
+        }
+      },
+      "environment_rejections": {
+        "latency": "parameter_latency",
+        "depth": "parameter_depth",
+        "cell": "parameter_cell",
+        "length": "parameter_length",
+        "same_edge_return_reuse": "environment_cell_reuse",
+        "short_reset": "environment_reset_width",
+        "uninitialized": "environment_uninitialized"
+      },
+      "metamorphic": {
+        "tag_bijection": "PASS",
+        "unused_output_lanes": "PASS"
+      },
+      "atomic_overlap": {
+        "counts": {
+          "edges": 34,
+          "reserves": 3,
+          "allocations": 3,
+          "writes": 3,
+          "commits": 3,
+          "dispatches": 3,
+          "reads": 3,
+          "responses": 3,
+          "outputs": 3,
+          "bytes": 3,
+          "frees": 3,
+          "done": 3
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_2": 34,
+          "depth_4": 34,
+          "atomic_commit": 3,
+          "duplicate_tag_candidate": 3,
+          "packet_final_hold": 13,
+          "keep_1": 3,
+          "source_0": 2,
+          "qid_0": 2,
+          "complete": 3,
+          "atomic_store_retire": 1,
+          "cell_retire": 3,
+          "source_1": 1,
+          "qid_1": 1
+        }
+      },
+      "link_lifetime_baseline": {
+        "counts": {
+          "edges": 60,
+          "reserves": 2,
+          "allocations": 6,
+          "writes": 10,
+          "commits": 2,
+          "dispatches": 2,
+          "reads": 10,
+          "responses": 10,
+          "outputs": 10,
+          "bytes": 70,
+          "frees": 6,
+          "done": 2
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_2": 60,
+          "depth_4": 60,
+          "duplicate_tag_candidate": 2,
+          "link_query": 34,
+          "beat_hold": 12,
+          "exact_full": 18,
+          "full_stall": 14,
+          "full_arrival": 6,
+          "keep_8": 8,
+          "source_0": 10,
+          "qid_0": 10,
+          "cell_final_hold": 8,
+          "cell_retire": 6,
+          "packet_final_hold": 4,
+          "keep_3": 2,
+          "complete": 2
+        }
+      },
+      "bench_baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_2": 1314,
+        "depth_4": 1314,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 85,
+        "keep_1": 4,
+        "source_0": 155,
+        "qid_0": 95,
+        "complete": 26,
+        "cell_retire": 155,
+        "keep_7": 5,
+        "source_1": 141,
+        "qid_1": 26,
+        "keep_8": 274,
+        "qid_2": 60,
+        "beat_hold": 136,
+        "qid_3": 115,
+        "link_query": 702,
+        "cell_final_hold": 293,
+        "exact_full": 584,
+        "full_stall": 346,
+        "full_arrival": 244,
+        "keep_2": 3,
+        "keep_3": 1,
+        "keep_4": 3,
+        "keep_5": 4,
+        "keep_6": 2,
+        "full_exchange": 12,
+        "maximum_descriptor": 2
+      },
+      "saved_sv_coverage": {
+        "bench_points": {
+          "branch": {
+            "hit": 53,
+            "total": 120
+          },
+          "expr": {
+            "hit": 30,
+            "total": 45
+          },
+          "line": {
+            "hit": 28,
+            "total": 51
+          },
+          "toggle": {
+            "hit": 8,
+            "total": 8
+          },
+          "covergroup": {
+            "hit": 20,
+            "total": 20
+          }
+        },
+        "functional_bins": {
+          "issue.auto_0": 1019,
+          "issue.auto_1": 296,
+          "response.auto_0": 1019,
+          "response.auto_1": 296,
+          "output_transfer.auto_0": 1019,
+          "output_transfer.auto_1": 296,
+          "output_hold.auto_0": 801,
+          "output_hold.auto_1": 514,
+          "cell_return.auto_0": 1160,
+          "cell_return.auto_1": 155,
+          "descriptor_done.auto_0": 1289,
+          "descriptor_done.auto_1": 26,
+          "overlap.<auto_0,auto_0,auto_0>": 692,
+          "overlap.<auto_0,auto_0,auto_1>": 44,
+          "overlap.<auto_0,auto_1,auto_0>": 70,
+          "overlap.<auto_0,auto_1,auto_1>": 213,
+          "overlap.<auto_1,auto_0,auto_0>": 256,
+          "overlap.<auto_1,auto_0,auto_1>": 27,
+          "overlap.<auto_1,auto_1,auto_0>": 1,
+          "overlap.<auto_1,auto_1,auto_1>": 12
+        },
+        "scope": "Replay bench only; DUT coverage NOT_RUN"
+      },
+      "bench_cases": {
+        "memory-tx-bench-build": "PASS",
+        "memory-tx-bench-legal": "PASS",
+        "memory-tx-bench-atomic-overlap": "PASS",
+        "memory-tx-bench-random-31": "PASS",
+        "memory-tx-bench-random-53": "PASS",
+        "memory-tx-bench-replay-17": "PASS",
+        "memory-tx-bench-reset-dispatch": "PASS",
+        "memory-tx-bench-reset-pending": "PASS",
+        "memory-tx-bench-reset-full": "PASS",
+        "memory-tx-bench-reset-partial": "PASS",
+        "memory-tx-bench-reset-cell_hold": "PASS",
+        "memory-tx-bench-reset-packet_hold": "PASS",
+        "memory-tx-bench-wrong-response": "PASS",
+        "memory-tx-bench-missing-response": "PASS",
+        "memory-tx-bench-wrong-output": "PASS",
+        "memory-tx-bench-missing-done": "PASS",
+        "memory-tx-bench-missing-free": "PASS",
+        "memory-tx-bench-missing-final": "PASS",
+        "memory-tx-bench-link-lifetime-legal": "PASS",
+        "memory-tx-bench-link-lifetime-missing": "PASS",
+        "memory-tx-bench-held-data": "PASS",
+        "memory-tx-bench-absent-trigger": "PASS",
+        "memory-tx-bench-nonempty-end": "PASS",
+        "memory-tx-bench-missing-final-sample": "PASS",
+        "memory-tx-bench-collector-omission": "PASS",
+        "memory-tx-bench-collector-duplicate": "PASS",
+        "memory-tx-bench-collector-mixed": "PASS",
+        "memory-tx-bench-seed-replay": "PASS"
+      },
+      "sampled_trace_replay": {
+        "legal": "01f05138a1b617516f01540be3d362e7512e96c95109f1ef5b4b78708116491d",
+        "replay-17": "01f05138a1b617516f01540be3d362e7512e96c95109f1ef5b4b78708116491d",
+        "random-31": "449c3268727b3bbd5c0779363256765f3c7b78022adad96fe125dbde0f2d0a4a",
+        "random-53": "ebf4379d4090cf97ed6c106e0445aa87fc9e7a7079ba01552f1c856460e5d4fd"
+      },
+      "baseline_artifacts": {
+        "stimulus": {
+          "path": ".build/runs/regression-2026-11-13T212746.037225+0000-53b4c4b9/memory-tx-bench-legal/replay.txt",
+          "sha256": "789f99225e8bc9f9128663b0403b231986d21f38c6643832c471e772e83ab27a"
+        },
+        "observed": {
+          "path": ".build/runs/regression-2026-11-13T212746.037225+0000-53b4c4b9/memory-tx-bench-legal/observed.jsonl",
+          "sha256": "01f05138a1b617516f01540be3d362e7512e96c95109f1ef5b4b78708116491d"
+        },
+        "coverage": {
+          "path": ".build/runs/regression-2026-11-13T212746.037225+0000-53b4c4b9/memory-tx-bench-legal/coverage.dat",
+          "sha256": "e04e1fc4efedaa830c4be6d0e8563129e51a8dc731e665e4f3bf815b25f4a8c6"
+        }
+      },
+      "bench_source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+      "compile_reuse": {
+        "manifest": ".build/runs/regression-2026-11-13T180804.452982+0000-1c77bc85/memory-tx-bench-build/manifest.json",
+        "manifest_sha256": "b1764858159e89fa7e4b8a37a6ece1261b6203bf76e65dc4036d744dde338420",
+        "binary": ".build/runs/regression-2026-11-13T180804.452982+0000-1c77bc85/memory-tx-bench-build/obj/Vmemory_tx_replay_top",
+        "binary_sha256": "cdd6285d0393781d76e4f4caa9170ca9b2a51f6bed8bb509d21ff987a621744a",
+        "compiled_source_revision": "901c02680d2c5c42a1edf82251fa8208a888ca87",
+        "compiled_dirty": false,
+        "validation": "Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source"
+      },
+      "generated_config_sha256": "dc73428678d18a683c13e9beddf24cddb063c537350a1179e761296ec48c6797",
+      "case_results": {
+        "PASS": 48
+      },
+      "oracle_negative_count": 36
+    },
+    "E0": {
+      "parameters": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 16,
+        "descriptors": 8,
+        "max_length": 128,
+        "queues": 2,
+        "sources": 1
+      },
+      "oracle_seeds": [
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "9981b58b2f86f2d7a5a0e531a73bcd8b2badea03fe6fb515c7ed3a27f41574a2",
+          "manifest": ".build/runs/regression-2026-11-13T212746.056901+0000-e4b278c6/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 31,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "aba4360d549a354000ed638605f200b88ea4c82270cb773c35a88939308c7b92",
+          "manifest": ".build/runs/regression-2026-11-13T212810.958426+0000-8bc1ae02/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 53,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "978c6b00b3c69b8f276a0b602a4e582e451795fba974d9a801cd603f990f6b97",
+          "manifest": ".build/runs/regression-2026-11-13T212813.577978+0000-79d43c19/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "9981b58b2f86f2d7a5a0e531a73bcd8b2badea03fe6fb515c7ed3a27f41574a2",
+          "manifest": ".build/runs/regression-2026-11-13T212815.902926+0000-a649c6c4/memory-tx-oracle/manifest.json"
+        }
+      ],
+      "baseline_counts": {
+        "edges": 825,
+        "reserves": 26,
+        "allocations": 86,
+        "writes": 159,
+        "commits": 26,
+        "dispatches": 26,
+        "reads": 159,
+        "responses": 159,
+        "outputs": 159,
+        "bytes": 1191,
+        "frees": 86,
+        "done": 26
+      },
+      "baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_1": 825,
+        "depth_4": 825,
+        "atomic_commit": 9,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 95,
+        "keep_1": 4,
+        "source_0": 159,
+        "qid_0": 83,
+        "complete": 26,
+        "cell_retire": 86,
+        "keep_7": 4,
+        "qid_1": 76,
+        "keep_8": 138,
+        "beat_hold": 121,
+        "link_query": 386,
+        "cell_final_hold": 135,
+        "maximum_descriptor": 4,
+        "exact_full": 276,
+        "full_stall": 174,
+        "full_arrival": 102,
+        "full_exchange": 27,
+        "keep_2": 1,
+        "keep_3": 4,
+        "keep_4": 2,
+        "keep_5": 3,
+        "keep_6": 3
+      },
+      "hand_witnesses": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        }
+      ],
+      "bounded_configurations": 12,
+      "bounded_sink_patterns": 192,
+      "reset_bins": {
+        "dispatch": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2
+        },
+        "pending": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 2,
+          "reset_pending": 1
+        },
+        "full": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_beat_hold": 1
+        },
+        "partial": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1
+        },
+        "cell_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_partial_cell": 1,
+          "reset_cell_final_hold": 1
+        },
+        "packet_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2,
+          "reset_partial_cell": 1,
+          "reset_packet_final_hold": 1
+        }
+      },
+      "environment_rejections": {
+        "latency": "parameter_latency",
+        "depth": "parameter_depth",
+        "cell": "parameter_cell",
+        "length": "parameter_length",
+        "same_edge_return_reuse": "environment_cell_reuse",
+        "short_reset": "environment_reset_width",
+        "uninitialized": "environment_uninitialized"
+      },
+      "metamorphic": {
+        "tag_bijection": "PASS",
+        "unused_output_lanes": "PASS"
+      },
+      "atomic_overlap": {
+        "counts": {
+          "edges": 30,
+          "reserves": 3,
+          "allocations": 3,
+          "writes": 3,
+          "commits": 3,
+          "dispatches": 3,
+          "reads": 3,
+          "responses": 3,
+          "outputs": 3,
+          "bytes": 3,
+          "frees": 3,
+          "done": 3
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_1": 30,
+          "depth_4": 30,
+          "atomic_commit": 3,
+          "duplicate_tag_candidate": 3,
+          "packet_final_hold": 13,
+          "keep_1": 3,
+          "source_0": 3,
+          "qid_0": 2,
+          "complete": 3,
+          "atomic_store_retire": 1,
+          "cell_retire": 3,
+          "qid_1": 1
+        }
+      },
+      "link_lifetime_baseline": {
+        "counts": {
+          "edges": 56,
+          "reserves": 2,
+          "allocations": 6,
+          "writes": 10,
+          "commits": 2,
+          "dispatches": 2,
+          "reads": 10,
+          "responses": 10,
+          "outputs": 10,
+          "bytes": 70,
+          "frees": 6,
+          "done": 2
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_1": 56,
+          "depth_4": 56,
+          "duplicate_tag_candidate": 2,
+          "link_query": 32,
+          "beat_hold": 12,
+          "exact_full": 16,
+          "full_stall": 12,
+          "full_arrival": 4,
+          "keep_8": 8,
+          "source_0": 10,
+          "qid_0": 10,
+          "cell_final_hold": 8,
+          "cell_retire": 6,
+          "packet_final_hold": 4,
+          "keep_3": 2,
+          "complete": 2
+        }
+      },
+      "bench_baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_1": 825,
+        "depth_4": 825,
+        "atomic_commit": 9,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 95,
+        "keep_1": 4,
+        "source_0": 159,
+        "qid_0": 83,
+        "complete": 26,
+        "cell_retire": 86,
+        "keep_7": 4,
+        "qid_1": 76,
+        "keep_8": 138,
+        "beat_hold": 121,
+        "link_query": 386,
+        "cell_final_hold": 135,
+        "maximum_descriptor": 4,
+        "exact_full": 276,
+        "full_stall": 174,
+        "full_arrival": 102,
+        "full_exchange": 27,
+        "keep_2": 1,
+        "keep_3": 4,
+        "keep_4": 2,
+        "keep_5": 3,
+        "keep_6": 3
+      },
+      "saved_sv_coverage": {
+        "bench_points": {
+          "branch": {
+            "hit": 53,
+            "total": 120
+          },
+          "expr": {
+            "hit": 30,
+            "total": 45
+          },
+          "line": {
+            "hit": 28,
+            "total": 51
+          },
+          "toggle": {
+            "hit": 8,
+            "total": 8
+          },
+          "covergroup": {
+            "hit": 20,
+            "total": 20
+          }
+        },
+        "functional_bins": {
+          "issue.auto_0": 667,
+          "issue.auto_1": 159,
+          "response.auto_0": 667,
+          "response.auto_1": 159,
+          "output_transfer.auto_0": 667,
+          "output_transfer.auto_1": 159,
+          "output_hold.auto_0": 475,
+          "output_hold.auto_1": 351,
+          "cell_return.auto_0": 740,
+          "cell_return.auto_1": 86,
+          "descriptor_done.auto_0": 800,
+          "descriptor_done.auto_1": 26,
+          "overlap.<auto_0,auto_0,auto_0>": 516,
+          "overlap.<auto_0,auto_0,auto_1>": 26,
+          "overlap.<auto_0,auto_1,auto_0>": 63,
+          "overlap.<auto_0,auto_1,auto_1>": 62,
+          "overlap.<auto_1,auto_0,auto_0>": 81,
+          "overlap.<auto_1,auto_0,auto_1>": 44,
+          "overlap.<auto_1,auto_1,auto_0>": 7,
+          "overlap.<auto_1,auto_1,auto_1>": 27
+        },
+        "scope": "Replay bench only; DUT coverage NOT_RUN"
+      },
+      "bench_cases": {
+        "memory-tx-bench-build": "PASS",
+        "memory-tx-bench-legal": "PASS",
+        "memory-tx-bench-atomic-overlap": "PASS",
+        "memory-tx-bench-random-31": "PASS",
+        "memory-tx-bench-random-53": "PASS",
+        "memory-tx-bench-replay-17": "PASS",
+        "memory-tx-bench-reset-dispatch": "PASS",
+        "memory-tx-bench-reset-pending": "PASS",
+        "memory-tx-bench-reset-full": "PASS",
+        "memory-tx-bench-reset-partial": "PASS",
+        "memory-tx-bench-reset-cell_hold": "PASS",
+        "memory-tx-bench-reset-packet_hold": "PASS",
+        "memory-tx-bench-wrong-response": "PASS",
+        "memory-tx-bench-missing-response": "PASS",
+        "memory-tx-bench-wrong-output": "PASS",
+        "memory-tx-bench-missing-done": "PASS",
+        "memory-tx-bench-missing-free": "PASS",
+        "memory-tx-bench-missing-final": "PASS",
+        "memory-tx-bench-link-lifetime-legal": "PASS",
+        "memory-tx-bench-link-lifetime-missing": "PASS",
+        "memory-tx-bench-held-data": "PASS",
+        "memory-tx-bench-absent-trigger": "PASS",
+        "memory-tx-bench-nonempty-end": "PASS",
+        "memory-tx-bench-missing-final-sample": "PASS",
+        "memory-tx-bench-collector-omission": "PASS",
+        "memory-tx-bench-collector-duplicate": "PASS",
+        "memory-tx-bench-collector-mixed": "PASS",
+        "memory-tx-bench-seed-replay": "PASS"
+      },
+      "sampled_trace_replay": {
+        "legal": "ea27ead3943f1354917ed1842e1d69a1ce377ec16b0eee1f087524b08398cd02",
+        "replay-17": "ea27ead3943f1354917ed1842e1d69a1ce377ec16b0eee1f087524b08398cd02",
+        "random-31": "e18fbcd79712d5c87e1622d227ecc1217bf8a26b3b65e2187c58302f503c7822",
+        "random-53": "2894a140ed7f78fe36ff1b95386cd6785c4813103eccf87dcaa87195dd38d57c"
+      },
+      "baseline_artifacts": {
+        "stimulus": {
+          "path": ".build/runs/regression-2026-11-13T212746.056901+0000-e4b278c6/memory-tx-bench-legal/replay.txt",
+          "sha256": "9ed17d3a7961dc69c01e7539e426a143e09e5ef354bdb0438d9c143d75af521a"
+        },
+        "observed": {
+          "path": ".build/runs/regression-2026-11-13T212746.056901+0000-e4b278c6/memory-tx-bench-legal/observed.jsonl",
+          "sha256": "ea27ead3943f1354917ed1842e1d69a1ce377ec16b0eee1f087524b08398cd02"
+        },
+        "coverage": {
+          "path": ".build/runs/regression-2026-11-13T212746.056901+0000-e4b278c6/memory-tx-bench-legal/coverage.dat",
+          "sha256": "42fe85ecd312b419d70a819cb64b69f42de08422e51ba2900e30ab8954d30ec4"
+        }
+      },
+      "bench_source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+      "compile_reuse": {
+        "manifest": ".build/runs/regression-2026-11-13T180804.441178+0000-dcf331ee/memory-tx-bench-build/manifest.json",
+        "manifest_sha256": "66f32006550b974d1f347ef9e2bc85300ce1d4be5b158b0df91b1b4fa72d312e",
+        "binary": ".build/runs/regression-2026-11-13T180804.441178+0000-dcf331ee/memory-tx-bench-build/obj/Vmemory_tx_replay_top",
+        "binary_sha256": "5aad7746bad249d440b26aa0c002ae1d4a3c987706fb5bfadc309d135b8e35f0",
+        "compiled_source_revision": "901c02680d2c5c42a1edf82251fa8208a888ca87",
+        "compiled_dirty": false,
+        "validation": "Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source"
+      },
+      "generated_config_sha256": "4d263dd89a677f8cefcd5e689b16ab5bf57d7fb5c3abbfba8072c1759b196605",
+      "case_results": {
+        "PASS": 78
+      },
+      "oracle_negative_count": 36
+    },
+    "E1": {
+      "parameters": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 32,
+        "cells": 64,
+        "descriptors": 32,
+        "max_length": 512,
+        "queues": 8,
+        "sources": 4
+      },
+      "oracle_seeds": [
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "ab02b9bc9f8602fc29ae3ddb8b825a1e6f26a79d451fc230a7900cf83e117e43",
+          "manifest": ".build/runs/regression-2026-11-13T212823.888517+0000-47e768a4/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 31,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "a5f351dea396223bd026a93feeeb00f764a041207c09218fbf270969908fcd7f",
+          "manifest": ".build/runs/regression-2026-11-13T212845.728617+0000-018a6a09/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 53,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "32e9a64176a6a7da3bbc0aa2ea7ba574cd702e5494faccb69fc2c64ad328f934",
+          "manifest": ".build/runs/regression-2026-11-13T212848.430945+0000-853bb435/memory-tx-oracle/manifest.json"
+        },
+        {
+          "seed": 17,
+          "source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+          "dirty": false,
+          "trace_sha256": "ab02b9bc9f8602fc29ae3ddb8b825a1e6f26a79d451fc230a7900cf83e117e43",
+          "manifest": ".build/runs/regression-2026-11-13T212851.418460+0000-f23afa9e/memory-tx-oracle/manifest.json"
+        }
+      ],
+      "baseline_counts": {
+        "edges": 1946,
+        "reserves": 26,
+        "allocations": 155,
+        "writes": 576,
+        "commits": 26,
+        "dispatches": 26,
+        "reads": 576,
+        "responses": 576,
+        "outputs": 576,
+        "bytes": 4515,
+        "frees": 155,
+        "done": 26
+      },
+      "baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_2": 1946,
+        "depth_4": 1946,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 88,
+        "keep_1": 6,
+        "source_0": 186,
+        "qid_0": 166,
+        "complete": 26,
+        "cell_retire": 155,
+        "keep_7": 6,
+        "source_1": 49,
+        "qid_1": 40,
+        "keep_8": 553,
+        "source_2": 116,
+        "qid_2": 25,
+        "beat_hold": 211,
+        "source_3": 225,
+        "qid_3": 39,
+        "exact_full": 972,
+        "full_stall": 457,
+        "full_arrival": 523,
+        "qid_4": 20,
+        "qid_5": 9,
+        "link_query": 1028,
+        "qid_6": 91,
+        "cell_final_hold": 287,
+        "qid_7": 186,
+        "full_exchange": 210,
+        "keep_2": 2,
+        "keep_3": 3,
+        "keep_4": 2,
+        "keep_5": 2,
+        "keep_6": 2,
+        "maximum_descriptor": 1
+      },
+      "hand_witnesses": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "valid_bytes": 35,
+          "returns": [
+            5,
+            1,
+            9
+          ]
+        }
+      ],
+      "bounded_configurations": 12,
+      "bounded_sink_patterns": 192,
+      "reset_bins": {
+        "dispatch": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2
+        },
+        "pending": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 2,
+          "reset_pending": 1
+        },
+        "full": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 1,
+          "reset_full": 1,
+          "reset_full_fifo": 1,
+          "reset_beat_hold": 1
+        },
+        "partial": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1
+        },
+        "cell_hold": {
+          "reset": 2,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "reset_pending": 1,
+          "reset_full": 1,
+          "reset_partial_cell": 1,
+          "reset_cell_final_hold": 1
+        },
+        "packet_hold": {
+          "reset": 2,
+          "reset_idle": 2,
+          "reset_nonfull": 2,
+          "reset_partial_cell": 1,
+          "reset_packet_final_hold": 1
+        }
+      },
+      "environment_rejections": {
+        "latency": "parameter_latency",
+        "depth": "parameter_depth",
+        "cell": "parameter_cell",
+        "length": "parameter_length",
+        "same_edge_return_reuse": "environment_cell_reuse",
+        "short_reset": "environment_reset_width",
+        "uninitialized": "environment_uninitialized"
+      },
+      "metamorphic": {
+        "tag_bijection": "PASS",
+        "unused_output_lanes": "PASS"
+      },
+      "atomic_overlap": {
+        "counts": {
+          "edges": 34,
+          "reserves": 3,
+          "allocations": 3,
+          "writes": 3,
+          "commits": 3,
+          "dispatches": 3,
+          "reads": 3,
+          "responses": 3,
+          "outputs": 3,
+          "bytes": 3,
+          "frees": 3,
+          "done": 3
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_2": 34,
+          "depth_4": 34,
+          "atomic_commit": 3,
+          "duplicate_tag_candidate": 3,
+          "packet_final_hold": 13,
+          "keep_1": 3,
+          "source_0": 2,
+          "qid_0": 2,
+          "complete": 3,
+          "atomic_store_retire": 1,
+          "cell_retire": 3,
+          "source_1": 1,
+          "qid_1": 1
+        }
+      },
+      "link_lifetime_baseline": {
+        "counts": {
+          "edges": 76,
+          "reserves": 2,
+          "allocations": 6,
+          "writes": 18,
+          "commits": 2,
+          "dispatches": 2,
+          "reads": 18,
+          "responses": 18,
+          "outputs": 18,
+          "bytes": 134,
+          "frees": 6,
+          "done": 2
+        },
+        "bins": {
+          "reset": 1,
+          "reset_idle": 1,
+          "reset_nonfull": 1,
+          "latency_2": 76,
+          "depth_4": 76,
+          "duplicate_tag_candidate": 2,
+          "link_query": 42,
+          "beat_hold": 12,
+          "exact_full": 26,
+          "full_stall": 14,
+          "full_arrival": 12,
+          "keep_8": 16,
+          "source_0": 18,
+          "qid_0": 18,
+          "full_exchange": 2,
+          "cell_final_hold": 8,
+          "cell_retire": 6,
+          "packet_final_hold": 4,
+          "keep_3": 2,
+          "complete": 2
+        }
+      },
+      "bench_baseline_bins": {
+        "reset": 1,
+        "reset_idle": 1,
+        "reset_nonfull": 1,
+        "latency_2": 1946,
+        "depth_4": 1946,
+        "atomic_commit": 8,
+        "duplicate_tag_candidate": 26,
+        "packet_final_hold": 88,
+        "keep_1": 6,
+        "source_0": 186,
+        "qid_0": 166,
+        "complete": 26,
+        "cell_retire": 155,
+        "keep_7": 6,
+        "source_1": 49,
+        "qid_1": 40,
+        "keep_8": 553,
+        "source_2": 116,
+        "qid_2": 25,
+        "beat_hold": 211,
+        "source_3": 225,
+        "qid_3": 39,
+        "exact_full": 972,
+        "full_stall": 457,
+        "full_arrival": 523,
+        "qid_4": 20,
+        "qid_5": 9,
+        "link_query": 1028,
+        "qid_6": 91,
+        "cell_final_hold": 287,
+        "qid_7": 186,
+        "full_exchange": 210,
+        "keep_2": 2,
+        "keep_3": 3,
+        "keep_4": 2,
+        "keep_5": 2,
+        "keep_6": 2,
+        "maximum_descriptor": 1
+      },
+      "saved_sv_coverage": {
+        "bench_points": {
+          "branch": {
+            "hit": 53,
+            "total": 120
+          },
+          "expr": {
+            "hit": 30,
+            "total": 45
+          },
+          "line": {
+            "hit": 28,
+            "total": 51
+          },
+          "toggle": {
+            "hit": 8,
+            "total": 8
+          },
+          "covergroup": {
+            "hit": 20,
+            "total": 20
+          }
+        },
+        "functional_bins": {
+          "issue.auto_0": 1371,
+          "issue.auto_1": 576,
+          "response.auto_0": 1371,
+          "response.auto_1": 576,
+          "output_transfer.auto_0": 1371,
+          "output_transfer.auto_1": 576,
+          "output_hold.auto_0": 1361,
+          "output_hold.auto_1": 586,
+          "cell_return.auto_0": 1792,
+          "cell_return.auto_1": 155,
+          "descriptor_done.auto_0": 1921,
+          "descriptor_done.auto_1": 26,
+          "overlap.<auto_0,auto_0,auto_0>": 970,
+          "overlap.<auto_0,auto_0,auto_1>": 44,
+          "overlap.<auto_0,auto_1,auto_0>": 69,
+          "overlap.<auto_0,auto_1,auto_1>": 288,
+          "overlap.<auto_1,auto_0,auto_0>": 323,
+          "overlap.<auto_1,auto_0,auto_1>": 34,
+          "overlap.<auto_1,auto_1,auto_0>": 9,
+          "overlap.<auto_1,auto_1,auto_1>": 210
+        },
+        "scope": "Replay bench only; DUT coverage NOT_RUN"
+      },
+      "bench_cases": {
+        "memory-tx-bench-build": "PASS",
+        "memory-tx-bench-legal": "PASS",
+        "memory-tx-bench-atomic-overlap": "PASS",
+        "memory-tx-bench-random-31": "PASS",
+        "memory-tx-bench-random-53": "PASS",
+        "memory-tx-bench-replay-17": "PASS",
+        "memory-tx-bench-reset-dispatch": "PASS",
+        "memory-tx-bench-reset-pending": "PASS",
+        "memory-tx-bench-reset-full": "PASS",
+        "memory-tx-bench-reset-partial": "PASS",
+        "memory-tx-bench-reset-cell_hold": "PASS",
+        "memory-tx-bench-reset-packet_hold": "PASS",
+        "memory-tx-bench-wrong-response": "PASS",
+        "memory-tx-bench-missing-response": "PASS",
+        "memory-tx-bench-wrong-output": "PASS",
+        "memory-tx-bench-missing-done": "PASS",
+        "memory-tx-bench-missing-free": "PASS",
+        "memory-tx-bench-missing-final": "PASS",
+        "memory-tx-bench-link-lifetime-legal": "PASS",
+        "memory-tx-bench-link-lifetime-missing": "PASS",
+        "memory-tx-bench-held-data": "PASS",
+        "memory-tx-bench-absent-trigger": "PASS",
+        "memory-tx-bench-nonempty-end": "PASS",
+        "memory-tx-bench-missing-final-sample": "PASS",
+        "memory-tx-bench-collector-omission": "PASS",
+        "memory-tx-bench-collector-duplicate": "PASS",
+        "memory-tx-bench-collector-mixed": "PASS",
+        "memory-tx-bench-seed-replay": "PASS"
+      },
+      "sampled_trace_replay": {
+        "legal": "f430e6f19338d86b1c100873ff2e124ee1740f02afb1fe2e97696df5a00a2c65",
+        "replay-17": "f430e6f19338d86b1c100873ff2e124ee1740f02afb1fe2e97696df5a00a2c65",
+        "random-31": "ca950a8c61455080a1bad40f182d38880cd2df7e2342021f79383091b793a2e1",
+        "random-53": "6cec72ee7952cd8306ca01586dc7aceaa8b141b365599fe019498f3930f9770a"
+      },
+      "baseline_artifacts": {
+        "stimulus": {
+          "path": ".build/runs/regression-2026-11-13T212823.888517+0000-47e768a4/memory-tx-bench-legal/replay.txt",
+          "sha256": "53feb1f63bcee1d66ec68463055e2aa82033304e09297712c2b4e7b315636d6c"
+        },
+        "observed": {
+          "path": ".build/runs/regression-2026-11-13T212823.888517+0000-47e768a4/memory-tx-bench-legal/observed.jsonl",
+          "sha256": "f430e6f19338d86b1c100873ff2e124ee1740f02afb1fe2e97696df5a00a2c65"
+        },
+        "coverage": {
+          "path": ".build/runs/regression-2026-11-13T212823.888517+0000-47e768a4/memory-tx-bench-legal/coverage.dat",
+          "sha256": "7c74f27791f8947a25fb626b4e473c0396edf5bbcd44fdd6d0b06fb329100b5a"
+        }
+      },
+      "bench_source_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+      "compile_reuse": {
+        "manifest": ".build/runs/regression-2026-11-13T181544.537938+0000-57fee027/memory-tx-bench-build/manifest.json",
+        "manifest_sha256": "604812d3b4164967afd3f35097efeae0bbcf0695476cff58491769fb7981e219",
+        "binary": ".build/runs/regression-2026-11-13T181544.537938+0000-57fee027/memory-tx-bench-build/obj/Vmemory_tx_replay_top",
+        "binary_sha256": "3bbdd081f643c9f6fc7da16f47e58779b2acdf41b0d021544144efbdb08c2b55",
+        "compiled_source_revision": "033b016a8a43c7781853b1642894c992e7005dfd",
+        "compiled_dirty": false,
+        "validation": "Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source"
+      },
+      "generated_config_sha256": "268a2a5b7fb8f058e29708927007cb1f08c7f5555ff33ab1f5d5ba43bf313859",
+      "case_results": {
+        "PASS": 48
+      },
+      "oracle_negative_count": 36
+    }
+  },
+  "commands": [
+    {
+      "profile": "I1",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle",
+        "memory-tx-bench"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I1",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle",
+        "--test",
+        "memory-tx-bench",
+        "--preparation-build-manifest",
+        ".build/runs/regression-2026-11-13T180804.452982+0000-1c77bc85/memory-tx-bench-build/manifest.json"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I1-0.log",
+      "summary": ".build/runs/regression-2026-11-13T212746.037225+0000-53b4c4b9/summary.json"
+    },
+    {
+      "profile": "I1",
+      "seed": 31,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I1",
+        "--seed",
+        "31",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I1-1.log",
+      "summary": ".build/runs/regression-2026-11-13T212806.396560+0000-446c549b/summary.json"
+    },
+    {
+      "profile": "I1",
+      "seed": 53,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I1",
+        "--seed",
+        "53",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I1-2.log",
+      "summary": ".build/runs/regression-2026-11-13T212809.032448+0000-44809270/summary.json"
+    },
+    {
+      "profile": "I1",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I1",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I1-3.log",
+      "summary": ".build/runs/regression-2026-11-13T212811.512356+0000-a45e97d5/summary.json"
+    },
+    {
+      "profile": "E0",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle",
+        "memory-tx-bench"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E0",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle",
+        "--test",
+        "memory-tx-bench",
+        "--preparation-build-manifest",
+        ".build/runs/regression-2026-11-13T180804.441178+0000-dcf331ee/memory-tx-bench-build/manifest.json"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E0-0.log",
+      "summary": ".build/runs/regression-2026-11-13T212746.056901+0000-e4b278c6/summary.json"
+    },
+    {
+      "profile": "E0",
+      "seed": 31,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E0",
+        "--seed",
+        "31",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E0-1.log",
+      "summary": ".build/runs/regression-2026-11-13T212810.958426+0000-8bc1ae02/summary.json"
+    },
+    {
+      "profile": "E0",
+      "seed": 53,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E0",
+        "--seed",
+        "53",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E0-2.log",
+      "summary": ".build/runs/regression-2026-11-13T212813.577978+0000-79d43c19/summary.json"
+    },
+    {
+      "profile": "E0",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E0",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E0-3.log",
+      "summary": ".build/runs/regression-2026-11-13T212815.902926+0000-a649c6c4/summary.json"
+    },
+    {
+      "profile": "I0",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle",
+        "memory-tx-bench"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I0",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle",
+        "--test",
+        "memory-tx-bench",
+        "--preparation-build-manifest",
+        ".build/runs/regression-2026-11-13T181538.694410+0000-b14bcafa/memory-tx-bench-build/manifest.json"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I0-0.log",
+      "summary": ".build/runs/regression-2026-11-13T212814.344082+0000-40381004/summary.json"
+    },
+    {
+      "profile": "I0",
+      "seed": 31,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I0",
+        "--seed",
+        "31",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I0-1.log",
+      "summary": ".build/runs/regression-2026-11-13T212834.560533+0000-9d791ec6/summary.json"
+    },
+    {
+      "profile": "I0",
+      "seed": 53,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I0",
+        "--seed",
+        "53",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I0-2.log",
+      "summary": ".build/runs/regression-2026-11-13T212836.921748+0000-7e1317b4/summary.json"
+    },
+    {
+      "profile": "I0",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "I0",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/I0-3.log",
+      "summary": ".build/runs/regression-2026-11-13T212839.492649+0000-2e13ce41/summary.json"
+    },
+    {
+      "profile": "E1",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle",
+        "memory-tx-bench"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E1",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle",
+        "--test",
+        "memory-tx-bench",
+        "--preparation-build-manifest",
+        ".build/runs/regression-2026-11-13T181544.537938+0000-57fee027/memory-tx-bench-build/manifest.json"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E1-0.log",
+      "summary": ".build/runs/regression-2026-11-13T212823.888517+0000-47e768a4/summary.json"
+    },
+    {
+      "profile": "E1",
+      "seed": 31,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E1",
+        "--seed",
+        "31",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E1-1.log",
+      "summary": ".build/runs/regression-2026-11-13T212845.728617+0000-018a6a09/summary.json"
+    },
+    {
+      "profile": "E1",
+      "seed": 53,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E1",
+        "--seed",
+        "53",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E1-2.log",
+      "summary": ".build/runs/regression-2026-11-13T212848.430945+0000-853bb435/summary.json"
+    },
+    {
+      "profile": "E1",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "E1",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/E1-3.log",
+      "summary": ".build/runs/regression-2026-11-13T212851.418460+0000-f23afa9e/summary.json"
+    },
+    {
+      "profile": "F0",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle",
+        "memory-tx-bench"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F0",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle",
+        "--test",
+        "memory-tx-bench",
+        "--preparation-build-manifest",
+        ".build/runs/regression-2026-11-13T182037.114985+0000-8d829789/memory-tx-bench-build/manifest.json"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F0-0.log",
+      "summary": ".build/runs/regression-2026-11-13T212842.055783+0000-64e21303/summary.json"
+    },
+    {
+      "profile": "F0",
+      "seed": 31,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F0",
+        "--seed",
+        "31",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F0-1.log",
+      "summary": ".build/runs/regression-2026-11-13T212912.366901+0000-0bb82b15/summary.json"
+    },
+    {
+      "profile": "F0",
+      "seed": 53,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F0",
+        "--seed",
+        "53",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F0-2.log",
+      "summary": ".build/runs/regression-2026-11-13T212916.294573+0000-3a826e8d/summary.json"
+    },
+    {
+      "profile": "F0",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F0",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F0-3.log",
+      "summary": ".build/runs/regression-2026-11-13T212921.858271+0000-256b9c82/summary.json"
+    },
+    {
+      "profile": "F1",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle",
+        "memory-tx-bench"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F1",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle",
+        "--test",
+        "memory-tx-bench",
+        "--preparation-build-manifest",
+        ".build/runs/regression-2026-11-13T182052.112025+0000-1952b1b0/memory-tx-bench-build/manifest.json"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F1-0.log",
+      "summary": ".build/runs/regression-2026-11-13T212854.317094+0000-dbd0255e/summary.json"
+    },
+    {
+      "profile": "F1",
+      "seed": 31,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F1",
+        "--seed",
+        "31",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F1-1.log",
+      "summary": ".build/runs/regression-2026-11-13T212924.907128+0000-2ba9ec39/summary.json"
+    },
+    {
+      "profile": "F1",
+      "seed": 53,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F1",
+        "--seed",
+        "53",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F1-2.log",
+      "summary": ".build/runs/regression-2026-11-13T212929.210800+0000-e7092e4b/summary.json"
+    },
+    {
+      "profile": "F1",
+      "seed": 17,
+      "modes": [
+        "memory-tx-oracle"
+      ],
+      "command": [
+        "python3",
+        "tools/run.py",
+        "regression",
+        "--profile",
+        "F1",
+        "--seed",
+        "17",
+        "--timeout",
+        "120",
+        "--build-timeout",
+        "600",
+        "--test",
+        "memory-tx-oracle"
+      ],
+      "returncode": 0,
+      "log": "work/final-campaign-qualified/F1-3.log",
+      "summary": ".build/runs/regression-2026-11-13T212934.533198+0000-206810b6/summary.json"
+    }
+  ],
+  "future_dut_mode": {
+    "result": "NOT_IMPLEMENTED",
+    "exit_code": 1,
+    "summary": "work/future-mode-qualified/regression-2026-11-13T213044.479499+0000-2062cc8f/summary.json"
+  },
+  "unexpected_failures": [
+    {
+      "path": "verification/failures/20261113T173934554217Z-memory-tx-oracle-41982911d145.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Output-field negative selected a beat with a preceding held-valid obligation; held_output correctly fired before the intended field detector. Select unheld transfers for field probes. Retirement expectations also use contract length rather than observed last, preventing a corrupt last from defining the expected completion.",
+      "source_patch_sha256": "44d898e8136fa9cb710a6f2d16267e0a9bf17eed2fd90f400d729e77577fe493"
+    },
+    {
+      "path": "verification/failures/20261113T174022924305Z-memory-tx-oracle-5c8e2760f4c2.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Detector-removal qualification exposed redundant ID checks after an absent expected completion. Gate ID comparisons on an expected event so removal is assessed by the intended presence self-test, without a secondary alarm.",
+      "source_patch_sha256": "640819df92fb1f3cfd5f9e002c295c8961bf26e5b67531dfd680f4a29a2178ff"
+    },
+    {
+      "path": "verification/failures/20261113T174258560191Z-memory-tx-bench-build-043ab9df9614.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Preparation config generator omitted dependent scalar width parameters required by public tm_types.svh. Generate guarded index/count/deficit widths from selected public profile before compilation.",
+      "source_patch_sha256": "de2ca1211597c9e0716396aa88a387978e1f8f3bcfaadb572d893311c44db6df"
+    },
+    {
+      "path": "verification/failures/20261113T174450778476Z-memory-tx-bench-build-580a313ae523.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Replay bench used logical negation of 32-bit fscanf integers, rejected by fatal Verilator width warnings. Use explicit zero comparisons; no warning suppression.",
+      "source_patch_sha256": "afbefcda02a72b5f7053cd96bd8712b06b6e050d67a7ce6ec1c6d4df80deab4d"
+    },
+    {
+      "path": "verification/failures/20261113T174802601044Z-memory-tx-bench-wrong-response-aa9f861b69a4.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Expected planted response fault fired the correct SV response detector; the new handler incorrectly required normal completion before checking the exported failing prefix. Require the exact intended first diagnostic and independently replay the sampled prefix. Captured handler failures remain retained; these are not RTL defects.",
+      "source_patch_sha256": "9f3845677d6d12735f24998ae8ef4b5cdbc4c7d7f10039def7240e5cec61667f"
+    },
+    {
+      "path": "verification/failures/20261113T174803003600Z-memory-tx-bench-missing-response-2361b00f5fbf.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Expected planted response fault fired the correct SV response detector; the new handler incorrectly required normal completion before checking the exported failing prefix. Require the exact intended first diagnostic and independently replay the sampled prefix. Captured handler failures remain retained; these are not RTL defects.",
+      "source_patch_sha256": "9f3845677d6d12735f24998ae8ef4b5cdbc4c7d7f10039def7240e5cec61667f"
+    },
+    {
+      "path": "verification/failures/20261113T175909253713Z-memory-tx-oracle-a6042abfa6a8.json",
+      "disposition": "verification-defect",
+      "diagnosis": "New missing-info detector-removal fixture used a one-beat atomic commit; removing presence also exposed commit completeness. Move the isolated presence-removal probe to a legal multibeat reservation edge without a same-edge commit, retaining the separate atomic legal baseline. The model detector correctly rejects missing info. No RTL was executed.",
+      "source_patch_sha256": "0df82361790ebe900c1d404ee642af8a9cbeea93ee78284861af91ba4f4ddf38"
+    },
+    {
+      "path": "verification/failures/20261113T181510542719Z-preparation-campaign-interrupted-c56b31ece3c4.json",
+      "disposition": "tool-environment",
+      "diagnosis": "Managed-environment reconnect lost the process-session handle. Child compilations/checks completed PASS; the parent was later observed defunct and only two of 24 orchestration records existed. Parent exit status/root cause unavailable. Resume from retained passing summaries using file-backed parent output; no test result is reclassified.",
+      "source_patch_sha256": null
+    },
+    {
+      "path": "verification/failures/20261113T181954408933Z-link-capture-lifetime-regression-12acfa6b4b74.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Link-capture bookkeeping used (descriptor ID, cell ID), so a second packet reusing both IDs could inherit the prior packet capture. Actual replay accepted missing link queries in the second lifetime. Expectations already identify packets by reservation ordinal; key capture by that ordinal and add a two-lifetime regression. No RTL was executed.",
+      "source_patch_sha256": null
+    },
+    {
+      "path": "verification/failures/20261113T212600074380Z-metadata-source-queue-coverage-regression-67b6e388b769.json",
+      "disposition": "verification-defect",
+      "diagnosis": "Actual F0 baseline UVM output exercised only source/queue zero. Required metadata coverage lacked source/queue observed bins. Vary legal descriptor metadata across all profile source/queue values and require bins from sampled output; include maximum descriptor ID. Preserve allocator/scheduler abstraction: this is a memory/TX component fixture, not pool-policy qualification.",
+      "source_patch_sha256": null
+    }
+  ],
+  "production_tests": "NOT_RUN",
+  "production_performance": "NOT_RUN",
+  "formal_proof": "NOT_RUN",
+  "dut_coverage": "NOT_RUN",
+  "candidate_validation": "NOT_RUN",
+  "merged_source_confirmation": "NOT_RUN",
+  "tool_versions": {
+    "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+    "rtl_frontend": "slang",
+    "verilator": ".tools/install/bin/verilator: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "verilator_coverage": ".tools/install/bin/verilator_coverage: Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": ".tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "abc": ".tools/install/bin/yosys-abc: ======== ABC command line \"version\"",
+    "sby": ".tools/install/bin/sby: SBY v0.71",
+    "z3": ".tools/install/bin/z3: Z3 version 5.4.1 - 64 bit - build hashcode 145c0c51570a357cc558ce898ce77573ba9d4fbf",
+    "opensta": ".tools/install/bin/sta: 3.2.0",
+    "compiler": "/usr/bin/g++: g++ (Debian 14.2.0-19) 14.2.0",
+    "cmake": ".tools/install/cmake/bin/cmake: cmake version 4.4.5",
+    "swig": ".tools/install/bin/swig: SWIG Version 4.5.1",
+    "slang_revision": ".tools/install/bin/yosys: -- Running command `slang_version' --\nsv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222\nslang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f",
+    "make": "/usr/bin/make: GNU Make 4.4.1",
+    "bash": "/usr/bin/bash: GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)",
+    "uvm": "Accellera UVM 2020.3.2; UVM_NO_DPI"
+  },
+  "approved_source_digests": {
+    "AGENTS.md": "1461ea52fc524c0e7081bceece2ac37f191f98421235bb9598bd5543cf60a2b3",
+    "docs/implementation/tasks/P05-memory-tx.md": "bd66d661ad4b44bf34cb4f3bb2bf2d8d1fb5d2d873642b4e3bf10a57b613a1f5",
+    "docs/spec/README.md": "014370b7329610ac5b8e3fcdb2711114ed0a8843b288671110cc19886b01bce5",
+    "docs/spec/acceptance.md": "214ec29e5c745777b9d9160beebc3b653cd0cce27221c80b0a659143b6e17304",
+    "docs/spec/architecture.md": "1d907df7d46b345796138898a4df2a637a2c8343375349cc07544edae9a3aa2c",
+    "docs/spec/automation.md": "8991579e07a7599e3ebbad5f39b871702ee1b5a39b0b4dda5cc184652370b991",
+    "docs/spec/buffer-management.md": "74280da3b98aadddebd2932be0198ec49931b1438521949e23715eb8592192d6",
+    "docs/spec/formal.md": "4ad29b02cd0d7d08fbcbacf0e8ba2f4388f733bf21631d36f2cc9d5fd5f3fb62",
+    "docs/spec/implementation.md": "af146e754ef172e7f1e4965a37b8e111d49ff24d12d9a5395a385002fcf89bf8",
+    "docs/spec/interfaces.md": "9c79e0385b8861caa8a8fe1993a79ce1b53f6a7b64c947495273898f1abfd986",
+    "docs/spec/module-contracts.md": "538454d5b4a3a52f7e3875ae9e6f53d76d01c87e630ebe13db10af320bf87b48",
+    "docs/spec/queues-and-scheduling.md": "30f9585475b0c06a2e46630dda8759f79e32d66e8d719acf900115968cb10ead",
+    "docs/spec/references.md": "d821dce7c377630c933423232382bc1338dcf95071e505e088beb3e4cfe5ac63",
+    "docs/spec/registers.md": "b646566965b5d950279988e8fa5890bea0c0aa1bcc5cb743095a93627e8017bb",
+    "docs/spec/reset-timing.md": "b2d0ee519b912f637cfb7db7f5394b35f3f29497c628d0f64d496ff1720ab92f",
+    "docs/spec/toolchain.md": "1b57c21e5b06d95eb9893729d33da1613cfca0b4108063258b898dd6bb499935",
+    "docs/spec/triage.md": "e862465c8534c9d534f853f7299636430b6277256806def210295082f1d2b7aa",
+    "docs/spec/verification.md": "319e867aa91b42bf954760e29518de470f64d6a49a5e4a3c724d57ed92705d21",
+    "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+    "dv/env/tm_bench_pkg.sv": "c614a296f1f26c1bdb5ce3a8401d18dfc3561ef9f2e6e3453ff3f358457fff18",
+    "dv/memory_tx/README.md": "ed5a00d8259419f0f628014bf1b4f77abf6ab7c6f0702ddd708f61ab3c98646d",
+    "dv/memory_tx/adapter.py": "885a7c4d604490d79abbca523e9fa68d8393d5c82353318c7328f52810f4b2fd",
+    "dv/memory_tx/contract.md": "19aa1b4acc6508adb10ebc42aeecfa6b01ee13cd11024936948958911d4661cb",
+    "dv/memory_tx/hand_checks.py": "50227f015cfdbde357ef9b5ad2aeedb978f8d580bf86d86fb8d208d6680f848d",
+    "dv/memory_tx/ledger.py": "671f842b84f2a35fea93a236a99f512e331751e1b146081671167562eb469cb3",
+    "dv/memory_tx/oracle.py": "0b1eaffcb2c0138c1263cd0e602939b67eee4ebcb29a25fdc0f8b2781a66fe7c",
+    "dv/memory_tx/parameters.sv": "87e4ad9a9e06d493ab91e2af7c53921547a2fc9fcb86ab6a7da9b7ad2572471f",
+    "dv/memory_tx/qualification.py": "7eefe870bc165f9fb1f94a13b502ead73e60a3d14dda0827aca6b37ea129963c",
+    "dv/memory_tx/replay.sv": "6e3bfc468ee724158d9e0f90d0037f8f5acefd43eca72b99c87ee6e52c90f87d",
+    "dv/memory_tx/sweep.py": "bd6c24d576a575611ff162e97ec90a11ef053a9e491613793a56ce30f875f346",
+    "dv/memory_tx/traces.py": "b46bdcceaeee107779fce98a8fc6a2e2940fea2b3088160a96012583689fe69f",
+    "dv/memory_tx/wires.svh": "d09c222d3fee05a6cad85e34c7a2ff845a2eeea81bc6830fef3d55fd4777c32d",
+    "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+    "formal/tx/README.md": "8f5c97b823cef9d18884d4db2ac8853c1a3df3eed06e29a00fc089ac45ce3cd4",
+    "formal/tx/memory_tx_obligations.sv": "78443870888ee2363a06b4958fd337cb3b35be93d5d547f4f41edcab943eb22f",
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "rtl/include/tm_module_ports.sv": "9115b422f8fc58a5c37789736dde59acb95aa3c2b40f37000f01657eb2d5a0f9",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "tests/toolchain/test_memory_tx_preparation.py": "fe7a30af51d15bb3bd3d3f96c83544dbd3a7b5791581eb47e0f139921da5e43c",
+    "tools/AGENTS.md": "c3ae0d4a8e0c92df5af02c7288c37190bf901974275efa75af43e1cd190eee17",
+    "tools/allocator_scaling.py": "c24601f3e316e94939cef27d80162312bdd4e8bf9c5cf4c3a3e4f3c29a388e25",
+    "tools/check_light.py": "c606f9ee5216ee79288dbe49bab6040a258e48352e1f3f42d0f5e5fe6346070d",
+    "tools/check_repository.py": "75dbcb835e759545d70669e44d1c61e2ce65588646f0366fa0b01796ff6bd43d",
+    "tools/ci_policy.py": "4f800b625875cf1996d52202c85aa5c66075c52e71f323bbf7e4c81029bb646c",
+    "tools/cleanup_toolchain_artifact.py": "4279c0c63bc047f9e96edb9238e6151f1543f12c8ee2ab56ad24890008fbf50f",
+    "tools/contracts.py": "182beed08e56c6a8b5811beeefa38eeaa643be53fd6987b93f2372d2df7107c1",
+    "tools/csr.py": "84234def046d16017a012274ec70e851adc46535ea37ad01b50a6efd8229521b",
+    "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38",
+    "tools/doctor.py": "11a70e94db96f4348b394f9fc307bd602f22af24c3054236b4521f19b6298aa8",
+    "tools/evidence.py": "7afb8f4053b22f71f7bbd6231182960ca4afd3061c2438755454c7a91648210c",
+    "tools/failure_capture.py": "915b8cd60c0bb1d063372c27c9d206709f4f96d48a4eff65ce27e6117621d8cd",
+    "tools/formal_csr.py": "302752982dc8050d1c5b729bef2c5858a59e483a1958e821cecb1d3cd84e1fb7",
+    "tools/formal_queue.py": "e432d70e457f29346e58ef29050daa7595f1a3a3fd60c53ecc66390c250c9c77",
+    "tools/formal_queue_independent.py": "2f2e19f2abf0633d659c761af42810f1f0e7aeec58352a50975f692fcf6f9d89",
+    "tools/formal_scheduler.py": "1a39dcda72eb234c917a896f01c2cb290e6e735730163da5c361d22b62b63320",
+    "tools/formal_storage.py": "6a0af4f3f07d99f485eb96ad48e45271bef8976ad46a5de6b49e6fac6899b23e",
+    "tools/formal_symbols.py": "62d6f5c5b8d19ca71abb8356bf2fef1e587adf895dbeb564413d862e7ae21807",
+    "tools/foundation.py": "431beeb6268a7334091bd26307d3b2ff76d2cd0b3d0fcc4795659ae4e2e97b72",
+    "tools/frontend.py": "a3ade09454f846f7f45baad7e2a2340e6923df637adf83006247e1269534d97e",
+    "tools/frontend_qualification.py": "3596165ca0d16e3536d76d13dfe00d9ac042441e5cbed14009f0d87df6805120",
+    "tools/memory_tx.py": "5cdff315f28fb46c17a6a2ca8939ff767407d6b9a7b76ab9b448f4a6d291b050",
+    "tools/memory_tx_bench.py": "d868e0984707b2790330c45f59dcb78dd915600a0f33377aadfceb6ec03c2476",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996",
+    "tools/packet_stimulus.py": "7565709ca9ebc76047245b40aa73b8e23680cf7fc01572f6d3b06f1684cac562",
+    "tools/queue_coverage.py": "72660f54b5d02255dd880c8d3facf2bfbc9f045fc163fb10603fa8da933c58a1",
+    "tools/queue_dispatch_guard.py": "ca8db1791086767e9f68f3f882f9ef23fe599808ddc95a9ee5162bdd06bc0969",
+    "tools/queues.py": "91596d3ac0fd6e70d196db69e75629b57f74a7d27c11e1084ee66d858f2c9f3d",
+    "tools/queues_independent.py": "b17071ecfb6902250b9403941a689a769aa4632ea1440100b41d2122e6d3bc72",
+    "tools/registry.py": "807285835e5fa6dc9283f86d22a537250a8889543043b80564c91932c53cca4f",
+    "tools/run.py": "3883c8cffa1e2afcd6549a18bfbb4bbff41749282c96d124490a7704f997b67f",
+    "tools/run_uvm_capabilities.py": "114c4a4612c963d1e70babfadc716f18534f2693c808746754d9e23c8b9fa20a",
+    "tools/scheduler.py": "8265216dc5fac68a5766cb2d5e9925feeb47738e12028770e8bb19e9dfb3a56e",
+    "tools/scheduler_coverage.py": "0b1cd1d2831a7d1722f1158e826631c6c29373ac7bc09b3a8f1ec4f042cd027a",
+    "tools/scheduler_stress.py": "5f328abc808f7258564255f3e1a71f11a7a681f47ae5b3c3fceebda8f7436545",
+    "tools/scheduler_summary.py": "5c1f766cb5e4ab20c449ad001fcc49b427e530036f3adda4a73fed7ca2d1fc99",
+    "tools/setup.sh": "a7ba3762c9c09bce6dcf9d0d2c55ad5b752b36396750e926f2f2a77d6e10a528",
+    "tools/setup_toolchain.py": "79a1eb1e4242485bdea917719f50e54ae835428655c94326a608596222857d7d",
+    "tools/storage.py": "0a23e51503a812cc0075aa2e2cc6375ab7fbf39f31f943a553afa034b9e94408",
+    "tools/symbolic_qualification.py": "4ada9274ab56a3cfbf3155a8f745460a22d787e5fa55874676b9e44ef8b4dda4",
+    "tools/toolchain_cache.py": "e585f23530cabb62f2b4071bc72d7a37a193b5ac045d78d97972c97349bb2508",
+    "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+    "verification/sources/memory-tx-preparation.json": "982d62de66d57bce2ffb79d0f800d831a90dfa89e5118ea05c9bd00d2a25a40a",
+    "verification/suites.json": "103779f383adbef94a9d2fc8c72afc83e6439c042d5b3313c35d4f702f8aa6c7"
+  },
+  "support_checks": {
+    "schema_version": 1,
+    "result": "PASS",
+    "scope": "Toolchain capability fixtures only",
+    "cases": [
+      {
+        "test": "metadata-coverage-after-fix",
+        "result": "PASS",
+        "manifest": "work/support-qualified/metadata-coverage-after-fix/manifest.json"
+      },
+      {
+        "test": "link-lifetime-after-fix",
+        "result": "PASS",
+        "manifest": "work/support-qualified/link-lifetime-after-fix/manifest.json"
+      },
+      {
+        "test": "existing-failure-capture-regression",
+        "result": "PASS",
+        "manifest": "work/support-qualified/existing-failure-capture-regression/manifest.json"
+      }
+    ]
+  },
+  "session_scope_qualification": {
+    "status": "CONFIRMED_PRE_MODEL_EXPOSURE",
+    "acceptance": "INDEPENDENCE_NOT_ESTABLISHED",
+    "rtl_outside_include_entries": 11,
+    "dependency_implementations": 9,
+    "top_declarations": 1,
+    "guidance_files": 1,
+    "results_files": 33,
+    "exposure_record": "docs/results/P05-source-exposure.json",
+    "note": "Supersedes the inaccurate 11 implementation-file digests description; full-text source-policy and results parsing also occurred. Later passing tests do not cure exposure."
+  },
+  "pr": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/23",
+  "oracle_negative_detectors": {
+    "wrong_info": {
+      "detector": "metadata_info",
+      "detector_removal": "KILLED_BY_wrong_info"
+    },
+    "wrong_commit_info": {
+      "detector": "metadata_commit",
+      "detector_removal": "KILLED_BY_wrong_commit_info"
+    },
+    "wrong_dispatch_info": {
+      "detector": "metadata_dispatch",
+      "detector_removal": "KILLED_BY_wrong_dispatch_info"
+    },
+    "missing_info_write": {
+      "detector": "metadata_info_presence",
+      "detector_removal": "KILLED_BY_missing_info_write"
+    },
+    "missing_response": {
+      "detector": "response_presence",
+      "detector_removal": "KILLED_BY_missing_response"
+    },
+    "wrong_response": {
+      "detector": "response_data",
+      "detector_removal": "KILLED_BY_wrong_response"
+    },
+    "extra_response": {
+      "detector": "response_presence",
+      "detector_removal": "KILLED_BY_extra_response"
+    },
+    "wrong_output_keep": {
+      "detector": "output_keep",
+      "detector_removal": "KILLED_BY_wrong_output_keep"
+    },
+    "wrong_output_last": {
+      "detector": "output_last",
+      "detector_removal": "KILLED_BY_wrong_output_last"
+    },
+    "wrong_output_user": {
+      "detector": "output_user",
+      "detector_removal": "KILLED_BY_wrong_output_user"
+    },
+    "wrong_output_data": {
+      "detector": "output_data",
+      "detector_removal": "KILLED_BY_wrong_output_data"
+    },
+    "missing_cell_return": {
+      "detector": "cell_completion_presence",
+      "detector_removal": "KILLED_BY_missing_cell_return"
+    },
+    "wrong_cell_return": {
+      "detector": "cell_completion_id",
+      "detector_removal": "KILLED_BY_wrong_cell_return"
+    },
+    "missing_done": {
+      "detector": "descriptor_completion_presence",
+      "detector_removal": "KILLED_BY_missing_done"
+    },
+    "wrong_done": {
+      "detector": "descriptor_completion_id",
+      "detector_removal": "KILLED_BY_wrong_done"
+    },
+    "duplicate_done": {
+      "detector": "descriptor_completion_presence",
+      "detector_removal": "KILLED_BY_duplicate_done"
+    },
+    "duplicate_free": {
+      "detector": "cell_completion_presence",
+      "detector_removal": "KILLED_BY_duplicate_free"
+    },
+    "wrong_link": {
+      "detector": "metadata_next",
+      "detector_removal": "KILLED_BY_wrong_link"
+    },
+    "late_response": {
+      "detector": "response_presence",
+      "detector_removal": "KILLED_BY_late_response"
+    },
+    "duplicate_response": {
+      "detector": "response_presence",
+      "detector_removal": "KILLED_BY_duplicate_response"
+    },
+    "early_cell_return": {
+      "detector": "cell_completion_presence",
+      "detector_removal": "KILLED_BY_early_cell_return"
+    },
+    "missing_link_capture": {
+      "detector": "link_capture",
+      "detector_removal": "KILLED_BY_missing_link_capture"
+    },
+    "overissue": {
+      "detector": "read_credit",
+      "detector_removal": "KILLED_BY_overissue"
+    },
+    "held_valid": {
+      "detector": "held_output"
+    },
+    "held_data": {
+      "detector": "held_output"
+    },
+    "held_keep": {
+      "detector": "held_output"
+    },
+    "held_last": {
+      "detector": "held_output"
+    },
+    "held_user": {
+      "detector": "held_output"
+    },
+    "missing_final_output": {
+      "detector": "shutdown_ownership"
+    },
+    "missing_completion_leak": {
+      "detector": "shutdown_ownership"
+    },
+    "empty_trace": {
+      "detector": "shutdown_initialization"
+    },
+    "missing_sample": {
+      "detector": "sample_cycle"
+    },
+    "duplicate_sample": {
+      "detector": "sample_cycle"
+    },
+    "mixed_epoch": {
+      "detector": "sample_epoch"
+    },
+    "absent_required_trigger": {
+      "detector": "required_bin"
+    },
+    "reused_link_missing_capture": {
+      "detector": "link_capture"
+    }
+  },
+  "registered_hdl_digests": {
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "dv/env/tm_bench_pkg.sv": "c614a296f1f26c1bdb5ce3a8401d18dfc3561ef9f2e6e3453ff3f358457fff18",
+    "dv/memory_tx/replay.sv": "6e3bfc468ee724158d9e0f90d0037f8f5acefd43eca72b99c87ee6e52c90f87d",
+    "formal/tx/memory_tx_obligations.sv": "78443870888ee2363a06b4958fd337cb3b35be93d5d547f4f41edcab943eb22f",
+    "dv/memory_tx/parameters.sv": "87e4ad9a9e06d493ab91e2af7c53921547a2fc9fcb86ab6a7da9b7ad2572471f",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "dv/model/tm_monitor_types.svh": "8f1ea5c31cc5c8a3ff29eb39184563d3ed7fdc441a16cb9f3c2c94ac316a8b88",
+    "dv/agents/tm_stream_agent.svh": "a1e321ca1dceafcb4290baa194299193144651d181343c616a50c6ba61db18ce",
+    "dv/memory_tx/wires.svh": "d09c222d3fee05a6cad85e34c7a2ff845a2eeea81bc6830fef3d55fd4777c32d",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a"
+  },
+  "sv_covergroup_prefix": "memory_tx_replay_pkg::memory_replay_collector::observed_traffic.",
+  "hosted_ci": {
+    "tested_revision": "290760486b627701a0555c0b98a27e4332ec9957",
+    "run_id": 43510946402,
+    "url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43510946402",
+    "result": "success",
+    "executed_scope": [
+      "policy",
+      "repository / python-unit-syntax",
+      "repository / repository-contracts",
+      "full-ci-summary"
+    ],
+    "heavy_suites": "SKIPPED; no hardware qualification"
+  }
+}

@@ -1,0 +1,1627 @@
+diff --git a/dv/env/tm_bench_pkg.sv b/dv/env/tm_bench_pkg.sv
+index e21df98..6f14ce7 100644
+--- a/dv/env/tm_bench_pkg.sv
++++ b/dv/env/tm_bench_pkg.sv
+@@ -54,6 +54,7 @@ package tm_bench_pkg;
+         endfunction
+     endclass
+     `include "tm_stream_agent.svh"
++`ifndef TM_MEMORY_TX_PREPARATION
+     `include "tm_packet.svh"
+     `include "tm_handshake_recorder.svh"
+     `include "tm_axil_agent.svh"
+@@ -67,4 +68,5 @@ package tm_bench_pkg;
+     `include "tm_packet_test.svh"
+ `endif
+     `include "tm_schedule_test.svh"
++`endif
+ endpackage
+diff --git a/dv/memory_tx/oracle.py b/dv/memory_tx/oracle.py
+index 97a3fba..2545d80 100644
+--- a/dv/memory_tx/oracle.py
++++ b/dv/memory_tx/oracle.py
+@@ -95,7 +95,7 @@ class Oracle:
+         a, out = s['actions'], s['out']
+         require(set(out) == {'valid', 'ready', 'data', 'keep', 'last', 'user'}, 'output_shape')
+         require(set(a) <= {'reserve', 'allocate', 'write', 'info', 'link', 'commit',
+-                           'dispatch', 'read', 'response', 'query', 'free', 'done'}, 'action_shape')
++                           'dispatch', 'read', 'response', 'query', 'free', 'done', 'commit_info', 'dispatch_info'}, 'action_shape')
+         # Physical RAM is unreset. Capture its due response before control flush.
+         due = self.physical_reads[0] if self.physical_reads and self.physical_reads[0]['due'] == self.cycle else None
+         response = a.get('response')
+@@ -110,12 +110,13 @@ class Oracle:
+                 self.bins['reset'] += 1
+                 self.bins['reset_pending' if self.pending else 'reset_idle'] += 1
+                 self.bins['reset_full' if len(self.buffered)+len(self.pending)==self.p.depth else 'reset_nonfull'] += 1
++                if len(self.buffered)==self.p.depth:self.bins['reset_full_fifo'] += 1
+                 if self.active is not None:
+                     packet = self.packets[self.active]
+                     idx = packet.output_index
+                     if idx % (self.p.cell_bytes//8): self.bins['reset_partial_cell'] += 1
+                     if self.held:
+-                        self.bins['reset_packet_final_hold' if self.held['last'] else 'reset_cell_or_beat_hold'] += 1
++                        self.bins['reset_packet_final_hold' if self.held['last'] else 'reset_cell_final_hold' if (idx+1)%(self.p.cell_bytes//8)==0 else 'reset_beat_hold'] += 1
+                 self.epoch += 1
+             self._clear_control()
+             self.in_reset = True
+@@ -131,6 +132,7 @@ class Oracle:
+             fields = ('valid','data','keep','last','user')
+             self.check(all(out[k] == self.held[k] for k in fields), 'held_output')
+         self.held = deepcopy(out) if out['valid'] and not out['ready'] else None
++        self.check(('info' in a)==('reserve' in a),'metadata_info_presence')
+         pre_owners = dict(self.owners)
+         pre_packets = set(self.packets)
+         pre_queues = {q:list(v) for q,v in self.queues.items()}
+@@ -151,7 +153,8 @@ class Oracle:
+                 self.check(bool(chunk), 'output_extra')
+                 keep = (1<<len(chunk))-1
+                 self.check(out['keep']==keep, 'output_keep')
+-                self.check(out['last']==(offset+8>=len(packet.image)), 'output_last')
++                expected_last=offset+8>=len(packet.image)
++                self.check(out['last']==expected_last, 'output_last')
+                 meta = packet.info
+                 user = meta['qid'] | meta['length']<<8 | meta['tag']<<24 | meta['source']<<40
+                 self.check(out['user']==user, 'output_user')
+@@ -159,7 +162,7 @@ class Oracle:
+                     self.check((out['data']>>(lane*8))&255 == byte, 'output_data')
+                 token = self.buffered[0]
+                 self.check(token['desc']==self.active and token['index']==i, 'output_order')
+-                final_cell = (offset+8) % self.p.cell_bytes == 0 or out['last']
++                final_cell = (offset+8) % self.p.cell_bytes == 0 or expected_last
+                 if not out['ready']:
+                     self.bins['packet_final_hold' if out['last'] else 'cell_final_hold' if final_cell else 'beat_hold'] += 1
+                 if transfer:
+@@ -167,9 +170,9 @@ class Oracle:
+                     cell = packet.cells[offset//self.p.cell_bytes]
+                     if final_cell:
+                         expected_free = cell
+-                        if not out['last']:
++                        if not expected_last:
+                             self.check((self.active, cell) in self.captured_links, 'link_capture')
+-                    if out['last']:
++                    if expected_last:
+                         expected_done = self.active
+                     packet.output_index += 1
+                     self.counts['outputs'] += 1
+@@ -177,11 +180,11 @@ class Oracle:
+                     self.bins[f'keep_{len(chunk)}'] += 1
+         actual_free = a.get('free')
+         self.check((actual_free is not None)==(expected_free is not None), 'cell_completion_presence')
+-        if actual_free is not None:
++        if actual_free is not None and expected_free is not None:
+             self.check(actual_free==expected_free, 'cell_completion_id')
+-            self.check(actual_free in pre_owners, 'cell_completion_owner')
++            self.check(expected_free in pre_owners, 'cell_completion_owner')
+         self.check((a.get('done') is not None)==(expected_done is not None), 'descriptor_completion_presence')
+-        if a.get('done') is not None:
++        if a.get('done') is not None and expected_done is not None:
+             self.check(a['done']==expected_done, 'descriptor_completion_id')
+         if 'reserve' in a:
+             r = a['reserve']; d = r['desc']; length = r['length']
+@@ -213,7 +216,7 @@ class Oracle:
+         if 'info' in a:
+             info=a['info']; d=info['desc']
+             require('reserve' in a and d==a['reserve']['desc'], 'environment_info_writer')
+-            self.check(info==a['reserve'] | {'head':self.packets[d].cells[0]}, 'metadata_info')
++            self.check(info==a['reserve'] | {'head':self.packets[d].cells[0], 'ncell':(self.packets[d].info['length']+self.p.cell_bytes-1)//self.p.cell_bytes}, 'metadata_info')
+             self.info_array[d]=deepcopy(info)
+         if 'link' in a:
+             link=a['link']; cell,nxt=link['cell'],link['next']
+@@ -226,6 +229,7 @@ class Oracle:
+             packet=self.packets[d]; meta=packet.info
+             n=(meta['length']+self.p.cell_bytes-1)//self.p.cell_bytes
+             self.check(len(packet.cells)==n and d in self.info_array, 'commit_complete')
++            self.check(a.get('commit_info')==meta | {'head':packet.cells[0],'ncell':n},'metadata_commit')
+             image=bytearray()
+             for j in range(meta['length']):
+                 cell=packet.cells[j//self.p.cell_bytes]
+@@ -242,7 +246,9 @@ class Oracle:
+             d=a['dispatch']
+             require(self.active is None and not self.buffered and not self.pending, 'environment_dispatch_busy')
+             require(d in pre_packets and self.packets[d].state=='QUEUED', 'environment_dispatch_owner')
+-            q=self.packets[d].info['qid']
++            packet=self.packets[d]
++            self.check(a.get('dispatch_info')==packet.info | {'head':packet.cells[0],'ncell':len(packet.cells)},'metadata_dispatch')
++            q=packet.info['qid']
+             require(bool(pre_queues[q]) and pre_queues[q][0]==d, 'environment_dispatch_prestate')
+             self.queues[q].popleft(); self.packets[d].state='TX'; self.active=d
+             self.counts['dispatches'] += 1
+@@ -300,6 +306,8 @@ class Oracle:
+             if arrival: self.bins['full_arrival'] += 1
+             if arrival and transfer and 'read' in a: self.bins['full_exchange'] += 1
+         if a.get('done') is not None: self.bins['complete'] += 1
++        if all(k in a for k in ('reserve','allocate','write','commit','free','done')):
++            self.bins['atomic_store_retire'] += 1
+         if 'free' in a: self.bins['cell_retire'] += 1
+         if 'reserve' in a and a['reserve']['tag']==7: self.bins['duplicate_tag_candidate'] += 1
+ 
+diff --git a/tools/evidence.py b/tools/evidence.py
+index 0f8c61d..7d28d83 100644
+--- a/tools/evidence.py
++++ b/tools/evidence.py
+@@ -24,12 +24,12 @@ def sha(path):
+         return hashlib.file_digest(stream, 'sha256').hexdigest()
+ 
+ 
+-def provenance():
++def provenance(source_paths=None):
+     def git(*args):
+         return subprocess.check_output(['git', *args], cwd=ROOT, text=True, timeout=30).strip()
+-    files = git('ls-files', '--cached', '--others', '--exclude-standard').splitlines()
++    files = git('ls-files', '--cached', '--others', '--exclude-standard', '--', *(source_paths or ['.'])).splitlines()
+     digests = {p: sha(ROOT / p) for p in files if (ROOT / p).is_file() and not p.startswith('work/')}
+-    return dict(source_revision=git('rev-parse', 'HEAD'), dirty=bool(git('status', '--porcelain')),
++    return dict(**({'source_identity_paths': source_paths} if source_paths else {}), source_revision=git('rev-parse', 'HEAD'), dirty=bool(git('status', '--porcelain')),
+                 source_digests=digests, dependency_digests={p: digests[p] for p in digests
+                 if p in ('tools/dependencies.json', 'tools/packages.lock.json')},
+                 constraint_digests={p: d for p, d in digests.items() if p.endswith(('.sdc', '.sby'))})
+@@ -113,10 +113,10 @@ class Case:
+ 
+ 
+ class Run:
+-    def __init__(self, path, profile='toolchain'):
++    def __init__(self, path, profile='toolchain', source_paths=None):
+         self.path, self.profile = Path(path).resolve(), profile
+         self.path.mkdir(parents=True, exist_ok=True)
+-        self.provenance = provenance()
++        self.provenance = provenance(source_paths)
+         self.versions, self.cases = {'python': sys.version.splitlines()[0]}, []
+ 
+     def finish(self):
+diff --git a/tools/failure_capture.py b/tools/failure_capture.py
+index a7d84b0..01fd3be 100644
+--- a/tools/failure_capture.py
++++ b/tools/failure_capture.py
+@@ -55,7 +55,7 @@ def capture_failure(data, path, root):
+     name = f'{stamp}-{test}-{uuid4().hex[:12]}'
+     record = {key: data[key] for key in ('test', 'result', 'first_failure', 'profile',
+               'seed', 'tool_versions', 'parameters', 'source_set', 'source_digests',
+-              'dependency_digests', 'constraint_digests') if key in data}
++              'dependency_digests', 'constraint_digests', 'source_identity_paths') if key in data}
+     record.update(schema_version=1, captured_utc=stamp, disposition='unclassified',
+                   run_source_revision=data.get('source_revision'),
+                   run_dirty=data.get('dirty'), run_directory=str(path),
+@@ -80,7 +80,7 @@ def capture_failure(data, path, root):
+                 mismatches.append(filename)
+         if 'source_digests' in data:
+             current = git(root, 'ls-files', '--cached', '--others', '--exclude-standard',
+-                          '-z', '--', *SOURCE_PATHS).split(b'\0')
++                          '-z', '--', *data.get('source_identity_paths', SOURCE_PATHS)).split(b'\0')
+             mismatches += [os.fsdecode(p) for p in filter(None, current)
+                            if os.fsdecode(p) not in data['source_digests']
+                            and not os.fsdecode(p).startswith('work/')
+diff --git a/tools/registry.py b/tools/registry.py
+index 051a939..cf778b7 100644
+--- a/tools/registry.py
++++ b/tools/registry.py
+@@ -16,7 +16,7 @@ def profile(name):
+ 
+ 
+ def sources(name, seen=()):
+-    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard'):
++    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation', 'memory-tx-oracle', 'memory-tx-bench', 'memory-tx'):
+         raise ValueError('Unknown or cyclic source set: ' + name)
+     data = read('sources/' + name + '.json')
+     inherited = sources(data['extends'], (*seen, name)) if 'extends' in data else dict(
+@@ -30,6 +30,10 @@ def sources(name, seen=()):
+                 raise ValueError('Missing or external registered path: ' + path)
+             if key != 'include_dirs' and name in ('production', 'formal', 'synthesis') and not (path.startswith('rtl/') or (name=='formal' and path.startswith('formal/'))):
+                 raise ValueError('Non-production source in ' + name + ': ' + path)
++    if name == 'memory-tx-preparation':
++        if 'extends' in data or any(p.startswith('rtl/') and not p.startswith('rtl/include/')
++                                    for p in result['sources'] + result['headers']):
++            raise ValueError('Preparation source set includes implementation RTL')
+     if name == 'formal':
+         from formal_symbols import check_sources
+         # No registry-provided exception list: diagnostic fixtures cannot opt in.
+@@ -47,7 +51,7 @@ def selection(profile_name, tests):
+     for name in selected:
+         if name not in suites or profile_name not in suites[name]['profiles']:
+             raise ValueError('Unknown suite/profile selection: ' + name)
+-        if suites[name]['handler'] not in ('contracts', 'pools', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard'):
++        if suites[name]['handler'] not in ('contracts', 'pools', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation', 'memory-tx-oracle', 'memory-tx-bench', 'memory-tx'):
+             raise ValueError('Suite has no executable handler: ' + name)
+         for source_set in suites[name]['source_sets']:
+             sources(source_set)
+diff --git a/tools/run.py b/tools/run.py
+index b92fb34..44276be 100644
+--- a/tools/run.py
++++ b/tools/run.py
+@@ -374,7 +374,14 @@ def main(argv=None):
+               'test-unit': 'unit', 'repo-check': 'repo'}.get(args.action, args.action)
+     if args.profile is None:
+         args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
+-    run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
++    preparation = action == 'regression' and args.test is not None and all(
++        name in ('memory-tx-oracle', 'memory-tx-bench', 'memory-tx') for name in args.test)
++    identity_paths = None
++    if preparation:
++        from memory_tx import identity_paths as preparation_identity_paths
++        identity_paths = preparation_identity_paths()
++    run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]),
++              args.profile, source_paths=identity_paths)
+     from frontend import selected
+     args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal','formal-symbols') else 'synthesis')
+     run.versions['rtl_frontend'] = args.frontend
+@@ -413,6 +420,7 @@ def main(argv=None):
+         from queues_independent import queues_independent
+         from queue_dispatch_guard import queue_dispatch_guard
+         from scheduler import scheduler
++        from memory_tx import memory_tx_oracle, memory_tx_bench, memory_tx_dut
+         run.scope = 'Selected contract/component suites; no integrated TM validation'
+         try:
+             selected = selection(args.profile, args.test)
+@@ -422,7 +430,8 @@ def main(argv=None):
+                 raise ValueError('Regression accepts one positive 31-bit functional seed')
+             from doctor import qualify
+             qualify(run)
+-            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler, 'queues-independent': queues_independent, 'queues-dispatch-guard': queue_dispatch_guard}
++            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler, 'queues-independent': queues_independent, 'queues-dispatch-guard': queue_dispatch_guard, 'memory-tx-oracle': memory_tx_oracle,
++                        'memory-tx-bench': memory_tx_bench, 'memory-tx': memory_tx_dut}
+             for name in selected:
+                 handlers[name](run, args)
+         except (OSError, ValueError, KeyError) as error:
+diff --git a/verification/suites.json b/verification/suites.json
+index f9ee007..a6c6fef 100644
+--- a/verification/suites.json
++++ b/verification/suites.json
+@@ -122,6 +122,51 @@
+         "queues-dispatch-guard"
+       ],
+       "scope": "Independent wrong-descriptor rejection, sticky diagnostics, same/different-qid publication, reset and targeted guard mutation."
++    },
++    "memory-tx-oracle": {
++      "handler": "memory-tx-oracle",
++      "profiles": [
++        "F0",
++        "F1",
++        "I0",
++        "I1",
++        "E0",
++        "E1"
++      ],
++      "source_sets": [
++        "memory-tx-preparation"
++      ],
++      "scope": "Independent observed-write oracle qualification only"
++    },
++    "memory-tx-bench": {
++      "handler": "memory-tx-bench",
++      "profiles": [
++        "F0",
++        "F1",
++        "I0",
++        "I1",
++        "E0",
++        "E1"
++      ],
++      "source_sets": [
++        "memory-tx-preparation"
++      ],
++      "scope": "P07 passive monitor and UVM replay qualification only"
++    },
++    "memory-tx": {
++      "handler": "memory-tx",
++      "profiles": [
++        "F0",
++        "F1",
++        "I0",
++        "I1",
++        "E0",
++        "E1"
++      ],
++      "source_sets": [
++        "memory-tx-preparation"
++      ],
++      "scope": "Future actual memory/TX DUT qualification; NOT_IMPLEMENTED during preparation"
+     }
+   }
+ }
+diff --git a/dv/memory_tx/adapter.py b/dv/memory_tx/adapter.py
+new file mode 100644
+index 0000000..033c35d
+--- /dev/null
++++ b/dv/memory_tx/adapter.py
+@@ -0,0 +1,69 @@
++"""Public-action wire encoding for sealed monitor replay; no expected behavior."""
++from pathlib import Path
++import json
++
++FIELDS=[('reserve_v',32),('desc',32),('length',32),('qid',32),('tag',32),('source',32),
++        ('alloc_v',32),('alloc_cell',32),('alloc_desc',32),
++        ('write_v',32),('write_addr',32),('write_data',64),
++        ('info_v',32),('info_desc',32),('info_length',32),('info_qid',32),('info_tag',32),('info_source',32),('info_head',32),('info_ncell',32),
++        ('link_v',32),('link_cell',32),('link_next',32),('commit_v',32),('commit_desc',32),
++        ('dispatch_v',32),('dispatch_desc',32),('read_v',32),('read_addr',32),
++        ('response_v',32),('response_data',64),('query_v',32),('query_cell',32),('query_next',32),
++        ('free_v',32),('free_cell',32),('done_v',32),('done_desc',32)]+[(event+'_'+key,32) for event in ('commit_info','dispatch_info') for key in ('v','desc','length','qid','tag','source','head','ncell')]
++
++
++def encode_actions(actions):
++    values={name:0 for name,_ in FIELDS}
++    mapping={'reserve':{'desc':'desc','length':'length','qid':'qid','tag':'tag','source':'source'},
++             'allocate':{'cell':'alloc_cell','desc':'alloc_desc'},'write':{'addr':'write_addr','data':'write_data'},
++             'info':{key:'info_'+key for key in ('desc','length','qid','tag','source','head','ncell')},
++             'link':{'cell':'link_cell','next':'link_next'},'response':{'data':'response_data'},
++             'query':{'cell':'query_cell','next':'query_next'}}
++    for event in ('commit_info','dispatch_info'):
++        mapping[event]={key:event+'_'+key for key in ('desc','length','qid','tag','source','head','ncell')}
++    for action,fields in mapping.items():
++        if action not in actions:continue
++        values[{'allocate':'alloc'}.get(action,action)+'_v']=1
++        for key,target in fields.items():values[target]=actions[action][key]
++    for action,key in [('commit','desc'),('dispatch','desc'),('read','addr'),('free','cell'),('done','desc')]:
++        if action in actions:values[action+'_v']=1;values[action+'_'+key]=actions[action]
++    word=0
++    for name,width in FIELDS:word=(word<<width)|values[name]
++    return word
++
++
++def decode_actions(word):
++    values={}
++    for name,width in reversed(FIELDS):values[name]=word&((1<<width)-1);word>>=width
++    actions={}
++    for action,prefix,keys in [('reserve','',('desc','length','qid','tag','source')),('allocate','alloc_',('cell','desc')),
++                               ('write','write_',('addr','data')),('info','info_',('desc','length','qid','tag','source','head','ncell')),
++                               ('link','link_',('cell','next')),('response','response_',('data',)),('query','query_',('cell','next'))]:
++        if values[{'allocate':'alloc'}.get(action,action)+'_v']:
++            actions[action]={key:values[prefix+key] for key in keys}
++    for event in ('commit_info','dispatch_info'):
++        if values[event+'_v']:
++            actions[event]={key:values[event+'_'+key] for key in ('desc','length','qid','tag','source','head','ncell')}
++    for action,key in [('commit','desc'),('dispatch','desc'),('read','addr'),('free','cell'),('done','desc')]:
++        if values[action+'_v']:actions[action]=values[action+'_'+key]
++    return actions
++
++
++def write_replay(path,samples):
++    lines=[]
++    for s in samples:
++        o=s['out']
++        lines.append(f"{int(s['reset'])} {encode_actions(s['actions']):x} {int(o['valid'])} {int(o['ready'])} {o['data']:x} {o['keep']:x} {int(o['last'])} {o['user']:x}\n")
++    Path(path).write_text(''.join(lines))
++
++
++def read_observed(path):
++    result=[]
++    for line in Path(path).read_text().splitlines():
++        raw=json.loads(line)
++        result.append(dict(epoch=raw['epoch'],cycle=raw['cycle'],reset=bool(raw['reset']),
++                           actions=decode_actions(int(raw['actions'],16)),
++                           out=dict(valid=bool(raw['valid']),ready=bool(raw['ready']),
++                                    data=int(raw['data'],16),keep=int(raw['keep'],16),
++                                    last=bool(raw['last']),user=int(raw['user'],16))))
++    return result
+diff --git a/dv/memory_tx/hand_checks.py b/dv/memory_tx/hand_checks.py
+new file mode 100644
+index 0000000..af2c426
+--- /dev/null
++++ b/dv/memory_tx/hand_checks.py
+@@ -0,0 +1,58 @@
++"""Literal byte/lifetime witnesses and contract-valid metamorphic checks."""
++from copy import deepcopy
++from oracle import Profile, require, Violation
++from traces import Trace, idle_output
++
++
++def hand_trace(profile):
++    # Literal C=16 fragmented chain; these values are independent of random stimulus.
++    require(profile.cell_bytes==16,'hand_profile')
++    t=Trace(profile);t.reset()
++    info=dict(desc=0,length=35,qid=0,tag=7,source=0)
++    addresses=[10,11,2,3,18]
++    data=[0x0706050403020100,0x0f0e0d0c0b0a0908,0x1716151413121110,0x1f1e1d1c1b1a1918,0xaaaaaaaabb222120]
++    for i,(addr,word) in enumerate(zip(addresses,data)):
++        a={'write':{'addr':addr,'data':word}}
++        if i==0:a.update(reserve=info,info=info|{'head':5,'ncell':3},allocate={'desc':0,'cell':5})
++        if i==2:a.update(allocate={'desc':0,'cell':1},link={'cell':5,'next':1})
++        if i==4:a.update(allocate={'desc':0,'cell':9},link={'cell':1,'next':9},commit=0)
++        t.edge(a)
++    packet=dict(info=info,chain=[5,1,9],raw=bytes(range(35)),words=list(zip(addresses,data)))
++    t.send(packet);t.drain()
++    return t.samples
++
++
++def qualify_hand(replay):
++    results=[]
++    for latency in (1,2):
++        for depth in (4,8):
++            p=Profile(latency=latency,depth=depth)
++            samples=hand_trace(p);report=replay(samples,p)
++            transfers=[s for s in samples if s['out']['valid'] and s['out']['ready']]
++            require([s['out']['keep'] for s in transfers]==[255,255,255,255,7],'hand_keeps')
++            require([s['actions'].get('free') for s in transfers]==[None,5,None,1,9],'hand_lifetimes')
++            require([s['actions'].get('done') for s in transfers]==[None,None,None,None,0],'hand_descriptor')
++            raw=bytes((s['out']['data']>>(lane*8))&255 for s in transfers for lane in range(8) if s['out']['keep']&(1<<lane))
++            require(raw==bytes(range(35)),'hand_bytes')
++            issued=[(s['cycle'],s['actions']['read']) for s in samples if 'read' in s['actions']]
++            arrived=[s['cycle'] for s in samples if 'response' in s['actions']]
++            require([address for _,address in issued]==[10,11,2,3,18],'hand_read_order')
++            require(arrived==[cycle+latency for cycle,_ in issued],'hand_latency')
++            results.append(dict(latency=latency,depth=depth,valid_bytes=len(raw),returns=[5,1,9]))
++    return results
++
++
++def metamorphic(samples,profile,replay):
++    renamed=deepcopy(samples)
++    for s in renamed:
++        for key in ('reserve','info','commit_info','dispatch_info'):
++            if key in s['actions']:s['actions'][key]['tag']^=0x2345
++        if s['out']['valid']:s['out']['user']^=0x2345<<24
++    replay(renamed,profile)
++    unused=deepcopy(samples)
++    for s in unused:
++        if s['out']['valid']:
++            for lane in range(8):
++                if not s['out']['keep']&(1<<lane):s['out']['data']^=0x5a<<(lane*8)
++    replay(unused,profile)
++    return {'tag_bijection':'PASS','unused_output_lanes':'PASS'}
+diff --git a/dv/memory_tx/ledger.py b/dv/memory_tx/ledger.py
+new file mode 100644
+index 0000000..3b3dafb
+--- /dev/null
++++ b/dv/memory_tx/ledger.py
+@@ -0,0 +1,43 @@
++"""Recompute lifetime and read totals from sample history, independent of deltas."""
++from collections import Counter
++from oracle import require
++
++
++class Ledger:
++    def __init__(self,profile):
++        self.p=profile;self.epoch=-1;self.reservations=[];self.active=None
++        self.reads=[];self.outputs=0;self.responses=0
++
++    def observe(self,sample,model):
++        if sample['reset']:
++            self.reservations=[];self.active=None;self.reads=[];self.outputs=self.responses=0
++            return
++        a=sample['actions']
++        if 'reserve' in a:
++            self.reservations.append(dict(info=a['reserve'],allocations=0,beats=0,retirements=0,ended=False))
++        if 'allocate' in a:
++            lifetime=next(r for r in reversed(self.reservations) if r['info']['desc']==a['allocate']['desc'] and not r['ended'])
++            lifetime['allocations']+=1
++        if 'dispatch' in a:
++            self.active=next(r for r in reversed(self.reservations) if r['info']['desc']==a['dispatch'] and not r['ended'])
++        if 'read' in a:self.reads.append(sample['cycle']+self.p.latency)
++        self.responses=sum(due<=sample['cycle'] for due in self.reads)
++        if sample['out']['valid'] and sample['out']['ready']:
++            require(self.active is not None,'ledger_output_without_dispatch')
++            self.active['beats']+=1;self.outputs+=1
++            length=self.active['info']['length'];consumed=min(length,self.active['beats']*8)
++            # A cell retires only when all its bytes are externally consumed.
++            self.active['retirements']=consumed//self.p.cell_bytes+int(consumed==length and length%self.p.cell_bytes!=0)
++            if consumed==length:self.active['ended']=True;self.active=None
++        budget=sum((r['info']['length']+self.p.cell_bytes-1)//self.p.cell_bytes for r in self.reservations)
++        allocated=sum(r['allocations'] for r in self.reservations)
++        retired=sum(r['retirements'] for r in self.reservations)
++        expected_H=Counter()
++        for r in self.reservations:
++            expected_H[r['info']['qid']]+=(r['info']['length']+self.p.cell_bytes-1)//self.p.cell_bytes-r['retirements']
++        require((model.U,model.A,model.R)==(self.p.cells-budget+retired,allocated-retired,budget-allocated),
++                'ledger_resources')
++        require(model.H==expected_H,'ledger_queue_credit')
++        require(len(model.packets)==sum(not r['ended'] for r in self.reservations),'ledger_descriptors')
++        require(len(model.pending)==len(self.reads)-self.responses and len(model.buffered)==self.responses-self.outputs,
++                'ledger_transactions')
+diff --git a/dv/memory_tx/parameters.sv b/dv/memory_tx/parameters.sv
+new file mode 100644
+index 0000000..03ae679
+--- /dev/null
++++ b/dv/memory_tx/parameters.sv
+@@ -0,0 +1,7 @@
++// Parameter-contract probe only; contains no hardware implementation.
++module memory_tx_parameters #(
++`include "tm_parameters.svh"
++)(output logic configuration_valid);
++`include "tm_validate.svh"
++assign configuration_valid=CONFIG_VALID;
++endmodule
+diff --git a/dv/memory_tx/qualification.py b/dv/memory_tx/qualification.py
+new file mode 100644
+index 0000000..d67f2a0
+--- /dev/null
++++ b/dv/memory_tx/qualification.py
+@@ -0,0 +1,190 @@
++"""Model qualification and labeled trace fault checks, independent of RTL."""
++import argparse
++from collections import Counter
++from copy import deepcopy
++import hashlib
++import json
++from pathlib import Path
++import sys
++from oracle import Oracle, Profile, Violation, require
++from traces import legal_trace, reset_traces, atomic_overlap_trace
++from ledger import Ledger
++from sweep import sweep
++from hand_checks import qualify_hand, metamorphic
++
++
++def replay(samples, profile, required=(), disabled=(), finish=True):
++    oracle=Oracle(profile,disabled)
++    ledger=Ledger(profile)
++    for sample in samples:
++        oracle.step(sample)
++        if not disabled:ledger.observe(sample,oracle)
++    return oracle.finish(required) if finish else oracle
++
++
++def qualify(profile, seed):
++    samples=legal_trace(profile,seed)
++    required=['exact_full','full_stall','full_arrival','full_exchange','atomic_commit',
++              'cell_final_hold','packet_final_hold','link_query','complete']+[f'keep_{i}' for i in range(1,9)]
++    report=replay(samples,profile,required)
++    report['trace_sha256']=hashlib.sha256(json.dumps(samples,sort_keys=True).encode()).hexdigest()
++    resets={name:replay(trace,profile,['reset','complete']) for name,trace in reset_traces(profile,seed).items()}
++    report['hand_witnesses']=qualify_hand(replay)
++    report['bounded_sweep']=sweep(profile,replay,seed)
++    report['metamorphic']=metamorphic(samples,profile,replay)
++    report['reset_phases']=resets
++    report['atomic_overlap']=replay(atomic_overlap_trace(profile,seed),profile,['atomic_store_retire'])
++    negatives={}
++    def negative(name, detector, mutate, *, finish=False):
++        trace=deepcopy(samples); end=mutate(trace)
++        trace=trace if end is None else trace[:end+1]
++        try: replay(trace,profile,finish=finish)
++        except Violation as error:
++            require(error.detector==detector,'selftest_wrong_detector',f'{name}: {error}')
++        else: raise AssertionError('selftest_missing_detection: '+name)
++        # Removal must be killed by this self-test, before a later unrelated alarm.
++        if end is not None:
++            try: replay(trace,profile,disabled=[detector],finish=False)
++            except Violation as error:raise AssertionError('selftest_removal_wrong_alarm: '+name+': '+str(error)) from error
++            negatives[name]={'detector':detector,'detector_removal':'KILLED_BY_'+name}
++        else: negatives[name]={'detector':detector}
++    def edit_first(predicate, change):
++        def mutate(trace):
++            for i,s in enumerate(trace):
++                if predicate(s): change(s);return i
++            raise AssertionError('missing fault trigger')
++        return mutate
++    has=lambda key:lambda s:key in s['actions']
++    action=lambda key:lambda s:s['actions'].pop(key)
++    for key,detector in [('info','metadata_info'),('commit_info','metadata_commit'),('dispatch_info','metadata_dispatch')]:
++        negative('wrong_'+key,detector,edit_first(has(key),lambda s,k=key:s['actions'][k].update(tag=s['actions'][k]['tag']^1)))
++    negative('missing_info_write','metadata_info_presence',edit_first(has('info'),action('info')))
++    negative('missing_response','response_presence',edit_first(has('response'),action('response')))
++    negative('wrong_response','response_data',edit_first(has('response'),lambda s:s['actions']['response'].update(data=s['actions']['response']['data']^1)))
++    negative('extra_response','response_presence',edit_first(lambda s:not s['reset'] and s['cycle']>3 and not s['actions'],lambda s:s['actions'].update(response={'data':0})))
++    for key,detector in [('keep','output_keep'),('last','output_last'),('user','output_user'),('data','output_data')]:
++        def mutate_output(trace,key=key):
++            for i,s in enumerate(trace):
++                if s['out']['valid'] and s['out']['ready'] and not (trace[i-1]['out']['valid'] and not trace[i-1]['out']['ready']):
++                    s['out'][key]^=1;return i
++            raise AssertionError('no unheld transfer')
++        negative('wrong_output_'+key,detector,mutate_output)
++    negative('missing_cell_return','cell_completion_presence',edit_first(has('free'),action('free')))
++    negative('wrong_cell_return','cell_completion_id',edit_first(has('free'),lambda s:s['actions'].update(free=(s['actions']['free']+1)%profile.cells)))
++    negative('missing_done','descriptor_completion_presence',edit_first(has('done'),action('done')))
++    negative('wrong_done','descriptor_completion_id',edit_first(has('done'),lambda s:s['actions'].update(done=1)))
++    negative('duplicate_done','descriptor_completion_presence',edit_first(lambda s:not s['reset'] and s['cycle']>3 and not s['actions'],lambda s:s['actions'].update(done=0)))
++    negative('duplicate_free','cell_completion_presence',edit_first(lambda s:not s['reset'] and s['cycle']>3 and not s['actions'],lambda s:s['actions'].update(free=0)))
++    negative('wrong_link','metadata_next',edit_first(has('query'),lambda s:s['actions']['query'].update(next=(s['actions']['query']['next']+1)%profile.cells)))
++    # Held fields corrupt on a successor to a genuine held-valid sample.
++    def late_response(trace):
++        for i,s in enumerate(trace):
++            if 'response' in s['actions']:
++                response=s['actions'].pop('response');trace[i+1]['actions']['response']=response;return i
++        raise AssertionError('no response')
++    negative('late_response','response_presence',late_response)
++    negative('duplicate_response','response_presence',edit_first(lambda s:not s['reset'] and s['cycle']>3 and not s['actions'],lambda s:s['actions'].update(response={'data':0})))
++    negative('early_cell_return','cell_completion_presence',edit_first(lambda s:s['out']['valid'] and not s['out']['ready'],lambda s:s['actions'].update(free=0)))
++    def omit_queries(trace):
++        for i,s in enumerate(trace):
++            s['actions'].pop('query',None)
++            if 'free' in s['actions'] and 'done' not in s['actions']:return i
++        raise AssertionError('no interior cell retirement')
++    negative('missing_link_capture','link_capture',omit_queries)
++    def overissue(trace):
++        occupied=0
++        for i,s in enumerate(trace):
++            if s['reset']:occupied=0;continue
++            transfer=s['out']['valid'] and s['out']['ready']
++            if occupied==profile.depth and not transfer:
++                for later in trace[i+1:]:
++                    if 'done' in later['actions']:break
++                    if 'read' in later['actions']:
++                        s['actions']['read']=later['actions']['read'];return i
++            occupied+=int('read' in s['actions'])-int(transfer)
++        raise AssertionError('no exact-capacity trigger')
++    negative('overissue','read_credit',overissue)
++    for key in ('valid','data','keep','last','user'):
++        def mutate(trace,key=key):
++            for i in range(1,len(trace)):
++                prev=trace[i-1]['out']
++                if prev['valid'] and not prev['ready']:
++                    trace[i]['out'][key]^=1;return i
++            raise AssertionError('no hold')
++        # Other semantic checks would also reject the corruption after removing hold.
++        trace=deepcopy(samples);end=mutate(trace)
++        try:replay(trace[:end+1],profile,finish=False)
++        except Violation as error:require(error.detector=='held_output','selftest_wrong_detector',str(error))
++        else:raise AssertionError('missing held detector')
++        negatives['held_'+key]={'detector':'held_output'}
++    # Missing final transaction cannot quietly pass shutdown.
++    end=next(i for i,s in enumerate(samples) if 'done' in s['actions'])
++    for name,trace,detector in [('missing_final_output',samples[:end],'shutdown_ownership'),
++                               ('missing_completion_leak',samples[:end],'shutdown_ownership')]:
++        try:replay(trace,profile)
++        except Violation as error:require(error.detector==detector,'selftest_wrong_detector',str(error))
++        else:raise AssertionError(name)
++        negatives[name]={'detector':detector}
++    # Direct equations are separate arithmetic witnesses, not model-state edits.
++    equations=[]
++    for depth in (4,8):
++        for B in range(depth+1):
++            for O in range(3):
++                for R in (0,1):
++                    for I in (0,1):
++                        for T in (0,1):
++                            if B+O>depth or R>O or T>B:continue
++                            post_B=B+R-T;post_O=O+I-R
++                            legal=B+O+I-T<=depth
++                            require((post_B+post_O<=depth)==legal,'equation_witness')
++                            require((post_B+post_O+1<=depth)!=legal or I==0 or T==0 or B+O!=depth,
++                                    'wrong_delta_witness')
++                            equations.append([depth,B,O,R,I,T,post_B,post_O,legal])
++    # Environment rejection is separate from a DUT guarantee detector.
++    environment={}
++    for name,field,value,detector in [('latency','latency',3,'parameter_latency'),('depth','depth',2,'parameter_depth'),
++                                      ('cell','cell_bytes',8,'parameter_cell'),('length','max_length',1537,'parameter_length')]:
++        from dataclasses import asdict
++        values=asdict(profile);values[field]=value
++        try:Profile(**values)
++        except Violation as error:require(error.detector==detector,'environment_wrong_detector')
++        else:raise AssertionError('unsupported configuration passed')
++        environment[name]=detector
++    trace=deepcopy(atomic_overlap_trace(profile,seed))
++    overlap=next(i for i,s in enumerate(trace) if 'done' in s['actions'] and 'reserve' in s['actions'])
++    # Reusing the just-returned cell on the same edge is illegal even though a return occurs.
++    trace[overlap]['actions']['allocate']['cell']=trace[overlap]['actions']['free']
++    try:replay(trace[:overlap+1],profile,finish=False)
++    except Violation as error:require(error.detector=='environment_cell_reuse','environment_wrong_detector',str(error))
++    else:raise AssertionError('same-edge reuse accepted')
++    environment['same_edge_return_reuse']='environment_cell_reuse'
++    for name,edit,detector in [('missing_sample',lambda t:t.pop(5),'sample_cycle'),
++                               ('duplicate_sample',lambda t:t.insert(5,deepcopy(t[4])),'sample_cycle'),
++                               ('mixed_epoch',lambda t:t[5].update(epoch=t[5]['epoch']+1),'sample_epoch')]:
++        trace=deepcopy(samples);edit(trace)
++        try:replay(trace,profile)
++        except Violation as error:require(error.detector==detector,'sample_wrong_detector',str(error))
++        else:raise AssertionError(name)
++        negatives[name]={'detector':detector}
++    try:replay(samples,profile,['absent_required_trigger'])
++    except Violation as error:require(error.detector=='required_bin','required_bin_wrong_detector')
++    else:raise AssertionError('unhit required bin passed')
++    negatives['absent_required_trigger']={'detector':'required_bin'}
++    report.update(negatives=negatives,environment_rejections=environment,equation_combinations=len(equations))
++    return report,samples
++
++
++def main():
++    parser=argparse.ArgumentParser()
++    parser.add_argument('--seed',type=int,default=17)
++    parser.add_argument('--profile-json',type=Path,required=True)
++    parser.add_argument('--output',type=Path,required=True)
++    args=parser.parse_args()
++    profile=Profile(**json.loads(args.profile_json.read_text()))
++    report,samples=qualify(profile,args.seed)
++    args.output.mkdir(parents=True,exist_ok=True)
++    (args.output/'qualification.json').write_text(json.dumps(report,indent=2)+'\n')
++    (args.output/'samples.jsonl').write_text(''.join(json.dumps(s)+'\n' for s in samples))
++    print('TM_MEMORY_TX_ORACLE_PASS '+report['trace_sha256'])
++
++if __name__=='__main__':main()
+diff --git a/dv/memory_tx/replay.sv b/dv/memory_tx/replay.sv
+new file mode 100644
+index 0000000..627aff1
+--- /dev/null
++++ b/dv/memory_tx/replay.sv
+@@ -0,0 +1,258 @@
++`timescale 1ns/1ps
++package memory_tx_wires;
++    `include "wires.svh"
++endpackage
++
++interface memory_tx_replay_if(input logic clk);
++    import memory_tx_wires::*;
++    logic capture, rst_n;
++    memory_actions_t actions;
++endinterface
++
++package memory_tx_replay_pkg;
++    import uvm_pkg::*;
++    import tm_bench_types::*;
++    import tm_bench_pkg::*;
++    import memory_tx_wires::*;
++    `include "uvm_macros.svh"
++
++    class memory_action_sample extends tm_sample;
++        memory_actions_t actions;
++        function new(string name="action_sample");super.new(name);endfunction
++    endclass
++
++    class memory_action_monitor extends uvm_monitor;
++        `uvm_component_utils(memory_action_monitor)
++        virtual memory_tx_replay_if vif;
++        uvm_analysis_port #(tm_sample) observed;
++        tm_stamp stamp;
++        bit injected;
++        function new(string name,uvm_component parent);
++            super.new(name,parent);observed=new("observed",this);stamp=new;
++        endfunction
++        task run_phase(uvm_phase phase);
++            memory_action_sample sample;
++            forever begin
++                @(posedge vif.clk);
++                sample=new;sample.source=N_RX+3;sample.actions=vif.actions;
++                stamp.apply(sample,!vif.rst_n);
++                if(vif.capture && !injected && $test$plusargs("MIXED_SAMPLE"))sample.batch.cycle++;
++                observed.write(sample);
++                if(vif.capture && !injected && $test$plusargs("DUPLICATE_SAMPLE"))observed.write(sample);
++                if(vif.capture)injected=1;
++            end
++        endtask
++    endclass
++
++    class memory_replay_collector extends uvm_component;
++        `uvm_component_utils(memory_replay_collector)
++        uvm_analysis_imp #(tm_sample,memory_replay_collector) samples;
++        virtual memory_tx_replay_if vif;
++        bit [1:0] seen;
++        int epoch,cycle,reset,edges,reads,responses,outputs,returns,completions,stalls;
++        int live_reads,buffered;
++        int due_cycles[$];
++        logic [63:0] due_data[$];
++        logic [63:0] memory_image[int];
++        int file;
++        monitor_batch_t pending;
++        memory_actions_t actions;
++        bit have_last;
++        int last_epoch;
++        longint unsigned last_cycle;
++        covergroup observed_traffic with function sample(bit read_v,bit response_v,bit transfer,bit held,bit release_cell,bit complete);
++            option.per_instance=1;
++            issue:coverpoint read_v;
++            response:coverpoint response_v;
++            output_transfer:coverpoint transfer;
++            output_hold:coverpoint held;
++            cell_return:coverpoint release_cell;
++            descriptor_done:coverpoint complete;
++            overlap:cross response,output_transfer,issue;
++        endgroup
++        function new(string name,uvm_component parent);
++            super.new(name,parent);samples=new("samples",this);observed_traffic=new;
++        endfunction
++        function void build_phase(uvm_phase phase);file=$fopen("observed.jsonl","w");endfunction
++        function void write(tm_sample sample);
++            memory_action_sample action_sample;
++            int lane;
++            bit transfer;
++            if(!vif.capture)return;
++            lane=(sample.source==N_RX)?0:1;
++            if(sample.source!=N_RX && sample.source!=N_RX+3) `uvm_fatal("MEMORY_SAMPLE_SOURCE","unknown monitor source")
++            if($test$plusargs("OMIT_ACTION") && lane==1)return;
++            if($test$plusargs("OMIT_FINAL_ACTION") && lane==1 && vif.actions.done_v!=0)return;
++            if(seen=='0)begin
++                pending='0;pending.epoch=sample.batch.epoch;pending.cycle=sample.batch.cycle;
++                pending.reset_asserted=sample.batch.reset_asserted;
++                if(have_last && (sample.batch.epoch<last_epoch || (sample.batch.epoch==last_epoch && sample.batch.cycle<=last_cycle)))
++                    `uvm_fatal("MEMORY_SAMPLE_STALE","stale sample")
++            end
++            if(sample.batch.epoch!=pending.epoch || sample.batch.cycle!=pending.cycle || sample.batch.reset_asserted!=pending.reset_asserted)
++                `uvm_fatal("MEMORY_SAMPLE_MIXED","incomplete or mixed-cycle sample")
++            if(seen[lane]) `uvm_fatal("MEMORY_SAMPLE_DUPLICATE","duplicate sample")
++            seen[lane]=1;
++            if(lane==0)pending.output_sample=sample.batch.output_sample;
++            else begin
++                if(!$cast(action_sample,sample)) `uvm_fatal("MEMORY_SAMPLE_TYPE","missing action record")
++                actions=action_sample.actions;
++            end
++            if(&seen)begin
++                $fdisplay(file,"{\"epoch\":%0d,\"cycle\":%0d,\"reset\":%0d,\"actions\":\"%h\",\"valid\":%0d,\"ready\":%0d,\"data\":\"%h\",\"keep\":\"%h\",\"last\":%0d,\"user\":\"%h\"}",pending.epoch,edges,pending.reset_asserted,actions,pending.output_sample.valid,pending.output_sample.ready,pending.output_sample.beat.data,pending.output_sample.beat.keep,pending.output_sample.beat.last,pending.output_sample.beat.user);
++                $fflush(file);                if((actions.response_v!=0)!=(due_cycles.size()>0 && due_cycles[0]==edges))
++                    `uvm_fatal("MEMORY_RESPONSE_PRESENCE","fixed-latency response missing or extra")
++                if(actions.response_v!=0)begin
++                    if(actions.response_data!=due_data[0]) `uvm_fatal("MEMORY_RESPONSE_DATA","response differs from sampled write image")
++                    void'(due_cycles.pop_front());void'(due_data.pop_front());
++                end
++                if(actions.read_v!=0)begin
++                    if(!memory_image.exists(int'(actions.read_addr))) `uvm_fatal("MEMORY_READ_UNWRITTEN","read before sampled write")
++                    due_cycles.push_back(edges+MEM_RD_LATENCY);due_data.push_back(memory_image[int'(actions.read_addr)]);
++                end
++                if(actions.write_v!=0)begin
++                    if(actions.read_v!=0 && actions.read_addr==actions.write_addr) `uvm_fatal("MEMORY_COLLISION","same-word read/write")
++                    memory_image[int'(actions.write_addr)]=actions.write_data;
++                end
++                transfer=pending.output_sample.valid && pending.output_sample.ready;
++                if(pending.reset_asserted)begin live_reads=0;buffered=0;end
++                else begin
++                    if(actions.read_v!=0)begin live_reads++;reads++;end
++                    // Old physical responses during reset are sampled but give no live credit.
++                    if(actions.response_v!=0 && live_reads>0)begin live_reads--;buffered++;responses++;end
++                    if(transfer)begin buffered--;outputs++;end
++                    if(buffered<0 || live_reads<0 || buffered+live_reads>TX_FIFO_DEPTH)
++                        `uvm_fatal("MEMORY_CREDIT","sampled credit equation")
++                    if(actions.free_v!=0)returns++;
++                    if(actions.done_v!=0)completions++;
++                    if(pending.output_sample.valid && !pending.output_sample.ready)stalls++;
++                    observed_traffic.sample(actions.read_v!=0,actions.response_v!=0,transfer,
++                        pending.output_sample.valid&&!pending.output_sample.ready,actions.free_v!=0,actions.done_v!=0);
++                end
++edges++;seen='0;have_last=1;last_epoch=pending.epoch;last_cycle=pending.cycle;
++            end
++        endfunction
++        function void drained();
++            if(seen!='0) `uvm_fatal("MEMORY_SAMPLE_MISSING","incomplete final sample")
++            if(live_reads!=0 || buffered!=0) `uvm_fatal("MEMORY_SHUTDOWN","nonempty transactions")
++            if(reads==0 || responses==0 || outputs==0 || returns==0 || completions==0 || stalls==0)
++                `uvm_fatal("MEMORY_REQUIRED_TRIGGER","absent required trigger")
++            $display("TM_MEMORY_TX_BENCH_PASS edges=%0d reads=%0d responses=%0d outputs=%0d returns=%0d done=%0d holds=%0d",edges,reads,responses,outputs,returns,completions,stalls);
++        endfunction
++        function void final_phase(uvm_phase phase);$fclose(file);endfunction
++    endclass
++
++    class memory_replay_item extends uvm_sequence_item;
++        `uvm_object_utils(memory_replay_item)
++        bit reset;
++        memory_actions_t actions;
++        bit valid,ready;
++        beat_t beat;
++        function new(string name="memory_replay_item");super.new(name);endfunction
++    endclass
++
++    class memory_replay_sequence extends uvm_sequence #(memory_replay_item);
++        `uvm_object_utils(memory_replay_sequence)
++        function new(string name="memory_replay_sequence");super.new(name);endfunction
++        task body();
++            string path;
++            int input_file,got,reset_value,valid_value,ready_value,last_value,rows;
++            memory_actions_t values;
++            logic [63:0] data,user;
++            logic [7:0] keep;
++            memory_replay_item item;
++            if(!$value$plusargs("REPLAY=%s",path)) `uvm_fatal("REPLAY_INPUT","missing replay")
++            input_file=$fopen(path,"r");
++            if(input_file==0) `uvm_fatal("REPLAY_INPUT","cannot open replay")
++            while(!$feof(input_file))begin
++                got=$fscanf(input_file,"%d %h %d %d %h %h %d %h\n",reset_value,values,valid_value,ready_value,data,keep,last_value,user);
++                if(got!=8) `uvm_fatal("REPLAY_INPUT","malformed or empty row")
++                item=new;start_item(item);
++                item.reset=reset_value!=0;item.actions=values;
++                item.valid=valid_value!=0;item.ready=ready_value!=0;
++                item.beat='{data:data,keep:keep,last:last_value!=0,user:user};
++                finish_item(item);rows++;
++            end
++            if(rows==0) `uvm_fatal("REPLAY_INPUT","empty replay")
++            $fclose(input_file);
++        endtask
++    endclass
++
++    class memory_replay_driver extends uvm_driver #(memory_replay_item);
++        `uvm_component_utils(memory_replay_driver)
++        virtual memory_tx_replay_if vif;
++        virtual tm_stream_if stream;
++        function new(string name,uvm_component parent);super.new(name,parent);endfunction
++        task run_phase(uvm_phase phase);
++            memory_replay_item item;
++            forever begin
++                seq_item_port.get_next_item(item);
++                @(negedge vif.clk);vif.capture=1;vif.rst_n=!item.reset;vif.actions=item.actions;
++                stream.valid=item.valid;stream.ready=item.ready;stream.beat=item.beat;
++                @(posedge vif.clk);seq_item_port.item_done();
++            end
++        endtask
++    endclass
++
++    class memory_tx_replay_test extends uvm_test;
++        `uvm_component_utils(memory_tx_replay_test)
++        virtual memory_tx_replay_if vif;
++        virtual tm_stream_if stream;
++        tm_stream_agent output_agent;
++        memory_action_monitor action_monitor;
++        memory_replay_collector collector;
++        memory_replay_driver driver;
++        uvm_sequencer #(memory_replay_item) sequencer;
++        function new(string name,uvm_component parent);super.new(name,parent);endfunction
++        function void build_phase(uvm_phase phase);
++            if(!uvm_config_db#(virtual memory_tx_replay_if)::get(this,"","vif",vif)) `uvm_fatal("CONFIG","replay vif missing")
++            if(!uvm_config_db#(virtual tm_stream_if)::get(this,"","stream",stream)) `uvm_fatal("CONFIG","stream vif missing")
++            uvm_config_db#(virtual tm_stream_if)::set(this,"output_agent","vif",stream);
++            output_agent=tm_stream_agent::type_id::create("output_agent",this);
++            output_agent.is_active=UVM_PASSIVE;output_agent.source=N_RX;
++            action_monitor=memory_action_monitor::type_id::create("action_monitor",this);action_monitor.vif=vif;
++            collector=memory_replay_collector::type_id::create("collector",this);collector.vif=vif;
++            driver=memory_replay_driver::type_id::create("driver",this);driver.vif=vif;driver.stream=stream;
++            sequencer=new("sequencer",this);
++        endfunction
++        function void connect_phase(uvm_phase phase);
++            output_agent.monitor.observed.connect(collector.samples);
++            action_monitor.observed.connect(collector.samples);
++            driver.seq_item_port.connect(sequencer.seq_item_export);
++        endfunction
++        task run_phase(uvm_phase phase);
++            memory_replay_sequence stimulus;
++            phase.raise_objection(this);stimulus=new;
++            stimulus.start(sequencer);
++            @(negedge vif.clk);vif.capture=0;
++            collector.drained();phase.drop_objection(this);
++        endtask
++    endclass
++endpackage
++
++module memory_tx_replay_top;
++    import uvm_pkg::*;
++    import tm_bench_pkg::*;
++    import memory_tx_replay_pkg::*;
++    logic clk=0;
++    always #5 clk=~clk;
++    memory_tx_replay_if replay(clk);
++    tm_stream_if stream(clk,replay.rst_n);
++    memory_tx_obligations #(.LATENCY(tm_bench_types::MEM_RD_LATENCY),
++        .DEPTH(tm_bench_types::TX_FIFO_DEPTH),.CELL_BYTES(tm_bench_types::CELL_BYTES)) obligations(
++        .clk(clk),.sample_enable(replay.capture),.rst_n(replay.rst_n),
++        .dispatch_valid(replay.actions.dispatch_v!=0),.dispatch_length(replay.actions.dispatch_info_length),
++        .read_valid(replay.actions.read_v!=0),.response_valid(replay.actions.response_v!=0),
++        .output_valid(stream.valid),.output_ready(stream.ready),.output_last(stream.beat.last),
++        .output_keep(stream.beat.keep),.cell_return_valid(replay.actions.free_v!=0),.done_valid(replay.actions.done_v!=0));
++    tm_report_server reports;
++    initial begin
++        replay.capture=0;replay.rst_n=1;replay.actions='0;
++        stream.valid=0;stream.ready=0;stream.beat='0;
++        reports=new;uvm_report_server::set_server(reports);
++        uvm_config_db#(virtual memory_tx_replay_if)::set(null,"uvm_test_top","vif",replay);
++        uvm_config_db#(virtual tm_stream_if)::set(null,"uvm_test_top","stream",stream);
++        run_test("memory_tx_replay_test");
++    end
++    initial if($test$plusargs("TRACE"))begin $dumpfile("wave.vcd");$dumpvars(0,memory_tx_replay_top);end
++endmodule
+diff --git a/dv/memory_tx/sweep.py b/dv/memory_tx/sweep.py
+new file mode 100644
+index 0000000..28a2bb6
+--- /dev/null
++++ b/dv/memory_tx/sweep.py
+@@ -0,0 +1,26 @@
++"""Bounded sink patterns applied through sampled transactions, never model edits."""
++from collections import Counter
++from dataclasses import replace
++from traces import Trace
++
++
++def sweep(profile,replay,seed=17):
++    configurations=[]
++    for latency in (1,2):
++        for depth in (4,8):
++            for cell_bytes in (16,32,64):
++                p=replace(profile,latency=latency,depth=depth,cell_bytes=cell_bytes,
++                          max_length=min(profile.max_length,profile.cells*cell_bytes))
++                counts=Counter()
++                for mask in range(16):
++                    t=Trace(p,seed+mask);t.reset()
++                    length=min(p.max_length,max(cell_bytes+1,(depth+latency+3)*8))
++                    packet=t.store(length,salt=mask*13)
++                    t.send(packet,mode=('pattern',mask));t.drain()
++                    result=replay(t.samples,p,['complete','exact_full'])
++                    counts.update(result['bins'])
++                for name in ('full_arrival','full_stall','full_exchange'):
++                    if counts[name]==0:raise AssertionError('sweep_missing_bin: '+name+str(p))
++                configurations.append(dict(latency=latency,depth=depth,cell_bytes=cell_bytes,
++                                           masks=16,observed_bins=dict(counts)))
++    return configurations
+diff --git a/dv/memory_tx/traces.py b/dv/memory_tx/traces.py
+new file mode 100644
+index 0000000..19c4dba
+--- /dev/null
++++ b/dv/memory_tx/traces.py
+@@ -0,0 +1,157 @@
++"""Replayable signal/action fixtures. No oracle state is used to create pressure."""
++from copy import deepcopy
++import random
++
++
++def idle_output():
++    return dict(valid=False,ready=False,data=0,keep=0,last=False,user=0)
++
++
++class Trace:
++    def __init__(self, profile, seed=17):
++        self.p=profile; self.rng=random.Random(seed)
++        self.samples=[]; self.epoch=0; self.resetting=False
++        self.ram={}; self.responses={}; self.cycle=0; self.descriptors={}
++
++    def edge(self, actions=None, out=None, reset=False):
++        a=deepcopy(actions or {})
++        if 'info' in a:self.descriptors[a['info']['desc']]=deepcopy(a['info'])
++        for event in ('commit','dispatch'):
++            if event in a:a[event+'_info']=deepcopy(self.descriptors[a[event]])
++        if self.cycle in self.responses:
++            a['response']={'data':self.responses.pop(self.cycle)}
++        if 'read' in a:
++            self.responses[self.cycle+self.p.latency]=self.ram[a['read']]
++        if 'write' in a:
++            self.ram[a['write']['addr']]=a['write']['data']
++        if reset and not self.resetting: self.epoch+=1
++        self.samples.append(dict(epoch=self.epoch,cycle=self.cycle,reset=reset,
++                                 actions=a,out=deepcopy(out or idle_output())))
++        self.resetting=reset;self.cycle+=1
++
++    def reset(self):
++        self.edge(reset=True);self.edge(reset=True);self.edge()
++
++    def store(self, length, desc=0, tag=7, salt=0, chain=None):
++        count=(length+self.p.cell_bytes-1)//self.p.cell_bytes
++        if chain is None:
++            chain=list(range(self.p.cells));self.rng.shuffle(chain);chain=chain[:count]
++        raw=bytes((salt+37*j+11*(j//self.p.cell_bytes)+3)&255 for j in range(length))
++        info=dict(desc=desc,length=length,qid=desc%self.p.queues,source=desc%self.p.sources,tag=tag)
++        words=[]
++        for i in range((length+7)//8):
++            cell=chain[(i*8)//self.p.cell_bytes]
++            addr=cell*(self.p.cell_bytes//8)+i%(self.p.cell_bytes//8)
++            data=int.from_bytes(raw[i*8:i*8+8].ljust(8,bytes([self.rng.randrange(256)])),'little')
++            a={'write':{'addr':addr,'data':data}}
++            if i%(self.p.cell_bytes//8)==0:
++                a['allocate']={'cell':cell,'desc':desc}
++                if i: a['link']={'cell':chain[i//(self.p.cell_bytes//8)-1],'next':cell}
++            if i==0:
++                a['reserve']=info;a['info']=info|{'head':chain[0],'ncell':count}
++            if i==(length+7)//8-1: a['commit']=desc
++            words.append((addr,data));self.edge(a)
++        return dict(info=info,raw=raw,chain=chain,words=words)
++
++    def send(self, packet, mode='pressure', stop=None):
++        self.edge({'dispatch':packet['info']['desc']})
++        return self.continue_send(packet, mode, stop)
++
++    def continue_send(self, packet, mode='pressure', stop=None, state=None):
++        state=state or dict(issued=0,retired=0,available=[],held=None,age=0,stalled=set())
++        words=packet['words'];n=len(words)
++        for _ in range(n*20+self.p.depth*10+100):
++            i,t=state['issued'],state['retired']
++            if t==n: return state
++            age=state['age'];state['age']+=1
++            # Returned response becomes output on a later edge, never fall-through.
++            visible=[x for x in state['available'] if x[0]<self.cycle]
++            valid=bool(visible)
++            ready=age>=self.p.depth+self.p.latency+3
++            if mode=='random' and ready: ready=self.rng.randrange(4)!=0
++            if isinstance(mode,tuple) and ready:
++                pattern_age=age-(self.p.depth+self.p.latency+3)
++                ready=bool(mode[1]&(1<<(pattern_age%4))) if pattern_age<12 else True
++            final_cell=(t+1)%(self.p.cell_bytes//8)==0 or t+1==n
++            # Deliberately hold each boundary for two edges, including final output.
++            if not isinstance(mode,tuple) and valid and final_cell and (t,0) not in state['stalled']:
++                ready=False;state['stalled'].add((t,0))
++            elif not isinstance(mode,tuple) and valid and final_cell and (t,1) not in state['stalled']:
++                ready=False;state['stalled'].add((t,1))
++            out=idle_output();out['ready']=ready
++            a={}
++            if valid:
++                data=words[t][1]; remaining=len(packet['raw'])-t*8
++                out.update(valid=True,data=data,keep=(1<<min(8,remaining))-1,last=t+1==n,
++                           user=packet['info']['qid']|len(packet['raw'])<<8|packet['info']['tag']<<24|packet['info']['source']<<40)
++            transfer=valid and ready
++            if transfer:
++                if final_cell: a['free']=packet['chain'][t*8//self.p.cell_bytes]
++                if t+1==n: a['done']=packet['info']['desc']
++            # Issue from the independent number of issued-minus-retired beats.
++            if i<n and i-t-int(transfer)<self.p.depth:
++                a['read']=words[i][0]
++                state['available'].append((self.cycle+self.p.latency,i))
++                state['issued']+=1
++            cell_index=min(t*8//self.p.cell_bytes,len(packet['chain'])-1)
++            if cell_index+1<len(packet['chain']):
++                a['query']={'cell':packet['chain'][cell_index],'next':packet['chain'][cell_index+1]}
++            self.edge(a,out)
++            if transfer:
++                state['available']=[x for x in state['available'] if x[1]!=t]
++                state['retired']+=1
++            if stop and stop(self.samples[-1],state): return state
++        raise RuntimeError('Fixture progress exhausted')
++
++    def drain(self):
++        for _ in range(self.p.latency+2):self.edge()
++
++
++def legal_trace(profile, seed=17):
++    trace=Trace(profile,seed);trace.reset()
++    lengths=list(dict.fromkeys([1,7,8,9,profile.cell_bytes-1,profile.cell_bytes,
++                               profile.cell_bytes+1,profile.max_length-1,profile.max_length]+list(range(1,9))))
++    lengths += [trace.rng.randint(1,profile.max_length) for _ in range(12)]
++    for ordinal,length in enumerate(lengths):
++        packet=trace.store(length,tag=7,salt=ordinal*29)
++        trace.send(packet,'random' if ordinal>=len(lengths)-12 else 'pressure')
++        trace.drain()
++    return trace.samples
++
++
++def reset_traces(profile, seed=17):
++    traces={}
++    for phase in ('dispatch','pending','full','partial','cell_hold','packet_hold'):
++        trace=Trace(profile,seed);trace.reset()
++        packet=trace.store(profile.max_length,salt=19)
++        def stop(sample,state):
++            out=sample['out'];a=sample['actions']
++            return ((phase=='pending' and 'read' in a) or
++                    (phase=='full' and state['issued']-state['retired']==profile.depth and all(due<trace.cycle for due,_ in state['available'])) or
++                    (phase=='partial' and state['retired']==1) or
++                    (phase=='cell_hold' and out['valid'] and not out['ready'] and
++                     not out['last'] and (state['retired']+1)%(profile.cell_bytes//8)==0) or
++                    (phase=='packet_hold' and out['valid'] and out['last'] and not out['ready']))
++        if phase=='dispatch':trace.edge({'dispatch':0})
++        else:trace.send(packet,stop=stop)
++        trace.reset()
++        # Reuse exact IDs and tags; old array values remain physically present.
++        fresh=trace.store(profile.max_length,salt=177,chain=packet['chain'])
++        trace.send(fresh);trace.drain()
++        traces[phase]=trace.samples
++    return traces
++
++
++def atomic_overlap_trace(profile, seed=17):
++    trace=Trace(profile,seed);trace.reset()
++    old=trace.store(1,desc=0,salt=23,chain=[5])
++    trace.send(old,stop=lambda sample,state:sample['out']['valid'] and not sample['out']['ready'])
++    # A separate observed store and the final external transfer share one edge.
++    other=Trace(profile,seed+1);new=other.store(1,desc=1,salt=71,chain=[1])
++    actions=deepcopy(other.samples[0]['actions']);actions.update(free=5,done=0)
++    out=deepcopy(trace.samples[-1]['out']);out['ready']=True
++    trace.edge(actions,out)
++    # Returned ID becomes legal on the following edge, with distinct new bytes.
++    reused=trace.store(1,desc=0,salt=193,chain=[5])
++    trace.send(new);trace.send(reused);trace.drain()
++    return trace.samples
+diff --git a/dv/memory_tx/wires.svh b/dv/memory_tx/wires.svh
+new file mode 100644
+index 0000000..20d4b44
+--- /dev/null
++++ b/dv/memory_tx/wires.svh
+@@ -0,0 +1,57 @@
++// Transport only; flags are sampled public actions, not expectations.
++typedef struct packed {
++    logic [31:0] reserve_v;
++    logic [31:0] desc;
++    logic [31:0] length;
++    logic [31:0] qid;
++    logic [31:0] tag;
++    logic [31:0] source;
++    logic [31:0] alloc_v;
++    logic [31:0] alloc_cell;
++    logic [31:0] alloc_desc;
++    logic [31:0] write_v;
++    logic [31:0] write_addr;
++    logic [63:0] write_data;
++    logic [31:0] info_v;
++    logic [31:0] info_desc;
++    logic [31:0] info_length;
++    logic [31:0] info_qid;
++    logic [31:0] info_tag;
++    logic [31:0] info_source;
++    logic [31:0] info_head;
++    logic [31:0] info_ncell;
++    logic [31:0] link_v;
++    logic [31:0] link_cell;
++    logic [31:0] link_next;
++    logic [31:0] commit_v;
++    logic [31:0] commit_desc;
++    logic [31:0] dispatch_v;
++    logic [31:0] dispatch_desc;
++    logic [31:0] read_v;
++    logic [31:0] read_addr;
++    logic [31:0] response_v;
++    logic [63:0] response_data;
++    logic [31:0] query_v;
++    logic [31:0] query_cell;
++    logic [31:0] query_next;
++    logic [31:0] free_v;
++    logic [31:0] free_cell;
++    logic [31:0] done_v;
++    logic [31:0] done_desc;
++    logic [31:0] commit_info_v;
++    logic [31:0] commit_info_desc;
++    logic [31:0] commit_info_length;
++    logic [31:0] commit_info_qid;
++    logic [31:0] commit_info_tag;
++    logic [31:0] commit_info_source;
++    logic [31:0] commit_info_head;
++    logic [31:0] commit_info_ncell;
++    logic [31:0] dispatch_info_v;
++    logic [31:0] dispatch_info_desc;
++    logic [31:0] dispatch_info_length;
++    logic [31:0] dispatch_info_qid;
++    logic [31:0] dispatch_info_tag;
++    logic [31:0] dispatch_info_source;
++    logic [31:0] dispatch_info_head;
++    logic [31:0] dispatch_info_ncell;
++} memory_actions_t;
+diff --git a/formal/tx/README.md b/formal/tx/README.md
+new file mode 100644
+index 0000000..ae2f61a
+--- /dev/null
++++ b/formal/tx/README.md
+@@ -0,0 +1,32 @@
++# Prepared FP-TX boundary
++
++`memory_tx_obligations.sv` compiles and executes only on labeled public-action
++replay during preparation. It is not registered as a production proof and no
++production prove/cover/mutation result exists. `sample_enable` gates the finite
++replay capture window; a production binding must tie it high, never assume it
++low to hide work. All arbitrary inputs are explicit ports; there are no native
++anyconst/anyseq constructs. Fixed future packet/byte witnesses must use the
++F01 history/stability recipe across all resets.
++
++Safety permits arbitrary sink readiness and assumes only the published reset,
++legal dispatch/ownership and fixed 1/2-cycle RAM boundary. Assertions check the
++response due pipeline, issued-minus-retired reservation, response-minus-retired
++arrival count, final keep/last and exact cell/descriptor completion. The separate
++observed-write oracle checks bytes, metadata, fragmented physical identity,
++link capture and epochs. Covers describe pending/full/exchange/final-hold and
++restoration; replay cover counters do not establish formal reachability.
++
++Future reduced production safety: two queues/four descriptors/eight cells as
++separately named formal knobs, both latencies, supported cell words, depth 4/8.
++Bind actual production sources without a behavioral TX replacement. Prove
++credit, order, held output, exact retirement and no read after reuse unboundedly;
++check covers and intended outstanding-credit/early-retirement mutations. Keep
++payload abstractions and legal metadata assumptions explicit and discharge
++caller ownership in composition. The current simulation obligation module does
++not by itself prove no stale payload, link capture or physical uniqueness.
++
++Progress is separate: add an explicit bounded-stall or always-ready sink and
++RUN/initialized/committed input premises. Check first valid <= L+4 and one beat
++per cycle after fill, including cell boundaries for CELL_WORDS>=2. Do not import
++those assumptions into safety or report bounded progress as unbounded safety.
++See [frozen expectations](../../dv/memory_tx/contract.md) for the risk/cover map.
+diff --git a/formal/tx/memory_tx_obligations.sv b/formal/tx/memory_tx_obligations.sv
+new file mode 100644
+index 0000000..002b05f
+--- /dev/null
++++ b/formal/tx/memory_tx_obligations.sv
+@@ -0,0 +1,56 @@
++// Preparation assertions over sampled public API actions. No DUT proof is claimed.
++module memory_tx_obligations #(
++    parameter int LATENCY=1, DEPTH=4, CELL_BYTES=16
++)(
++    input logic clk, sample_enable, rst_n,
++    input logic dispatch_valid,
++    input logic [31:0] dispatch_length,
++    input logic read_valid, response_valid,
++    input logic output_valid, output_ready, output_last,
++    input logic [7:0] output_keep,
++    input logic cell_return_valid, done_valid
++);
++    int slots=0, arrived=0, remaining=0, word_in_cell=0;
++    logic [LATENCY-1:0] response_pipe='0;
++    logic fire, final_packet, final_cell;
++    always_comb begin
++        fire=output_valid && output_ready;
++        final_packet=remaining>0 && remaining<=8;
++        final_cell=final_packet || word_in_cell==CELL_BYTES/8-1;
++    end
++    always_ff @(posedge clk) begin
++        if(sample_enable)begin
++            c_reset_pending:cover(!rst_n && slots>0);
++            if(!rst_n)begin
++                slots<=0;arrived<=0;remaining<=0;word_in_cell<=0;response_pipe<='0;
++                a_reset:assert(!output_valid && !cell_return_valid && !done_valid);
++            end else begin
++                a_response_due:assert(response_valid==response_pipe[LATENCY-1]);
++                a_credit:assert(slots+int'(read_valid)-int'(fire)<=DEPTH);
++                a_credit_nonnegative:assert(slots+int'(read_valid)-int'(fire)>=0);
++                a_output_arrived:assert(!output_valid || (arrived>0 && remaining>0));
++                a_done:assert(done_valid==(fire && final_packet));
++                a_cell_return:assert(cell_return_valid==(fire && final_cell));
++                if(output_valid)begin
++                    a_last:assert(output_last==final_packet);
++                    a_keep:assert(output_keep==(remaining>=8?8'hff:8'((1<<remaining)-1)));
++                end
++                if(dispatch_valid)begin
++                    a_dispatch_empty:assert(slots==0 && remaining==0);
++                    a_dispatch_length:assert(dispatch_length>0);
++                    remaining<=int'(dispatch_length);word_in_cell<=0;
++                end else if(fire)begin
++                    remaining<=remaining>8?remaining-8:0;
++                    word_in_cell<=final_cell?0:word_in_cell+1;
++                end
++                response_pipe<=(response_pipe<<1)|LATENCY'(read_valid);
++                slots<=slots+int'(read_valid)-int'(fire);
++                arrived<=arrived+int'(response_valid)-int'(fire);
++                c_full_pending:cover(slots==DEPTH && |response_pipe);
++                c_exchange:cover(slots==DEPTH && response_valid && read_valid && fire);
++                c_final_hold:cover(output_valid && !output_ready && final_packet);
++                c_recovered:cover(done_valid && slots==1);
++            end
++        end
++    end
++endmodule
+diff --git a/tools/memory_tx.py b/tools/memory_tx.py
+new file mode 100644
+index 0000000..8ef4086
+--- /dev/null
++++ b/tools/memory_tx.py
+@@ -0,0 +1,111 @@
++"""Preparation-only memory/TX modes; never resolve production source lists."""
++import json
++from pathlib import Path
++import sys
++from evidence import Case, ROOT, completed, output
++from registry import profile, sources, fingerprint
++
++
++def identity_paths():
++    return ['AGENTS.md','docs/spec','docs/implementation/tasks/P05-memory-tx.md',
++            'rtl/include','formal/tx','dv/memory_tx','dv/agents/tm_stream_agent.svh',
++            'dv/model/tm_monitor_types.svh','dv/env/tm_bench_pkg.sv',
++            'tools','verification/profiles.json','verification/suites.json',
++            'verification/sources/memory-tx-preparation.json']
++
++
++def parameters(args):
++    p=profile(args.profile)
++    return dict(latency=p['MEM_RD_LATENCY'],depth=p['TX_FIFO_DEPTH'],cell_bytes=p['CELL_BYTES'],
++                cells=p['N_CELL'],descriptors=p['N_DESC'],max_length=p['MAX_PACKET_BYTES'],
++                queues=p['N_Q'],sources=p['N_RX'])
++
++
++def memory_tx_oracle(run,args):
++    seed=(args.seed or [17])[0]
++    run.scope='Independent memory/TX preparation; production/performance/formal/DUT coverage NOT_RUN'
++    case=Case(run,'memory-tx-oracle',seed)
++    p=parameters(args);case.data.update(parameters=p,source_set='memory-tx-preparation')
++    config=case.path/'profile.json';config.write_text(json.dumps(p))
++    step=case.execute([sys.executable,ROOT/'dv/memory_tx/qualification.py',
++                       '--profile-json',config,'--seed',str(seed),'--output',case.path],timeout=args.timeout)
++    result,reason=completed(step,'TM_MEMORY_TX_ORACLE_PASS')
++    if result=='PASS':
++        case.data['qualification']=json.loads((case.path/'qualification.json').read_text())
++        case.data['artifacts'].update(samples=str(case.path/'samples.jsonl'),qualification=str(case.path/'qualification.json'))
++    case.finish(result,reason)
++    if result=='PASS' and args.profile=='E0' and seed==17:
++        parameter_probes(run,args)
++        model_mutations(run,args,config,seed)
++
++
++def memory_tx_bench(run,args):
++    from memory_tx_bench import bench
++    bench(run,args)
++
++
++def memory_tx_dut(run,args):
++    case=Case(run,'memory-tx-dut')
++    case.finish('NOT_IMPLEMENTED','Preparation has no authorized implementation source selection; no DUT executed',
++                scope='Future exact-source DUT adapter required; oracle/bench PASS cannot satisfy this mode')
++
++
++def parameter_probes(run,args):
++    """Both pinned frontends reject the public unsupported-configuration sentinel."""
++    from frontend import read_sources
++    source=ROOT/'dv/memory_tx/parameters.sv'
++    include=ROOT/'rtl/include'
++    for frontend in ('verilator','slang'):
++        case=Case(run,'memory-tx-parameters-'+frontend)
++        observations=[]
++        for name,params in [('valid',{}),('latency',{'MEM_RD_LATENCY':3}),
++                            ('depth',{'MEM_RD_LATENCY':2,'TX_FIFO_DEPTH':3}),
++                            ('cell',{'CELL_BYTES':8}),('length',{'MAX_PACKET_BYTES':1537}),
++                            ('width',{'CELL_COUNT_W':1})]:
++            if frontend=='verilator':
++                command=['verilator','--lint-only','--top-module','memory_tx_parameters','-I'+str(include),str(source)]
++                command += ['-G'+key+'='+str(value) for key,value in params.items()]
++            else:
++                script=case.path/(name+'.ys')
++                script.write_text(read_sources([source],'memory_tx_parameters',includes=[include],params=params)+'hierarchy -check -top memory_tx_parameters\n')
++                command=['yosys','-s',str(script)]
++            step=case.execute(command,timeout=args.timeout,stem=name)
++            valid=step['returncode']==0 if name=='valid' else step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and 'TM_INVALID_CONFIGURATION' in output(step)
++            observations.append(dict(name=name,qualified=valid,expected='ACCEPT' if name=='valid' else 'PARAMETER_REJECTION'))
++        ok=all(row['qualified'] for row in observations)
++        case.finish('PASS' if ok else 'FAIL',None if ok else 'Public parameter acceptance/rejection did not qualify',observations=observations,
++                    source_set='public-parameter-probe',parameters='tm_parameters.svh defaults with named invalid overrides')
++
++
++def model_mutations(run,args,config,seed):
++    """Intentional model faults are isolated copies and must fail their own self-test."""
++    import shutil
++    import tempfile
++    targets={'response_presence':'missing_response','response_data':'wrong_response',
++             'output_data':'wrong_output_data','output_keep':'wrong_output_keep',
++             'cell_completion_presence':'missing_cell_return','descriptor_completion_presence':'missing_done',
++             'link_capture':'missing_link_capture','read_credit':'overissue'}
++    for detector,test in targets.items():
++        case=Case(run,'memory-tx-remove-'+detector,seed)
++        directory=case.path/'isolated-model';shutil.copytree(ROOT/'dv/memory_tx',directory,ignore=shutil.ignore_patterns('__pycache__'))
++        oracle=directory/'oracle.py';text=oracle.read_text()
++        text=text.replace('self.disabled = frozenset(disabled)',f'self.disabled = frozenset(disabled) | {{{detector!r}}}')
++        oracle.write_text(text)
++        step=case.execute([sys.executable,directory/'qualification.py','--profile-json',config,'--seed',str(seed),'--output',case.path/'result'],timeout=args.timeout)
++        marker='selftest_missing_detection: '+test
++        ok=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and marker in output(step)
++        case.finish('PASS' if ok else 'FAIL',None if ok else 'Detector removal did not fail its intended self-test',
++                    expected='MODEL_DETECTOR_REMOVAL',detector=detector,selftest=test)
++    for name,old,new,detector in [('credit','self.U += 1','self.U += 2','resource_equations'),
++                                  ('buffer','self.buffered.append(due)','self.buffered.extend([due,due])','buffer_delta')]:
++        case=Case(run,'memory-tx-wrong-model-delta-'+name,seed)
++        directory=case.path/'isolated-model';shutil.copytree(ROOT/'dv/memory_tx',directory,ignore=shutil.ignore_patterns('__pycache__'))
++        oracle=directory/'oracle.py';text=oracle.read_text()
++        if old not in text:case.finish('FAIL','Missing intended model mutation anchor');continue
++        oracle.write_text(text.replace(old,new))
++        step=case.execute([sys.executable,directory/'qualification.py','--profile-json',config,'--seed',str(seed),'--output',case.path/'result'],timeout=args.timeout)
++        import re
++        diagnostics=re.findall(r'oracle\.Violation: ([a-z_]+):',output(step))
++        ok=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and diagnostics==[detector]
++        case.finish('PASS' if ok else 'FAIL',None if ok else 'Wrong model delta did not hit intended independent self-test',
++                    expected='WRONG_MODEL_DELTA',detector=detector,observed_detectors=diagnostics)
+diff --git a/tools/memory_tx_bench.py b/tools/memory_tx_bench.py
+new file mode 100644
+index 0000000..6d5308e
+--- /dev/null
++++ b/tools/memory_tx_bench.py
+@@ -0,0 +1,135 @@
++"""Compile and qualify public-action replay with P07 passive UVM monitors."""
++from copy import deepcopy
++import hashlib
++import json
++import os
++from pathlib import Path
++import re
++import sys
++from evidence import Case, ROOT, IGNORED, completed, output
++from registry import sources, fingerprint, profile
++from memory_tx import parameters
++
++
++def bench(run,args):
++    sys.path.insert(0,str(ROOT/'dv/memory_tx'))
++    from oracle import Profile, Violation, require
++    from qualification import replay
++    from traces import legal_trace, reset_traces, atomic_overlap_trace, Trace
++    from adapter import write_replay, read_observed
++    p=Profile(**parameters(args));seed=(args.seed or [17])[0]
++    run.scope='P07/UVM passive-edge memory/TX replay preparation; no DUT execution'
++    registered=sources('memory-tx-preparation')
++    build=Case(run,'memory-tx-bench-build',seed)
++    build.data.update(parameters=parameters(args),source_set='memory-tx-preparation',
++                      registered_source_digests=fingerprint('memory-tx-preparation'))
++    params=profile(args.profile)
++    params.update(CELL_ID_W=max(1,(p.cells-1).bit_length()),CELL_COUNT_W=p.cells.bit_length(),
++                  DESC_ID_W=max(1,(p.descriptors-1).bit_length()),DESC_COUNT_W=p.descriptors.bit_length(),
++                  DEFICIT_W=(4096+p.max_length-1).bit_length())
++    config=build.path/'tm_bench_config.svh'
++    config.write_text(''.join(f'parameter int {k}={v};\n' for k,v in params.items()))
++    uvm_src=Path(os.environ.get('UVM_HOME',str(ROOT/'.deps/src/uvm')))/'src'
++    binary=build.path/'obj/Vmemory_tx_replay_top'
++    argv=['verilator','--binary','--timing','--assert','--coverage','--trace-vcd',
++          '--timescale','1ns/1ps','+define+UVM_NO_DPI','+define+TM_MEMORY_TX_PREPARATION',
++          '--build-jobs',str(args.jobs),'--output-groups','4','--output-split','20000',
++          '--output-split-cfuncs','500','-CFLAGS','-O0','-I'+str(uvm_src),'-I'+str(build.path)]
++    argv+=['-I'+str(ROOT/path) for path in registered['include_dirs']]
++    argv+=[str(uvm_src/'uvm_pkg.sv')]+[str(ROOT/path) for path in registered['sources']]
++    argv+=['--top-module','memory_tx_replay_top','--Mdir',str(binary.parent)]
++    step=build.execute(argv,timeout=args.build_timeout)
++    status,reason=step['result'],step['first_failure']
++    if IGNORED.search(output(step)):status,reason='UNSUPPORTED','Required SV construct ignored'
++    if status=='PASS' and not binary.is_file():status,reason='TOOL_ERROR','Missing replay executable'
++    build.finish(status,reason)
++    if status!='PASS':return
++    cases=[('legal',legal_trace(p,seed),None,None),('atomic-overlap',atomic_overlap_trace(p,seed),None,None)]
++    cases += [('reset-'+name,trace,None,None) for name,trace in reset_traces(p,seed).items()]
++    baseline=cases[0][1]
++    # These are labeled corrupt electrical/action fixtures, never production RTL.
++    for fault in ('wrong-response','missing-response','wrong-output','missing-done','missing-free','missing-final'):
++        trace=deepcopy(baseline)
++        if fault=='missing-final':
++            end=next(i for i,s in enumerate(trace) if 'done' in s['actions'])
++            trace=trace[:end]
++            detector='shutdown_ownership'
++        else:
++            for i,s in enumerate(trace):
++                a=s['actions']
++                if fault=='wrong-response' and 'response' in a:
++                    a['response']['data']^=1;detector='response_data';break
++                if fault=='missing-response' and 'response' in a:
++                    del a['response'];detector='response_presence';break
++                if fault=='wrong-output' and s['out']['valid'] and s['out']['ready'] and not (trace[i-1]['out']['valid'] and not trace[i-1]['out']['ready']):
++                    s['out']['data']^=1;detector='output_data';break
++                if fault=='missing-done' and 'done' in a:
++                    del a['done'];detector='descriptor_completion_presence';break
++                if fault=='missing-free' and 'free' in a:
++                    del a['free'];detector='cell_completion_presence';break
++        cases.append((fault,trace,None,detector))
++    idle=Trace(p,seed);idle.reset();idle.edge();idle.edge()
++    final_index=next(i for i,s in enumerate(baseline) if 'done' in s['actions'])
++    pending_index=next(i for i,s in enumerate(baseline) if 'read' in s['actions'])
++    cases += [('absent-trigger',idle.samples,'ABSENT_TRIGGER','MEMORY_REQUIRED_TRIGGER'),
++              ('nonempty-end',baseline[:pending_index+1],'NONEMPTY_END','MEMORY_SHUTDOWN'),
++              ('missing-final-sample',baseline[:final_index+1],'OMIT_FINAL_ACTION','MEMORY_SAMPLE_MISSING')]
++    cases += [('collector-'+name,baseline,flag,detector) for name,flag,detector in
++              [('omission','OMIT_ACTION','MEMORY_SAMPLE_MIXED'),
++               ('duplicate','DUPLICATE_SAMPLE','MEMORY_SAMPLE_DUPLICATE'),
++               ('mixed','MIXED_SAMPLE','MEMORY_SAMPLE_MIXED')]]
++    signatures=[]
++    for name,samples,flag,expected in cases:
++        case=Case(run,'memory-tx-bench-'+name,seed)
++        case.data.update(parameters=parameters(args),source_set='memory-tx-preparation',
++                         expected='LABELED_CORRUPT_REPLAY' if expected else 'LEGAL_REPLAY')
++        trace=case.path/'replay.txt';write_replay(trace,samples)
++        case.data['artifacts'].update(stimulus=str(trace),observed=str(case.path/'observed.jsonl'))
++        command=[str(binary),'+UVM_NO_RELNOTES','+REPLAY='+str(trace),f'+verilator+seed+{seed}']
++        if expected:command+=['+TRACE']
++        if flag:command+=['+'+flag]
++        step=case.execute(command,timeout=args.timeout,cwd=case.path)
++        text=output(step)
++        if flag:
++            diagnostics=re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]',text)
++            ok=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and diagnostics==[expected]
++            case.finish('PASS' if ok else 'FAIL',None if ok else 'Intended first collector diagnostic absent',detector=expected,observed_diagnostics=diagnostics)
++            continue
++        result,why=completed(step,'TM_MEMORY_TX_BENCH_PASS')
++        intended_sv={'response_data':'MEMORY_RESPONSE_DATA','response_presence':'MEMORY_RESPONSE_PRESENCE',
++                     'shutdown_ownership':'MEMORY_SHUTDOWN'}
++        sv_detection=False
++        assertion_map={'response_presence':'a_response_due','descriptor_completion_presence':'a_done',
++                       'cell_completion_presence':'a_cell_return'}
++        assertion_detection=False
++        if expected in assertion_map:
++            # Only the intended immediate assertion plus a real waveform qualifies.
++            named=re.findall(r'Assertion failed in [^\n:]*\.(a_[a-z_]+)',text)
++            wave=case.path/'wave.vcd'
++            assertion_detection=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and named==[assertion_map[expected]] and wave.is_file() and wave.stat().st_size>0
++            if assertion_detection:
++                result,why='PASS',None
++                case.data.update(detector=expected,sv_assertion=named[0])
++                case.data['artifacts']['waveform']=str(wave)
++
++        if expected in intended_sv:
++            diagnostics=re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]',text)
++            sv_detection=step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and diagnostics==[intended_sv[expected]]
++            if sv_detection:result,why='PASS',None
++        if result=='PASS':
++            try:
++                observed=read_observed(case.path/'observed.jsonl')
++                require(observed==(samples[:len(observed)] if sv_detection or assertion_detection else samples),
++                        'bench_transport','missing/changed sampled edge')
++                if expected and not assertion_detection:
++                    try:replay(observed,p,finish=not sv_detection or expected=='shutdown_ownership')
++                    except Violation as error:require(error.detector==expected,'bench_wrong_detector',str(error))
++                    else:raise ValueError('Corrupt replay passed independent checker')
++                    case.data.update(detector=expected,observed_detector=expected,sv_detection=sv_detection)
++                elif not expected:
++                    required=['complete']+(['packet_final_hold'] if name!='atomic-overlap' else ['atomic_store_retire'])
++                    case.data['observed_coverage']=replay(observed,p,required)
++                    signatures.append(hashlib.sha256((case.path/'observed.jsonl').read_bytes()).hexdigest())
++                case.data['sampled_edges']=len(observed)
++            except (OSError,ValueError,AssertionError) as error:result,why='FAIL',str(error)
++        case.finish(result,why)
+diff --git a/verification/sources/memory-tx-preparation.json b/verification/sources/memory-tx-preparation.json
+new file mode 100644
+index 0000000..eade6ec
+--- /dev/null
++++ b/verification/sources/memory-tx-preparation.json
+@@ -0,0 +1,25 @@
++{
++  "schema_version": 1,
++  "include_dirs": [
++    "rtl/include",
++    "dv/agents",
++    "dv/model",
++    "dv/memory_tx"
++  ],
++  "sources": [
++    "rtl/include/tm_fixed.sv",
++    "dv/env/tm_bench_pkg.sv",
++    "dv/memory_tx/replay.sv",
++    "formal/tx/memory_tx_obligations.sv",
++    "dv/memory_tx/parameters.sv"
++  ],
++  "headers": [
++    "rtl/include/tm_types.svh",
++    "dv/model/tm_monitor_types.svh",
++    "dv/agents/tm_stream_agent.svh",
++    "dv/memory_tx/wires.svh",
++    "rtl/include/tm_parameters.svh",
++    "rtl/include/tm_validate.svh"
++  ],
++  "scope": "Public types and P07 passive stream infrastructure only; no production inheritance or RTL implementation."
++}

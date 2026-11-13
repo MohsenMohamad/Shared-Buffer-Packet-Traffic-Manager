@@ -55,7 +55,7 @@ def capture_failure(data, path, root):
     name = f'{stamp}-{test}-{uuid4().hex[:12]}'
     record = {key: data[key] for key in ('test', 'result', 'first_failure', 'profile',
               'seed', 'tool_versions', 'parameters', 'source_set', 'source_digests',
-              'dependency_digests', 'constraint_digests') if key in data}
+              'dependency_digests', 'constraint_digests', 'source_identity_paths') if key in data}
     record.update(schema_version=1, captured_utc=stamp, disposition='unclassified',
                   run_source_revision=data.get('source_revision'),
                   run_dirty=data.get('dirty'), run_directory=str(path),
@@ -80,7 +80,7 @@ def capture_failure(data, path, root):
                 mismatches.append(filename)
         if 'source_digests' in data:
             current = git(root, 'ls-files', '--cached', '--others', '--exclude-standard',
-                          '-z', '--', *SOURCE_PATHS).split(b'\0')
+                          '-z', '--', *data.get('source_identity_paths', SOURCE_PATHS)).split(b'\0')
             mismatches += [os.fsdecode(p) for p in filter(None, current)
                            if os.fsdecode(p) not in data['source_digests']
                            and not os.fsdecode(p).startswith('work/')

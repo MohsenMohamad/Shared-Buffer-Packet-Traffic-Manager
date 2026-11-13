@@ -1,19 +1,23 @@
 # Integration status
 
-Current main `1c225525ba284ce694f1b234cb12cc514b9c0aee` includes P03 RTL
-(PR #14) and P04 RTL (PR #16), alongside P00/P01/P02/P06/P07, F01 and C01.
-P03/P04 are **implemented awaiting independent DV** in separate PRs. Their
-existing author checks/reports retain their original scope and provenance.
-P03 [local independent DV checks](results/P03-independent-dv.md) pass in
-[PR #17](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/17);
-its verified scope awaits the passing PR's merge. P04 independent DV remains
-pending. Remaining datapath declarations do not establish a complete traffic manager.
+Current main `8d66a92768f2c72236171731262563814e875352` includes P03 RTL
+(PR #14), P04 RTL (PR #16) and independent P03/P04 DV (PRs #17/#18), alongside
+P00/P01/P02/P06/P07, F01, C01 and PR #19 failure capture. Their reports retain
+original tested sources and scope; integration does not create new execution
+results. P05 is at fresh independent DV preparation under the
+[root workflow](../AGENTS.md#preparation-implementation-and-independent-qualification).
+Preparation establishes no hardware acceptance.
+[PR #23 preparation evidence](results/P05-fresh-dv-preparation.md) records passing
+scoped oracle/UVM runs but a confirmed pre-model dependency RTL/results exposure.
+Independence acceptance is not established; it is not merged qualification or an
+RTL start. See the [exposure inventory](results/P05-source-exposure.md). Remaining datapath declarations
+do not establish a complete traffic manager.
 
 | Gate | Current scope | Evidence / owner |
 | --- | --- | --- |
 | G0 | Qualified toolchain fixtures and selected frontend | [Toolchain qualification](results/modern-toolchain.md) |
 | G1 | Qualified declarations/configurations; qualified types and declarations | [P01](results/P01-contracts.md), [RTL representation](results/rtl-representation.md) |
-| G2 | Implementation/component evidence only; independent P03/P04 DV pending: FIFOs/pools, descriptor queues, DRR/packet RR, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P03](results/P03-queues.md), [P04](results/P04-scheduler.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P05/P08 and composition pending |
+| G2 | Integrated P03/P04 independent component DV plus scoped component evidence: FIFOs/pools, descriptor queues, DRR/packet RR, CSR/statistics and exercised bench fixture | [P02](results/P02-storage-primitives.md), [P03](results/P03-queues.md), [P04](results/P04-scheduler.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md); P05/P08 and composition pending |
 | G3 | Pending real vertical path | P09 |
 | G4 | Pending integrated concurrency/profile evidence | P10 |
 | G5 | Pending composition proofs and coverage closure | P11A/P11B/P11C |

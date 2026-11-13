@@ -12,7 +12,7 @@ Dependencies: [P03](P03-queues.md)
 - [verification.md](../../spec/verification.md)
 - [formal.md](../../spec/formal.md)
 
-Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and follow the root workflow for role-specific source access.
 
 `rtl/scheduler/`, independent scheduling model/tests, `formal/scheduler/` and scheduler-suite registration.
 
@@ -42,7 +42,9 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Completion
 
-Independent DV completion requires both implemented modes to pass separate-owner policy checks without credit growth per stalled cycle or per packet in a continuing visit. System-level fairness measurements are completed in P12.
+RTL #16 and independent DV #18 are integrated, including both modes and
+separate-owner policy checks. Their evidence retains its tested revisions and
+component scope. System-level fairness measurements are completed in P12.
 
 Requirement focus: `SCH-01`, `SCH-02`, `SCH-03`, `SCH-04`, `SCH-05`, `SCH-06`, `PERF-02`
 

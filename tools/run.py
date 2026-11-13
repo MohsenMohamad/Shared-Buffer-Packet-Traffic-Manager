@@ -353,6 +353,7 @@ def main(argv=None):
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
+    parser.add_argument('--preparation-build-manifest',type=Path,help='Explicit passing preparation replay build; validate source/config/tool identity before reuse')
     parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing component case manifest for coverage extraction')
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')
@@ -374,7 +375,14 @@ def main(argv=None):
               'test-unit': 'unit', 'repo-check': 'repo'}.get(args.action, args.action)
     if args.profile is None:
         args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
-    run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]), args.profile)
+    preparation = action == 'regression' and args.test is not None and any(
+        name in ('memory-tx-oracle', 'memory-tx-bench', 'memory-tx') for name in args.test)
+    identity_paths = None
+    if preparation:
+        from memory_tx import identity_paths as preparation_identity_paths
+        identity_paths = preparation_identity_paths()
+    run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]),
+              args.profile, source_paths=identity_paths)
     from frontend import selected
     args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal','formal-symbols') else 'synthesis')
     run.versions['rtl_frontend'] = args.frontend
@@ -413,6 +421,7 @@ def main(argv=None):
         from queues_independent import queues_independent
         from queue_dispatch_guard import queue_dispatch_guard
         from scheduler import scheduler
+        from memory_tx import memory_tx_oracle, memory_tx_bench, memory_tx_dut
         run.scope = 'Selected contract/component suites; no integrated TM validation'
         try:
             selected = selection(args.profile, args.test)
@@ -422,7 +431,8 @@ def main(argv=None):
                 raise ValueError('Regression accepts one positive 31-bit functional seed')
             from doctor import qualify
             qualify(run)
-            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler, 'queues-independent': queues_independent, 'queues-dispatch-guard': queue_dispatch_guard}
+            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler, 'queues-independent': queues_independent, 'queues-dispatch-guard': queue_dispatch_guard, 'memory-tx-oracle': memory_tx_oracle,
+                        'memory-tx-bench': memory_tx_bench, 'memory-tx': memory_tx_dut}
             for name in selected:
                 handlers[name](run, args)
         except (OSError, ValueError, KeyError) as error:

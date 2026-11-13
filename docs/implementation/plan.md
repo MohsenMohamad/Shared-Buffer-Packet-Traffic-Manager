@@ -17,7 +17,8 @@ completed successfully. This statement records that hosted result, not a new loc
 P03 RTL is merged in PR #14 and P04 RTL in PR #16. Their
 [queue](../results/P03-queues.md) and [scheduler](../results/P04-scheduler.md)
 reports retain their author scope; [status](../status.md) records independent
-qualification progress. P05 is the next RTL stage.
+qualification progress. P03/P04 independent DV is integrated in PRs #17/#18. P05 starts with fresh
+independent verification preparation under the root policy; RTL is a later task.
 [F01](tasks/F01-formal-symbols.md) is integrated; [R01](tasks/R01-reset-timing.md)
 and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 [C01](tasks/C01-ci-economy.md) is integrated.
@@ -30,9 +31,9 @@ and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 | Stabilization | [Toolchain refresh](tasks/P00-followup-toolchain.md), [representation](tasks/P01-followup-representation.md), [scaling](tasks/P02-followup-scaling.md), [stimulus](tasks/P07-followup-stimulus.md) | Integrated; consume results, do not recreate |
 | C01 | [CI iteration economy](tasks/C01-ci-economy.md) | Integrated; preserve all full suites |
 | F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Integrated; applies to every harness |
-| P03 | [Descriptor queues](tasks/P03-queues.md) | RTL integrated in PR #14; independent DV pending |
-| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | RTL integrated in PR #16; independent DV pending; P09/P11B own composition |
-| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | P03 |
+| P03 | [Descriptor queues](tasks/P03-queues.md) | RTL #14 and independent DV #17 integrated |
+| P04 | [DRR and packet RR](tasks/P04-scheduler.md) | RTL #16 and independent DV #18 integrated; P09/P11B own composition |
+| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | Fresh independent DV preparation in PR #23; [results/exposure](../results/P05-fresh-dv-preparation.md); independence unresolved; P03 integrated |
 | R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
 | A01 | [Allocator evaluation/disposition](tasks/A01-allocator-selection.md) | Existing characterization + R01; before P08 |
 | P08 | [Receive/admission/reclaim](tasks/P08-receive-admission.md) | P02/P03/P05/P07 + A01/R01; earlier follow-ups integrated |
@@ -73,8 +74,8 @@ only for a concrete need, not to replace external checking.
 
 ## Implementation and decision checkpoints
 
-P03/P04/P05/P08 deliver RTL/designer smoke and independent component DV in
-separate PRs under the ownership gates below. P09 wires the real top and bench;
+P05/P08 follow the [root preparation and qualification workflow](../../AGENTS.md#preparation-implementation-and-independent-qualification).
+P03/P04 RTL and independent component DV are integrated in separate PRs. P09 wires the real top and bench;
 P10 establishes concurrency across F0/F1/I0/I1/E0/E1. P11 closes composition and
 coverage rather than deferring all verification until the end.
 
@@ -138,7 +139,7 @@ defines file boundaries and the shared RTL/DV workflow.
 
 | Task | RTL PR | Independent DV / other PR |
 | --- | --- | --- |
-| P03 / P04 | Already merged #14 / #16 | Separate queue / scheduler independent qualification; both pending |
+| P03 / P04 | Already merged #14 / #16 | Independent queue / scheduler DV integrated #17 / #18 |
 | P05 | Store, metadata and TX implementation + designer smoke | API byte/port/credit/retirement/reset/performance tests, FP-TX, covers and negatives |
 | A01 | Adopted allocator candidate after coordinated policy decision | Independent safety/policy qualification; analysis owns frozen comparison and disposition |
 | P08 | RX/admission/reclaim implementation + designer smoke | Framing/admission/accounting/concurrency tests and local composition proofs |

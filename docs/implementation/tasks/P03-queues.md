@@ -12,7 +12,7 @@ Dependencies: [P02](P02-storage-primitives.md), completed [F01 symbolic-input qu
 - [queues-and-scheduling.md](../../spec/queues-and-scheduling.md)
 - [formal.md](../../spec/formal.md)
 
-Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and follow the root workflow for role-specific source access.
 
 `rtl/queue/`, independent queue tests, `formal/queue/` and queue-suite registration.
 
@@ -42,8 +42,8 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Completion
 
-The RTL implementation and author-produced local evidence exist. Independent
-queue qualification remains pending until its separate passing DV PR merges. Caller ownership enforcement remains an explicit composition obligation, not an unproven implicit assumption.
+RTL #14 and independent queue DV #17 are integrated. Their reports retain
+the actual tested revisions and component scope. Caller ownership enforcement remains an explicit composition obligation, not an unproven implicit assumption.
 
 Requirement focus: `Q-01`, `Q-02`, `Q-03`, `Q-04`, `Q-05`, `MEM-01`, `PAR-01`
 
