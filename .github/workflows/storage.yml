@@ -31,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           for profile in F0 F1 I0 I1 E0 E1; do
-            make regression RUN_ARGS="--profile $profile --test pools --test queues --test queues-independent --seed 17"
+            make regression RUN_ARGS="--profile $profile --test pools --test queues --test queues-independent --test queues-dispatch-guard --seed 17"
           done
       - name: Validate saved independent queue coverage by elaboration
         shell: bash
