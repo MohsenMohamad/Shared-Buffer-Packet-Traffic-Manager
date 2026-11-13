@@ -86,10 +86,8 @@ Use one active task and this cycle across the separate RTL/DV branches:
    risk/check/cover matrix and first usable tests, then a checkpoint. This is
    not a full DUT campaign. Commit the model, matrix and self-check/test commands
    before inspecting target RTL, designer results or retained checker internals.
-2. RTL develops the candidate and may run available DV checks as well as designer
-   smoke, but never edits independent DV expectations. Independent DV owns changes
-   to those expectations and must justify them from the specs. Share bounded
-   policy/documentation commits independently of test work.
+2. RTL develops the candidate and runs available DV checks as well as designer
+   smoke. Share bounded policy/documentation commits independently of test work.
 3. Independent DV qualifies the exact candidate production source before RTL
    merge. Test RTL and DV together in an isolated worktree built from named RTL
    and DV commits; record both commits, the assembly command and resulting tested
