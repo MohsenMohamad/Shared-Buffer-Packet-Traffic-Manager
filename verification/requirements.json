@@ -143,6 +143,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -206,6 +214,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -289,6 +305,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -311,6 +335,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -333,6 +365,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -355,6 +395,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -387,6 +435,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -673,6 +729,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -716,6 +780,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {
@@ -893,6 +965,14 @@
         ],
         "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
         "evidence": "docs/results/P03-queues.json"
+      },
+      "independent_queue_verification": {
+        "status": "NOT_RUN",
+        "suite": "queues-independent",
+        "formal_selection": "formal-rtl --test queues-independent",
+        "coverage_selection": "coverage --test queues-independent",
+        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P03-independent-dv.md"
       }
     },
     {

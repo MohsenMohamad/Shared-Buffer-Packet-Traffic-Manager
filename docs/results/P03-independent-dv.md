@@ -5,7 +5,7 @@ from the unchanged [P03 designer evidence](P03-queues.md). No independent scope
 is verified until the passing DV PR merges. Production RTL and embedded designer
 assertions are outside this PR's edit boundary.
 
-## Baseline and prepared environment
+## Baseline
 
 Fetched main/base: `1c225525ba284ce694f1b234cb12cc514b9c0aee` (P04 PR #16).
 The checkout was clean. No existing task branch/PR was found. Actual prerequisite
@@ -14,12 +14,6 @@ P06 PR #5 `a473b8c` (CSR dependency inventory), F01 PR #13 `068e2c6`,
 P03 PR #14 `eccb9fb`; implementation `f89fcfb`, delivered head `0d0b986`.
 P07 PR #4 `0901ad7` and follow-up PR #10 `c32b3f1` remain integrated.
 Merge metadata does not replace any historical report's tested revision.
-
-`make doctor` passed on clean main before tool-dependent checks: versions,
-OpenSTA source, C++20 and solver SAT/UNSAT. Raw summary:
-`.build/runs/doctor-2026-11-13T041026.841233+0000-85e19c6a/summary.json`.
-No setup, tool rebuild/install/download, stamp/lock changes or validation bypass
-were performed.
 
 The first commit changes ownership documentation only. `make repo-check` passed
 (52 requirement records; no hardware evaluated), raw summary

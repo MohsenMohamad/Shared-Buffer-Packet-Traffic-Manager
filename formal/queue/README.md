@@ -56,3 +56,36 @@ Exact executed results and residual composition obligations are in the
 [P03 report](../../docs/results/P03-queues.md). This proof does not establish
 commit-to-output byte order, descriptor final-return timing, scheduler behavior,
 or whole-system resource conservation.
+
+## Independent review and strengthened harness
+
+The existing list and asserted live-link representation invariants originate in
+P03 PR #14. Independent review found that expected order/count do not come from
+DUT links and that non-tail link equality is asserted rather than assumed.
+The model remains specification-derived; the historical report retains its
+original author/tested scope.
+
+`make formal-rtl RUN_ARGS='--test queues-independent --timeout 300'` adds exact
+link-write payload and named count detectors, explicit FREE/RX/QUEUED/TX owner
+state, a full owner/list-membership invariant and arbitrary fixed qid/descriptor
+witnesses. F01 witness stability is held across later resets by a history bit
+that is never reset. Lists and owner state reset; descriptor links remain stale.
+The local model's owner transitions are abstract API events, not production RX
+or TX. Allocation assumes FREE; completion assumes pre-state TX; publication
+assumes RX or simultaneous fresh allocation, in-range/nonqueued ID and capacity.
+These are caller assumptions, not evidence that the integrated callers satisfy
+them. P11A must discharge them with real pools/RX/abort/TX, including publication
+only after payload completion and return only after final retirement. P04/P11A
+must discharge scheduler eligibility, descriptor-info matching and TX acceptance.
+No sink-progress assumption is used.
+
+Safety is unbounded k-induction at N_Q=2/N_DESC=8 and the supported reduced
+production parameters above. Bounded covers include full, empty request with
+publication, same-queue singleton/long replacement, different qids, active reset,
+post-reset witness reuse and TX-held descriptors. Disposable order/link/count
+mutations must fail `a_order`, `a_link_payload`, and `a_count` respectively with
+engine FAIL and a nonempty counterexample waveform. A parse error, timeout or
+unrelated assertion does not qualify a detector. The independent selection uses
+its own SBY task configuration; historical `queues` registration is retained.
+Actual executed statuses, tool identities and any timeouts are reported in
+[P03 independent DV](../../docs/results/P03-independent-dv.md).

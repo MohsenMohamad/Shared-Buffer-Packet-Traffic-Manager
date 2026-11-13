@@ -65,6 +65,20 @@
       "families": [
         "FP-SCHED"
       ]
+    },
+    "queues-independent": {
+      "top": "queue_formal",
+      "N_RX": 1,
+      "N_Q": 2,
+      "N_CELL": 16,
+      "N_DESC": 8,
+      "CELL_BYTES": 16,
+      "MAX_PACKET_BYTES": 128,
+      "families": [
+        "FP-QUEUE",
+        "FP-ORDER"
+      ],
+      "scope": "Independent audited harness qualification; explicit ownership model and fixed witnesses"
     }
   },
   "scope": "Local production storage, queue/link, scheduler and CSR APIs at named reduced configurations. No integrated RX/TX ownership or payload-path composition.",

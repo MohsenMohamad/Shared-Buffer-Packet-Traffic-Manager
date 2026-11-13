@@ -107,3 +107,28 @@ and packet RR run, with unequal/small/maximum quanta, maximum lengths, replaceme
 true empty/reactivation, longer/different-qid updates and output stalls.
 Finite byte accounting includes the unretired TX remainder. Saved coverage and
 an intended extra-quantum mutation are described in [P04 results](../docs/results/P04-scheduler.md).
+
+## Independent P03 queue DV
+
+`make regression RUN_ARGS='--profile E0 --test queues-independent --seed 23'`
+selects the new passive `queue_api_monitor`, its separate driver and the illegal
+empty-dispatch diagnostic top. The historical `queues` suite remains the P03
+author selection. Both exercise actual production queue/link RTL; the new suite
+also uses the real P02 descriptor pool. RX/TX endpoint events are local stimulus,
+not implemented packet producers/consumers. The model samples actual API actions,
+tracks ordered lists and descriptor phases, and compares pre-state next queries
+without using saved RTL writes as FIFO expectation. Legal native and enlarged
+ID/count widths run separately.
+
+Each positive elaboration saves `api-events.jsonl`, `queue-coverage.json` and
+`coverage.dat`. Replay/extract exact compatible evidence with:
+
+```sh
+make coverage RUN_ARGS='--profile E0 --test queues-independent --coverage-manifest .build/runs/RUN/queues-independent-native/manifest.json'
+```
+
+Replace RUN with an actual successful run. Extraction rejects stale source,
+wrong profile, failed runs, altered/missing artifacts, duplicate/missing bins and
+unhit mandatory transitions/lifetime cases. It reports code holes by elaboration;
+collection is not integrated coverage closure. See the
+[independent report](../docs/results/P03-independent-dv.md) for results and scope.

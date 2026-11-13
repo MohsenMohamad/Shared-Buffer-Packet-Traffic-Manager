@@ -1,0 +1,23 @@
+[tasks]
+prove
+cover
+order
+link
+count
+[options]
+prove: mode prove
+prove: depth 4
+cover: mode cover
+cover: depth 24
+order: mode prove
+order: depth 12
+link: mode prove
+link: depth 12
+count: mode prove
+count: depth 12
+[engines]
+smtbmc z3
+[script]
+@SCRIPT@
+[files]
+@FILES@

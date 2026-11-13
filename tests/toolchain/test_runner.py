@@ -131,7 +131,7 @@ class RunnerTests(unittest.TestCase):
     def test_cli_rejects_empty_unknown_and_unimplemented(self):
         for args, expected in [(['ci', '--test', ''], 'TOOL_ERROR'),
                                (['ci', '--test', 'missing'], 'TOOL_ERROR'),
-                               (['coverage'], 'NOT_IMPLEMENTED'),
+                               (['coverage'], 'TOOL_ERROR'),
                                (['uvm', '--seed', '17'], 'TOOL_ERROR'),
                                (['ci', '--jobs', '0'], 'TOOL_ERROR')]:
             path = self.path / str(len(list(self.path.iterdir())))
