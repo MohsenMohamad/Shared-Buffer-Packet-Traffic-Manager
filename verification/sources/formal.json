@@ -17,7 +17,8 @@
     "formal/pools/bitmap_properties.svh",
     "formal/pools/fifo_properties.svh",
     "formal/csr/csr_properties.svh",
-    "formal/symbolic/symbolic_checks.svh"
+    "formal/symbolic/symbolic_checks.svh",
+    "formal/scheduler/scheduler_policy.svh"
   ],
   "scope": "Local production storage, queue/controller-link, scheduler and CSR protocol proofs; no integrated TM ownership or datapath proof.",
   "frontend": "slang"

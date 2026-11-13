@@ -618,6 +618,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {
@@ -651,6 +658,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {
@@ -684,6 +698,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {
@@ -707,6 +728,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {
@@ -730,6 +758,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {
@@ -753,6 +788,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Progress is finite simulation under a progressing fixture sink, not an unbounded liveness theorem.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {
@@ -1213,6 +1255,13 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.md"
       }
     },
     {

@@ -8,7 +8,7 @@ from foundation import run_result
 
 
 def scheduler_coverage(path, mode):
-    points, bins = {}, {}
+    points, bins, holes = {}, {}, []
     for line in path.read_text().splitlines():
         match = re.fullmatch(r"C '(.*)' (\d+)", line)
         if not match:
@@ -19,8 +19,13 @@ def scheduler_coverage(path, mode):
             point = points.setdefault(fields['t'], dict(hit=0, total=0))
             point['total'] += 1
             point['hit'] += int(count>0)
+            if count==0:
+                holes.append(dict(kind=fields['t'], line=fields.get('l'), expression=fields.get('o')))
         if fields.get('t')=='covergroup' and 'policy_cg.' in fields.get('h', ''):
-            bins[fields['h'].split('policy_cg.')[1]] = count
+            name = fields['h'].split('policy_cg.')[1]
+            if name in bins:
+                raise ValueError('Duplicate scheduler functional bin: '+name)
+            bins[name] = count
     expected = {'update_kind.'+name for name in ('none','singleton','longer','different')}
     expected |= {point+'.auto_'+str(value) for point in ('tx_busy','activated') for value in (0,1)}
     expected |= {'fit.'+name for name in ('insufficient','equal','surplus')}
@@ -39,7 +44,7 @@ def scheduler_coverage(path, mode):
     missing = [name for name in expected-excluded.keys() if bins[name]<=0]
     if missing:
         raise ValueError('Mandatory scheduler bins not hit: '+', '.join(sorted(missing)))
-    return dict(owned_points=points, functional_bins=bins, exclusions=excluded,
+    return dict(owned_points=points, unhit=holes, functional_bins=bins, exclusions=excluded,
                 mandatory_hit=len(expected-excluded.keys()), mandatory_total=len(expected-excluded.keys()))
 
 
@@ -69,8 +74,8 @@ def scheduler(run, args):
     params = profile(args.profile)
     registered = sources('scheduler')
     seed = (args.seed or [17])[0]
-    for mode, mutation in ((1, False), (0, False), (1, True)):
-        label = f'scheduler-mode{mode}'+('-extra-quantum' if mutation else '')
+    for mode, mutation in ((1, None), (0, None), (1, 'extra-quantum'), (1, 'missing-dispatch'), (0, 'missing-dispatch')):
+        label = f'scheduler-mode{mode}'+('-'+mutation if mutation else '')
         build = Case(run, label+'-build', seed)
         parameters = dict(params, SCHED_MODE=mode)
         parameters.update(CELL_ID_W=max(1,(params['N_CELL']-1).bit_length()),
@@ -93,12 +98,19 @@ def scheduler(run, args):
             original = ROOT/'rtl/scheduler/tm_drr.sv'
             target = 'if (!visit_active)\n                    credit ='
             text = original.read_text()
-            if text.count(target)!=1:
-                raise ValueError('Extra-quantum mutation site missing or ambiguous')
+            if mutation=='missing-dispatch':
+                target = 'else if (tx_ready) begin'
+                replacement = "else if (tx_ready && 1'b0) begin"
+                count = 2
+            else:
+                replacement = "if (!visit_active || (tx_ready && credit >= (DEFICIT_W+1)'(selected_info.length)))\n                    credit ="
+                count = 1
+            if text.count(target)!=count:
+                raise ValueError('Scheduler mutation site missing or ambiguous: '+mutation)
             mutant = build.path/'tm_drr.sv'
-            mutant.write_text(text.replace(target,"if (!visit_active || (tx_ready && credit >= (DEFICIT_W+1)'(selected_info.length)))\n                    credit ="))
+            mutant.write_text(text.replace(target,replacement))
             source_paths[source_paths.index(original)] = mutant
-            build.data.update(mutation='Add quantum on a fitting continuing packet dispatch', mutant_sha256=sha(mutant))
+            build.data.update(mutation=mutation, mutant_sha256=sha(mutant))
         argv += [str(uvm/'uvm_pkg.sv')] + [str(p) for p in source_paths]
         argv += ['--top-module', 'tm_scheduler_top', '--Mdir', str(binary.parent)]
         step = build.execute(argv, timeout=args.build_timeout)
@@ -109,24 +121,27 @@ def scheduler(run, args):
             result, why = 'TOOL_ERROR', 'Missing executable'
         build.finish(result, why)
         case = Case(run, label, seed)
-        case.data.update(parameters=parameters, source_set='scheduler')
+        case.data.update(parameters=parameters, source_set='scheduler', registered_source_digests=fingerprint('scheduler'))
         if result!='PASS':
             case.finish('NOT_RUN', 'Build did not qualify')
             continue
         if mode==1 and not mutation:
             schedule_checker_probes(run, args, binary, seed)
-        command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES']
+        command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES', '+DETACHED_STIMULUS_PROBE']
         if mutation:
-            command += ['+TRACE', '+PACKET_QUANTUM_PROBE']
+            command += ['+TRACE']
+            if mutation=='extra-quantum':
+                command += ['+PACKET_QUANTUM_PROBE']
         step = case.execute(command, timeout=args.timeout, cwd=case.path)
         if mutation:
+            detector = 'SCHEDULE_CREDIT' if mutation=='extra-quantum' else 'SCHEDULE_TIMING'
             fatals = re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]', output(step))
             wave = case.path/'wave.vcd'
             ok = (step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and
-                  fatals==['SCHEDULE_CREDIT'] and wave.is_file() and wave.stat().st_size>0)
+                  fatals==[detector] and wave.is_file() and wave.stat().st_size>0)
             case.data['artifacts']['waveform']=str(wave)
-            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended SCHEDULE_CREDIT detection missing',
-                        expected='SEEDED_DEFECT_DETECTION', observed_fatals=fatals)
+            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended '+detector+' detection missing',
+                        expected='SEEDED_DEFECT_DETECTION', detector=detector, observed_fatals=fatals)
             continue
         status, reason = run_result(step, f'TM_SCHEDULER_PASS mode={mode}')
         if status=='PASS':
@@ -136,7 +151,7 @@ def scheduler(run, args):
             if not coverage.is_file() or not coverage.stat().st_size:
                 status, reason = 'FAIL', 'Missing saved coverage'
             else:
-                case.data['artifacts']['coverage'] = str(coverage)
+                case.data['artifacts'].update(coverage=str(coverage), coverage_sha256=sha(coverage))
                 try:
                     case.data['coverage'] = scheduler_coverage(coverage, mode)
                     case.data['finite_endpoints'] = [

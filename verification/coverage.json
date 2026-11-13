@@ -5,6 +5,11 @@
       "handler": "queue_coverage",
       "source_set": "queues-independent",
       "scope": "Saved sampled queue transition/lifetime counters and production queue line/branch/toggle coverage by exact elaboration; no merging or system closure."
+    },
+    "scheduler": {
+      "handler": "scheduler_saved_coverage",
+      "source_set": "scheduler",
+      "scope": "Saved DRR/packet-RR functional and production code coverage, matched profile, parameters, source and artifact hashes; no integrated closure."
     }
   }
 }

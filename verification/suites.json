@@ -91,7 +91,7 @@
       "source_sets": [
         "scheduler"
       ],
-      "scope": "Production DRR and packet RR with real P03 queues and independent P07 policy/timing checker; local TX endpoint, no payload proof."
+      "scope": "Audited retained UVM event/length DRR and packet-RR model on production P03/P04; passive API packet reconstruction, baseline timing and production credit/missing-dispatch mutations. Metadata/TX endpoint fixtures; no payload or composition proof."
     },
     "queues-independent": {
       "handler": "queues-independent",

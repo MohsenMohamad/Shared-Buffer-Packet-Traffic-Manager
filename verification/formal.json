@@ -64,6 +64,18 @@
       "MAX_PACKET_BYTES": 128,
       "families": [
         "FP-SCHED"
+      ],
+      "properties": [
+        "grant/head legality",
+        "independent mandatory baseline dispatch",
+        "independent cursor/visit/TX history",
+        "per-edge byte credit and bounds",
+        "merged empty and busy/completion freeze"
+      ],
+      "mutations": [
+        "extra quantum per continuing dispatch",
+        "missing dispatch in both modes",
+        "frozen cursor in both modes"
       ]
     },
     "queues-independent": {

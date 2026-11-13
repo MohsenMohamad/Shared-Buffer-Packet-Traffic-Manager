@@ -120,4 +120,5 @@ for(genvar q=0;q<N_Q;q=q+1) begin : g_credit
         end
     end
 end
+`include "scheduler_policy.svh"
 endmodule
