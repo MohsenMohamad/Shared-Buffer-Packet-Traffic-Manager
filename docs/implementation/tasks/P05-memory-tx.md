@@ -2,7 +2,10 @@
 
 ## Objective and prerequisites
 
-Implement the actual finite-port store and a transmit engine whose prefetch cannot overwrite output data or release live cells.
+Current stage: fresh independent verification preparation from specifications
+and public declarations only. Prepare the finite-port store/TX expectations and
+qualified bench before a fresh RTL task. This preparation establishes no
+hardware acceptance.
 
 Dependencies: [P03](P03-queues.md)
 
@@ -14,9 +17,16 @@ Dependencies: [P03](P03-queues.md)
 - [formal.md](../../spec/formal.md)
 - [implementation.md](../../spec/implementation.md)
 
-Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
+Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and follow the [root workflow](../../../AGENTS.md#preparation-implementation-and-independent-qualification)
+for source access, preparation acceptance and candidate/merged-source gates.
 
 `rtl/memory/`, `rtl/tx/`, memory/TX benches, `formal/tx/` and memory-TX suite registration.
+
+## Later RTL and production-DV scope
+
+The root policy defines the current preparation acceptance criteria. The
+following implementation/check obligations remain for later separately assigned
+tasks; this card does not authorize automatic handover.
 
 ## Execution sequence
 
