@@ -63,3 +63,40 @@ reviewed baseline/optimization decision. P11B owns integrated proof closure;
 P12 owns system fairness. No local safety result assumes sink progress. Finite
 progressing-fixture tests are not unbounded liveness. Independent verified scope
 is established only when the passing DV PR merges.
+
+## Extended qualification in progress
+
+The extended checks add P07 constrained packet traffic at three distinct seeds
+and a same-seed passive-event replay in both modes. Random active subsets,
+per-queue 64..4096 quanta, weighted lengths, gaps/bursts, independent readiness
+and long/final-beat stalls accompany many/sparse-queue directed cases. Saved
+extended counters require all mandatory bins, with explicit impossible reset
+phase/ownership exclusions and the packet-RR many-packets-per-visit exclusion.
+
+Finite continuously backlogged windows assert visit-count difference at most
+one and the corresponding quantum-weighted byte-service discrepancy, including
+open-visit deficits. Packet RR asserts packet-count difference at most one and
+checks identical service order/lengths after changing quanta.
+
+Simulation progress has an explicit visit deadline and a conservative round
+budget derived from maximum funded bytes, minimum packet size and bounded
+packet retirement. The adversarial case uses quantum 64 versus 4096 on every
+other backlogged queue. The separate formal progress harness has 128-byte heads,
+quanta 64/128, continuous TX readiness and retirement within 20 clocks. Its
+response deadlines are 96 clocks for DRR and 48 for packet RR. These assumptions
+never enter the safety harness. An unclosed proof remains INCONCLUSIVE.
+
+Input checks independently reconstruct queued descriptors and TX ownership,
+validate completion identity, and restrict quantum/policy changes to a disabled,
+idle component boundary. A stale completion is an invalid-neighbor probe: it
+must be diagnosed and leave the unowned reset epoch's queue/credit state intact.
+This does not assert tolerance of invalid completions during a newly owned
+packet; real epoch filtering remains a P09/P11B caller obligation.
+
+The previously retained RUN pauses stress direct scheduler input levels. They
+are not legal busy CSR disable writes; the separate reconfiguration scenario
+drains, disables, changes quanta and re-enables without reset.
+
+Extended simulation, all-profile seed/replay coverage and progress proof results
+are pending. Any unexpected failure remains visible for a separate RTL fix;
+production RTL is unchanged.

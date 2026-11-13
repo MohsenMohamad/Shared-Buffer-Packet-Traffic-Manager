@@ -11,7 +11,8 @@
     "formal/csr/csr_formal.sv",
     "formal/symbolic/symbolic_inputs.sv",
     "formal/queue/queue_formal.sv",
-    "formal/scheduler/scheduler_formal.sv"
+    "formal/scheduler/scheduler_formal.sv",
+    "formal/scheduler/scheduler_progress.sv"
   ],
   "headers": [
     "formal/pools/bitmap_properties.svh",

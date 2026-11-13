@@ -5,6 +5,7 @@ import re
 from evidence import Case, ROOT, IGNORED, output, sha
 from registry import profile, sources, fingerprint
 from foundation import run_result
+from scheduler_stress import DEFECTS, mutate, intended_failure, stress_runs
 
 
 def scheduler_coverage(path, mode):
@@ -76,7 +77,10 @@ def scheduler(run, args):
     params = profile(args.profile)
     registered = sources('scheduler')
     seed = (args.seed or [17])[0]
-    for mode, mutation in ((1, None), (0, None), (1, 'extra-quantum'), (1, 'missing-dispatch'), (0, 'missing-dispatch')):
+    variants=[(1,None),(0,None),(1,'extra-quantum'),(1,'missing-dispatch'),(0,'missing-dispatch')]
+    if args.profile=='E0':
+        variants += [(mode,name) for name,(mode,_) in DEFECTS.items()]
+    for mode, mutation in variants:
         label = f'scheduler-mode{mode}'+('-'+mutation if mutation else '')
         build = Case(run, label+'-build', seed)
         parameters = dict(params, SCHED_MODE=mode)
@@ -98,19 +102,8 @@ def scheduler(run, args):
         source_paths = [ROOT/p for p in registered['sources']]
         if mutation:
             original = ROOT/'rtl/scheduler/tm_drr.sv'
-            target = 'if (!visit_active)\n                    credit ='
-            text = original.read_text()
-            if mutation=='missing-dispatch':
-                target = 'else if (tx_ready) begin'
-                replacement = "else if (tx_ready && 1'b0) begin"
-                count = 2
-            else:
-                replacement = "if (!visit_active || (tx_ready && credit >= (DEFICIT_W+1)'(selected_info.length)))\n                    credit ="
-                count = 1
-            if text.count(target)!=count:
-                raise ValueError('Scheduler mutation site missing or ambiguous: '+mutation)
             mutant = build.path/'tm_drr.sv'
-            mutant.write_text(text.replace(target,replacement))
+            mutant.write_text(mutate(original.read_text(),mutation))
             source_paths[source_paths.index(original)] = mutant
             build.data.update(mutation=mutation, mutant_sha256=sha(mutant))
         argv += [str(uvm/'uvm_pkg.sv')] + [str(p) for p in source_paths]
@@ -136,11 +129,10 @@ def scheduler(run, args):
                 command += ['+PACKET_QUANTUM_PROBE']
         step = case.execute(command, timeout=args.timeout, cwd=case.path)
         if mutation:
-            detector = 'SCHEDULE_CREDIT' if mutation=='extra-quantum' else 'SCHEDULE_TIMING'
-            fatals = re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]', output(step))
+            detectors = DEFECTS[mutation][1] if mutation in DEFECTS else {'SCHEDULE_CREDIT' if mutation=='extra-quantum' else 'SCHEDULE_TIMING'}
             wave = case.path/'wave.vcd'
-            ok = (step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and
-                  fatals==[detector] and wave.is_file() and wave.stat().st_size>0)
+            ok,fatals = intended_failure(step,output(step),wave,detectors)
+            detector = '/'.join(sorted(detectors))
             case.data['artifacts']['waveform']=str(wave)
             case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended '+detector+' detection missing',
                         expected='SEEDED_DEFECT_DETECTION', detector=detector, observed_fatals=fatals)
@@ -171,3 +163,5 @@ def scheduler(run, args):
             case.execute(command+['+TRACE'],timeout=args.timeout,cwd=rerun)
             case.data['artifacts']['waveform']=str(rerun/'wave.vcd')
         case.finish(status, reason)
+        if status=='PASS':
+            stress_runs(run,args,binary,parameters)

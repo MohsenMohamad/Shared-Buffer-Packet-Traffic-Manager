@@ -1,5 +1,6 @@
 """Replay compatible saved scheduler coverage without combining elaborations."""
 import json
+import re
 from pathlib import Path
 from evidence import Case, sha
 from registry import fingerprint, read, profile
@@ -11,7 +12,8 @@ def inspect(path, profile_name):
     if manifest['result']!='PASS' or manifest['profile']!=profile_name or manifest.get('source_set')!='scheduler':
         raise ValueError('Coverage requires a passing scheduler case of the selected profile')
     mode=manifest['parameters']['SCHED_MODE']
-    if mode not in (0,1) or manifest['test']!=f'scheduler-mode{mode}':
+    stress=bool(re.fullmatch(f'scheduler-mode{mode}-stress-(?:[0-9]+|replay)',manifest['test']))
+    if mode not in (0,1) or (manifest['test']!=f'scheduler-mode{mode}' and not stress):
         raise ValueError('Coverage requires an unmutated production elaboration')
     expected=profile(profile_name)
     expected.update(SCHED_MODE=mode,
@@ -30,7 +32,15 @@ def inspect(path, profile_name):
     coverage=scheduler_coverage(Path(artifacts['coverage']),mode)
     if coverage!=manifest['coverage']:
         raise ValueError('Saved coverage summary mismatch')
-    return dict(parameters=manifest['parameters'],source_revision=manifest['source_revision'],
+    extra={}
+    if stress:
+        from scheduler_stress import inspect_stress
+        for name in ('functional_coverage','events'):
+            if sha(artifacts[name])!=artifacts[name+'_sha256']:
+                raise ValueError('Extended coverage artifact digest mismatch: '+name)
+        extra=inspect_stress(artifacts['functional_coverage'],mode,expected['N_Q'])
+        if extra!=manifest['stress']: raise ValueError('Extended coverage summary mismatch')
+    return dict(stress=extra,parameters=manifest['parameters'],source_revision=manifest['source_revision'],
                 dirty=manifest['dirty'],source_digests=manifest['registered_source_digests'],
                 coverage=coverage,source_manifest=str(path))
 

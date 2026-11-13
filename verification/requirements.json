@@ -624,7 +624,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {
@@ -664,7 +665,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {
@@ -704,7 +706,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {
@@ -734,7 +737,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {
@@ -764,7 +768,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {
@@ -794,7 +799,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {
@@ -1261,7 +1267,8 @@
         "formal_selection": "formal-rtl --test scheduler",
         "coverage_selection": "coverage --test scheduler",
         "scope": "Audited retained event/packet-length model and new passive commit reconstruction; independent formal policy history and qualified production mutations. Component scope only; P09/P10 composition/optimization and P11B/P12 obligations remain open. Verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.md"
+        "evidence": "docs/results/P04-independent-dv.md",
+        "extension_status": "Execution pending: three constrained-random seeds plus replay per mode/profile, many/sparse queues, finite fairness assertions, bounded conditional progress, reconfiguration/reset/input probes and seven additional source-copy defects. No broader PASS is claimed."
       }
     },
     {

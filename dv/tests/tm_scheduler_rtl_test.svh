@@ -3,6 +3,7 @@ class tm_scheduler_rtl_test extends uvm_test;
     virtual tm_scheduler_if vif;
     tm_schedule_checker model;
     tm_scheduler_event_monitor monitor;
+    tm_scheduler_input_checker input_checker;
     tm_frame transmitting;
     int tx_offset, next_id, cycles, grants, replacements, longer, different;
     int stalls, completions, reactivations, max_credit, waiting, continuing, bound_hits;
@@ -29,6 +30,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         model.mode=SCHED_MODE;
         monitor=tm_scheduler_event_monitor::type_id::create("monitor",this);
         monitor.vif=vif;
+        input_checker=tm_scheduler_input_checker::type_id::create("input_checker",this);
     endfunction
     function tm_frame packet(int queue_id, int packet_length);
         tm_packet p=new;
@@ -67,12 +69,12 @@ class tm_scheduler_rtl_test extends uvm_test;
         f.descriptor.tag=p.tag;
         return f;
     endfunction
-    task reset_case(int q0, int q1);
+    virtual task reset_case(int q0, int q1);
         @(negedge vif.clk);
         if(transmitting!=null) reset_owned++;
         vif.rst_n=0; vif.commit='0; vif.tx_done='0; vif.cfg='0;
         vif.tx_ready=1; vif.output_sample='0; vif.cell_free='0; transmitting=null; tx_offset=0; next_id=0;
-        model.flush(); model.quanta[0]=q0;
+        model.flush(); input_checker.flush(); model.quanta[0]=q0;
         foreach(emptied[q]) begin emptied[q]=0; pending_reactivation[q]=0; end
         for(int q=1;q<N_Q;q++) model.quanta[q]=q1;
         repeat(2) @(posedge vif.clk);
@@ -115,6 +117,8 @@ class tm_scheduler_rtl_test extends uvm_test;
         end
         @(posedge vif.clk);
         monitor.sample(b,committed);
+        input_checker.check(b,vif.cfg);
+        observe_pre(b);
         if(!vif.cfg.run && model.active==null && model.visit) paused_wait++;
         q=model.cursor; credit=model.deficit[q]+(model.visit ? 0 : model.quanta[q]);
         if(SCHED_MODE==1 && run && model.active==null && model.queues[q].frames.size()>0) begin
@@ -144,6 +148,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         if(vif.dispatch.valid && model.queues[vif.dispatch.qid].frames.size()==1 &&
            !(vif.commit.valid && vif.commit.qid==vif.dispatch.qid)) emptied[vif.dispatch.qid]=1;
         policy_cg.sample(collision,model.active!=null,reactivated_head,relation);
+        foreach(model.quanta[i]) model.quanta[i]=int'(vif.cfg.quantum[i*13+:13]);
         model.apply(b,committed,vif.cfg.run,vif.tx_ready);
         // The independent model rejects illegal or omitted dispatches before
         // this endpoint consumes any observed grant.
@@ -161,7 +166,14 @@ class tm_scheduler_rtl_test extends uvm_test;
             if(model.queues[i].frames.size()>0 && int'(vif.heads[i*DESC_ID_W+:DESC_ID_W])!=model.queues[i].frames[0].desc)
                 `uvm_fatal("SCHEDULER_QUEUE","production head differs from packet list")
         end
+        observe_post();
         cycles++;
+    endtask
+    virtual function void observe_pre(monitor_batch_t batch);
+    endfunction
+    virtual function void observe_post();
+    endfunction
+    virtual task additional_cases();
     endtask
     function bit eligible();
         int q=model.cursor;
@@ -191,13 +203,27 @@ class tm_scheduler_rtl_test extends uvm_test;
         return 1;
     endfunction
     task saturated(int quantum0, int quantum1);
+        int packets[2]='{default:0};
+        int chosen;
+        longint difference, allowance;
         reset_case(quantum0,quantum1);
         step(0,64,0); step(1,MAX_PACKET_BYTES,0);
         repeat(160) begin
             until_eligible();
             // Keep both queues backlogged through every dequeue. A finite
             // endpoint may include the entire just-dispatched TX packet.
-            step(model.cursor,model.cursor==0 ? 64 : MAX_PACKET_BYTES);
+            chosen=model.cursor;
+            step(chosen,chosen==0 ? 64 : MAX_PACKET_BYTES);
+            packets[chosen]++;
+            if(SCHED_MODE==1) begin
+                if(model.visit_entries[0]-model.visit_entries[1]>1 || model.visit_entries[1]-model.visit_entries[0]>1)
+                    `uvm_fatal("SCHEDULE_FAIR_VISITS","continuously backlogged visit counts differ by more than one")
+                difference=model.dispatched_bytes[0]*quantum1-model.dispatched_bytes[1]*quantum0;
+                allowance=longint'(quantum0)*quantum1+longint'(model.deficit[0])*quantum1+longint'(model.deficit[1])*quantum0;
+                if(difference>allowance || -difference>allowance)
+                    `uvm_fatal("SCHEDULE_FAIR_BYTES","byte service exceeds the quantum share plus finite open-visit credit")
+            end else if(packets[0]-packets[1]>1 || packets[1]-packets[0]>1)
+                `uvm_fatal("SCHEDULE_FAIR_PACKETS","packet RR served continuously backlogged queues unequally");
         end
         model.check_accounting();
         if(model.active==null || model.dispatched_bytes[0]==0 || model.dispatched_bytes[1]==0 ||
@@ -277,6 +303,7 @@ class tm_scheduler_rtl_test extends uvm_test;
         step(0,64,0); drain();
         step(0,65,0); drain();
         pause_reset_cases();
+        additional_cases();
         reset_case(64,64);
         for(int q=0;q<N_Q;q++) step(q,1,0);
         drain();

@@ -31,7 +31,9 @@
     "rtl/include/tm_parameters.svh",
     "rtl/include/tm_validate.svh",
     "dv/tests/tm_scheduler_rtl_test.svh",
-    "dv/model/tm_scheduler_events.svh"
+    "dv/model/tm_scheduler_events.svh",
+    "dv/model/tm_scheduler_inputs.svh",
+    "dv/tests/tm_scheduler_stress_test.svh"
   ],
   "scope": "Production scheduler/queue/link with UVM independent event/packet-length policy model; fixture metadata and TX endpoint, no payload engine."
 }

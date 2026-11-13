@@ -38,8 +38,9 @@ jobs:
           from pathlib import Path
           import subprocess
           manifests=sorted(Path('.build/runs').glob('regression-*/scheduler-mode[01]/manifest.json'))
-          if len(manifests)!=2:
-              raise SystemExit('Expected one passing manifest for each scheduler mode')
+          manifests+=sorted(Path('.build/runs').glob('regression-*/scheduler-mode[01]-stress-*/manifest.json'))
+          if len(manifests)!=10:
+              raise SystemExit('Expected baseline and four seeded/replay manifests per scheduler mode')
           argv=['python3','tools/run.py','coverage','--profile','${{ matrix.profile }}','--test','scheduler']
           for manifest in manifests:
               argv.extend(['--coverage-manifest',str(manifest)])

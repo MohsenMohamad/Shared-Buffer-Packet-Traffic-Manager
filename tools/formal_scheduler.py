@@ -71,3 +71,40 @@ def formal_scheduler(run, args, configuration):
                 result,why=('PASS',None) if ok else ('FAIL' if status=='FAIL' else 'INCONCLUSIVE' if status=='UNKNOWN' else 'TOOL_ERROR','Completed production proof/cover missing')
             case.data['artifacts'].update(status=str(status_file),traces=waves,configuration=str(config))
             case.finish(result,why,engine_status=status,expected='SEEDED_DEFECT_DETECTION' if detector else task.upper(), detector=detector, observed_basecase_assertions=failed, reached_covers=[dict(step=int(depth),name=name) for depth,name in reached])
+
+        formal_scheduler_progress(run,args,configuration,mode)
+
+
+def formal_scheduler_progress(run,args,configuration,mode):
+    for task in ('prove','cover'):
+        _formal_scheduler_progress_case(run,args,configuration,mode,task)
+
+
+def _formal_scheduler_progress_case(run,args,configuration,mode,task):
+    registered=sources('formal')
+    case=Case(run,f'rtl-scheduler-mode{mode}-progress'+('-cover' if task=='cover' else ''))
+    case.data.update(configuration=dict(configuration,SCHED_MODE=mode),source_set='formal',
+                     registered_source_digests=fingerprint('formal'),frontend='slang',
+                     engine='smtbmc z3',method='bounded reachability depth 110' if task=='cover' else 'unbounded k-induction of conditional bounded-response property, maximum induction depth 110',
+                     assumptions='Two startup reset samples, arbitrary later resets. Two continuously backlogged 128-byte queues after legal initial publications; q0 quantum64, q1 quantum128; distinct alternating descriptor IDs. TX ready always high; accepted packets retire within20 clocks, only while event-owned. These progress assumptions are absent from safety tasks.')
+    paths=['rtl/include/tm_fixed.sv','rtl/scheduler/tm_drr.sv','formal/scheduler/scheduler_progress.sv']
+    params={key:configuration[key] for key in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
+    params['SCHED_MODE']=mode
+    script=read_sources([Path(p).name for p in paths],'scheduler_progress',params=params,frontend='slang',formal=True)
+    script+='prep -top scheduler_progress\nasync2sync\ndffunmap'
+    files='\n'.join((ROOT/p).name+' '+str(ROOT/p) for p in paths+registered['headers'])
+    config=case.path/'scheduler_progress.sby'
+    config.write_text((ROOT/'formal/scheduler/scheduler_progress.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@',files))
+    step=case.execute(['sby','-f','-d',str(case.path/'engine'),str(config),task],timeout=args.timeout,cwd=case.path)
+    status_file=case.path/'engine/status'
+    status=status_file.read_text().split()[0] if status_file.is_file() else None
+    text=output(step)
+    if step['result']=='TIMEOUT' or status=='UNKNOWN':
+        result,why='INCONCLUSIVE','Conditional progress did not close within the stated induction/time budget'
+    elif status=='PASS' and step['returncode']==0 and ('Reached cover statement' if task=='cover' else 'successful proof by k-induction') in text:
+        result,why='PASS',None
+    else:
+        result,why=('FAIL' if status=='FAIL' else 'TOOL_ERROR'),'Conditional progress proof did not qualify'
+    case.data['artifacts'].update(configuration=str(config),status=str(status_file),
+                                  traces=[str(p) for p in (case.path/'engine').rglob('*.vcd') if p.stat().st_size])
+    case.finish(result,why,engine_status=status,response_bound=(2 if mode else 1)*2*(20+4),tx_retirement_bound=20)

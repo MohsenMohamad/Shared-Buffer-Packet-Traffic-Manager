@@ -20,7 +20,9 @@ package tm_scheduler_tests;
     import tm_bench_pkg::*;
     `include "uvm_macros.svh"
     `include "tm_scheduler_events.svh"
+    `include "tm_scheduler_inputs.svh"
     `include "tm_scheduler_rtl_test.svh"
+    `include "tm_scheduler_stress_test.svh"
 endpackage
 
 module tm_scheduler_top;
