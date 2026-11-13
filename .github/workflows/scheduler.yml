@@ -49,6 +49,17 @@ jobs:
       - name: Prove independent policy, credit and bounds; qualify selected mutations
         if: matrix.profile == 'E0'
         run: make formal-rtl RUN_ARGS='--test scheduler --timeout 600'
+      - name: Save compact scheduler results
+        if: always()
+        run: python3 tools/scheduler_summary.py --output .build/scheduler-summary.json
+      - name: Retain compact scheduler results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: scheduler-summary-${{ matrix.profile }}-${{ github.sha }}
+          path: .build/scheduler-summary.json
+          retention-days: 14
+          if-no-files-found: error
       - name: Retain scheduler evidence, coverage and counterexamples
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
