@@ -52,3 +52,13 @@ Requirement focus: Functional IF, LEN, ADM, MEM, Q, SCH, FMT, RST, CSR and PAR f
 ## Early measurement gate
 
 Before P11 closure, require the [P10 packet-rate report and explicit baseline/optimization decision](P10-concurrency.md#packet-rate-diagnosis-and-decision). Keep any proposed optimization and affected revalidation visible; an unreviewed measurement or unresolved proposal cannot silently close this gate. P12 retains full performance acceptance.
+
+## Independent DV role
+
+This is a DV task/PR: tests, models, binds, coverage, harnesses and registration.
+All existing behavior/check/acceptance obligations remain. Production RTL and
+embedded designer assertions are owned by separate RTL fix PRs. Develop DV early;
+final qualification targets the actual merged implementation. P11 closure requires
+verified P09/P10 and reviewed baseline/optimization disposition; adopted executable
+optimizations require passing independent DV merge and affected G5 refresh.
+Follow the [ownership gates](../plan.md#ownership-and-verification-gates).

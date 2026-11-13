@@ -43,3 +43,31 @@ remain integration gates; see [hosted CI policy](docs/spec/automation.md#hosted-
 Follow [documentation conventions](docs/documentation.md) for repository documents, PR bodies and delivery summaries. Lead with the behavior or result; give each paragraph, bullet or table row one purpose. Keep summaries, contracts, reproduction instructions and raw evidence separate.
 
 Use the PR template as a default. Keep validation concise, link to a focused report for full commands, revisions, seeds, digests and measurements, and keep material qualifications beside the result. Label expected seeded-defect detections explicitly. Preserve precise requirements and proof boundaries; never shorten by omitting necessary behavior or limitations. Check Markdown structure and links before delivery. Do not accumulate debugging chronology or duplicate evidence across documents.
+
+## Separate RTL and independent DV ownership
+
+RTL implementation and independent DV use separate owners, task branches and PRs.
+RTL owns production `rtl/`, embedded designer assertions and designer smoke;
+independent DV owns `dv/`, `formal/`, passive binds, models, scoreboards, coverage
+and test/proof/requirement registration. Designer smoke belongs in
+`dv/designer/` for new work, registered separately from independent selections.
+Existing author checks keep their original locations/provenance until an explicit
+migration; their names do not establish independent evidence.
+
+DV may develop early against shared spec/API contracts, coordinating interface
+changes with the RTL owner. Infrastructure-only checks are labeled as such.
+RTL merges first; final DV qualification must exercise the actual merged
+production implementation. Only merge of the passing independent DV PR establishes
+its verified scope. P03/P04 are implemented awaiting separate independent DV PRs.
+
+A hardware defect stays visible in the open DV PR with the detecting check,
+revision/configuration and evidence. Report it for a separate RTL fix PR; do not
+repair production RTL or embedded designer assertions in DV. Continue other DV
+work, then rebase after the fix merges and rerun affected checks without weakening
+expectations, assumptions or required coverage. Audits remain read-only.
+
+Use the prepared toolchain and run `make doctor` on current main before
+tool-dependent checks. If it fails, report the precise mismatch before any setup,
+rebuild, install or download; do not edit locks/stamps or bypass validation.
+Continue independent work. Continue an existing task branch/PR when present.
+See [ownership and gates](docs/implementation/plan.md#ownership-and-verification-gates).

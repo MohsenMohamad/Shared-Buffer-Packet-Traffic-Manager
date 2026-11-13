@@ -42,3 +42,10 @@ One reviewed convention and executable recipe are shared by future studies,
 old violations remain visible, and data/reset results have separate scopes and
 owners. Unresolved physical assumptions are explicit. R01 is required before
 A01's measured comparison and P08; it does not block queue implementation.
+
+## Analysis role
+
+This task is constraint/timing analysis, not RTL or independent functional DV.
+Keep all existing measured checks and reset-source qualifications. Any hardware
+change requires a separate RTL PR and affected independent DV; this card does
+not authorize a reset implementation change.

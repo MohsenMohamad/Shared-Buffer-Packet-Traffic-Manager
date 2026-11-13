@@ -55,3 +55,29 @@ Requirement focus: `PERF-01`, `PERF-02`, `PERF-03`, `PERF-04`, `SCH-05`
 ## Earlier baseline
 
 Consume the P09/P10 packet-rate measurements and pre-P11 baseline decision, then perform the full study above. Early measurements do not replace the matched benchmark matrix or extend the 1536-byte utilization target to minimum packets.
+
+## Role sections and separate PRs
+
+### P12A: DV traffic benchmarks
+
+Independent DV owns steps 1–4, workload/accounting models and traffic acceptance.
+Use verified real RTL and preserve the existing performance targets.
+
+### P12B: RTL structural variants PR
+
+RTL owns step 5: actual matched-capacity flat/banked/pipelined hardware and
+separate designer smoke, coordinated API/latency proposals and production lists.
+
+### P12B: independent DV PR
+
+Independent DV owns step 6 and structural-comparison acceptance: byte/ownership/
+latency models, production proofs, intended defects and coverage refresh. Develop
+early, qualify the merged variants, and merge passing DV before reusing G5 or
+claiming a qualified comparison. A fixture delay is not a physical variant.
+
+### P12C: implementation analysis
+
+Analysis owns steps 7–9: mapped synthesis/STA tooling, matched constraints and
+area/slack/latency/throughput interpretation. Preserve every implementation
+acceptance row and conditional reset scope. This is analysis, not independent
+functional qualification. Follow the [ownership gates](../plan.md#ownership-and-verification-gates).

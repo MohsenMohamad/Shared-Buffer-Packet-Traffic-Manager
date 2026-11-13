@@ -44,3 +44,10 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The diagnostic portion of G7 and AI-01 has a real failure-to-reviewed-report example and executable credential-free tests. A missing live session remains an explicit unfinished requirement rather than a fixture-based substitute.
 
 Requirement focus: `AI-01`
+
+## Tooling and diagnostics role
+
+This is tooling/diagnostics work, separate from RTL and independent hardware DV.
+Preserve all fixture robustness checks and the required real reviewed diagnostic
+session. Do not repair RTL through the diagnostic utility; detected hardware
+failures remain visible for separate RTL fixes and DV reverification.

@@ -15,7 +15,7 @@ Dependencies: [P10](P10-concurrency.md)
 
 Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-`formal/tx/`, `formal/scheduler/`, `formal/csr/`, assertion correspondence, matching RTL/tests and control-proof selection.
+`formal/tx/`, `formal/scheduler/`, `formal/csr/`, assertion correspondence, matching DV tests/binds and control-proof selection.
 
 ## Execution sequence
 
@@ -59,3 +59,13 @@ resets; arbitrary sink or traffic inputs remain unconstrained except for explici
 legitimate protocol assumptions. Preserve property names, covers and intended
 negative detections when changing harness representation. Native diagnostics are
 historical/minimized controls, not the parser for current production types.
+
+## Independent DV role
+
+This is a DV task/PR: tests, models, binds, coverage, harnesses and registration.
+All existing behavior/check/acceptance obligations remain. Production RTL and
+embedded designer assertions are owned by separate RTL fix PRs. Develop DV early;
+final qualification targets the actual merged implementation. P11 closure requires
+verified P09/P10 and reviewed baseline/optimization disposition; adopted executable
+optimizations require passing independent DV merge and affected G5 refresh.
+Follow the [ownership gates](../plan.md#ownership-and-verification-gates).

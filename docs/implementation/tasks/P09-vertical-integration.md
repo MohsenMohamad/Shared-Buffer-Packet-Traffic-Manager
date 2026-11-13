@@ -57,3 +57,13 @@ Requirement focus: `IF-01`, `IF-03`, `LEN-01`, `LEN-02`, `LEN-03`, `Q-01`, `MEM-
 Measure saturated 64-byte and 1536-byte traffic on the real path with an always-ready output to characterize internal overhead. Keep one backlogged queue for the initial vertical baseline; also run representative multi-queue traffic once that path is available, with completion required in P10. Define reset/setup, warm-up and measurement windows explicitly; record sustained backlog, delivered packets/beats, elapsed measurement cycles, packets/cycle, beats/cycle and the interpacket-gap distribution. State how packets crossing window boundaries are counted. Define an interpacket gap as the output cycles strictly between the previous packet's final transfer and the next packet's first transfer; adjacent transfers have zero gap.
 
 Use the common [P09/P10 measurement accounting](P10-concurrency.md#packet-rate-diagnosis-and-decision) so overhead cycles are attributed once. This is early diagnosis, not P12 benchmark closure. No hard minimum-packet utilization target is agreed; do not invent one or apply the large-packet target to 64-byte traffic.
+
+## RTL integration PR
+
+Steps 1–3 implement actual top/control/event/ownership wiring, production source membership and separate designer smoke; coordinate APIs with DV.
+
+## Independent DV PR and verified G3 gate
+
+Steps 4–8, all required path/control/latency/checker/CI rows and early packet-rate checks are DV-owned. Early wiring/bench development may precede component DV merge, but G3 requires merged passing applicable component DV (including P03/P04/P05/P08 and reviewed P02/P06 qualification), then qualification of the actual merged top. Preserve all original acceptance obligations.
+
+Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.

@@ -15,7 +15,7 @@ Dependencies: [P09](P09-vertical-integration.md)
 
 Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-Integrated RTL fixes, `dv/sequences/`, `dv/tests/`, assertion/coverage refinements, regression profiles and requirement mapping.
+DV-owned `dv/sequences/`, `dv/tests/`, assertion/coverage refinements, regression profiles and requirement mapping.
 
 ## Execution sequence
 
@@ -59,3 +59,21 @@ Expand the P09 baseline with saturated 64-byte and 1536-byte traffic, one backlo
 Define an exhaustive, non-double-counted per-cycle attribution over the measurement window. Count a delivered beat as productive. For idle output cycles, classify a pending valid beat blocked by ready as output stall; otherwise classify lack of dispatch eligibility due to scanning empty queues as empty-queue scanning, selection/dispatch work with eligible backlog as scheduling/dispatch, and an active transfer awaiting memory/read-credit/data as memory/data availability. State and justify precedence for overlapping causes, record reset/warm-up outside the window, and identify any residual/unclassified cycles explicitly. Cross-check category totals against elapsed cycles and use trace observations to substantiate causal labels rather than inferring them only from a low utilization number.
 
 After P10, record an explicit reviewed decision to accept the measured baseline or propose a scoped optimization with its validation plan before P11 closure. There is no agreed hard minimum-packet utilization target; the 1536-byte target must not silently apply to 64-byte packets. This decision does not close P12's full benchmark, fairness, latency and implementation studies.
+
+## Independent DV role
+
+This is a DV task/PR: tests, models, binds, coverage, harnesses and registration.
+All existing behavior/check/acceptance obligations remain. Production RTL and
+embedded designer assertions are owned by separate RTL fix PRs. Develop DV early;
+final qualification targets the actual merged implementation. P11 closure requires
+verified P09/P10 and reviewed baseline/optimization disposition; adopted executable
+optimizations require passing independent DV merge and affected G5 refresh.
+Follow the [ownership gates](../plan.md#ownership-and-verification-gates).
+
+## Optional optimization: separate RTL and DV PRs
+
+The packet-rate decision may retain the measured baseline. If optimization is
+adopted, the RTL owner supplies the scoped implementation/designer smoke PR;
+independent DV supplies a separate PR retaining all policy/data/ownership/timing
+expectations, checking measured benefit and rerunning affected regression,
+proof and coverage. Merge RTL first, then the passing DV PR before P11 closure.

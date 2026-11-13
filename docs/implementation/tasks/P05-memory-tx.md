@@ -50,3 +50,13 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 The memory/TX portion of G2 has real byte/latency/ownership checks for both response latencies and scoped safety evidence. Any missed specified timing/performance bound is identified before dependent integration.
 
 Requirement focus: `IF-01`, `LEN-01`, `LEN-02`, `MEM-03`, `MEM-04`, `MEM-05`, `RST-02`, `PERF-01`
+
+## RTL PR
+
+Steps 1–5 implement finite-port store/metadata/TX, embedded assertions and separate designer smoke. Coordinate API changes with DV.
+
+## Independent DV PR
+
+Develop early; own tests/models/scoreboards for steps 6–7, independent proof/cover/mutation and registration in step 8, and all required acceptance rows. Final qualification runs merged RTL at both latencies; RTL merge precedes passing DV merge. No delayed-memory fixture substitutes for structural hardware.
+
+Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.

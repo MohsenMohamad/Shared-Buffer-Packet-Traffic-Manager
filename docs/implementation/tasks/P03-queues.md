@@ -42,7 +42,8 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 ## Completion
 
-The queue portion of G2 and required local FIFO-order proof are established. Caller ownership enforcement remains an explicit composition obligation, not an unproven implicit assumption.
+The RTL implementation and author-produced local evidence exist. Independent
+queue qualification remains pending until its separate passing DV PR merges. Caller ownership enforcement remains an explicit composition obligation, not an unproven implicit assumption.
 
 Requirement focus: `Q-01`, `Q-02`, `Q-03`, `Q-04`, `Q-05`, `MEM-01`, `PAR-01`
 
@@ -51,3 +52,13 @@ Requirement focus: `Q-01`, `Q-02`, `Q-03`, `Q-04`, `Q-05`, `MEM-01`, `PAR-01`
 Implemented with the production controller/link child and local verification in
 [P03 results](../../results/P03-queues.md). P04 scheduler, P05 metadata/TX
 integration and P11A caller-ownership discharge retain their separate scope.
+
+## RTL implementation (merged PR #14)
+
+Steps 1–4, production controller/link child and embedded assertions belong to the RTL owner; preserve the P03 designer report unchanged.
+
+## Independent DV qualification (`verify/p03-queues`)
+
+Steps 5–7 and every required transition/reuse/order check belong to a separate DV PR. Audit retained models/properties, derive an API-event ownership/FIFO model from specs, strengthen production FP-QUEUE/FP-ORDER with qualified witnesses and explicit caller assumptions, and qualify order/link/count detectors. Final runs target merged production RTL. Status: implemented awaiting independent DV; only merge of this passing DV PR establishes its scope.
+
+Follow the [separate-owner defect/fix/reverify gates](../plan.md#ownership-and-verification-gates); hardware fixes use another RTL PR.

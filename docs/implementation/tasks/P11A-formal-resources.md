@@ -14,7 +14,7 @@ Dependencies: [P10](P10-concurrency.md)
 
 Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, and inspect the integrated dependency implementations before changing their boundaries.
 
-`formal/pools/`, `formal/credit/`, `formal/queue/`, matching bounded RTL/test fixes and resource-proof selection.
+`formal/pools/`, `formal/credit/`, `formal/queue/`, matching DV tests/binds and resource-proof selection.
 
 ## Execution sequence
 
@@ -32,7 +32,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 7. Run required reachable covers for full allocation, exact-credit admission, last-pop/push, multi-qid traffic, abort-to-recovery and active reset. Recheck selected wrong-delta/last-entry defects at their intended property.
 
-8. Register resource-family selection under `formal-rtl`. If a proof fails, inspect the counterexample and fix DUT/property/assumption as appropriate with matching simulation regression. Keep bounded, unbounded and inconclusive results separate.
+8. Register resource-family selection under `formal-rtl`. If a proof fails, inspect the counterexample and report DUT defects for a separate RTL fix PR, or correct property/assumption errors with justification and a matching simulation regression. Keep bounded, unbounded and inconclusive results separate.
 
 ## Required checks
 
@@ -58,3 +58,13 @@ resets; arbitrary sink or traffic inputs remain unconstrained except for explici
 legitimate protocol assumptions. Preserve property names, covers and intended
 negative detections when changing harness representation. Native diagnostics are
 historical/minimized controls, not the parser for current production types.
+
+## Independent DV role
+
+This is a DV task/PR: tests, models, binds, coverage, harnesses and registration.
+All existing behavior/check/acceptance obligations remain. Production RTL and
+embedded designer assertions are owned by separate RTL fix PRs. Develop DV early;
+final qualification targets the actual merged implementation. P11 closure requires
+verified P09/P10 and reviewed baseline/optimization disposition; adopted executable
+optimizations require passing independent DV merge and affected G5 refresh.
+Follow the [ownership gates](../plan.md#ownership-and-verification-gates).
