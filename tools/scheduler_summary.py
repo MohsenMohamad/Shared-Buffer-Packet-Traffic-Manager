@@ -7,6 +7,7 @@ from pathlib import Path
 
 
 def collect(root):
+    root=root.resolve()
     records=[];runs=[];provenance={}
     for path in sorted(root.glob('*/summary.json')):
         summary=json.loads(path.read_text())
@@ -30,7 +31,10 @@ def collect(root):
                     source_digests=data.get('registered_source_digests',{}),
                     tools={key:(value if key=='slang_revision' else value.splitlines()[0]) for key,value in versions.items()
                            if key in ('python','verilator','yosys','sby','z3','compiler','slang_revision')})
-            else: provenance[identity]['source_digests'].update(data.get('registered_source_digests',{}))
+            else:
+                provenance[identity]['source_digests'].update(data.get('registered_source_digests',{}))
+                provenance[identity]['tools'].update({key:(value if key=='slang_revision' else value.splitlines()[0])
+                    for key,value in data['tool_versions'].items() if key in ('python','verilator','yosys','sby','z3','compiler','slang_revision')})
         if selected:
             records.extend(selected)
             runs.append(dict(run=path.parent.name,result=summary['result'],cases=len(selected)))
