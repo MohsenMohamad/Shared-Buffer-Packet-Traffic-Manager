@@ -122,3 +122,8 @@ no target implementation informed them. The P07 reuse audit is limited to
 `tm_sample`, `tm_stamp`, passive stream sampling, the held-stream assertion and
 report termination. No retained expected-byte/policy oracle or checker is reused.
 The preparation define excludes those unrelated checkers from compilation.
+
+Link captures belong to the reservation ordinal, not a reusable descriptor/cell
+ID pair. Two packets reusing the same fragmented chain and duplicate tag must
+each establish their own pre-retirement capture. A legal/corrupt two-lifetime
+regression qualifies this rule through the oracle and passive UVM replay.

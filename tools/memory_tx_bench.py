@@ -5,8 +5,9 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import sys
-from evidence import Case, ROOT, IGNORED, completed, output
+from evidence import Case, ROOT, IGNORED, completed, output, sha
 from registry import sources, fingerprint, profile
 from memory_tx import parameters
 
@@ -15,7 +16,7 @@ def bench(run,args):
     sys.path.insert(0,str(ROOT/'dv/memory_tx'))
     from oracle import Profile, Violation, require
     from qualification import replay, BASELINE_BINS
-    from traces import legal_trace, reset_traces, atomic_overlap_trace, Trace
+    from traces import legal_trace, reset_traces, atomic_overlap_trace, reused_link_trace, Trace
     from adapter import write_replay, read_observed
     p=Profile(**parameters(args));seed=(args.seed or [17])[0]
     run.scope='P07/UVM passive-edge memory/TX replay preparation; no DUT execution'
@@ -38,10 +39,21 @@ def bench(run,args):
     argv+=['-I'+str(ROOT/path) for path in registered['include_dirs']]
     argv+=[str(uvm_src/'uvm_pkg.sv')]+[str(ROOT/path) for path in registered['sources']]
     argv+=['--top-module','memory_tx_replay_top','--Mdir',str(binary.parent)]
-    step=build.execute(argv,timeout=args.build_timeout)
-    status,reason=step['result'],step['first_failure']
-    if IGNORED.search(output(step)):status,reason='UNSUPPORTED','Required SV construct ignored'
-    if status=='PASS' and not binary.is_file():status,reason='TOOL_ERROR','Missing replay executable'
+    reuse=getattr(args,'preparation_build_manifest',None)
+    if reuse is not None:
+        try:
+            origin=validate_build_reuse(reuse,build.data,argv,build.path,params)
+            binary.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(origin['binary'],binary)
+            build.data.update(build_origin='QUALIFIED_COMPILED_BENCH_REUSE',reuse=origin,
+                              generated_config_sha256=sha(config),binary_sha256=sha(binary))
+            status,reason='PASS',None
+        except (OSError,ValueError,KeyError) as error:status,reason='FAIL',str(error)
+    else:
+        step=build.execute(argv,timeout=args.build_timeout)
+        status,reason=step['result'],step['first_failure']
+        if IGNORED.search(output(step)):status,reason='UNSUPPORTED','Required SV construct ignored'
+        if status=='PASS' and not binary.is_file():status,reason='TOOL_ERROR','Missing replay executable'
+        if status=='PASS':build.data.update(binary_sha256=sha(binary),generated_config_sha256=sha(config))
     build.finish(status,reason)
     if status!='PASS':return
     cases=[('legal',legal_trace(p,seed),None,None),('atomic-overlap',atomic_overlap_trace(p,seed),None,None)]
@@ -71,6 +83,10 @@ def bench(run,args):
                 if fault=='missing-free' and 'free' in a:
                     del a['free'];detector='cell_completion_presence';break
         cases.append((fault,trace,None,detector))
+    reused,second_start=reused_link_trace(p,seed)
+    cases.append(('link-lifetime-legal',deepcopy(reused),None,None))
+    for sample in reused[second_start:]:sample['actions'].pop('query',None)
+    cases.append(('link-lifetime-missing',reused,None,'link_capture'))
     held=deepcopy(baseline)
     for index in range(1,len(held)):
         previous=held[index-1]['out']
@@ -173,3 +189,28 @@ def saved_coverage(path):
         if not any(name.endswith('.'+point+'.auto_1') and count>0 for name,count in bins.items()):
             raise ValueError('Missing observed SV trigger bin: '+point)
     return dict(bench_points=points,functional_bins=bins,scope='Replay bench only; DUT coverage NOT_RUN')
+
+
+def validate_build_reuse(path,current,argv,current_path,params):
+    path=Path(path).resolve();old=json.loads(path.read_text())
+    if old.get('result')!='PASS' or old.get('test')!='memory-tx-bench-build' or old.get('source_set')!='memory-tx-preparation':
+        raise ValueError('Only an explicit passing preparation build may be reused')
+    for key in ('parameters','registered_source_digests','tool_versions','dependency_digests'):
+        if old.get(key)!=current.get(key):raise ValueError('Preparation build identity mismatch: '+key)
+    steps=old.get('steps',[])
+    if len(steps)!=1 or steps[0].get('returncode')!=0:
+        raise ValueError('Preparation reuse requires the original successful compiler manifest')
+    command=steps[0]['argv']
+    normalize=lambda values,directory:[str(value).replace(str(directory),'<BUILD>') for value in values]
+    if normalize(command,path.parent)!=normalize(argv,current_path):
+        raise ValueError('Preparation compiler command changed')
+    config=path.parent/'tm_bench_config.svh'
+    expected=''.join(f'parameter int {key}={value};\n' for key,value in params.items())
+    if config.read_text()!=expected:raise ValueError('Preparation generated config changed')
+    binary=path.parent/'obj/Vmemory_tx_replay_top'
+    digest=sha(binary)
+    if old.get('binary_sha256') is not None and old['binary_sha256']!=digest:
+        raise ValueError('Preparation binary hash changed')
+    return dict(manifest=str(path),manifest_sha256=sha(path),binary=str(binary),binary_sha256=digest,
+                compiled_source_revision=old['source_revision'],compiled_dirty=old['dirty'],
+                validation='Exact registered HDL/package/header, configuration, dependency, compiler argv and tool identities match; Python checking executes current source')

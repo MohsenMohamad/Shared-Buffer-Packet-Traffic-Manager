@@ -38,3 +38,10 @@ No production source-list inheritance is permitted. Failure capture is still
 mandatory, including outputs outside the repository. The fixtures contain no
 traffic manager or behavioral TX implementation; the replay environment's
 persistent RAM image is not evidence of production memory/TX correctness.
+
+An explicit `--preparation-build-manifest PATH` can reuse this task's passing
+SV/UVM compilation when registered HDL/headers, generated configuration,
+dependencies, tool identities and compiler arguments match exactly. It records
+the original compile revision and binary hash and reruns stimulus, monitors and
+current Python checking. It never discovers a build or an RTL implementation.
+The normal invocation still compiles. Mismatched or incomplete identities fail.

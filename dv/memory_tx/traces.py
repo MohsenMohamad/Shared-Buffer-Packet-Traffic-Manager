@@ -155,3 +155,14 @@ def atomic_overlap_trace(profile, seed=17):
     reused=trace.store(1,desc=0,salt=193,chain=[5])
     trace.send(new);trace.send(reused);trace.drain()
     return trace.samples
+
+
+def reused_link_trace(profile,seed=17):
+    trace=Trace(profile,seed);trace.reset()
+    length=min(profile.max_length,2*profile.cell_bytes+3)
+    chain=[5,1,9][:(length+profile.cell_bytes-1)//profile.cell_bytes]
+    first=trace.store(length,desc=0,tag=7,salt=23,chain=chain)
+    trace.send(first);trace.drain()
+    second=trace.store(length,desc=0,tag=7,salt=177,chain=chain)
+    second_start=len(trace.samples);trace.send(second);trace.drain()
+    return trace.samples,second_start

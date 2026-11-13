@@ -353,6 +353,7 @@ def main(argv=None):
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
+    parser.add_argument('--preparation-build-manifest',type=Path,help='Explicit passing preparation replay build; validate source/config/tool identity before reuse')
     parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing component case manifest for coverage extraction')
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')

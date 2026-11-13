@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 from oracle import Oracle, Profile, Violation, require
-from traces import legal_trace, reset_traces, atomic_overlap_trace
+from traces import legal_trace, reset_traces, atomic_overlap_trace, reused_link_trace
 from ledger import Ledger
 from sweep import sweep
 from hand_checks import qualify_hand, metamorphic
@@ -189,6 +189,14 @@ def qualify(profile, seed):
     except Violation as error:require(error.detector=='required_bin','required_bin_wrong_detector')
     else:raise AssertionError('unhit required bin passed')
     negatives['absent_required_trigger']={'detector':'required_bin'}
+
+    reused,second_start=reused_link_trace(profile,seed)
+    report['link_lifetime_baseline']=replay(reused,profile,['complete','link_query'])
+    for sample in reused[second_start:]:sample['actions'].pop('query',None)
+    try:replay(reused,profile)
+    except Violation as error:require(error.detector=='link_capture','lifetime_wrong_detector',str(error))
+    else:raise AssertionError('selftest_missing_detection: reused_link_missing_capture')
+    negatives['reused_link_missing_capture']={'detector':'link_capture'}
     report.update(negatives=negatives,environment_rejections=environment,equation_combinations=len(equations))
     return report,samples
 

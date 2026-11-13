@@ -172,7 +172,7 @@ class Oracle:
                     if final_cell:
                         expected_free = cell
                         if not expected_last:
-                            self.check((self.active, cell) in self.captured_links, 'link_capture')
+                            self.check((packet.ordinal, cell) in self.captured_links, 'link_capture')
                     if expected_last:
                         expected_done = self.active
                     packet.output_index += 1
@@ -260,7 +260,7 @@ class Oracle:
                 idx=packet.cells.index(cell)
                 if idx+1<len(packet.cells):
                     self.check(q['next']==packet.cells[idx+1], 'metadata_next')
-                    self.captured_links.add((self.active,cell))
+                    self.captured_links.add((packet.ordinal,cell))
                     self.bins['link_query'] += 1
         # Arrival cannot fund a same-edge output absent a buffered pre-state beat.
         arrival=bool(due and due['epoch']==self.epoch)
@@ -291,7 +291,9 @@ class Oracle:
             self.retired_cells.add((self.packets[d].ordinal,expected_free))
             self.counts['frees'] += 1
         if expected_done is not None:
-            self.completed.add(self.packets[self.active].ordinal)
+            packet=self.packets[self.active]
+            for cell in packet.cells:self.captured_links.discard((packet.ordinal,cell))
+            self.completed.add(packet.ordinal)
             del self.packets[self.active]; self.active=None
             self.counts['done'] += 1
         self.check(len(self.buffered)==B+int(arrival)-int(transfer), 'buffer_delta')

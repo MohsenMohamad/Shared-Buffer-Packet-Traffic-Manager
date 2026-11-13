@@ -98,6 +98,33 @@ class PreparationBoundaryTests(unittest.TestCase):
             self.assertEqual(run.cases[0].data['result'],'NOT_IMPLEMENTED')
             self.assertFalse(run.cases[0].data['steps'])
 
+    def test_build_reuse_requires_matching_identity_and_binary(self):
+        from copy import deepcopy
+        from evidence import sha
+        from memory_tx_bench import validate_build_reuse
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);old_dir=root/'old';old_dir.mkdir();(old_dir/'obj').mkdir()
+            binary=old_dir/'obj/Vmemory_tx_replay_top';binary.write_bytes(b'isolated synthetic binary')
+            (old_dir/'tm_bench_config.svh').write_text('parameter int DEPTH=4;\n')
+            current=dict(parameters={'depth':4},registered_source_digests={'public.sv':'abc'},
+                         tool_versions={'verilator':'pinned'},dependency_digests={'lock':'123'})
+            command=['verilator','-I'+str(old_dir),'--Mdir',str(old_dir/'obj')]
+            data=dict(current,result='PASS',test='memory-tx-bench-build',source_set='memory-tx-preparation',
+                      steps=[dict(argv=command,returncode=0)],source_revision='fixture',dirty=False,binary_sha256=sha(binary))
+            path=old_dir/'manifest.json'
+            new_dir=root/'new'
+            argv=['verilator','-I'+str(new_dir),'--Mdir',str(new_dir/'obj')]
+            path.write_text(json.dumps(data))
+            reused=validate_build_reuse(path,current,argv,new_dir,{'DEPTH':4})
+            self.assertEqual(reused['binary_sha256'],sha(binary))
+            for key in ('parameters','registered_source_digests','tool_versions','dependency_digests'):
+                corrupt=deepcopy(data);corrupt[key]={'wrong':'identity'};path.write_text(json.dumps(corrupt))
+                with self.assertRaisesRegex(ValueError,'identity mismatch'):
+                    validate_build_reuse(path,current,argv,new_dir,{'DEPTH':4})
+            path.write_text(json.dumps(data));binary.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'binary hash'):
+                validate_build_reuse(path,current,argv,new_dir,{'DEPTH':4})
+
     def test_public_response_has_no_backpressure(self):
         ports=(ROOT/'rtl/include/tm_module_ports.sv').read_text()
         ram=ports.split('module tm_packet_ram_api',1)[1].split('endmodule',1)[0]
