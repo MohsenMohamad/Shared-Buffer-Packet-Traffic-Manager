@@ -2,9 +2,12 @@ class tm_scheduler_rtl_test extends uvm_test;
     `uvm_component_utils(tm_scheduler_rtl_test)
     virtual tm_scheduler_if vif;
     tm_schedule_checker model;
+    tm_scheduler_event_monitor monitor;
+    tm_scheduler_input_checker input_checker;
     tm_frame transmitting;
     int tx_offset, next_id, cycles, grants, replacements, longer, different;
     int stalls, completions, reactivations, max_credit, waiting, continuing, bound_hits;
+    int paused_wait, reset_owned, detached;
     bit [N_Q-1:0] served='0;
     bit emptied[N_Q], pending_reactivation[N_Q];
     covergroup policy_cg with function sample(int collision, bit busy, bit reactivation, int relation);
@@ -25,6 +28,9 @@ class tm_scheduler_rtl_test extends uvm_test;
             `uvm_fatal("SCHEDULER_VIF","missing interface")
         model=tm_schedule_checker::type_id::create("model",this);
         model.mode=SCHED_MODE;
+        monitor=tm_scheduler_event_monitor::type_id::create("monitor",this);
+        monitor.vif=vif;
+        input_checker=tm_scheduler_input_checker::type_id::create("input_checker",this);
     endfunction
     function tm_frame packet(int queue_id, int packet_length);
         tm_packet p=new;
@@ -63,11 +69,12 @@ class tm_scheduler_rtl_test extends uvm_test;
         f.descriptor.tag=p.tag;
         return f;
     endfunction
-    task reset_case(int q0, int q1);
+    virtual task reset_case(int q0, int q1);
         @(negedge vif.clk);
+        if(transmitting!=null) reset_owned++;
         vif.rst_n=0; vif.commit='0; vif.tx_done='0; vif.cfg='0;
-        vif.tx_ready=1; transmitting=null; tx_offset=0; next_id=0;
-        model.flush(); model.quanta[0]=q0;
+        vif.tx_ready=1; vif.output_sample='0; vif.cell_free='0; transmitting=null; tx_offset=0; next_id=0;
+        model.flush(); input_checker.flush(); model.quanta[0]=q0;
         foreach(emptied[q]) begin emptied[q]=0; pending_reactivation[q]=0; end
         for(int q=1;q<N_Q;q++) model.quanta[q]=q1;
         repeat(2) @(posedge vif.clk);
@@ -101,8 +108,18 @@ class tm_scheduler_rtl_test extends uvm_test;
                     vif.tx_done='{1'b1,DESC_ID_W'(transmitting.desc),Q_ID_W'(transmitting.qid),16'(transmitting.length)};
             end else stalls++;
         end
+        vif.output_sample=b.output_sample; vif.cell_free=b.policy.cell_free;
+        // Qualify the observation boundary by destroying the sequence object's
+        // length after the publication signals have been driven.
+        if(committed!=null && $test$plusargs("DETACHED_STIMULUS_PROBE")) begin
+            committed.length=0;
+            detached++;
+        end
         @(posedge vif.clk);
-        b.policy.commit=vif.commit; b.policy.dispatch=vif.dispatch; b.policy.tx_done=vif.tx_done;
+        monitor.sample(b,committed);
+        input_checker.check(b,vif.cfg);
+        observe_pre(b);
+        if(!vif.cfg.run && model.active==null && model.visit) paused_wait++;
         q=model.cursor; credit=model.deficit[q]+(model.visit ? 0 : model.quanta[q]);
         if(SCHED_MODE==1 && run && model.active==null && model.queues[q].frames.size()>0) begin
             if(credit>max_credit) max_credit=credit;
@@ -131,7 +148,8 @@ class tm_scheduler_rtl_test extends uvm_test;
         if(vif.dispatch.valid && model.queues[vif.dispatch.qid].frames.size()==1 &&
            !(vif.commit.valid && vif.commit.qid==vif.dispatch.qid)) emptied[vif.dispatch.qid]=1;
         policy_cg.sample(collision,model.active!=null,reactivated_head,relation);
-        model.apply(b,committed,run,ready);
+        foreach(model.quanta[i]) model.quanta[i]=int'(vif.cfg.quantum[i*13+:13]);
+        model.apply(b,committed,vif.cfg.run,vif.tx_ready);
         // The independent model rejects illegal or omitted dispatches before
         // this endpoint consumes any observed grant.
         if(vif.tx_done.valid) begin transmitting=null; completions++; end
@@ -148,7 +166,14 @@ class tm_scheduler_rtl_test extends uvm_test;
             if(model.queues[i].frames.size()>0 && int'(vif.heads[i*DESC_ID_W+:DESC_ID_W])!=model.queues[i].frames[0].desc)
                 `uvm_fatal("SCHEDULER_QUEUE","production head differs from packet list")
         end
+        observe_post();
         cycles++;
+    endtask
+    virtual function void observe_pre(monitor_batch_t batch);
+    endfunction
+    virtual function void observe_post();
+    endfunction
+    virtual task additional_cases();
     endtask
     function bit eligible();
         int q=model.cursor;
@@ -178,19 +203,53 @@ class tm_scheduler_rtl_test extends uvm_test;
         return 1;
     endfunction
     task saturated(int quantum0, int quantum1);
+        int packets[2]='{default:0};
+        int chosen;
+        longint difference, allowance;
         reset_case(quantum0,quantum1);
         step(0,64,0); step(1,MAX_PACKET_BYTES,0);
         repeat(160) begin
             until_eligible();
             // Keep both queues backlogged through every dequeue. A finite
             // endpoint may include the entire just-dispatched TX packet.
-            step(model.cursor,model.cursor==0 ? 64 : MAX_PACKET_BYTES);
+            chosen=model.cursor;
+            step(chosen,chosen==0 ? 64 : MAX_PACKET_BYTES);
+            packets[chosen]++;
+            if(SCHED_MODE==1) begin
+                if(model.visit_entries[0]-model.visit_entries[1]>1 || model.visit_entries[1]-model.visit_entries[0]>1)
+                    `uvm_fatal("SCHEDULE_FAIR_VISITS","continuously backlogged visit counts differ by more than one")
+                difference=model.dispatched_bytes[0]*quantum1-model.dispatched_bytes[1]*quantum0;
+                allowance=longint'(quantum0)*quantum1+longint'(model.deficit[0])*quantum1+longint'(model.deficit[1])*quantum0;
+                if(difference>allowance || -difference>allowance)
+                    `uvm_fatal("SCHEDULE_FAIR_BYTES","byte service exceeds the quantum share plus finite open-visit credit")
+            end else if(packets[0]-packets[1]>1 || packets[1]-packets[0]>1)
+                `uvm_fatal("SCHEDULE_FAIR_PACKETS","packet RR served continuously backlogged queues unequally");
         end
         model.check_accounting();
         if(model.active==null || model.dispatched_bytes[0]==0 || model.dispatched_bytes[1]==0 ||
            model.cleared[0]!=0 || model.cleared[1]!=0)
             `uvm_fatal("SCHEDULE_ACCOUNTING","saturated endpoint not exercised")
         `uvm_info("SCHEDULER_BYTES",$sformatf("quantum0=%0d quantum1=%0d dispatch0=%0d dispatch1=%0d delivered0=%0d delivered1=%0d deficit0=%0d deficit1=%0d inflight=%0d visits0=%0d visits1=%0d",quantum0,quantum1,model.dispatched_bytes[0],model.dispatched_bytes[1],model.delivered_bytes[0],model.delivered_bytes[1],model.deficit[0],model.deficit[1],model.active.length-model.offset,model.completed_visits[0],model.completed_visits[1]),UVM_NONE)
+        drain();
+    endtask
+    task pause_reset_cases();
+        // A funded, fitting head waits through readiness and RUN pauses.
+        reset_case(65,127);
+        step(0,65,0);
+        repeat(3) step(-1,1,1,1,0);
+        repeat(3) step(-1,1,0,1,0);
+        step(0,1); // Preserve the visit by merged singleton replacement.
+        repeat(3) step(-1,1,0,0);
+        finish_tx(); // Completion can release ownership even while RUN changes.
+        repeat(3) step(-1,1,0);
+        drain();
+        // Reset abandons an owned, stalled maximum packet and queued work.
+        reset_case(4096,64);
+        step(0,MAX_PACKET_BYTES,0); step(1,64,0);
+        until_eligible(); step();
+        repeat(3) step(-1,1,1,0);
+        reset_case(64,128);
+        step(1,MAX_PACKET_BYTES,0);
         drain();
     endtask
     task run_phase(uvm_phase phase);
@@ -243,14 +302,20 @@ class tm_scheduler_rtl_test extends uvm_test;
         step(0,1,0); drain();
         step(0,64,0); drain();
         step(0,65,0); drain();
+        pause_reset_cases();
+        additional_cases();
         reset_case(64,64);
         for(int q=0;q<N_Q;q++) step(q,1,0);
         drain();
+        if(reset_owned==0 || (SCHED_MODE==1 && paused_wait==0))
+            `uvm_fatal("SCHEDULER_COVERAGE","pause/reset scenario absent")
+        if($test$plusargs("DETACHED_STIMULUS_PROBE") && detached==0)
+            `uvm_fatal("SCHEDULER_MONITOR","detached stimulus probe absent")
         if(!(&served)) `uvm_fatal("SCHEDULER_COVERAGE","a qid was not served")
         if(SCHED_MODE==1 && bound_hits==0) `uvm_fatal("SCHEDULER_COVERAGE","maximum arithmetic bound not reached")
         if(grants==0 || replacements==0 || longer==0 || different==0 || stalls==0 || waiting==0 || reactivations==0)
             `uvm_fatal("SCHEDULER_COVERAGE","mandatory scenario absent")
-        `uvm_info("SCHEDULER",$sformatf("TM_SCHEDULER_PASS mode=%0d grants=%0d replacement=%0d longer=%0d different=%0d stalls=%0d waiting=%0d reactivation=%0d continuing=%0d max_credit=%0d bound_hits=%0d qids=%0d cycles=%0d",SCHED_MODE,grants,replacements,longer,different,stalls,waiting,reactivations,continuing,max_credit,bound_hits,$countones(served),cycles),UVM_NONE)
+        `uvm_info("SCHEDULER",$sformatf("TM_SCHEDULER_PASS mode=%0d grants=%0d replacement=%0d longer=%0d different=%0d stalls=%0d waiting=%0d reactivation=%0d continuing=%0d max_credit=%0d bound_hits=%0d qids=%0d cycles=%0d paused_wait=%0d reset_owned=%0d detached=%0d",SCHED_MODE,grants,replacements,longer,different,stalls,waiting,reactivations,continuing,max_credit,bound_hits,$countones(served),cycles,paused_wait,reset_owned,detached),UVM_NONE)
         phase.drop_objection(this);
     endtask
 endclass

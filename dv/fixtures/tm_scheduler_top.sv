@@ -2,6 +2,8 @@
 interface tm_scheduler_if(input logic clk);
     import tm_bench_types::*;
     logic rst_n=0, tx_ready=1;
+    stream_sample_t output_sample='0;
+    cell_return_t cell_free='0;
     config_t cfg='0;
     commit_t commit='0;
     tx_done_t tx_done='0;
@@ -17,7 +19,12 @@ package tm_scheduler_tests;
     import tm_bench_types::*;
     import tm_bench_pkg::*;
     `include "uvm_macros.svh"
+    `include "tm_scheduler_events.svh"
+    `include "tm_scheduler_inputs.svh"
     `include "tm_scheduler_rtl_test.svh"
+`ifndef TM_SCHEDULER_MUTATION_BENCH
+    `include "tm_scheduler_stress_test.svh"
+`endif
 endpackage
 
 module tm_scheduler_top;

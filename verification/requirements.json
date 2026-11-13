@@ -618,6 +618,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {
@@ -651,6 +674,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {
@@ -684,6 +730,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {
@@ -707,6 +776,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {
@@ -730,6 +822,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {
@@ -753,6 +868,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Progress is finite simulation under a progressing fixture sink, not an unbounded liveness theorem.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {
@@ -1213,6 +1351,29 @@
         ],
         "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
         "evidence": "docs/results/P04-scheduler.json"
+      },
+      "independent_scheduler_verification": {
+        "suite": "scheduler",
+        "formal_selection": "formal-rtl --test scheduler",
+        "coverage_selection": "coverage --test scheduler",
+        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
+        "evidence": "docs/results/P04-independent-dv.json",
+        "result": "PASS",
+        "executed_profiles": [
+          "E0",
+          "I0",
+          "I1",
+          "E1",
+          "F0",
+          "F1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53
+        ],
+        "replay_seed": 17,
+        "workflow_run": 43384557984
       }
     },
     {

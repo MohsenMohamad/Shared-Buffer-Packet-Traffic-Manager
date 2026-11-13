@@ -64,7 +64,31 @@
       "MAX_PACKET_BYTES": 128,
       "families": [
         "FP-SCHED"
-      ]
+      ],
+      "properties": [
+        "grant/head legality",
+        "independent mandatory baseline dispatch",
+        "independent cursor/visit/TX history",
+        "per-edge byte credit and bounds",
+        "merged empty and busy/completion freeze"
+      ],
+      "mutations": [
+        "extra quantum per continuing dispatch",
+        "missing dispatch in both modes",
+        "frozen cursor in both modes"
+      ],
+      "conditional_progress": {
+        "source": "formal/scheduler/scheduler_progress.sv",
+        "sink_retirement_bound": 20,
+        "quanta": [
+          64,
+          128
+        ],
+        "packet_length": 128,
+        "response_bound_drr": 96,
+        "response_bound_packet_rr": 48,
+        "separate_from_safety": true
+      }
     },
     "queues-independent": {
       "top": "queue_formal",

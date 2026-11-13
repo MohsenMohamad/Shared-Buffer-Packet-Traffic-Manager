@@ -5,10 +5,11 @@ import re
 from evidence import Case, ROOT, IGNORED, output, sha
 from registry import profile, sources, fingerprint
 from foundation import run_result
+from scheduler_stress import DEFECTS, mutate, intended_failure, stress_runs
 
 
 def scheduler_coverage(path, mode):
-    points, bins = {}, {}
+    points, bins, holes = {}, {}, []
     for line in path.read_text().splitlines():
         match = re.fullmatch(r"C '(.*)' (\d+)", line)
         if not match:
@@ -19,8 +20,13 @@ def scheduler_coverage(path, mode):
             point = points.setdefault(fields['t'], dict(hit=0, total=0))
             point['total'] += 1
             point['hit'] += int(count>0)
+            if count==0:
+                holes.append(dict(kind=fields['t'], line=fields.get('l'), expression=fields.get('o')))
         if fields.get('t')=='covergroup' and 'policy_cg.' in fields.get('h', ''):
-            bins[fields['h'].split('policy_cg.')[1]] = count
+            name = fields['h'].split('policy_cg.')[1]
+            if name in bins:
+                raise ValueError('Duplicate scheduler functional bin: '+name)
+            bins[name] = count
     expected = {'update_kind.'+name for name in ('none','singleton','longer','different')}
     expected |= {point+'.auto_'+str(value) for point in ('tx_busy','activated') for value in (0,1)}
     expected |= {'fit.'+name for name in ('insufficient','equal','surplus')}
@@ -36,10 +42,12 @@ def scheduler_coverage(path, mode):
                          for name in ('insufficient','equal','surplus')})
     if set(bins)!=expected or not points.get('line', {}).get('hit'):
         raise ValueError('Missing scheduler code or functional coverage dimensions')
+    if any(bins[name]>0 for name in excluded if name.startswith('replacement_busy.')):
+        raise ValueError('Impossible dispatch collision during pre-owned TX was hit')
     missing = [name for name in expected-excluded.keys() if bins[name]<=0]
     if missing:
         raise ValueError('Mandatory scheduler bins not hit: '+', '.join(sorted(missing)))
-    return dict(owned_points=points, functional_bins=bins, exclusions=excluded,
+    return dict(owned_points=points, unhit=holes, functional_bins=bins, exclusions=excluded,
                 mandatory_hit=len(expected-excluded.keys()), mandatory_total=len(expected-excluded.keys()))
 
 
@@ -69,8 +77,11 @@ def scheduler(run, args):
     params = profile(args.profile)
     registered = sources('scheduler')
     seed = (args.seed or [17])[0]
-    for mode, mutation in ((1, False), (0, False), (1, True)):
-        label = f'scheduler-mode{mode}'+('-extra-quantum' if mutation else '')
+    variants=[(1,None),(0,None),(1,'extra-quantum'),(1,'missing-dispatch'),(0,'missing-dispatch')]
+    if args.profile=='E0':
+        variants += [(mode,name) for name,(mode,_) in DEFECTS.items()]
+    for mode, mutation in variants:
+        label = f'scheduler-mode{mode}'+('-'+mutation if mutation else '')
         build = Case(run, label+'-build', seed)
         parameters = dict(params, SCHED_MODE=mode)
         parameters.update(CELL_ID_W=max(1,(params['N_CELL']-1).bit_length()),
@@ -87,18 +98,17 @@ def scheduler(run, args):
                 '--timescale', '1ns/1ps', '+define+UVM_NO_DPI', '+define+TM_SCHEDULER_BENCH', '--build-jobs', str(args.jobs),
                 '--output-groups', '4', '--output-split', '20000', '--output-split-cfuncs', '500',
                 '-CFLAGS', '-O0', '-I'+str(uvm), '-I'+str(build.path)]
+        if mutation:
+            argv += ['+define+TM_SCHEDULER_MUTATION_BENCH']
+            build.data['defines'].append('TM_SCHEDULER_MUTATION_BENCH')
         argv += ['-I'+str(ROOT/p) for p in registered['include_dirs']]
         source_paths = [ROOT/p for p in registered['sources']]
         if mutation:
             original = ROOT/'rtl/scheduler/tm_drr.sv'
-            target = 'if (!visit_active)\n                    credit ='
-            text = original.read_text()
-            if text.count(target)!=1:
-                raise ValueError('Extra-quantum mutation site missing or ambiguous')
             mutant = build.path/'tm_drr.sv'
-            mutant.write_text(text.replace(target,"if (!visit_active || (tx_ready && credit >= (DEFICIT_W+1)'(selected_info.length)))\n                    credit ="))
+            mutant.write_text(mutate(original.read_text(),mutation))
             source_paths[source_paths.index(original)] = mutant
-            build.data.update(mutation='Add quantum on a fitting continuing packet dispatch', mutant_sha256=sha(mutant))
+            build.data.update(mutation=mutation, mutant_sha256=sha(mutant))
         argv += [str(uvm/'uvm_pkg.sv')] + [str(p) for p in source_paths]
         argv += ['--top-module', 'tm_scheduler_top', '--Mdir', str(binary.parent)]
         step = build.execute(argv, timeout=args.build_timeout)
@@ -109,24 +119,26 @@ def scheduler(run, args):
             result, why = 'TOOL_ERROR', 'Missing executable'
         build.finish(result, why)
         case = Case(run, label, seed)
-        case.data.update(parameters=parameters, source_set='scheduler')
+        case.data.update(parameters=parameters, source_set='scheduler', registered_source_digests=fingerprint('scheduler'))
         if result!='PASS':
             case.finish('NOT_RUN', 'Build did not qualify')
             continue
         if mode==1 and not mutation:
             schedule_checker_probes(run, args, binary, seed)
-        command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES']
+        command = [str(binary), f'+verilator+seed+{seed}', '+UVM_NO_RELNOTES', '+DETACHED_STIMULUS_PROBE']
         if mutation:
-            command += ['+TRACE', '+PACKET_QUANTUM_PROBE']
+            command += ['+TRACE']
+            if mutation=='extra-quantum':
+                command += ['+PACKET_QUANTUM_PROBE']
         step = case.execute(command, timeout=args.timeout, cwd=case.path)
         if mutation:
-            fatals = re.findall(r'UVM_FATAL[^\n]*\[([^]]+)\]', output(step))
+            detectors = DEFECTS[mutation][1] if mutation in DEFECTS else {'SCHEDULE_CREDIT' if mutation=='extra-quantum' else 'SCHEDULE_TIMING'}
             wave = case.path/'wave.vcd'
-            ok = (step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and
-                  fatals==['SCHEDULE_CREDIT'] and wave.is_file() and wave.stat().st_size>0)
+            ok,fatals = intended_failure(step,output(step),wave,detectors)
+            detector = '/'.join(sorted(detectors))
             case.data['artifacts']['waveform']=str(wave)
-            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended SCHEDULE_CREDIT detection missing',
-                        expected='SEEDED_DEFECT_DETECTION', observed_fatals=fatals)
+            case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended '+detector+' detection missing',
+                        expected='SEEDED_DEFECT_DETECTION', detector=detector, observed_fatals=fatals)
             continue
         status, reason = run_result(step, f'TM_SCHEDULER_PASS mode={mode}')
         if status=='PASS':
@@ -136,7 +148,7 @@ def scheduler(run, args):
             if not coverage.is_file() or not coverage.stat().st_size:
                 status, reason = 'FAIL', 'Missing saved coverage'
             else:
-                case.data['artifacts']['coverage'] = str(coverage)
+                case.data['artifacts'].update(coverage=str(coverage), coverage_sha256=sha(coverage))
                 try:
                     case.data['coverage'] = scheduler_coverage(coverage, mode)
                     case.data['finite_endpoints'] = [
@@ -154,3 +166,5 @@ def scheduler(run, args):
             case.execute(command+['+TRACE'],timeout=args.timeout,cwd=rerun)
             case.data['artifacts']['waveform']=str(rerun/'wave.vcd')
         case.finish(status, reason)
+        if status=='PASS':
+            stress_runs(run,args,binary,parameters)

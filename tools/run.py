@@ -353,7 +353,7 @@ def main(argv=None):
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
-    parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing independent queue case manifest for coverage extraction')
+    parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing component case manifest for coverage extraction')
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')
     try:
@@ -380,9 +380,13 @@ def main(argv=None):
     run.versions['rtl_frontend'] = args.frontend
     if action == 'coverage':
         from queue_coverage import queue_coverage
-        run.scope = 'Independent queue coverage by elaboration; no integrated coverage closure'
+        from scheduler_coverage import scheduler_saved_coverage
+        run.scope = 'Component coverage by elaboration; no integrated coverage closure'
         try:
-            queue_coverage(run, args)
+            if args.test==['scheduler']:
+                scheduler_saved_coverage(run, args)
+            else:
+                queue_coverage(run, args)
         except (OSError, ValueError, KeyError) as error:
             Case(run, 'coverage-selection-error').finish('TOOL_ERROR', str(error))
         return run.finish()
