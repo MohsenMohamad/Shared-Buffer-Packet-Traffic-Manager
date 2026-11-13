@@ -176,3 +176,11 @@ coverage. Use `--timeout 240` for these cases. Input ownership/configuration
 probes and source-copy defects have named intended detectors; seven additional
 scheduler defects run at E0. See the same independent report for the six-profile
 execution and conditional formal progress boundary.
+
+## Memory/TX baseline checkpoint
+
+`python3 -m unittest discover -s dv/tests -p test_memory_tx_baseline.py -v`
+self-checks the independent passive memory-response/byte-order/retirement oracle
+against hand-calculated traces, including first full-credit, cell-retirement and
+pending-reset cases. This is an offline baseline, not production memory/TX
+qualification. See the [risk matrix and resume boundary](../docs/results/P05-memory-tx-baseline.md).

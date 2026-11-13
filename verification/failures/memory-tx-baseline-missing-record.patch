@@ -1,0 +1,689 @@
+diff --git a/docs/results/P05-memory-tx-baseline.md b/docs/results/P05-memory-tx-baseline.md
+new file mode 100644
+index 0000000..6c46a0b
+--- /dev/null
++++ b/docs/results/P05-memory-tx-baseline.md
+@@ -0,0 +1,145 @@
++# Memory/TX independent baseline checkpoint
++
++This baseline self-checks a spec-derived passive oracle and the first directed
++traces. Production memory/metadata/TX simulation, UVM integration, formal proofs,
++performance and mandatory production coverage are **NOT_RUN**. This is the
++baseline checkpoint; candidate qualification resumes with steps 3–9 of the
++assigned work. P12B retains the structural memory comparison.
++
++## Source and independence boundary
++
++The baseline starts at `origin/main` commit
++`8d66a92768f2c72236171731262563814e875352` (including PR #19).
++The first policy commit `47084d4` is independently cherry-pickable by RTL,
++without waiting for tests. Documentation stays in
++[DV PR #20](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/20)
++on `verify/packet-store-tx`.
++
++The oracle was written from [interfaces](../spec/interfaces.md),
++[buffer management](../spec/buffer-management.md),
++[module contracts](../spec/module-contracts.md),
++[verification](../spec/verification.md) and [formal](../spec/formal.md), including
++the referenced [TX timing contract](../spec/queues-and-scheduling.md#output-engine-backpressure-and-completion).
++The P05 card was read after those contracts. No target/dependency RTL, designer
++results or retained checker internals were inspected before this baseline commit.
++Existing repository/light checks were executed without inspecting their checkers.
++
++[The model](../../dv/model/memory_tx.py) imports only the Python standard library.
++[The first tests](../../dv/tests/test_memory_tx_baseline.py) use sealed `Edge`
++monitor batches, not UVM driver packet handles, DUT cursors or DUT free counts.
++Python provides the offline oracle; existing UVM agents/monitors remain the
++required production execution path on resume. There is no replacement bench or
++new runner. Baseline direct invocation does not register a production suite.
++
++## Model and environment contract
++
++The local RX/queue environment supplies observed descriptor reservations, cell
++allocations, link writes, payload writes and commits. Physical ownership is an
++independent ID-to-descriptor map; cells are ordered by observed allocations.
++Dispatch metadata are cross-checked against reservation metadata. The local
++queue is one ordered commit stream; multi-queue scheduling remains P03/P04/P09
++composition. The model does not implement RX admission, abort cleanup or pool
++priority selection and does not claim to discharge their contracts.
++
++RAM is 64-bit 1R1W, at most one of each action per sealed edge. Address is
++`cell*CELL_WORDS+offset`. The memory response is due exactly at issue edge plus
++one/two, has no ready, and compares against the monitored write value at issue.
++Same-word read/write is rejected, regardless of any RAM collision semantics.
++Expected packet bytes are frozen from monitored writes at commit, with byte zero
++in bits 7:0. Accepted output is compared in packet order; keep, last and all user
++bits are exact, and only valid data lanes are compared. A held output compares
++all data bits, including unused lanes, for stability.
++
++The oracle computes buffered plus current-epoch outstanding credit itself. A
++response merely moves a credit from pending to buffered. Only accepted output
++returns a slot; same-edge acceptance can fund one new read. It models no
++response-to-output combinational bypass. Output data, cell returns, descriptor
++returns and completion are distinct observations; a missing/extra return fails.
++A cell returns exactly on its last externally accepted beat, the descriptor and
++`done` exactly on packet EOF. Next-link capture must be independently witnessed
++on an earlier edge before return; links are checked against allocation order.
++A returned physical ID becomes allocatable on the following edge.
++
++Reset spans at least two rising edges. The first released edge initializes;
++new work can start at the next edge. Ownership, packets, buffered entries,
++response validity and completion expectations are flushed. RAM and its physical
++response schedule persist. Old-epoch responses are consumed/discarded, never
++added to valid output credit. New traffic rewrites its own data; RAM is not
++cleared to make stale-response checks pass. The production adapter must also
++check control/reset signals outside this oracle's boundary.
++
++## Risk/check/cover matrix
++
++`Self-check` below refers only to synthetic monitor traces. Every production
++row remains NOT_RUN until the named candidate checks execute and mandatory bins
++are observed; neither a RAM fixture nor a coverage percentage closes P05.
++
++| Risk / requirement | Independent check / named detector | Required observed cases / next campaign |
++| --- | --- | --- |
++| Response loss, wrong latency/data; MEM-03 | Issue-time RAM snapshot; `MTX_RESPONSE_LATENCY`, `MTX_MEMORY_DATA` | Self-check: latency 1/2. Production: actual 64-bit 1R1W store, simultaneous distinct owned read/write, finite metadata mux ports |
++| Lane reversal, partial final beat; LEN-01/02, IF-03 | Monitored bytes and immutable metadata; `MTX_OUTPUT_BYTES/FRAMING/METADATA` | Self-check: 9/17-byte literals, unused lanes, duplicate tags. Production: keeps 1–8; 1/7/8/9, cell−1/cell/cell+1, MAX−1/MAX, single/multi-cell |
++| Omitted outstanding credit; MEM-04 | Pre-state buffered+pending−accepted+issued ≤ depth; `MTX_OVERISSUE`, `MTX_FIFO_OVERWRITE` | Self-check: latency 1/2 × depth 4/8, exact-full pending stall through arrival, issue+response+retire, long/final stalls; missing trigger fails `MTX_MISSING_PRESSURE` |
++| Early/wrong/double cell return; MEM-05 | External beat ordinal and allocation order; `MTX_CELL_RETIREMENT`, `MTX_LINK_BEFORE_RETURN` | Self-check: cell-final stall after prefetch, delayed EOF, captured next link, earliest following-edge reuse. Production: each boundary, reuse/collision/retirement crosses |
++| Early/missing/duplicate completion, leaks | Accepted EOF and independent owner sets; `MTX_COMPLETION`, `MTX_RESOURCE_LEAK`, `MTX_DESC_REUSE` | Self-check: exact normal completion/resource restoration. Production: pool/descriptor integration and exactly-once completion under concurrency |
++| Output changes during stall; IF-01 | Complete prior held beat; `MTX_STABILITY` | Self-check: boundary/final hold and named changed-bit rejection. Production: data/keep/last/user across pending response and full FIFO |
++| Old response validates new epoch; RST-01/02 | Epoch on issued requests; `MTX_OUTPUT_WITHOUT_RESPONSE`, `MTX_RESET_CONTROL` | Self-check: pending reset at both latencies, unchanged RAM and new distinctive same-ID/tag packet. Production: dispatch/full FIFO/partial cell/stalled-last resets, exact pool restoration |
++| Wrong pre-state ownership / collision; MEM-01/03 | Independently reconstructed owned IDs, write phase and read order; `MTX_CELL_REUSE`, `MTX_WRITE_OWNER`, `MTX_PAYLOAD_COLLISION` | Self-check: normal and earliest legal reuse. Production: no same-edge free bypass, forbidden payload collisions and simultaneous distinct-owned-word R/W |
++| Random hazards missed / replay | Saved monitor trace, occupancy/outstanding/latency/retirement/reset crosses | NOT_RUN: constrained chains/lengths, independent sink stalls, legal reuse; directed cases remain mandatory |
++| First-valid delay / cell bubbles; PERF-01 | Dispatch/valid/accepted timestamps, ready assumptions | NOT_RUN: latency+4 first-valid bound, one beat/clock after fill, zero cell-boundary bubble for CELL_WORDS≥2 |
++| Vacuous or constrained-away safety; FP-TX | Production safety with arbitrary sink stalls and explicit memory contracts, F01 explicit inputs | NOT_RUN: unbounded credit/retirement/stability/reset, full-credit/pending-stall/reset-reuse covers; outstanding omission, premature return and stale-valid mutations must hit named detectors |
++| False PASS / incomplete registration | Requirement links, nonempty executed production selections, saved bins and antecedent/constraint audit | NOT_RUN: memory-tx simulation/proof/coverage registration; retain all real failures under PR #19 rules and before/fix/retest evidence |
++
++## Hand calculations and results
++
++| Trace | Hand-calculated expectation | Baseline outcome |
++| --- | --- | --- |
++| Normal, 9 bytes, cell 3 | Address 6 gives `0706050403020100`, address 7 lane 0 gives `08`; bytes 00…08; keeps FF/01; EOF only second beat; user `011234000903` | PASS at latencies 1/2 |
++| Boundary, 17 bytes, cells 3→1 | Reads 6,7,2; bytes 00…10; keeps FF/FF/01; cell 3 returns on beat 2 acceptance, cell 1 and descriptor on beat 3 | PASS at latencies 1/2; cell 3 reused on first legal following edge before old EOF |
++| Exact capacity | D issued, zero retired gives D credits. After responses: D buffered, zero outstanding. One accepted plus one issued keeps D; response arrival alone releases zero | PASS at (L,D)=(1,4),(1,8),(2,4),(2,8); every case requires full-credit, pending-response-stall and issue/response/retire hits |
++| Pending-response reset | One issued read is canceled as TX work; old RAM value remains. New same-ID packet emits only bytes 90…97 after initialization | PASS at latencies 1/2 |
++| Deliberate invalid traces | Reverse valid bytes, early cell return, read D+1, response too soon, changed held bit, stale output after reset, corrupt response, wrong keep/user, leaked resources and omitted pressure trigger | Expected detections at eleven exact named detectors; no engine/crash surrogate |
++
++Five unittest methods cover ten positive parameterized traces and eleven expected
++negative detections. These results qualify the oracle's initial behavior only;
++production seeded-defect qualification remains NOT_RUN.
++
++## Reproduction and source pairing
++
++Use the prepared environment; setup/install is not part of these commands.
++On the recorded main base, `make doctor` passed versions, source identity, C++20
++and solver SAT/UNSAT checks. On the policy commit, repository checks and light
++checks passed (99 tests). On the baseline revision, run:
++
++```sh
++python3 -m unittest discover -s dv/tests -p test_memory_tx_baseline.py -v
++python3 tools/check_repository.py
++python3 tools/check_light.py
++git diff --check
++```
++
++The baseline commit contains the exact model/tests/commands; no random seed or
++HDL tool is used by the Python self-check. See the companion
++[execution record](P05-memory-tx-baseline.json) for actual tested revisions,
++source hashes, command statuses and tool identities.
++
++For candidate qualification, record the named RTL and DV SHAs before assembling
++an isolated worktree. One reproducible assembly, when changes are separate and
++do not overlap, is:
++
++```sh
++git worktree add --detach ../packet-store-tx-qualification "$RTL_SHA"
++git -C ../packet-store-tx-qualification cherry-pick "$DV_BASELINE_SHA"
++git -C ../packet-store-tx-qualification rev-parse HEAD
++git -C ../packet-store-tx-qualification status --porcelain
++```
++
++Set both variables to recorded full commit IDs, include every later DV commit
++in dependency order, and record the assembly commands/resulting SHA/dirty state.
++If conflicts arise, retain the resolution as part of tested source. Independent DV qualifies the paired
++candidate, then verifies the actual merged source under the root policy.
++
++Resume with a named production RTL candidate and this committed DV baseline;
++inspect candidate boundaries and retained checker reuse only after the checkpoint.
++Connect passive sampling through existing UVM and implement remaining matrix rows
++without downgrading any technical obligation. There is currently no P05 RTL
++candidate branch/PR available. Stop here until candidate qualification is resumed.
+diff --git a/dv/model/memory_tx.py b/dv/model/memory_tx.py
+new file mode 100644
+index 0000000..9194803
+--- /dev/null
++++ b/dv/model/memory_tx.py
+@@ -0,0 +1,293 @@
++"""Passive, spec-derived memory/TX oracle; no RTL or retained checker imports.
++
++Each Edge is a sealed pre-edge monitor batch. Memory responses use issue-time
++snapshots; packet bytes use monitored writes. Neither stimulus packet objects
++nor DUT cursors/free counts are accepted by this API.
++"""
++from collections import Counter, deque
++from dataclasses import dataclass, field
++
++
++class Violation(AssertionError):
++    """A named contract detector, suitable for negative qualification."""
++
++
++def require(condition, detector):
++    if not condition:
++        raise Violation(detector)
++
++
++@dataclass(frozen=True)
++class Info:
++    length: int
++    qid: int = 0
++    tag: int = 0
++    source: int = 0
++
++    @property
++    def user(self):
++        return self.qid | (self.length << 8) | (self.tag << 24) | (self.source << 40)
++
++
++@dataclass(frozen=True)
++class Beat:
++    data: int
++    keep: int
++    last: bool
++    user: int
++
++
++@dataclass(frozen=True)
++class Edge:
++    reset: bool = False
++    reserve: tuple | None = None       # descriptor, independently sampled Info
++    allocate: tuple | None = None      # descriptor, physical cell
++    write: tuple | None = None         # physical word address, 64-bit data
++    link_write: tuple | None = None    # previous cell, next cell
++    commit: int | None = None
++    dispatch: tuple | None = None      # descriptor, Info (cross-check only)
++    read: int | None = None            # physical word address
++    response: int | None = None        # unbackpressured data, no driver token
++    output: Beat | None = None         # actual valid output levels
++    ready: bool = False
++    capture_next: tuple | None = None  # independently witnessed next-link capture
++    cell_return: tuple | None = None   # descriptor, cell
++    desc_return: int | None = None
++    done: int | None = None
++
++
++@dataclass
++class Packet:
++    info: Info
++    cells: list = field(default_factory=list)
++    writes: dict = field(default_factory=dict)
++    payload: bytes | None = None
++    phase: str = 'RX'
++
++
++@dataclass(frozen=True)
++class Token:
++    due: int
++    epoch: int
++    ordinal: int
++    data: int
++
++
++def little_bytes(data):
++    require(0 <= data < 1 << 64, 'MTX_WORD_WIDTH')
++    return data.to_bytes(8, 'little')
++
++
++class MemoryTxModel:
++    def __init__(self, latency=1, depth=4, cell_bytes=16, ncell=16,
++                 ndesc=8, max_length=128):
++        require(latency in (1, 2) and depth >= latency + 2, 'MTX_CONFIGURATION')
++        require(cell_bytes in (16, 32, 64), 'MTX_CONFIGURATION')
++        self.latency, self.depth = latency, depth
++        self.cell_bytes, self.cell_words = cell_bytes, cell_bytes // 8
++        self.ncell, self.ndesc, self.max_length = ncell, ndesc, max_length
++        self.ram = {}                 # deliberately survives reset
++        self.pending = deque()        # physical RAM pipeline survives reset
++        self.cover = Counter()
++        self.cycle = -1
++        self.epoch = 0
++        self.reset_edges = 0
++        self.in_reset = False
++        self.initialized = False
++        self._flush()
++
++    def _flush(self):
++        self.packets = {}
++        self.owners = {}
++        self.committed = deque()      # local single-queue dispatch environment
++        self.active = None
++        self.read_count = self.retired = 0
++        self.fifo = deque()
++        self.captured = set()
++        self.held = None
++
++    @property
++    def outstanding(self):
++        return sum(token.epoch == self.epoch for token in self.pending)
++
++    @property
++    def credits(self):
++        return len(self.fifo) + self.outstanding
++
++    def address(self, packet, ordinal):
++        cell_index, word_offset = divmod(ordinal, self.cell_words)
++        return packet.cells[cell_index] * self.cell_words + word_offset
++
++    def _response(self, edge):
++        due = self.pending[0] if self.pending and self.pending[0].due == self.cycle else None
++        require((edge.response is not None) == (due is not None), 'MTX_RESPONSE_LATENCY')
++        if due:
++            require(edge.response == due.data, 'MTX_MEMORY_DATA')
++            self.pending.popleft()
++        return due
++
++    def step(self, edge):
++        self.cycle += 1
++        due = self._response(edge)
++        if edge.reset:
++            require(not any((edge.reserve, edge.allocate, edge.write, edge.link_write,
++                             edge.dispatch, edge.output, edge.capture_next,
++                             edge.cell_return)) and edge.read is None and
++                    edge.commit is None and edge.desc_return is None and edge.done is None,
++                    'MTX_RESET_CONTROL')
++            if not self.in_reset:
++                self.epoch += 1
++                self.cover['reset_pending' if self.pending or due else 'reset_idle'] += 1
++            self.reset_edges += 1
++            self.in_reset, self.initialized = True, False
++            self._flush()
++            return
++        if self.in_reset:
++            require(self.reset_edges >= 2, 'MTX_RESET_WIDTH')
++            self.in_reset, self.reset_edges = False, 0
++        if not self.initialized:
++            require(edge == Edge(response=edge.response), 'MTX_INITIALIZATION')
++            self.initialized = True
++            return
++
++        # All legality checks use this pre-state. Current retirement can fund a
++        # read credit, but cannot fund physical reallocation until the next edge.
++        packet = self.packets.get(self.active)
++        occupancy = len(self.fifo)
++        outstanding = self.outstanding + int(due is not None and due.epoch == self.epoch)
++        fire = edge.output is not None and edge.ready
++        require(occupancy + outstanding <= self.depth, 'MTX_CREDIT_BOUND')
++        self.cover[f'credits_{occupancy + outstanding}'] += 1
++        if occupancy + outstanding == self.depth and not edge.ready:
++            self.cover['full_credit_stall'] += 1
++        if due and due.epoch == self.epoch and not edge.ready:
++            self.cover['pending_response_stall'] += 1
++        if due and edge.read is not None and fire:
++            self.cover['issue_response_retire'] += 1
++
++        if self.held is not None:
++            require(edge.output == self.held, 'MTX_STABILITY')
++        expected_cell = None
++        expected_done = None
++        if edge.output is not None:
++            require(packet is not None and self.fifo, 'MTX_OUTPUT_WITHOUT_RESPONSE')
++            token = self.fifo[0]
++            require(token.epoch == self.epoch and token.ordinal == self.retired,
++                    'MTX_RESPONSE_ORDER')
++            offset = self.retired * 8
++            count = min(8, packet.info.length - offset)
++            last = offset + count == packet.info.length
++            require(edge.output.keep == (1 << count) - 1 and edge.output.last == last,
++                    'MTX_OUTPUT_FRAMING')
++            require(edge.output.user == packet.info.user, 'MTX_OUTPUT_METADATA')
++            require(little_bytes(edge.output.data)[:count] == packet.payload[offset:offset + count],
++                    'MTX_OUTPUT_BYTES')
++            if fire:
++                if (self.retired + 1) % self.cell_words == 0 or last:
++                    cell_index = self.retired // self.cell_words
++                    expected_cell = (self.active, packet.cells[cell_index])
++                    if not last:
++                        require((packet.cells[cell_index], packet.cells[cell_index + 1])
++                                in self.captured, 'MTX_LINK_BEFORE_RETURN')
++                if last:
++                    expected_done = self.active
++        require(edge.cell_return == expected_cell, 'MTX_CELL_RETIREMENT')
++        require(edge.desc_return == expected_done and edge.done == expected_done,
++                'MTX_COMPLETION')
++
++        if edge.allocate:
++            desc, cell = edge.allocate
++            require(desc in self.packets and self.packets[desc].phase == 'RX', 'MTX_ALLOC_OWNER')
++            require(0 <= cell < self.ncell and cell not in self.owners, 'MTX_CELL_REUSE')
++        if edge.reserve:
++            desc, info = edge.reserve
++            require(0 <= desc < self.ndesc and desc not in self.packets, 'MTX_DESC_REUSE')
++            require(1 <= info.length <= self.max_length and 0 <= info.qid < 256 and
++                    0 <= info.tag < 65536 and 0 <= info.source < 256, 'MTX_HEADER')
++        if edge.read is not None:
++            require(packet is not None and packet.phase == 'TX', 'MTX_READ_OWNER')
++            require(self.read_count < (packet.info.length + 7) // 8, 'MTX_READ_PAST_END')
++            require(edge.read == self.address(packet, self.read_count), 'MTX_READ_ORDER')
++            require(occupancy + outstanding + 1 - int(fire) <= self.depth, 'MTX_OVERISSUE')
++            require(edge.write is None or edge.read != edge.write[0], 'MTX_PAYLOAD_COLLISION')
++        if edge.dispatch:
++            desc, info = edge.dispatch
++            require(self.active is None and not self.fifo and outstanding == 0,
++                    'MTX_DISPATCH_BUSY')
++            require(self.committed and self.committed[0] == desc, 'MTX_DISPATCH_ORDER')
++            require(self.packets[desc].info == info, 'MTX_DISPATCH_METADATA')
++
++        # Apply the sealed batch after validating pre-state decisions.
++        self.held = edge.output if edge.output is not None and not edge.ready else None
++        if fire:
++            self.fifo.popleft()
++            self.retired += 1
++            if expected_cell:
++                del self.owners[expected_cell[1]]
++                self.cover['cell_retired'] += 1
++            if expected_done is not None:
++                del self.packets[expected_done]
++                self.active = None
++                self.cover['packet_completed'] += 1
++        if due and due.epoch == self.epoch:
++            self.fifo.append(due)
++        elif due:
++            self.cover['old_response_discarded'] += 1
++        if edge.read is not None:
++            self.pending.append(Token(self.cycle + self.latency, self.epoch,
++                                      self.read_count, self.ram[edge.read]))
++            self.read_count += 1
++        if edge.reserve:
++            desc, info = edge.reserve
++            self.packets[desc] = Packet(info)
++        if edge.allocate:
++            desc, cell = edge.allocate
++            self.owners[cell] = desc
++            self.packets[desc].cells.append(cell)
++        if edge.write:
++            addr, data = edge.write
++            require(0 <= addr < self.ncell * self.cell_words, 'MTX_WRITE_ADDRESS')
++            desc = self.owners.get(addr // self.cell_words)
++            require(desc in self.packets and self.packets[desc].phase == 'RX', 'MTX_WRITE_OWNER')
++            little_bytes(data)
++            require(addr not in self.packets[desc].writes, 'MTX_DUPLICATE_WRITE')
++            self.packets[desc].writes[addr] = data
++            self.ram[addr] = data
++        if edge.link_write:
++            previous, following = edge.link_write
++            desc = self.owners.get(previous)
++            require(desc is not None and self.owners.get(following) == desc, 'MTX_LINK_OWNER')
++            cells = self.packets[desc].cells
++            require((previous, following) in list(zip(cells, cells[1:])), 'MTX_LINK_ORDER')
++        if edge.commit is not None:
++            committed = self.packets[edge.commit]
++            require(committed.phase == 'RX' and len(committed.cells) ==
++                    (committed.info.length + self.cell_bytes - 1) // self.cell_bytes,
++                    'MTX_COMMIT_CELLS')
++            addresses = [self.address(committed, i)
++                         for i in range((committed.info.length + 7) // 8)]
++            require(set(addresses) == set(committed.writes), 'MTX_COMMIT_WRITES')
++            committed.payload = b''.join(little_bytes(committed.writes[a]) for a in addresses)
++            committed.payload = committed.payload[:committed.info.length]
++            committed.phase = 'QUEUED'
++            self.committed.append(edge.commit)
++        if edge.dispatch:
++            self.active = self.committed.popleft()
++            self.packets[self.active].phase = 'TX'
++            self.read_count = self.retired = 0
++            self.captured.clear()
++        if edge.capture_next:
++            require(packet is not None, 'MTX_LINK_CAPTURE_OWNER')
++            require(edge.capture_next in list(zip(packet.cells, packet.cells[1:])),
++                    'MTX_LINK_CAPTURE_VALUE')
++            require(edge.capture_next[0] in self.owners, 'MTX_LINK_AFTER_REUSE')
++            self.captured.add(edge.capture_next)
++        require(self.credits <= self.depth, 'MTX_FIFO_OVERWRITE')
++
++    def finish(self, required=()):
++        require(not self.packets and not self.owners and not self.pending and
++                not self.fifo and self.active is None and self.held is None,
++                'MTX_RESOURCE_LEAK')
++        for name in required:
++            require(self.cover[name] > 0, 'MTX_MISSING_PRESSURE:' + name)
++        return dict(self.cover)
+diff --git a/dv/tests/test_memory_tx_baseline.py b/dv/tests/test_memory_tx_baseline.py
+new file mode 100644
+index 0000000..24833b5
+--- /dev/null
++++ b/dv/tests/test_memory_tx_baseline.py
+@@ -0,0 +1,233 @@
++"""Hand-calculated passive traces, not a production memory/TX campaign."""
++import unittest
++
++from dv.model.memory_tx import Beat, Edge, Info, MemoryTxModel, Violation
++
++
++class Trace:
++    """A tiny fixed-latency RAM environment, separate from the passive oracle.
++
++    Samples requests/writes; deliberately retains RAM and responses across reset.
++    Output levels and resource events always come from the explicit trace.
++    """
++    def __init__(self, latency=1, depth=4):
++        self.model = MemoryTxModel(latency=latency, depth=depth)
++        self.latency = latency
++        self.clock = -1
++        self.words = {}
++        self.responses = {}
++        self.tick(reset=True)
++        self.tick(reset=True)
++        self.tick()
++
++    def tick(self, **signals):
++        self.clock += 1
++        response = self.responses.pop(self.clock, None)
++        signals.setdefault('response', response)
++        edge = Edge(**signals)
++        self.model.step(edge)
++        if edge.read is not None:
++            self.responses[self.clock + self.latency] = self.words[edge.read]
++        if edge.write:
++            self.words[edge.write[0]] = edge.write[1]
++
++    def load(self, desc, info, cells, words):
++        self.tick(reserve=(desc, info))
++        for cell in cells:
++            self.tick(allocate=(desc, cell))
++        for left, right in zip(cells, cells[1:]):
++            self.tick(link_write=(left, right))
++        for ordinal, data in enumerate(words):
++            cell_index, offset = divmod(ordinal, 2)
++            self.tick(write=(cells[cell_index] * 2 + offset, data))
++        self.tick(commit=desc)
++
++    def dispatch(self, desc, info):
++        self.tick(dispatch=(desc, info))
++
++    def complete(self, desc, cell, data, info, keep=255):
++        self.tick(output=Beat(data, keep, True, info.user), ready=True,
++                  cell_return=(desc, cell), desc_return=desc, done=desc)
++
++
++class BaselineTraces(unittest.TestCase):
++    def test_hand_calculated_normal_little_endian_and_unused_lanes(self):
++        for latency in (1, 2):
++            with self.subTest(latency=latency):
++                t = Trace(latency)
++                info = Info(9, qid=3, tag=0x1234, source=1)
++                t.load(0, info, [3], [0x0706050403020100, 0xFFEEDDCCBBAA9908])
++                self.assertEqual(t.model.packets[0].payload, bytes(range(9)))
++                self.assertEqual(info.user, 0x011234000903)
++                t.dispatch(0, info)
++                t.tick(read=6)
++                t.tick(read=7)
++                if latency == 2:
++                    t.tick()
++                t.tick(output=Beat(0x0706050403020100, 255, False, info.user), ready=True)
++                # Only lane 0 is meaningful; the other seven differ from RAM.
++                t.complete(0, 3, 0xA5A5A5A5A5A5A508, info, keep=1)
++                t.model.finish(['packet_completed', 'cell_retired'])
++
++    def test_hand_calculated_cell_boundary_and_earliest_legal_reuse(self):
++        for latency in (1, 2):
++            with self.subTest(latency=latency):
++                t = Trace(latency)
++                info = Info(17, tag=7)
++                t.load(0, info, [3, 1], [0x0706050403020100,
++                                       0x0F0E0D0C0B0A0908, 0x9999999999999910])
++                self.assertEqual(t.model.packets[0].payload, bytes(range(17)))
++                t.dispatch(0, info)
++                t.tick(read=6, capture_next=(3, 1))
++                t.tick(read=7)
++                if latency == 2:
++                    t.tick(read=2)
++                else:
++                    t.tick(read=2, output=Beat(0x0706050403020100, 255, False, info.user), ready=True)
++                if latency == 2:
++                    t.tick(output=Beat(0x0706050403020100, 255, False, info.user), ready=True)
++                boundary = Beat(0x0F0E0D0C0B0A0908, 255, False, info.user)
++                for _ in range(4):
++                    t.tick(output=boundary)  # prefetch progressed; ownership has not
++                    self.assertEqual(t.model.owners[3], 0)
++                next_info = Info(8, tag=7)  # deliberately duplicate tag
++                t.tick(output=boundary, reserve=(1, next_info))
++                t.tick(output=boundary, ready=True, cell_return=(0, 3))
++                # Allocate on the very next edge after return; overwrite this
++                # cell before the old packet EOF. No same-edge return bypass.
++                t.tick(allocate=(1, 3))
++                t.tick(write=(6, 0x8786858483828180))
++                t.tick(commit=1)
++                final = Beat(0x1010101010101010, 1, True, info.user)
++                t.tick(output=final)
++                t.tick(output=final)
++                t.complete(0, 1, final.data, info, keep=1)
++                t.dispatch(1, next_info)
++                t.tick(read=6)
++                for _ in range(latency):
++                    t.tick()
++                t.complete(1, 3, 0x8786858483828180, next_info)
++                t.model.finish(['cell_retired', 'packet_completed'])
++
++    def test_first_full_credit_stalls_all_latency_depth_pairs(self):
++        for latency in (1, 2):
++            for depth in (4, 8):
++                with self.subTest(latency=latency, depth=depth):
++                    t = Trace(latency, depth)
++                    info = Info(96)
++                    # Hand formula: word i contains byte values 8*i .. 8*i+7.
++                    words = [int.from_bytes(bytes(range(8*i, 8*i+8)), 'little')
++                             for i in range(12)]
++                    cells = list(range(6))
++                    t.load(0, info, cells, words)
++                    t.dispatch(0, info)
++                    for i in range(depth):
++                        t.tick(read=i, capture_next=(i//2, i//2+1) if i % 2 == 0 and i < 10 else None)
++                    self.assertEqual(t.model.credits, depth)
++                    self.assertGreater(t.model.outstanding, 0)
++                    for _ in range(latency + 5):
++                        t.tick()  # immediate stall following issue, across arrival
++                    self.assertEqual((len(t.model.fifo), t.model.outstanding), (depth, 0))
++                    # Return one slot per edge while issuing remaining requests.
++                    for i in range(12):
++                        final = i == 11
++                        release = (0, i//2) if i % 2 or final else None
++                        read = depth + i if depth + i < 12 else None
++                        capture = (read//2, read//2+1) if read is not None and read % 2 == 0 and read < 10 else None
++                        if final:
++                            held = Beat(words[i], 255, True, info.user)
++                            for _ in range(5):
++                                t.tick(output=held)
++                        t.tick(output=Beat(words[i], 255, final, info.user), ready=True,
++                               cell_return=release, read=read, capture_next=capture,
++                               desc_return=0 if final else None, done=0 if final else None)
++                    t.model.finish(['full_credit_stall', 'pending_response_stall',
++                                    'issue_response_retire', 'packet_completed'])
++
++    def test_first_pending_response_reset_without_clearing_ram(self):
++        for latency in (1, 2):
++            with self.subTest(latency=latency):
++                t = Trace(latency)
++                info = Info(8, tag=9)
++                t.load(0, info, [0], [0x1716151413121110])
++                t.dispatch(0, info)
++                t.tick(read=0)
++                t.tick(reset=True)
++                t.tick(reset=True)
++                t.tick()  # first post-release edge initializes
++                self.assertEqual(t.model.ram[0], 0x1716151413121110)
++                self.assertFalse(t.model.fifo)
++                self.assertEqual(t.model.credits, 0)
++                # New epoch immediately after legal initialization, same IDs/tag.
++                t.load(0, info, [0], [0x9796959493929190])
++                t.dispatch(0, info)
++                t.tick(read=0)
++                for _ in range(latency):
++                    t.tick()
++                t.complete(0, 0, 0x9796959493929190, info)
++                t.model.finish(['reset_pending', 'packet_completed'])
++
++    def test_named_error_detectors(self):
++        def active(latency=1, depth=4, length=8):
++            t = Trace(latency, depth)
++            info = Info(length)
++            cells = list(range((length + 15)//16))
++            words = [0x0706050403020100 + i for i in range((length + 7)//8)]
++            t.load(0, info, cells, words)
++            t.dispatch(0, info)
++            return t, info
++
++        t, info = active()
++        t.tick(read=0)
++        t.tick()
++        with self.assertRaisesRegex(Violation, '^MTX_OUTPUT_BYTES$'):
++            t.complete(0, 0, 0x0001020304050607, info)
++        t, info = active()
++        with self.assertRaisesRegex(Violation, '^MTX_CELL_RETIREMENT$'):
++            t.tick(cell_return=(0, 0))
++        t, info = active(length=64)
++        for i in range(4):
++            t.tick(read=i)
++        with self.assertRaisesRegex(Violation, '^MTX_OVERISSUE$'):
++            t.tick(read=4)
++        t, info = active(latency=2)
++        t.tick(read=0)
++        with self.assertRaisesRegex(Violation, '^MTX_RESPONSE_LATENCY$'):
++            t.tick(response=0x0706050403020100)
++        t, info = active()
++        t.tick(read=0)
++        t.tick()
++        held = Beat(0x0706050403020100, 255, True, info.user)
++        t.tick(output=held)
++        with self.assertRaisesRegex(Violation, '^MTX_STABILITY$'):
++            t.tick(output=Beat(held.data ^ (1 << 63), 255, True, info.user))
++        t, info = active()
++        t.tick(read=0)
++        t.tick(reset=True)
++        t.tick(reset=True)
++        t.tick()
++        with self.assertRaisesRegex(Violation, '^MTX_OUTPUT_WITHOUT_RESPONSE$'):
++            t.tick(output=held, ready=True)
++        t, info = active()
++        t.tick(read=0)
++        with self.assertRaisesRegex(Violation, '^MTX_MEMORY_DATA$'):
++            t.tick(response=0x0706050403020101)
++        t, info = active()
++        t.tick(read=0)
++        t.tick()
++        with self.assertRaisesRegex(Violation, '^MTX_OUTPUT_FRAMING$'):
++            t.tick(output=Beat(0x0706050403020100, 127, True, info.user))
++        t, info = active()
++        t.tick(read=0)
++        t.tick()
++        with self.assertRaisesRegex(Violation, '^MTX_OUTPUT_METADATA$'):
++            t.tick(output=Beat(0x0706050403020100, 255, True, info.user ^ 1))
++        t, info = active()
++        with self.assertRaisesRegex(Violation, '^MTX_RESOURCE_LEAK$'):
++            t.model.finish()
++        with self.assertRaisesRegex(Violation, '^MTX_MISSING_PRESSURE:full_credit_stall$'):
++            Trace().model.finish(['full_credit_stall'])
++
++
++if __name__ == '__main__':
++    unittest.main()

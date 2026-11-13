@@ -16,3 +16,5 @@ coverage databases and generated netlists remain ignored build/CI artifacts.
 
 - [P07 UVM foundation fixture](P07-verification-foundation.md)
 - [P07 readable checkers and constrained packet stimulus](P07-followup-stimulus.md)
+
+- [P05 independent memory/TX baseline checkpoint](P05-memory-tx-baseline.md)

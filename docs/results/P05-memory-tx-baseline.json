@@ -1,0 +1,63 @@
+{
+  "scope": "Spec-derived memory/TX oracle self-check; production qualification NOT_RUN",
+  "rtl_commit": "8d66a92768f2c72236171731262563814e875352",
+  "dv_source_base": "8ce786f3ed8cdaf479091a141ace6a4f69ceeca1",
+  "dirty": true,
+  "tools": {
+    "python": "3.12.14",
+    "git": "git version 2.52.0"
+  },
+  "source_sha256": {
+    "dv/model/memory_tx.py": "6b8479e10df945495e389fd89a5d09efdaedd26409804f74e38683eabe77cf97",
+    "dv/tests/test_memory_tx_baseline.py": "bf72b12ed208b39966603c2af48e7a3a8ea70fdbc15a7ed1eac4f55c2b85554a",
+    "docs/spec/interfaces.md": "9c79e0385b8861caa8a8fe1993a79ce1b53f6a7b64c947495273898f1abfd986",
+    "docs/spec/buffer-management.md": "74280da3b98aadddebd2932be0198ec49931b1438521949e23715eb8592192d6",
+    "docs/spec/module-contracts.md": "538454d5b4a3a52f7e3875ae9e6f53d76d01c87e630ebe13db10af320bf87b48",
+    "docs/spec/verification.md": "319e867aa91b42bf954760e29518de470f64d6a49a5e4a3c724d57ed92705d21",
+    "docs/spec/formal.md": "4ad29b02cd0d7d08fbcbacf0e8ba2f4388f733bf21631d36f2cc9d5fd5f3fb62",
+    "docs/spec/queues-and-scheduling.md": "30f9585475b0c06a2e46630dda8759f79e32d66e8d719acf900115968cb10ead",
+    "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+    "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38"
+  },
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "dv/tests",
+        "-p",
+        "test_memory_tx_baseline.py",
+        "-v"
+      ],
+      "status": "PASS",
+      "methods": 5,
+      "positive_parameterized_traces": 10,
+      "expected_named_negative_detections": 11
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/check_repository.py"
+      ],
+      "status": "PASS",
+      "requirements": 52,
+      "note": "Missing execution-record link fixed; original failure retained."
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/check_light.py"
+      ],
+      "status": "PASS",
+      "tests": 99
+    }
+  ],
+  "random_seed": null,
+  "production_simulation": "NOT_RUN",
+  "production_formal": "NOT_RUN",
+  "production_coverage": "NOT_RUN",
+  "failure_capture": "../../verification/failures/memory-tx-baseline-missing-record.json"
+}
