@@ -33,7 +33,7 @@ class SchedulerCoverageTests(unittest.TestCase):
 
     def write_code(self,missing=None,zero=None,duplicate=None):
         self.code.write_text("C '\x01f\x02/x/rtl/scheduler/tm_drr.sv\x01t\x02line\x01l\x0230' 1\n"+
-            ''.join("C '\x01t\x02covergroup\x01h\x02top.policy_cg."+name+"' "+str(0 if name==zero else 1)+'\n'
+            ''.join("C '\x01t\x02covergroup\x01h\x02top.policy_cg."+name+"' "+str(0 if name==zero or (name.startswith('replacement_busy.<') and 'auto_1' in name and '<none,' not in name) else 1)+'\n'
                     for name in sorted(self.keys) if name!=missing))
         if duplicate:
             with self.code.open('a') as stream:
@@ -58,6 +58,10 @@ class SchedulerCoverageTests(unittest.TestCase):
             with self.subTest(variant=variant):
                 self.write_code(**{variant:'fit.equal'})
                 with self.assertRaises(ValueError): scheduler_coverage(self.code,1)
+
+    def test_impossible_owned_collision_fails(self):
+        self.code.write_text(self.code.read_text().replace("policy_cg.replacement_busy.<singleton,auto_1>' 0", "policy_cg.replacement_busy.<singleton,auto_1>' 1"))
+        with self.assertRaises(ValueError): scheduler_coverage(self.code,1)
 
     def test_empty_and_code_only_fail(self):
         for text in ('',"C '\x01f\x02/x/rtl/scheduler/tm_drr.sv\x01t\x02line' 1\n"):

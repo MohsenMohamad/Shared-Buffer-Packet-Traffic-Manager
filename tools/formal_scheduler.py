@@ -1,8 +1,17 @@
 """FP-SCHED production grant, credit and bounds proofs; separate RR elaboration."""
 from pathlib import Path
+import re
 from evidence import Case, ROOT, output, sha
 from registry import sources, fingerprint
 from frontend import read_sources
+
+
+def mutation_outcome(step, status, waves, text, detector):
+    failed = re.findall(r'basecase:.*Assert failed in \S+: (\S+)', text)
+    intended = any(name.rsplit('.',1)[-1]==detector for name in failed)
+    traces = any(Path(path).is_file() and Path(path).stat().st_size>0 for path in waves)
+    ok = step['result']!='TIMEOUT' and step['returncode'] not in (0,None) and status=='FAIL' and traces and intended
+    return ('PASS',None,failed) if ok else ('TOOL_ERROR','Missing intended '+detector+' base-case counterexample',failed)
 
 
 def formal_scheduler(run, args, configuration):
@@ -14,7 +23,7 @@ def formal_scheduler(run, args, configuration):
             case = Case(run, f'rtl-scheduler-mode{mode}-{task}')
             case.data.update(configuration=dict(configuration,SCHED_MODE=mode), source_set='formal',
                              registered_source_digests=fingerprint('formal'), frontend='slang',
-                             engine='smtbmc z3', method='bounded reachability depth 16' if task=='cover' else 'unbounded k-induction',
+                             engine='smtbmc z3', method='intended base-case counterexample through depth 8' if detector else 'bounded reachability depth 16' if task=='cover' else 'unbounded k-induction',
                              assumptions='Two startup reset samples; arbitrary later reset. Legal static 64..4096 per-qid quanta. Abstract P03 merged count transitions (0..2), immutable pre-state heads until pop, legal selected packet length 1..MAX. Completion only while TX owns; readiness/completion have no progress bound.')
             paths = ['rtl/include/tm_fixed.sv','rtl/scheduler/tm_drr.sv','formal/scheduler/scheduler_formal.sv']
             files=[]
@@ -50,14 +59,15 @@ def formal_scheduler(run, args, configuration):
             status=status_file.read_text().split()[0] if status_file.is_file() else None
             waves=[str(p) for p in (case.path/'engine').rglob('*.vcd') if p.stat().st_size]
             text=output(step)
+            failed = []
+            reached = re.findall(r'Reached cover statement in step (\d+) at \S+: (\S+)',text)
             if step['result']=='TIMEOUT':
                 result,why='TIMEOUT',step['first_failure']
             elif detector:
-                ok=step['returncode'] not in (0,None) and status=='FAIL' and waves and detector in text and 'Assert failed' in text
-                result,why=('PASS',None) if ok else ('TOOL_ERROR','Missing intended '+detector+' counterexample')
+                result,why,failed=mutation_outcome(step,status,waves,text,detector)
             else:
                 marker='Reached cover statement' if task=='cover' else 'successful proof by k-induction'
                 ok=step['returncode']==0 and status=='PASS' and marker in text and (task!='cover' or bool(waves))
                 result,why=('PASS',None) if ok else ('FAIL' if status=='FAIL' else 'INCONCLUSIVE' if status=='UNKNOWN' else 'TOOL_ERROR','Completed production proof/cover missing')
             case.data['artifacts'].update(status=str(status_file),traces=waves,configuration=str(config))
-            case.finish(result,why,engine_status=status,expected='SEEDED_DEFECT_DETECTION' if detector else task.upper(), detector=detector)
+            case.finish(result,why,engine_status=status,expected='SEEDED_DEFECT_DETECTION' if detector else task.upper(), detector=detector, observed_basecase_assertions=failed, reached_covers=[dict(step=int(depth),name=name) for depth,name in reached])

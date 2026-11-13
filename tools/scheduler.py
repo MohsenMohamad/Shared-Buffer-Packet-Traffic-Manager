@@ -41,6 +41,8 @@ def scheduler_coverage(path, mode):
                          for name in ('insufficient','equal','surplus')})
     if set(bins)!=expected or not points.get('line', {}).get('hit'):
         raise ValueError('Missing scheduler code or functional coverage dimensions')
+    if any(bins[name]>0 for name in excluded if name.startswith('replacement_busy.')):
+        raise ValueError('Impossible dispatch collision during pre-owned TX was hit')
     missing = [name for name in expected-excluded.keys() if bins[name]<=0]
     if missing:
         raise ValueError('Mandatory scheduler bins not hit: '+', '.join(sorted(missing)))
