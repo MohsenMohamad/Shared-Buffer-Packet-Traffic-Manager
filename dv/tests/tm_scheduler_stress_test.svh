@@ -262,9 +262,13 @@ class tm_scheduler_stress_test extends tm_scheduler_rtl_test;
     endtask
     task progress_bound();
         // At least one accepted output beat every three cycles; readiness is
-        // continuously true. A MAX-byte packet retires within TX_BOUND clocks.
+        // continuously true. Every queue in this scenario has MAX-byte packets.
+        // A visit can fund at most floor((4096+MAX-1)/MAX) such packets.
+        // This makes the asserted deadline tighter than the fixture watchdog.
+        // A MAX-byte packet retires within TX_BOUND clocks.
         localparam int TX_BOUND=3*((MAX_PACKET_BYTES+7)/8);
-        localparam longint ROUND_BOUND=longint'(N_Q)*(64'd2+(64'd4096+longint'(MAX_PACKET_BYTES)-64'd1)*(longint'(TX_BOUND)+64'd1));
+        localparam int PACKETS_PER_VISIT=SCHED_MODE==1 ? (4096+MAX_PACKET_BYTES-1)/MAX_PACKET_BYTES : 1;
+        localparam longint ROUND_BOUND=longint'(N_Q)*(64'd2+longint'(PACKETS_PER_VISIT)*(longint'(TX_BOUND)+64'd1));
         int needed, age, entries_at_start, last_entry_cycle, prior_entries;
         reset_case(64,4096);
         for(int q=0;q<N_Q;q++) step(q,MAX_PACKET_BYTES,0);
