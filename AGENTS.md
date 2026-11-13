@@ -13,11 +13,31 @@ Implement the traffic-manager contracts in `docs/spec/`. Use `docs/spec/README.m
 
 Run checks appropriate to the changed behavior. Record exact commands, profiles/seeds and results in the supporting results report; summarize outcomes and essential qualifications in the PR. `make repo-check` checks the repository contract only; it does not validate hardware. A missing executable, empty test selection, ignored construct, timeout or unavailable capability is not PASS. Keep production RTL, testbench, formal and synthesis source lists separate.
 
-Keep build outputs in ignored directories. Preserve important decisions in a short topic-specific decision record; put a reproducible bug/test/fix summary in the PR or issue. Add a compact task handoff only when work actually remains, naming the current revision, known facts, blockers and next command. Do not accumulate conversation transcripts or per-agent diaries.
+Keep build outputs in ignored directories. Preserve important decisions in a short topic-specific decision record; record failures and bugs as described in "Failure capture" below. Add a compact task handoff only when work actually remains, naming the current revision, known facts, blockers and next command. Do not accumulate conversation transcripts or per-agent diaries.
 
 Use technical branch/commit/PR names such as `feat/cell-pool` and `fix(queue): preserve head on simultaneous replacement`. Comments explain behavior and constraints. Do not add generated-by banners, tool signatures, assistant coauthor trailers or conversational provenance. Do not fabricate authorship, credentials, results or dependency provenance.
 
 Do not push directly to the default branch, merge PRs, rewrite shared history or change repository access settings as part of implementation. Prepare a reviewable change; the maintainer controls integration. Check the current base revision before starting dependent work.
+
+## Failure capture
+
+Before repairing an unexpected failed check, including designer smoke,
+simulation, assertions, formal counterexamples and ad-hoc runs, preserve the
+failing source (commit or base plus patch), command/configuration/seed, stimulus
+and failure output. Capture first; classify afterward. Finished runner cases save
+records under `verification/failures/`; preserve equivalent evidence manually
+for ad-hoc/interrupted runs and any inputs the automatic capture cannot retain.
+Review and commit the records before session cleanup.
+
+Give every capture a disposition: `rtl-defect`, `verification-defect`,
+`specification-ambiguity`, `tool-environment` or `unresolved`. Capture tool/build
+errors too; classification must not decide whether evidence is retained.
+Confirmed RTL defects also get a short `docs/bugs.md` entry with root cause,
+fix and detecting before/after regression. Repeated failures may share a diagnosis.
+Expected detections from deliberate faults remain separately labeled. Do not
+count syntax/compile errors or mutations as discovered RTL bugs, and do not discard
+an unexpected failure because it was easy to fix or found by the RTL author.
+See [capture contents and limits](verification/failures/README.md).
 
 ## Hosted CI iteration
 

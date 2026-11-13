@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT / 'tools'))
 from evidence import Run, completed, execute, output
 from run import assertion_result, inspect_coverage, unit
 from setup_toolchain import fetch
+from runner_fixture import isolated_runner_repository
 
 
 def process_stopped(pid):
@@ -123,19 +124,21 @@ class RunnerTests(unittest.TestCase):
         tests = self.path / 'empty-tests'
         tests.mkdir()
         run = Run(self.path / 'empty-unit-run')
-        with patch('run.FIXTURES', tests):
+        with patch('run.FIXTURES', tests), patch('failure_capture.capture_failure',
+                                               return_value='fixture-only.json'):
             unit(run, SimpleNamespace(timeout=10))
         self.assertIn(run.cases[0].data['result'], ('FAIL', 'TOOL_ERROR'))
         self.assertIn('Ran 0 tests', output(run.cases[0].data['steps'][0]))
 
     def test_cli_rejects_empty_unknown_and_unimplemented(self):
+        checkout = isolated_runner_repository(self.path / 'checkout', ROOT)
         for args, expected in [(['ci', '--test', ''], 'TOOL_ERROR'),
                                (['ci', '--test', 'missing'], 'TOOL_ERROR'),
                                (['coverage'], 'TOOL_ERROR'),
                                (['uvm', '--seed', '17'], 'TOOL_ERROR'),
                                (['ci', '--jobs', '0'], 'TOOL_ERROR')]:
             path = self.path / str(len(list(self.path.iterdir())))
-            result = subprocess.run([sys.executable, str(ROOT / 'tools/run.py'), *args,
+            result = subprocess.run([sys.executable, str(checkout / 'tools/run.py'), *args,
                                      '--output', str(path)], capture_output=True, text=True, timeout=30)
             self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
             summary, = path.glob('*/summary.json')
