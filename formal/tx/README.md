@@ -42,14 +42,16 @@ unbounded safety; timeouts, UNKNOWN and cover/replay PASS do not.
 
 The production-supported formal dimensions are N_RX=1, N_Q=2, N_CELL=16,
 N_DESC=8, CELL_BYTES=16 and MAX_PACKET_BYTES=128. Latency 1/2 crosses depth 4/8.
-An independent eight-cell symbolic permutation is a committed-chain environment
-knob, not a claim that the production module elaborates at eight physical cells.
+An arbitrary eight-cell permutation is captured at each accepted dispatch. It
+is a committed-chain environment knob, not a claim that the production module
+elaborates at eight physical cells. All stimuli use F01 explicit input ports;
+the chain may change for every packet. No global chain-stability assumption remains.
 
 | Environment contract | Excluded behavior and nonvacuity |
 | --- | --- |
 | Two startup reset samples; arbitrary later resets, including short later resets | New dispatch waits through initialization. Pending-reset and same-ID/tag restart covers remain required. |
 | Legal idle-only dispatch, every length 1..128, arbitrary descriptor/tag/qid | Excludes busy dispatch and malformed descriptors outside the TX API contract; no packet size is selected from DUT state. |
-| Eight distinct arbitrary chain cells, fixed across all resets by F01 sticky history | Allows every cell permutation and one-to-eight-cell packet prefixes. Owned links are immutable; returned links may change immediately. This is a local ownership contract, not a caller/pool composition proof. |
+| A fresh arbitrary eight-cell permutation on each accepted dispatch | Allows every legal chain prefix and changing chains across ID/tag reuse. Only non-tail owned links are immutable; tail and returned links are arbitrary. A prefix can always extend to eight distinct IDs in the sixteen-cell configuration. This is a local ownership contract, not a caller/pool composition proof. |
 | Arbitrary 64-bit word sampled at each read, exact unreset physical response pipeline | No response backpressure or reset cancellation is assumed. Payload memory structure/byte readback is independently exercised in simulation. |
 | Sink readiness is an unconstrained input | Safety has no fairness, maximum-stall or always-ready assumption. Performance simulation names its readiness boundary separately. |
 

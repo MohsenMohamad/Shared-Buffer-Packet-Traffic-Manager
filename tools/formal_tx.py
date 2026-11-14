@@ -32,7 +32,7 @@ def formal_tx(run,args,configuration):
                 induction_depth=2
                 case.data.update(configuration=params,candidate=identity,source_set='formal',
                     engine='smtbmc z3',method=f'unbounded k-induction, maximum depth {induction_depth}' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
-                    assumptions='Two startup reset samples; arbitrary later resets and sink stalls. Legal idle-only dispatch, 1..128 byte packets. Eight distinct arbitrary fixed cell IDs stable across every reset by F01 history; arbitrary input word captured on each read with exact unreset physical response latency. Returned links may change immediately. No fairness assumption.')
+                    assumptions='Two startup reset samples; arbitrary later resets and sink stalls. Legal idle-only dispatch, 1..128 byte packets. An arbitrary distinct eight-cell permutation is captured per accepted dispatch using F01 explicit time-varying input ports; tails and returned links are arbitrary; arbitrary input word captured on each read with exact unreset physical response latency. Returned links may change immediately. No fairness assumption.')
                 paths=['rtl/include/tm_fixed.sv','rtl/tx/tm_tx.sv','formal/tx/tx_formal.sv']
                 headers=['rtl/include/tm_types.svh','rtl/include/tm_parameters.svh','rtl/include/tm_validate.svh']
                 check_sources([ROOT/p for p in paths+headers],[ROOT/'rtl/include'])

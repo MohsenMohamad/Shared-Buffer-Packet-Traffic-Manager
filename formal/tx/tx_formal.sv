@@ -5,7 +5,7 @@ module tx_formal #(
   input logic [15:0] length_input, tag_input,
   input logic [DESC_ID_W-1:0] descriptor_input,
   input logic qid_input,
-  input logic [8*CELL_ID_W-1:0] chain_witness,
+  input logic [8*CELL_ID_W-1:0] chain_input,
   input logic [63:0] read_word,
   input logic [CELL_ID_W-1:0] reused_link);
 `include "tm_types.svh"
@@ -13,6 +13,7 @@ localparam integer CW=CELL_BYTES/8;
 logic history=0;
 logic [1:0] startup=0;
 logic initialized=0, live=0;
+logic [8*CELL_ID_W-1:0] owned_chain;
 logic ever_work=0, reset_after_work=0, reset_pending_seen=0;
 logic [MEM_RD_LATENCY-1:0] physical_valid='0, live_valid='0;
 logic [63:0] physical_data[MEM_RD_LATENCY];
@@ -37,7 +38,7 @@ beat_t beat;
 logic fire, arrival, held=0;
 beat_t held_beat;
 function automatic cell_id_t chain(input integer index);
-    return chain_witness[(index%8)*CELL_ID_W +: CELL_ID_W];
+    return owned_chain[(index%8)*CELL_ID_W +: CELL_ID_W];
 endfunction
 assign fire=valid && sink_ready;
 assign arrival=live_valid[MEM_RD_LATENCY-1] && response.valid;
@@ -48,11 +49,11 @@ always_comb begin
     dispatch.valid=request && rst_n && initialized;
     dispatch.desc=descriptor_input;
     dispatch.qid=qid_t'(qid_input);
-    dispatch.info='{head:chain(0),ncell:cell_count_t'((int'(length_input)+CELL_BYTES-1)/CELL_BYTES),
+    dispatch.info='{head:cell_id_t'(chain_input[0 +: CELL_ID_W]),ncell:cell_count_t'((int'(length_input)+CELL_BYTES-1)/CELL_BYTES),
         length:length_input,qid:qid_t'(qid_input),tag:tag_input,source:'0};
     next_cell=cell_id_t'(reused_link);
     for(int i=0;i<7;i++)
-        if(link_cell==chain(i) && !returned[link_cell]) next_cell=chain(i+1);
+        if(link_cell==chain(i) && !returned[link_cell] && (i+1)*CELL_BYTES<int'(length)) next_cell=chain(i+1);
 end
 tm_tx_api #(.N_RX(N_RX),.N_Q(N_Q),.N_CELL(N_CELL),.N_DESC(N_DESC),.CELL_BYTES(CELL_BYTES),
  .MAX_PACKET_BYTES(MAX_PACKET_BYTES),.MEM_RD_LATENCY(MEM_RD_LATENCY),.TX_FIFO_DEPTH(TX_FIFO_DEPTH)) dut(
@@ -60,10 +61,9 @@ tm_tx_api #(.N_RX(N_RX),.N_Q(N_Q),.N_CELL(N_CELL),.N_DESC(N_DESC),.CELL_BYTES(CE
  .m_valid(valid),.m_beat(beat),.m_ready(sink_ready),.cell_return,.tx_done(done),.idle);
 always_ff @(posedge clk) begin
     history<=1;
-    if(history) assume(chain_witness==$past(chain_witness)); // F01: survives every reset.
-    for(int i=0;i<8;i++)begin
-        assume(int'(chain(i))<N_CELL);
-        for(int j=0;j<i;j++) assume(chain(i)!=chain(j));
+    if(dispatch.valid)for(int i=0;i<8;i++)begin
+        assume(int'(cell_id_t'(chain_input[i*CELL_ID_W +: CELL_ID_W]))<N_CELL);
+        for(int j=0;j<i;j++) assume(chain_input[i*CELL_ID_W +: CELL_ID_W]!=chain_input[j*CELL_ID_W +: CELL_ID_W]);
     end
     if(startup<2)begin startup<=startup+1;assume(!rst_n);end
     if(dispatch.valid)begin
@@ -78,13 +78,15 @@ always_ff @(posedge clk) begin
     if(!rst_n && ever_work) reset_after_work<=1;
     c_reset_pending:cover(!rst_n && slots>0 && |physical_valid);
     if(!rst_n && slots>0) reset_pending_seen<=1;
-    c_reset_reuse:cover(reset_pending_seen && dispatch.valid && tag_input==tag && descriptor_input==descriptor);
+    c_reset_reuse:cover(reset_pending_seen && dispatch.valid && tag_input==tag && descriptor_input==descriptor && chain_input[0 +: CELL_ID_W]==chain(0));
+    c_new_chain:cover(ever_work && dispatch.valid && chain_input!=owned_chain);
     if(!rst_n)begin
         initialized<=0;live<=0;slots<=0;arrived<=0;issued<=0;retired<=0;total<=0;
         live_valid<='0;returned<='0;held<=0;
         a_reset:assert(!valid && !read_req.valid && !cell_return.valid && !done.valid);
     end else begin
         initialized<=1;
+        a_response_contract:assert((live_valid & ~physical_valid)==0);
         a_inactive_empty:assert(live || slots==0);
         a_initialized_history:assert(!initialized || history);
         a_credit:assert(slots+int'(read_req.valid)-int'(fire)<=TX_FIFO_DEPTH);
@@ -129,7 +131,7 @@ always_ff @(posedge clk) begin
         for(int j=1;j<MEM_RD_LATENCY;j++) response_index[j]<=response_index[j-1];
         live_valid<=(live_valid<<1)|MEM_RD_LATENCY'(read_req.valid);
         if(dispatch.valid)begin
-            live<=1;issued<=0;retired<=0;length<=length_input;tag<=tag_input;
+            owned_chain<=chain_input;live<=1;issued<=0;retired<=0;length<=length_input;tag<=tag_input;
             total<=(int'(length_input)+7)/8;descriptor<=descriptor_input;qid<=qid_t'(qid_input);returned<='0;
         end
         // Binding lemmas relate production storage to independently observed event totals.
@@ -184,6 +186,16 @@ end
 for(genvar i=0;i<8;i++)begin:g_returned
     always_ff @(posedge clk) if(rst_n && live)begin
         a_return_mask:assert(returned[chain(i)]==(i*CW<total && retired>=((i+1)*CW<total ? (i+1)*CW : total)));
+    end
+end
+for(genvar i=0;i<8;i++)begin:g_owned_chain
+    always_ff @(posedge clk) if(rst_n && live)begin
+        a_owned_range:assert(int'(chain(i))<N_CELL);
+    end
+    for(genvar j=0;j<i;j++)begin:g_distinct
+        always_ff @(posedge clk) if(rst_n && live)begin
+            a_owned_distinct:assert(chain(i)!=chain(j));
+        end
     end
 end
 endmodule

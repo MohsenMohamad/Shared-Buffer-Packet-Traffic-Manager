@@ -115,7 +115,7 @@
       "families": [
         "FP-TX"
       ],
-      "scope": "Production-supported dimensions; fixed arbitrary eight-cell permutation and arbitrary legal length, response data, sink stalls and later reset. Payload RAM abstracted by explicit fixed-latency contract."
+      "scope": "Production-supported dimensions; arbitrary legal chain captured per dispatch and arbitrary legal length, response data, sink stalls and later reset. Tail/returned links are arbitrary. Payload RAM is abstracted by its exact unreset fixed-latency contract."
     }
   },
   "scope": "Local production storage, queue/link, scheduler and CSR APIs at named reduced configurations. No integrated RX/TX ownership or payload-path composition.",
