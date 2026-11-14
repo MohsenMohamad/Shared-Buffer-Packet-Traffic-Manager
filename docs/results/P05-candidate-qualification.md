@@ -5,6 +5,12 @@ RTL revision `479b5c1ceee2eee8db58d863bd5de5e20305cc8c`. All required local func
 source-fault and reduced production safety checks pass. No RTL defect is
 confirmed. Hosted CI remains a separate required integration gate, recorded on
 [qualification PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26).
+All six candidate jobs also pass on hosted run
+[43581916024](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43581916024)
+at delivery input `90363c81c814ee8a35b97128acb2eb1b1dfb62f3`, including E0 proofs, covers
+and mutation qualification. That run exposed the separate exact-set contracts
+test defect retained below. The final full gate after its DV-only repair is
+recorded on PR #26 without relabeling these executed sources.
 The qualification PR remains available for exact merged-source confirmation.
 Neither this PR nor [RTL PR #24](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24) is merged by this task.
 
@@ -55,7 +61,7 @@ canonical recombination trees match the captured source trees.
 | End accounting | PASS: frozen oracle and independent ledger finish empty. An observed-trace audit also accounts for physical responses, live arrivals, reset-cancelled pending/buffered beats, bytes, cells and descriptors. All six independent total equations pass in every run. |
 | Saved coverage | PASS: all 96 unmutated coverage inputs validate against HDL, adapter/checker, binary, sample and coverage hashes. Numeric line/branch/expression/toggle counts are saved per elaboration; no code-coverage closure or P12B structural comparison is claimed. |
 | Source-copy detector qualification | PASS: omitted outstanding credit, premature return and stale-response validity hit their intended simulation and formal detectors. Final-output suppression hits bounded missing-final shutdown. Simulation servers exit normally and the legal neighbor passes; crashes do not qualify. These are expected seeded negatives, not discovered RTL bugs. |
-| Standard/affected regressions | PASS: doctor, repository contracts, 114 light tests, two runner capture tests, E0 oracle qualification (20 runner cases), fresh I1 P07/UVM replay qualification (32 runner cases), and repository lint/compile-error fixtures. Oracle/bench counts each include four doctor cases and remain separate from production execution. |
+| Standard/affected regressions | PASS: doctor, repository contracts, 114 light tests, two runner capture tests, E0 oracle qualification (20 runner cases), fresh I1 P07/UVM replay qualification (32 runner cases), E0 contracts (76 runner cases including four doctor cases and twelve contract units), and repository lint/compile-error fixtures. Oracle/bench counts each include four doctor cases and remain separate from production execution. |
 | Opaque command | PASS: I1 command executed with child exit 0; public stimulus and expected/observed results are retained separately from full DV diagnostics. |
 
 The baseline below is seed 17, latency 1, depth 4. Counts span intentional reset

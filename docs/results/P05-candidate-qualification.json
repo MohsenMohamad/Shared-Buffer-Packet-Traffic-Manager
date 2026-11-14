@@ -24425,7 +24425,33 @@
     "verification-defect": 21
   },
   "historical_preparation_provenance": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
-  "hosted_ci": "Recorded separately on PR #26; local evidence does not substitute for hosted required checks.",
+  "hosted_ci": {
+    "status": "FINAL_DELIVERY_GATE_PENDING",
+    "candidate_jobs_first_attempt": {
+      "run_id": 43581916024,
+      "dv_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
+      "hosted_merge_revision": "bec8f462ed8ae1dd4f2162b9e4696b3b5dbb6146",
+      "result": "PASS",
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "job_ids": [
+        132408406756,
+        132408406776,
+        132408406771,
+        132408406774,
+        132408406788,
+        132408406881
+      ],
+      "scope": "All six production matrices and saved coverage, plus E0 unbounded safety/covers/source-copy mutations. The separate contracts job failed before its captured DV-only repair; this is not a full-CI PASS."
+    },
+    "final_gate_record": "Qualification PR #26 records the final delivery run and conclusion without changing the tested source."
+  },
   "merged_source_confirmation": "NOT_RUN: RTL PR #24 is unmerged",
   "structural_comparison": "P12B retained; no structural comparison or code coverage closure claimed.",
   "named_profiles": 6,
@@ -24486,6 +24512,397 @@
     "runner_capture_tests": {
       "result": "PASS",
       "count": 2
+    },
+    "contracts_after_ci_registration_repair": {
+      "result": "PASS",
+      "profile": "E0",
+      "seed": 17,
+      "cases": 76,
+      "command": "python3 tools/run.py regression --profile E0 --test contracts --seed 17 --jobs 2",
+      "combined_revision": "a6739669623f85af4a033db0a422273d1ea59f9c",
+      "cases_summary": [
+        {
+          "test": "versions",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/versions/manifest.json"
+        },
+        {
+          "test": "opensta-source",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/opensta-source/manifest.json"
+        },
+        {
+          "test": "cxx20",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/cxx20/manifest.json"
+        },
+        {
+          "test": "solver-sat-unsat",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/solver-sat-unsat/manifest.json"
+        },
+        {
+          "test": "verilator-E0",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-E0/manifest.json"
+        },
+        {
+          "test": "verilator-E0-monitor",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-E0-monitor/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-data-width",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-data-width/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-rx-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-rx-count/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-queue-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-queue-count/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-cell-size",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-cell-size/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-cell-power",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-cell-power/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-cell-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-cell-min/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-cell-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-cell-max/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-desc-power",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-desc-power/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-desc-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-desc-min/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-desc-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-desc-max/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-length-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-length-min/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-length-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-length-max/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-capacity",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-capacity/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-rx-depth",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-rx-depth/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-read-latency",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-read-latency/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-read-credit",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-read-credit/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-scheduler",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-scheduler/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-quantum-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-quantum-min/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-quantum-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-quantum-max/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-trace",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-trace/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-cell-index",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-cell-index/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-desc-index",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-desc-index/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-cell-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-cell-count/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-desc-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-desc-count/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-deficit",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-deficit/manifest.json"
+        },
+        {
+          "test": "verilator-options",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-options/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-counter-zero",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-counter-zero/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-counter-wide",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-counter-wide/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-bitmap-capacity",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-bitmap-capacity/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-bitmap-id-zero",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-bitmap-id-zero/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-bitmap-id-small",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-bitmap-id-small/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-bitmap-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-bitmap-count/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-bitmap-returns-zero",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-bitmap-returns-zero/manifest.json"
+        },
+        {
+          "test": "verilator-invalid-bitmap-returns-three",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/verilator-invalid-bitmap-returns-three/manifest.json"
+        },
+        {
+          "test": "yosys-E0",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-E0/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-data-width",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-data-width/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-rx-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-rx-count/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-queue-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-queue-count/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-cell-size",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-cell-size/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-cell-power",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-cell-power/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-cell-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-cell-min/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-cell-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-cell-max/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-desc-power",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-desc-power/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-desc-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-desc-min/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-desc-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-desc-max/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-length-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-length-min/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-length-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-length-max/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-capacity",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-capacity/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-rx-depth",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-rx-depth/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-read-latency",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-read-latency/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-read-credit",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-read-credit/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-scheduler",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-scheduler/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-quantum-min",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-quantum-min/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-quantum-max",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-quantum-max/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-trace",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-trace/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-cell-index",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-cell-index/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-desc-index",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-desc-index/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-cell-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-cell-count/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-desc-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-desc-count/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-deficit",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-deficit/manifest.json"
+        },
+        {
+          "test": "yosys-options",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-options/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-counter-zero",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-counter-zero/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-counter-wide",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-counter-wide/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-bitmap-capacity",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-bitmap-capacity/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-bitmap-id-zero",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-bitmap-id-zero/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-bitmap-id-small",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-bitmap-id-small/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-bitmap-count",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-bitmap-count/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-bitmap-returns-zero",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-bitmap-returns-zero/manifest.json"
+        },
+        {
+          "test": "yosys-invalid-bitmap-returns-three",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/yosys-invalid-bitmap-returns-three/manifest.json"
+        },
+        {
+          "test": "independent-event-batching",
+          "result": "PASS",
+          "manifest": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T094741.633726+0000-aa44b5c3/independent-event-batching/manifest.json"
+        }
+      ],
+      "scope": "Twelve contract units, callback-order replay and frontends/invalid parameters. Includes four doctor cases; not production memory/TX execution."
     }
   },
   "expected_negative_capture_artifacts": [
