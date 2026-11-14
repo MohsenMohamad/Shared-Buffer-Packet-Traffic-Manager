@@ -41,7 +41,7 @@ class WorkflowTests(unittest.TestCase):
     def test_cleanup_waits_for_all_consumers_even_if_they_fail(self):
         consumers = {name for name, body in self.jobs.items()
                      if re.search(r'^    needs: prepare$', body, re.M)}
-        self.assertEqual(consumers, {'capability', 'contracts', 'storage', 'csr', 'foundation', 'scheduler'})
+        self.assertEqual(consumers, {'capability', 'contracts', 'storage', 'csr', 'foundation', 'scheduler', 'memory_tx'})
         cleanup = self.jobs['cleanup-handoff']
         dependencies = re.search(r'^    needs: \[([^]]+)\]$', cleanup, re.M).group(1)
         self.assertEqual({name.strip() for name in dependencies.split(',')},

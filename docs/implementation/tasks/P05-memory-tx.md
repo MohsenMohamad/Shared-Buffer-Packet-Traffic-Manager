@@ -2,17 +2,24 @@
 
 ## Objective and prerequisites
 
-Current stage: fresh independent verification preparation from specifications
-and public declarations only. Prepare the finite-port store/TX expectations and
-qualified bench before a fresh RTL task. This preparation establishes no
-hardware acceptance.
+Current stage: **MERGED-SOURCE PASS** for the scoped RAM/metadata/TX component
+at PR #24 merge/current main `3ede1a5e40791ff00d98a0faa8389154d632e0c5`.
+Production confirmation uses tested DV/combined revision
+`fd129b1e0d7566c460962b6869aa2274f7a24fa9`, tree
+`c1c3033decc4fc1b16aab4702ac9da4714ef2353`. See
+[qualification and merged-source evidence](../../results/P05-candidate-qualification.md)
+and [public interface results](../../results/P05-candidate-public.json).
+Final full hosted CI and relevant main CI remain explicit merge gates, recorded
+on [DV PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26).
 
 Dependencies: [P03](P03-queues.md)
 
 Prepared evidence is in [PR #23 results](../../results/P05-fresh-dv-preparation.md).
 All six scoped oracle/UVM profiles pass; the report records a confirmed pre-model dependency RTL/results exposure.
-Independence acceptance is not established and requires independent review. This remains a
-preparation PR, with no hardware acceptance or automatic RTL handover.
+Historical preparation independence acceptance is not established and requires
+independent review. The subsequent candidate and actual merged-source results
+do not retroactively clear that caveat. Preparation alone established no hardware
+acceptance; current component evidence and its limits are recorded separately.
 
 ## Sources and work boundary
 
@@ -27,11 +34,11 @@ for source access, preparation acceptance and candidate/merged-source gates.
 
 `rtl/memory/`, `rtl/tx/`, memory/TX benches, `formal/tx/` and memory-TX suite registration.
 
-## Later RTL and production-DV scope
+## Implemented RTL and production-DV scope
 
-The root policy defines the current preparation acceptance criteria. The
-following implementation/check obligations remain for later separately assigned
-tasks; this card does not authorize automatic handover.
+The following obligations define the delivered implementation and production-DV
+scope. Verification uses unchanged specification-derived expectations and actual
+integrated RTL; original candidate/proof executions retain their identities.
 
 ## Execution sequence
 
@@ -49,7 +56,7 @@ tasks; this card does not authorize automatic handover.
 
 7. Check dispatch-to-first-valid and steady multi-beat behavior under an always-ready sink. Diagnose cell-boundary bubbles against the specified bound rather than hiding them in throughput averages.
 
-8. Register `memory-tx` simulation/proof suites. Prove reduced production read-credit and retirement safety with arbitrary sink stalls; reach stalled-pending-read covers and detect omission of outstanding-read credits. Physical banked comparison work is completed in P12; a delayed behavioral read alone does not establish it.
+8. Register `memory-tx` simulation/proof suites. Prove reduced production read-credit and retirement safety with arbitrary sink stalls; reach stalled-pending-read covers and detect omission of outstanding-read credits. Physical banked comparison remains separate P12B work; a delayed behavioral read alone does not establish it.
 
 ## Required checks
 
@@ -61,6 +68,15 @@ tasks; this card does not authorize automatic handover.
 | Proof/checker | Production credit/retirement properties, reachable pressure, and intended outstanding-credit mutation detection. |
 
 ## Completion
+
+| Current P05 evidence | Status and boundary |
+| --- | --- |
+| Production data/metadata/credit/ownership/reset checks | PASS across the retained six-profile matrix; fresh sixteen-run integrated I1 confirmation also passes. |
+| Exact merged source | PASS at the merge/current-main SHA above; all sixteen fresh trace hashes match the original corresponding runs. |
+| Reduced FP-TX | Four unbounded safety proofs and all required covers/mutation detections retain applicability through verified input equality; arbitrary sink stalls remain permitted. |
+| Transaction/resource shutdown and saved coverage | PASS; no live resource or response obligation remains. Numeric code counters do not establish coverage closure. |
+| Final hosted integration gate | Required full DV and main run conclusions are recorded on PR #26; light-only success is insufficient. |
+| Remaining scope | Historical preparation provenance review, caller/pool composition and P12B structural comparison remain separate; no retroactive independence or structural signoff is claimed. |
 
 The memory/TX portion of G2 has real byte/latency/ownership checks for both response latencies and scoped safety evidence. Any missed specified timing/performance bound is identified before dependent integration.
 

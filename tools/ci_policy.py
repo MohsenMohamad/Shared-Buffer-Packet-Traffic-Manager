@@ -9,7 +9,7 @@ import subprocess
 # Only orientation/prose documents are cosmetic. Never allow all docs or *.md.
 COSMETIC = frozenset(('README.md',))
 REQUIRED = ('repository', 'policy', 'prepare', 'capability', 'contracts', 'storage',
-            'csr', 'foundation', 'scheduler')
+            'csr', 'foundation', 'scheduler', 'memory_tx')
 
 
 def complete_paths(event, root):

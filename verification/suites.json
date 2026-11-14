@@ -164,9 +164,9 @@
         "E1"
       ],
       "source_sets": [
-        "memory-tx-preparation"
+        "memory-tx"
       ],
-      "scope": "Future actual memory/TX DUT qualification; NOT_IMPLEMENTED during preparation"
+      "scope": "Exact-source production RAM/metadata/TX against frozen observed-write checker; explicit candidate revision, latency/depth/seed matrix and mandatory observed bins"
     }
   }
 }

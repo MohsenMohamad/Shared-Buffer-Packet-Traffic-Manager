@@ -176,10 +176,15 @@ jobs:
     uses: ./.github/workflows/uvm-foundation.yml
     with:
       toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+  memory_tx:
+    needs: prepare
+    uses: ./.github/workflows/memory-tx.yml
+    with:
+      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
   cleanup-handoff:
     name: cleanup-handoff
     if: ${{ always() && needs.prepare.result != 'skipped' }}
-    needs: [prepare, capability, contracts, storage, csr, foundation, scheduler]
+    needs: [prepare, capability, contracts, storage, csr, foundation, scheduler, memory_tx]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -202,7 +207,7 @@ jobs:
   full-ci-summary:
     name: full-ci-summary
     if: ${{ always() }}
-    needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation, scheduler]
+    needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation, scheduler, memory_tx]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

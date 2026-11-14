@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "include_dirs": [
+    "rtl/include",
+    "dv/memory_tx"
+  ],
+  "sources": [
+    "rtl/include/tm_fixed.sv",
+    "rtl/queue/tm_desc_links.sv",
+    "rtl/memory/tm_packet_ram.sv",
+    "rtl/memory/tm_metadata.sv",
+    "rtl/tx/tm_tx.sv",
+    "dv/memory_tx/dut_top.sv"
+  ],
+  "headers": [
+    "rtl/include/tm_parameters.svh",
+    "rtl/include/tm_types.svh",
+    "rtl/include/tm_validate.svh",
+    "dv/memory_tx/wires.svh"
+  ],
+  "scope": "Candidate production component binding only; no designer smoke or replay source inheritance."
+}

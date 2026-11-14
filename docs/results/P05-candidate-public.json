@@ -1,0 +1,5263 @@
+{
+  "verdict": "PRE_MERGE_CANDIDATE_PASS",
+  "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+  "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+  "qualification_pr": 26,
+  "rtl_pr": 24,
+  "configurations": [
+    {
+      "profile": "F0",
+      "configuration": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9334,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 2990,
+        "responses": 2988,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 2990,
+          "response": 2990,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 12,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F0",
+      "configuration": {
+        "latency": 1,
+        "depth": 8,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9469,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 3002,
+        "responses": 3000,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 3002,
+          "response": 3002,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 24,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F0",
+      "configuration": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9386,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 2990,
+        "responses": 2987,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 2990,
+          "response": 2990,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 11,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F0",
+      "configuration": {
+        "latency": 2,
+        "depth": 8,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9516,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 3002,
+        "responses": 2999,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 3002,
+          "response": 3002,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 23,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082628.987137+0000-6353b6da/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F1",
+      "configuration": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9334,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 2990,
+        "responses": 2988,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 2990,
+          "response": 2990,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 12,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F1",
+      "configuration": {
+        "latency": 1,
+        "depth": 8,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9469,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 3002,
+        "responses": 3000,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 3002,
+          "response": 3002,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 24,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F1",
+      "configuration": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9386,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 2990,
+        "responses": 2987,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 2990,
+          "response": 2990,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 11,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "F1",
+      "configuration": {
+        "latency": 2,
+        "depth": 8,
+        "cell_bytes": 64,
+        "cells": 1024,
+        "descriptors": 256,
+        "max_length": 1536,
+        "queues": 16,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 9516,
+        "reserves": 49,
+        "allocations": 513,
+        "writes": 3929,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 3002,
+        "responses": 2999,
+        "outputs": 2976,
+        "bytes": 23684,
+        "frees": 392,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 81
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 3002,
+          "response": 3002,
+          "reserve": 49,
+          "allocate": 513,
+          "free": 392,
+          "done": 43,
+          "input_bytes": 31308,
+          "outputs": 2976,
+          "output_bytes": 23684
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 23,
+          "descriptors": 6,
+          "cells": 121,
+          "bytes": 7624
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 1024
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082737.486460+0000-0a6841bb/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I0",
+      "configuration": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2648,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 514,
+        "responses": 512,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 514,
+          "response": 514,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 12,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I0",
+      "configuration": {
+        "latency": 1,
+        "depth": 8,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2785,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 526,
+        "responses": 524,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 526,
+          "response": 526,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 24,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I0",
+      "configuration": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2699,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 514,
+        "responses": 511,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 514,
+          "response": 514,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 11,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I0",
+      "configuration": {
+        "latency": 2,
+        "depth": 8,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2837,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 526,
+        "responses": 523,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 526,
+          "response": 526,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 23,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.561736+0000-82c47688/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I1",
+      "configuration": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2648,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 514,
+        "responses": 512,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 514,
+          "response": 514,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 12,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I1",
+      "configuration": {
+        "latency": 1,
+        "depth": 8,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2785,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 526,
+        "responses": 524,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 526,
+          "response": 526,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 24,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I1",
+      "configuration": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2699,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 514,
+        "responses": 511,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 514,
+          "response": 514,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 11,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "I1",
+      "configuration": {
+        "latency": 2,
+        "depth": 8,
+        "cell_bytes": 16,
+        "cells": 32,
+        "descriptors": 16,
+        "max_length": 256,
+        "queues": 4,
+        "sources": 2
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 2837,
+        "reserves": 49,
+        "allocations": 342,
+        "writes": 659,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 526,
+        "responses": 523,
+        "outputs": 500,
+        "bytes": 3864,
+        "frees": 261,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 56
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 526,
+          "response": 526,
+          "reserve": 49,
+          "allocate": 342,
+          "free": 261,
+          "done": 43,
+          "input_bytes": 5136,
+          "outputs": 500,
+          "output_bytes": 3864
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 23,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 1272
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 32
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082446.300281+0000-9d54b97d/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E0",
+      "configuration": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 16,
+        "descriptors": 8,
+        "max_length": 128,
+        "queues": 2,
+        "sources": 1
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 1782,
+        "reserves": 49,
+        "allocations": 200,
+        "writes": 377,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 312,
+        "responses": 310,
+        "outputs": 298,
+        "bytes": 2268,
+        "frees": 159,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 33
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 312,
+          "response": 312,
+          "reserve": 49,
+          "allocate": 200,
+          "free": 159,
+          "done": 43,
+          "input_bytes": 2900,
+          "outputs": 298,
+          "output_bytes": 2268
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 12,
+          "descriptors": 6,
+          "cells": 41,
+          "bytes": 632
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 16
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E0",
+      "configuration": {
+        "latency": 1,
+        "depth": 8,
+        "cell_bytes": 16,
+        "cells": 16,
+        "descriptors": 8,
+        "max_length": 128,
+        "queues": 2,
+        "sources": 1
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 1934,
+        "reserves": 49,
+        "allocations": 200,
+        "writes": 377,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 324,
+        "responses": 322,
+        "outputs": 298,
+        "bytes": 2268,
+        "frees": 159,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 33
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 324,
+          "response": 324,
+          "reserve": 49,
+          "allocate": 200,
+          "free": 159,
+          "done": 43,
+          "input_bytes": 2900,
+          "outputs": 298,
+          "output_bytes": 2268
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 24,
+          "descriptors": 6,
+          "cells": 41,
+          "bytes": 632
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 16
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E0",
+      "configuration": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 16,
+        "cells": 16,
+        "descriptors": 8,
+        "max_length": 128,
+        "queues": 2,
+        "sources": 1
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 1845,
+        "reserves": 49,
+        "allocations": 200,
+        "writes": 377,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 312,
+        "responses": 309,
+        "outputs": 298,
+        "bytes": 2268,
+        "frees": 159,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 33
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 312,
+          "response": 312,
+          "reserve": 49,
+          "allocate": 200,
+          "free": 159,
+          "done": 43,
+          "input_bytes": 2900,
+          "outputs": 298,
+          "output_bytes": 2268
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 11,
+          "descriptors": 6,
+          "cells": 41,
+          "bytes": 632
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 16
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E0",
+      "configuration": {
+        "latency": 2,
+        "depth": 8,
+        "cell_bytes": 16,
+        "cells": 16,
+        "descriptors": 8,
+        "max_length": 128,
+        "queues": 2,
+        "sources": 1
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 1978,
+        "reserves": 49,
+        "allocations": 200,
+        "writes": 377,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 324,
+        "responses": 321,
+        "outputs": 298,
+        "bytes": 2268,
+        "frees": 159,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 33
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 324,
+          "response": 324,
+          "reserve": 49,
+          "allocate": 200,
+          "free": 159,
+          "done": 43,
+          "input_bytes": 2900,
+          "outputs": 298,
+          "output_bytes": 2268
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 23,
+          "descriptors": 6,
+          "cells": 41,
+          "bytes": 632
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 16
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082316.566669+0000-4cd83dca/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E1",
+      "configuration": {
+        "latency": 1,
+        "depth": 4,
+        "cell_bytes": 32,
+        "cells": 64,
+        "descriptors": 32,
+        "max_length": 512,
+        "queues": 8,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 3950,
+        "reserves": 49,
+        "allocations": 349,
+        "writes": 1320,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 1017,
+        "responses": 1015,
+        "outputs": 1003,
+        "bytes": 7876,
+        "frees": 268,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 49
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 1017,
+          "response": 1017,
+          "reserve": 49,
+          "allocate": 349,
+          "free": 268,
+          "done": 43,
+          "input_bytes": 10412,
+          "outputs": 1003,
+          "output_bytes": 7876
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 12,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 2536
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 64
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E1",
+      "configuration": {
+        "latency": 1,
+        "depth": 8,
+        "cell_bytes": 32,
+        "cells": 64,
+        "descriptors": 32,
+        "max_length": 512,
+        "queues": 8,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 4083,
+        "reserves": 49,
+        "allocations": 349,
+        "writes": 1320,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 1029,
+        "responses": 1027,
+        "outputs": 1003,
+        "bytes": 7876,
+        "frees": 268,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 3,
+        "ready_first_valid_max": 3,
+        "first_valid_bound": 5,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 49
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 1029,
+          "response": 1029,
+          "reserve": 49,
+          "allocate": 349,
+          "free": 268,
+          "done": 43,
+          "input_bytes": 10412,
+          "outputs": 1003,
+          "output_bytes": 7876
+        },
+        "reset_cancelled": {
+          "pending": 2,
+          "buffered": 24,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 2536
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 64
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E1",
+      "configuration": {
+        "latency": 2,
+        "depth": 4,
+        "cell_bytes": 32,
+        "cells": 64,
+        "descriptors": 32,
+        "max_length": 512,
+        "queues": 8,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 3973,
+        "reserves": 49,
+        "allocations": 349,
+        "writes": 1320,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 1017,
+        "responses": 1014,
+        "outputs": 1003,
+        "bytes": 7876,
+        "frees": 268,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 49
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 1017,
+          "response": 1017,
+          "reserve": 49,
+          "allocate": 349,
+          "free": 268,
+          "done": 43,
+          "input_bytes": 10412,
+          "outputs": 1003,
+          "output_bytes": 7876
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 11,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 2536
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 64
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    },
+    {
+      "profile": "E1",
+      "configuration": {
+        "latency": 2,
+        "depth": 8,
+        "cell_bytes": 32,
+        "cells": 64,
+        "descriptors": 32,
+        "max_length": 512,
+        "queues": 8,
+        "sources": 4
+      },
+      "result": "PASS",
+      "seeds": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "baseline_counts": {
+        "edges": 4123,
+        "reserves": 49,
+        "allocations": 349,
+        "writes": 1320,
+        "commits": 49,
+        "dispatches": 49,
+        "reads": 1029,
+        "responses": 1026,
+        "outputs": 1003,
+        "bytes": 7876,
+        "frees": 268,
+        "done": 43
+      },
+      "performance": {
+        "ready_first_valid_min": 4,
+        "ready_first_valid_max": 4,
+        "first_valid_bound": 6,
+        "always_ready_packets": 11,
+        "max_ready_gap": 1,
+        "max_cell_boundary_gap": 1,
+        "observed_ready_cell_boundaries": 49
+      },
+      "end_accounting": {
+        "observed_totals": {
+          "read": 1029,
+          "response": 1029,
+          "reserve": 49,
+          "allocate": 349,
+          "free": 268,
+          "done": 43,
+          "input_bytes": 10412,
+          "outputs": 1003,
+          "output_bytes": 7876
+        },
+        "reset_cancelled": {
+          "pending": 3,
+          "buffered": 23,
+          "descriptors": 6,
+          "cells": 81,
+          "bytes": 2536
+        },
+        "equalities": {
+          "physical_responses": true,
+          "read_accounting": true,
+          "arrival_accounting": true,
+          "descriptor_accounting": true,
+          "cell_accounting": true,
+          "byte_accounting": true
+        },
+        "final": {
+          "buffered": 0,
+          "outstanding": 0,
+          "owned_cells": 0,
+          "live_descriptors": 0,
+          "unreserved_cells": 64
+        }
+      },
+      "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+      "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/regression-2026-11-14T082543.778162+0000-9e2b9365/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+      "contract_violations": []
+    }
+  ],
+  "formal": [
+    {
+      "test": "rtl-tx-L1-D4-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "unbounded k-induction, maximum depth 2",
+      "elapsed_seconds": 29.108832,
+      "expected": "PROVE"
+    },
+    {
+      "test": "rtl-tx-L1-D4-cover",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "cover depth 64",
+      "elapsed_seconds": 1.368719,
+      "expected": "COVER"
+    },
+    {
+      "test": "rtl-tx-L1-D8-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "engine": "smtbmc z3",
+      "method": "unbounded k-induction, maximum depth 2",
+      "elapsed_seconds": 81.116857,
+      "expected": "PROVE"
+    },
+    {
+      "test": "rtl-tx-L1-D8-cover",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "engine": "smtbmc z3",
+      "method": "cover depth 64",
+      "elapsed_seconds": 2.276796,
+      "expected": "COVER"
+    },
+    {
+      "test": "rtl-tx-L2-D4-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "unbounded k-induction, maximum depth 2",
+      "elapsed_seconds": 38.519619,
+      "expected": "PROVE"
+    },
+    {
+      "test": "rtl-tx-L2-D4-cover",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "cover depth 64",
+      "elapsed_seconds": 2.327632,
+      "expected": "COVER"
+    },
+    {
+      "test": "rtl-tx-L2-D4-outstanding-credit",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "intended BMC counterexample depth 32",
+      "elapsed_seconds": 15.793073,
+      "expected": "SEEDED_DEFECT_DETECTION"
+    },
+    {
+      "test": "rtl-tx-L2-D4-premature-return",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "intended BMC counterexample depth 32",
+      "elapsed_seconds": 0.868461,
+      "expected": "SEEDED_DEFECT_DETECTION"
+    },
+    {
+      "test": "rtl-tx-L2-D4-stale-validity",
+      "result": "PASS",
+      "engine_status": "FAIL",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "engine": "smtbmc z3",
+      "method": "intended BMC counterexample depth 32",
+      "elapsed_seconds": 1.921661,
+      "expected": "SEEDED_DEFECT_DETECTION"
+    },
+    {
+      "test": "rtl-tx-L2-D8-prove",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "engine": "smtbmc z3",
+      "method": "unbounded k-induction, maximum depth 2",
+      "elapsed_seconds": 150.36559,
+      "expected": "PROVE"
+    },
+    {
+      "test": "rtl-tx-L2-D8-cover",
+      "result": "PASS",
+      "engine_status": "PASS",
+      "configuration": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "CELL_BYTES": 16,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "engine": "smtbmc z3",
+      "method": "cover depth 64",
+      "elapsed_seconds": 6.14312,
+      "expected": "COVER"
+    }
+  ],
+  "command": "python3 tools/p05_candidate.py --rtl-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --profile I1 --seed 17",
+  "contract_violations": [],
+  "limitations": [
+    "Reduced production FP-TX dimensions; actual full profile geometry simulation.",
+    "Historical preparation provenance qualification is preserved.",
+    "P12B structural comparison and exact merged-source confirmation are separate gates."
+  ],
+  "named_profiles": 6,
+  "unique_parameter_configurations": 16,
+  "matched_content_latency_cross": {
+    "F0/17": "12cf36a09f24d107334ace7149b5afcbbb4d51ac3ab2c5fb549826bc0125e1d2",
+    "F0/31": "a23657a530944df36790a48a0f1f9f33e961b53838ec9ae5e0ea4d57c2ee58fb",
+    "F0/53": "223fb1eba5a3abc357a5ce43b897921b69455027de21d7bbd9649529d1f15913",
+    "F1/17": "12cf36a09f24d107334ace7149b5afcbbb4d51ac3ab2c5fb549826bc0125e1d2",
+    "F1/31": "a23657a530944df36790a48a0f1f9f33e961b53838ec9ae5e0ea4d57c2ee58fb",
+    "F1/53": "223fb1eba5a3abc357a5ce43b897921b69455027de21d7bbd9649529d1f15913",
+    "I0/17": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+    "I0/31": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+    "I0/53": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+    "I1/17": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+    "I1/31": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+    "I1/53": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+    "E0/17": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+    "E0/31": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+    "E0/53": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+    "E1/17": "12cf36a09f24d107334ace7149b5afcbbb4d51ac3ab2c5fb549826bc0125e1d2",
+    "E1/31": "a23657a530944df36790a48a0f1f9f33e961b53838ec9ae5e0ea4d57c2ee58fb",
+    "E1/53": "223fb1eba5a3abc357a5ce43b897921b69455027de21d7bbd9649529d1f15913"
+  },
+  "refreshed_head_applicability": {
+    "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47": {
+      "verdict": "PRE_MERGE_APPLICABILITY_PASS",
+      "pre_merge_qualification_gate": "SATISFIED_WITHIN_RECORDED_COMPONENT_SCOPE",
+      "original_rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+      "refreshed_rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+      "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+      "dv_revision": "dc541cd5fe428a1dc7e1f1e175e1dfe1c2fc52dc",
+      "combined_revision": "47080a820dc9fc506a2c2ec85e474387d3c11f39",
+      "combined_tree": "643ecf9d742c16757001845103ba1e70cc79ed53",
+      "dirty": false,
+      "resolutions": [],
+      "carried_evidence": {
+        "local_production_runs": 96,
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "safety_proofs": 4,
+        "cover_runs": 4,
+        "required_covers_per_configuration": 10,
+        "formal_mutation_detections": 3,
+        "simulation_mutation_detections": 4,
+        "source_run_identities_preserved": true,
+        "basis": "The final original delivery combination and refreshed combination differ only in two RTL-author reports. All 228 audited executable/specification/configuration files and resolved includes are byte-identical. Parameters, flags, proof assumptions, assertions, mutations, checkers, tool versions/dependencies and setup stamp are unchanged. Fresh production traces also match all sixteen corresponding original hashes. Original runs/proofs retain their original SHA; applicability is by input identity, not new execution of those old runs."
+      },
+      "hosted_checks": {
+        "original_dv_full": {
+          "run_id": 43582750040,
+          "head_sha": "dc541cd5fe428a1dc7e1f1e175e1dfe1c2fc52dc",
+          "result": "PASS",
+          "jobs": 34
+        },
+        "refreshed_rtl_full": {
+          "run_id": 43591176269,
+          "head_sha": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "result": "PASS",
+          "jobs": 28
+        },
+        "evidence_update": "Keep draft; remove persistent full-ci request for this evidence/pin-only update. Run light checks and retain prior full results; do not repeat unchanged heavy suites solely for a new SHA."
+      },
+      "new_unexpected_failures": [],
+      "new_rtl_defects": [],
+      "retained_qualifications": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
+      "merged_source_confirmation": "NOT_RUN: separate follow-up after maintainer integration; not a pre-merge blocker.",
+      "structural_comparison": "P12B retained; no structural comparison or code coverage closure claimed.",
+      "identity_comparison": {
+        "result": "PASS",
+        "groups": {
+          "production_and_all_transitive_RTL_headers": {
+            "result": "PASS",
+            "files": 19,
+            "common_fingerprint_sha256": "2616b687e1e1cc624ac1087d425fe69f74c1da2621aedf942449f9ca648a127c"
+          },
+          "public_contracts_and_P05_card": {
+            "result": "PASS",
+            "files": 17,
+            "common_fingerprint_sha256": "34101e73a6eb73958d3e8d606bb981591ba58000dc4cddac096fe8d7e395ed9e"
+          },
+          "registrations_profiles_and_parameters": {
+            "result": "PASS",
+            "files": 19,
+            "common_fingerprint_sha256": "94732d400888fb69557bc4e86fb7bede0f095092eb1c127b755bcb09c07fc935"
+          },
+          "DV_and_formal_inputs": {
+            "result": "PASS",
+            "files": 79,
+            "common_fingerprint_sha256": "6d7db73b564dcf858415d26c7738031f27e75bbf4119b1669eb081fbce4feeb1"
+          },
+          "runner_build_proof_and_setup_configuration": {
+            "result": "PASS",
+            "files": 58,
+            "common_fingerprint_sha256": "6bd5838ef7d5d14ffb51cdeb23ef6c499b7f33a18a5357c4696f7698e91f88f6"
+          },
+          "tests_including_merged_interface_repair": {
+            "result": "PASS",
+            "files": 36,
+            "common_fingerprint_sha256": "9ebfadab693140d8dcf8de4a2740298d8adeaf47b264a4ee6ad76ad1ce51f59e"
+          }
+        },
+        "candidate_rtl_tree": {
+          "479b5c1ceee2eee8db58d863bd5de5e20305cc8c": "6ebe0d8c6f56723e4ff12c171ff9bf07e9713bc2",
+          "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47": "6ebe0d8c6f56723e4ff12c171ff9bf07e9713bc2"
+        },
+        "candidate_diff": [
+          "M\tdocs/results/P05-memory-tx-rtl.json",
+          "M\tdocs/results/P05-memory-tx-rtl.md",
+          "A\tdocs/results/P05-response-interface-check.md",
+          "M\ttests/toolchain/test_memory_tx_preparation.py",
+          "A\tverification/failures/p05-public-response-layout.json"
+        ],
+        "combined_diff": [
+          "M\tdocs/results/P05-memory-tx-rtl.json",
+          "M\tdocs/results/P05-memory-tx-rtl.md"
+        ],
+        "original_delivery_combined_revision": "63a57331bfb0f9b2c8870cc1d0b2960c687534d5",
+        "original_delivery_combined_tree": "2748b19207641bc861dbb3c4aa7733a104f6ea1a"
+      },
+      "confirmation": {
+        "result": "PASS",
+        "profile": "I1",
+        "production_runs": 16,
+        "seed_schedule": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "configurations": [
+          {
+            "profile": "I1",
+            "configuration": {
+              "latency": 1,
+              "depth": 4,
+              "cell_bytes": 16,
+              "cells": 32,
+              "descriptors": 16,
+              "max_length": 256,
+              "queues": 4,
+              "sources": 2
+            },
+            "result": "PASS",
+            "seeds": [
+              17,
+              31,
+              53,
+              17
+            ],
+            "runs": [
+              {
+                "seed": 17,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2648,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 514,
+                  "responses": 512,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+                "original_sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 514,
+                    "response": 514,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 12,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+                "public_stimulus_sha256": "63b23095ef69d4fbe2cf28d38a29922d2c7d829028b1b40a2fc47224e5616898",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+                "expected_observed_sha256": "63e1b62d86701169d5faadbc0dba0d02fa05ec8db36ddcf1ddfb30c683004cb2"
+              },
+              {
+                "seed": 31,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2935,
+                  "reserves": 49,
+                  "allocations": 378,
+                  "writes": 731,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 586,
+                  "responses": 584,
+                  "outputs": 572,
+                  "bytes": 4461,
+                  "frees": 297,
+                  "done": 43
+                },
+                "sample_sha256": "a29c95efa69ce30df13f09b845c895ecb836558e52ccf3a2b2403d26882c3994",
+                "original_sample_sha256": "a29c95efa69ce30df13f09b845c895ecb836558e52ccf3a2b2403d26882c3994",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 66
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 586,
+                    "response": 586,
+                    "reserve": 49,
+                    "allocate": 378,
+                    "free": 297,
+                    "done": 43,
+                    "input_bytes": 5733,
+                    "outputs": 572,
+                    "output_bytes": 4461
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 12,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed31-run1/public-inputs.jsonl",
+                "public_stimulus_sha256": "5312e5fb366dfe96b8fc8adb8b5811517770fb78520b406ea27772fe79c4c057",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed31-run1/public-output-checks.jsonl",
+                "expected_observed_sha256": "71f7eb9892f1d305db492814ab8a6dca0d4b531fc7a708e9be72bfc28c52ea3e"
+              },
+              {
+                "seed": 53,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2766,
+                  "reserves": 49,
+                  "allocations": 348,
+                  "writes": 671,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 526,
+                  "responses": 524,
+                  "outputs": 512,
+                  "bytes": 3957,
+                  "frees": 267,
+                  "done": 43
+                },
+                "sample_sha256": "d1dbb47848404806bebf0a6c6fa10c2c25d6c6a4e184daf294fee38efdbde20b",
+                "original_sample_sha256": "d1dbb47848404806bebf0a6c6fa10c2c25d6c6a4e184daf294fee38efdbde20b",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 43
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 526,
+                    "response": 526,
+                    "reserve": 49,
+                    "allocate": 348,
+                    "free": 267,
+                    "done": 43,
+                    "input_bytes": 5229,
+                    "outputs": 512,
+                    "output_bytes": 3957
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 12,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed53-run2/public-inputs.jsonl",
+                "public_stimulus_sha256": "d271aaa7d2a86372f7ecf5c22abf751bdb2485fed946d5fedaaf14cc2f0e03ec",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed53-run2/public-output-checks.jsonl",
+                "expected_observed_sha256": "466a51275cc2e35cb9c23b331e5f86ae1aab1cb861f40bd04eaefeca26df90e7"
+              },
+              {
+                "seed": 17,
+                "replay": true,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2648,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 514,
+                  "responses": 512,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+                "original_sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 514,
+                    "response": 514,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 12,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed17-run3/public-inputs.jsonl",
+                "public_stimulus_sha256": "63b23095ef69d4fbe2cf28d38a29922d2c7d829028b1b40a2fc47224e5616898",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D4-seed17-run3/public-output-checks.jsonl",
+                "expected_observed_sha256": "63e1b62d86701169d5faadbc0dba0d02fa05ec8db36ddcf1ddfb30c683004cb2"
+              }
+            ]
+          },
+          {
+            "profile": "I1",
+            "configuration": {
+              "latency": 1,
+              "depth": 8,
+              "cell_bytes": 16,
+              "cells": 32,
+              "descriptors": 16,
+              "max_length": 256,
+              "queues": 4,
+              "sources": 2
+            },
+            "result": "PASS",
+            "seeds": [
+              17,
+              31,
+              53,
+              17
+            ],
+            "runs": [
+              {
+                "seed": 17,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2785,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 526,
+                  "responses": 524,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+                "original_sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 526,
+                    "response": 526,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 24,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+                "public_stimulus_sha256": "02324ab9242e0191711959b583ca58def2048df26a2d7b77fb0b8406ea4fca1a",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+                "expected_observed_sha256": "cce309449e83b1972413ac7dc5f8a28d555565a731695354b23675d4c5f1b80b"
+              },
+              {
+                "seed": 31,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 3066,
+                  "reserves": 49,
+                  "allocations": 378,
+                  "writes": 731,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 598,
+                  "responses": 596,
+                  "outputs": 572,
+                  "bytes": 4461,
+                  "frees": 297,
+                  "done": 43
+                },
+                "sample_sha256": "065e4b4abea2ca055796ce9cd1ad29587a3d25166179ab17903f397b3135cdb6",
+                "original_sample_sha256": "065e4b4abea2ca055796ce9cd1ad29587a3d25166179ab17903f397b3135cdb6",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 66
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 598,
+                    "response": 598,
+                    "reserve": 49,
+                    "allocate": 378,
+                    "free": 297,
+                    "done": 43,
+                    "input_bytes": 5733,
+                    "outputs": 572,
+                    "output_bytes": 4461
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 24,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed31-run1/public-inputs.jsonl",
+                "public_stimulus_sha256": "020ee322b5a35c3b98e43d68171954d5d4082b7752c0d6c7055380ef76004652",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed31-run1/public-output-checks.jsonl",
+                "expected_observed_sha256": "1e64a3c1433bc30b9d6c76f05fcdcdd27c3e3e11ba92dcbbaf4a2890fb90931d"
+              },
+              {
+                "seed": 53,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2914,
+                  "reserves": 49,
+                  "allocations": 348,
+                  "writes": 671,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 538,
+                  "responses": 536,
+                  "outputs": 512,
+                  "bytes": 3957,
+                  "frees": 267,
+                  "done": 43
+                },
+                "sample_sha256": "3f77f189ab683371b85b1972785a22b1c565913e5cdda0bf227785cbc2483fb4",
+                "original_sample_sha256": "3f77f189ab683371b85b1972785a22b1c565913e5cdda0bf227785cbc2483fb4",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 43
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 538,
+                    "response": 538,
+                    "reserve": 49,
+                    "allocate": 348,
+                    "free": 267,
+                    "done": 43,
+                    "input_bytes": 5229,
+                    "outputs": 512,
+                    "output_bytes": 3957
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 24,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed53-run2/public-inputs.jsonl",
+                "public_stimulus_sha256": "c226b1376ccf2eddb40f2f52f54f2faff17108923d1e2610ace84f2502970b00",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed53-run2/public-output-checks.jsonl",
+                "expected_observed_sha256": "4b903c334f794991bd361db8269f121a274f738f77c6fae2d7af90a3079a6806"
+              },
+              {
+                "seed": 17,
+                "replay": true,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2785,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 526,
+                  "responses": 524,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+                "original_sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 3,
+                  "ready_first_valid_max": 3,
+                  "first_valid_bound": 5,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 526,
+                    "response": 526,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 2,
+                    "buffered": 24,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 1
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 28,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed17-run3/public-inputs.jsonl",
+                "public_stimulus_sha256": "02324ab9242e0191711959b583ca58def2048df26a2d7b77fb0b8406ea4fca1a",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L1-D8-seed17-run3/public-output-checks.jsonl",
+                "expected_observed_sha256": "cce309449e83b1972413ac7dc5f8a28d555565a731695354b23675d4c5f1b80b"
+              }
+            ]
+          },
+          {
+            "profile": "I1",
+            "configuration": {
+              "latency": 2,
+              "depth": 4,
+              "cell_bytes": 16,
+              "cells": 32,
+              "descriptors": 16,
+              "max_length": 256,
+              "queues": 4,
+              "sources": 2
+            },
+            "result": "PASS",
+            "seeds": [
+              17,
+              31,
+              53,
+              17
+            ],
+            "runs": [
+              {
+                "seed": 17,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2699,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 514,
+                  "responses": 511,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+                "original_sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 514,
+                    "response": 514,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 11,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+                "public_stimulus_sha256": "89253aa4ef23c1fc1ce41413f2f102d5c6e56a859634e361d8f89b27131808da",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+                "expected_observed_sha256": "438c9572cce5e3b2f043606983eeb99a0d8fe6e2bf5603d605d6bbe6ecc9fcc3"
+              },
+              {
+                "seed": 31,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2982,
+                  "reserves": 49,
+                  "allocations": 378,
+                  "writes": 731,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 586,
+                  "responses": 583,
+                  "outputs": 572,
+                  "bytes": 4461,
+                  "frees": 297,
+                  "done": 43
+                },
+                "sample_sha256": "9e70c4dad3ea37d5f3413e7c6a2b1f2b47baad348beb9a7bbe391ae687b0541a",
+                "original_sample_sha256": "9e70c4dad3ea37d5f3413e7c6a2b1f2b47baad348beb9a7bbe391ae687b0541a",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 66
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 586,
+                    "response": 586,
+                    "reserve": 49,
+                    "allocate": 378,
+                    "free": 297,
+                    "done": 43,
+                    "input_bytes": 5733,
+                    "outputs": 572,
+                    "output_bytes": 4461
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 11,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed31-run1/public-inputs.jsonl",
+                "public_stimulus_sha256": "2a050e1c53997e7efc4ad9fd607df97369e83606ff42d224eebffe34ca939685",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed31-run1/public-output-checks.jsonl",
+                "expected_observed_sha256": "67839202f49f6b4a99c1762e3eb8ce7cd8748fe2e421366fefe1ae762dd7cc01"
+              },
+              {
+                "seed": 53,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2816,
+                  "reserves": 49,
+                  "allocations": 348,
+                  "writes": 671,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 526,
+                  "responses": 523,
+                  "outputs": 512,
+                  "bytes": 3957,
+                  "frees": 267,
+                  "done": 43
+                },
+                "sample_sha256": "fc5e36fccc599323c46d91e6b025392070902f367c92838c83fe62e67aa4b2ba",
+                "original_sample_sha256": "fc5e36fccc599323c46d91e6b025392070902f367c92838c83fe62e67aa4b2ba",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 43
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 526,
+                    "response": 526,
+                    "reserve": 49,
+                    "allocate": 348,
+                    "free": 267,
+                    "done": 43,
+                    "input_bytes": 5229,
+                    "outputs": 512,
+                    "output_bytes": 3957
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 11,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed53-run2/public-inputs.jsonl",
+                "public_stimulus_sha256": "737ef5712e1b93a40389132c29e7a1c2b74e3a52caab5319ee48872c8a41fe2c",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed53-run2/public-output-checks.jsonl",
+                "expected_observed_sha256": "9465dc7367ad346ddbbcaa1e88bf921a263eeda823a9732dca2537cb224d2a8d"
+              },
+              {
+                "seed": 17,
+                "replay": true,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2699,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 514,
+                  "responses": 511,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+                "original_sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 514,
+                    "response": 514,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 11,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed17-run3/public-inputs.jsonl",
+                "public_stimulus_sha256": "89253aa4ef23c1fc1ce41413f2f102d5c6e56a859634e361d8f89b27131808da",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D4-seed17-run3/public-output-checks.jsonl",
+                "expected_observed_sha256": "438c9572cce5e3b2f043606983eeb99a0d8fe6e2bf5603d605d6bbe6ecc9fcc3"
+              }
+            ]
+          },
+          {
+            "profile": "I1",
+            "configuration": {
+              "latency": 2,
+              "depth": 8,
+              "cell_bytes": 16,
+              "cells": 32,
+              "descriptors": 16,
+              "max_length": 256,
+              "queues": 4,
+              "sources": 2
+            },
+            "result": "PASS",
+            "seeds": [
+              17,
+              31,
+              53,
+              17
+            ],
+            "runs": [
+              {
+                "seed": 17,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2837,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 526,
+                  "responses": 523,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+                "original_sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 526,
+                    "response": 526,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 23,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+                "public_stimulus_sha256": "1e6bafefb2fcb632ae34a8fa2adeeac81da5a2e365ac2a0f128d69d6903a4f88",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+                "expected_observed_sha256": "c807f56ff03b113db20a7b6aaecf76a68539053ea2663adbeded2a5b3750c7e9"
+              },
+              {
+                "seed": 31,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 3122,
+                  "reserves": 49,
+                  "allocations": 378,
+                  "writes": 731,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 598,
+                  "responses": 595,
+                  "outputs": 572,
+                  "bytes": 4461,
+                  "frees": 297,
+                  "done": 43
+                },
+                "sample_sha256": "dddec81f0601babd2edbb72b62e29fba1ba0c751c9d7017c435b32ca71c57d48",
+                "original_sample_sha256": "dddec81f0601babd2edbb72b62e29fba1ba0c751c9d7017c435b32ca71c57d48",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 66
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 598,
+                    "response": 598,
+                    "reserve": 49,
+                    "allocate": 378,
+                    "free": 297,
+                    "done": 43,
+                    "input_bytes": 5733,
+                    "outputs": 572,
+                    "output_bytes": 4461
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 23,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed31-run1/public-inputs.jsonl",
+                "public_stimulus_sha256": "70122e60a5918e4ed92ddced82a5be358ce72b22a2b31d141763411e5bf170b4",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed31-run1/public-output-checks.jsonl",
+                "expected_observed_sha256": "42f74c0c924dfa6b4213e813a3f0e3e26898ec03927e2f20a8e1363f4a8acb89"
+              },
+              {
+                "seed": 53,
+                "replay": false,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2974,
+                  "reserves": 49,
+                  "allocations": 348,
+                  "writes": 671,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 538,
+                  "responses": 535,
+                  "outputs": 512,
+                  "bytes": 3957,
+                  "frees": 267,
+                  "done": 43
+                },
+                "sample_sha256": "9c351e8a2ac7abc78d0e6695b3f96929a1cb36220eea124179986a535e81ffa3",
+                "original_sample_sha256": "9c351e8a2ac7abc78d0e6695b3f96929a1cb36220eea124179986a535e81ffa3",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 43
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 538,
+                    "response": 538,
+                    "reserve": 49,
+                    "allocate": 348,
+                    "free": 267,
+                    "done": 43,
+                    "input_bytes": 5229,
+                    "outputs": 512,
+                    "output_bytes": 3957
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 23,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed53-run2/public-inputs.jsonl",
+                "public_stimulus_sha256": "de73eb5c8be0f40829609cc8b14bb3426688df073b17cd2b582a68dfb6890c72",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed53-run2/public-output-checks.jsonl",
+                "expected_observed_sha256": "f1be1cfceb17ca20efcd5f36bdc5b3d8eedc95f1b8980287c307aa1c19080b7c"
+              },
+              {
+                "seed": 17,
+                "replay": true,
+                "result": "PASS",
+                "counts": {
+                  "edges": 2837,
+                  "reserves": 49,
+                  "allocations": 342,
+                  "writes": 659,
+                  "commits": 49,
+                  "dispatches": 49,
+                  "reads": 526,
+                  "responses": 523,
+                  "outputs": 500,
+                  "bytes": 3864,
+                  "frees": 261,
+                  "done": 43
+                },
+                "sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+                "original_sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+                "samples_identical": true,
+                "performance": {
+                  "ready_first_valid_min": 4,
+                  "ready_first_valid_max": 4,
+                  "first_valid_bound": 6,
+                  "always_ready_packets": 11,
+                  "max_ready_gap": 1,
+                  "max_cell_boundary_gap": 1,
+                  "observed_ready_cell_boundaries": 56
+                },
+                "end_accounting": {
+                  "observed_totals": {
+                    "read": 526,
+                    "response": 526,
+                    "reserve": 49,
+                    "allocate": 342,
+                    "free": 261,
+                    "done": 43,
+                    "input_bytes": 5136,
+                    "outputs": 500,
+                    "output_bytes": 3864
+                  },
+                  "reset_cancelled": {
+                    "pending": 3,
+                    "buffered": 23,
+                    "descriptors": 6,
+                    "cells": 81,
+                    "bytes": 1272
+                  },
+                  "equalities": {
+                    "physical_responses": true,
+                    "read_accounting": true,
+                    "arrival_accounting": true,
+                    "descriptor_accounting": true,
+                    "cell_accounting": true,
+                    "byte_accounting": true
+                  },
+                  "final": {
+                    "buffered": 0,
+                    "outstanding": 0,
+                    "owned_cells": 0,
+                    "live_descriptors": 0,
+                    "unreserved_cells": 32
+                  }
+                },
+                "ram_component": {
+                  "counts": {
+                    "writes": 12,
+                    "reads": 13,
+                    "simultaneous_1r1w": 6,
+                    "responses": 13,
+                    "response_during_reset": 2
+                  },
+                  "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                  "sampled_edges": 29,
+                  "readback_after_reset": true
+                },
+                "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed17-run3/public-inputs.jsonl",
+                "public_stimulus_sha256": "1e6bafefb2fcb632ae34a8fa2adeeac81da5a2e365ac2a0f128d69d6903a4f88",
+                "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/a35a63117f414948b59b4d7843bc764b/runs/regression-2026-11-14T122715.923021+0000-9696b306/memory-tx-L2-D8-seed17-run3/public-output-checks.jsonl",
+                "expected_observed_sha256": "c807f56ff03b113db20a7b6aaecf76a68539053ea2663adbeded2a5b3750c7e9"
+              }
+            ]
+          }
+        ],
+        "child_returncode": 0,
+        "command": "python3 tools/p05_candidate.py --rtl-revision dc7682f16dcdba05b1f2b7d80b1bf11732d17c47 --profile I1 --seed 17 --jobs 2",
+        "tools_dependencies_and_setup_unchanged": true,
+        "all_16_samples_counts_bins_match_original": true,
+        "saved_coverage_cases": 16,
+        "repository_contracts": "PASS",
+        "light_tests": {
+          "result": "PASS",
+          "tests": 114
+        },
+        "doctor_main": "PASS",
+        "doctor_combined": "PASS",
+        "contract_violations": []
+      }
+    }
+  },
+  "merged_source_confirmation": {
+    "verdict": "MERGED_SOURCE_PASS",
+    "rtl_merge_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+    "main_revision_at_confirmation": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+    "qualified_rtl_head": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+    "previous_applicability_delivery": "c8dfe3d290775eef855dad7937f9ba38e14c3c52",
+    "tested_dv_revision": "fd129b1e0d7566c460962b6869aa2274f7a24fa9",
+    "combined_revision": "fd129b1e0d7566c460962b6869aa2274f7a24fa9",
+    "combined_tree": "c1c3033decc4fc1b16aab4702ac9da4714ef2353",
+    "dirty": false,
+    "resolutions": [],
+    "github_pr": 24,
+    "github_merged": true,
+    "retained_evidence": {
+      "production_runs": 96,
+      "profiles": [
+        "F0",
+        "F1",
+        "I0",
+        "I1",
+        "E0",
+        "E1"
+      ],
+      "safety_proofs": 4,
+      "cover_runs": 4,
+      "required_covers_per_configuration": 10,
+      "formal_mutation_detections": 3,
+      "simulation_mutation_detections": 4,
+      "original_execution_identities_preserved": true,
+      "basis": "GitHub actual merge and current main have the same entire tree as the qualified head. The integrated DV checkout has the same tree as the canonical combination of the prior applicability delivery and qualified head. 215 behavior/configuration files match the prior actual execution; only seven documented applicability metadata files differ. All resolved include closures, frozen checks, effective profiles and formal settings are unchanged. Fresh actual merged-source I1 traces also match original hashes. Local unchanged proofs/regressions are retained without relabeling; final hosted full suites execute separately."
+    },
+    "hosted_checks": {
+      "main_full": {
+        "run_id": 43608539930,
+        "head_sha": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+        "status_record": "PR #26 final handoff"
+      },
+      "qualification_full": {
+        "status_record": "PR #26 final handoff: ready-for-review triggers required full CI; light-only success is insufficient",
+        "interrupted_attempt": {
+          "run_id": 43609541413,
+          "head_sha": "1b22a7d66c494efed9ebe05b93ef954f49ab62b7",
+          "job_id": 132491518277,
+          "result": "TOOL_ERROR",
+          "reason": "Runner shutdown, exit 143; incomplete work is not PASS."
+        }
+      }
+    },
+    "new_unexpected_failures": [
+      {
+        "record": "verification/failures/p05-merged-ci-scheduler-F0-43609541413.json",
+        "disposition": "tool-environment",
+        "symptom": "Hosted worker shutdown, exit 143; required F0 scheduler job interrupted."
+      }
+    ],
+    "new_rtl_defects": [],
+    "outstanding_required_technical_findings": [],
+    "historical_preparation_provenance": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
+    "scope": "Existing two-state component execution and reduced unbounded FP-TX safety; caller/pool composition remains separate.",
+    "structural_comparison": "P12B retained; no structural comparison or code coverage closure claimed.",
+    "identity_comparison": {
+      "result": "PASS",
+      "groups": {
+        "production_and_all_transitive_RTL_headers": {
+          "result": "PASS",
+          "files": 19,
+          "common_fingerprint_sha256": "2616b687e1e1cc624ac1087d425fe69f74c1da2621aedf942449f9ca648a127c"
+        },
+        "public_contracts_and_P05_card": {
+          "result": "PASS",
+          "files": 17,
+          "common_fingerprint_sha256": "34101e73a6eb73958d3e8d606bb981591ba58000dc4cddac096fe8d7e395ed9e"
+        },
+        "registrations_profiles_and_parameters": {
+          "result": "PASS",
+          "files": 17,
+          "common_fingerprint_sha256": "91bb94a963c425280238116f97f533f3a22a6d35b70d97f8e1d5f2d39dda5845"
+        },
+        "DV_and_formal_inputs": {
+          "result": "PASS",
+          "files": 68,
+          "common_fingerprint_sha256": "92773e93331fa8aa287d35ee032bc82a4828a9fbb2857bb308c4c6642f2fcf70"
+        },
+        "runner_build_proof_and_setup_configuration": {
+          "result": "PASS",
+          "files": 58,
+          "common_fingerprint_sha256": "6bd5838ef7d5d14ffb51cdeb23ef6c499b7f33a18a5357c4696f7698e91f88f6"
+        },
+        "tests_including_merged_interface_repair": {
+          "result": "PASS",
+          "files": 36,
+          "common_fingerprint_sha256": "9ebfadab693140d8dcf8de4a2740298d8adeaf47b264a4ee6ad76ad1ce51f59e"
+        }
+      },
+      "qualified_and_merged_full_tree": "6e9b5deaf839a89cc88c9dd8570af02e40fc37e9",
+      "premerge_canonical_inputs": [
+        "c8dfe3d290775eef855dad7937f9ba38e14c3c52",
+        "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47"
+      ],
+      "premerge_canonical_tree": "c1c3033decc4fc1b16aab4702ac9da4714ef2353",
+      "candidate_diff": [],
+      "classified_non_executable_differences": [
+        "docs/implementation/p05-rtl-handoff.md",
+        "docs/results/P05-candidate-public.json",
+        "docs/results/P05-candidate-qualification.json",
+        "docs/results/P05-candidate-qualification.md",
+        "dv/memory_tx/README.md",
+        "verification/candidates/p05.json",
+        "verification/requirements.json"
+      ],
+      "requirement_registry_semantics_unchanged": true
+    },
+    "confirmation": {
+      "result": "PASS",
+      "profile": "I1",
+      "production_runs": 16,
+      "seed_schedule": [
+        17,
+        31,
+        53,
+        17
+      ],
+      "configurations": [
+        {
+          "profile": "I1",
+          "configuration": {
+            "latency": 1,
+            "depth": 4,
+            "cell_bytes": 16,
+            "cells": 32,
+            "descriptors": 16,
+            "max_length": 256,
+            "queues": 4,
+            "sources": 2
+          },
+          "result": "PASS",
+          "seeds": [
+            17,
+            31,
+            53,
+            17
+          ],
+          "runs": [
+            {
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2648,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 514,
+                "responses": 512,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+              "original_sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 514,
+                  "response": 514,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 12,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed17-run0/public-inputs.jsonl",
+              "public_stimulus_sha256": "63b23095ef69d4fbe2cf28d38a29922d2c7d829028b1b40a2fc47224e5616898",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed17-run0/public-output-checks.jsonl",
+              "expected_observed_sha256": "63e1b62d86701169d5faadbc0dba0d02fa05ec8db36ddcf1ddfb30c683004cb2"
+            },
+            {
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2935,
+                "reserves": 49,
+                "allocations": 378,
+                "writes": 731,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 586,
+                "responses": 584,
+                "outputs": 572,
+                "bytes": 4461,
+                "frees": 297,
+                "done": 43
+              },
+              "sample_sha256": "a29c95efa69ce30df13f09b845c895ecb836558e52ccf3a2b2403d26882c3994",
+              "original_sample_sha256": "a29c95efa69ce30df13f09b845c895ecb836558e52ccf3a2b2403d26882c3994",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 66
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 586,
+                  "response": 586,
+                  "reserve": 49,
+                  "allocate": 378,
+                  "free": 297,
+                  "done": 43,
+                  "input_bytes": 5733,
+                  "outputs": 572,
+                  "output_bytes": 4461
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 12,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed31-run1/public-inputs.jsonl",
+              "public_stimulus_sha256": "5312e5fb366dfe96b8fc8adb8b5811517770fb78520b406ea27772fe79c4c057",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed31-run1/public-output-checks.jsonl",
+              "expected_observed_sha256": "71f7eb9892f1d305db492814ab8a6dca0d4b531fc7a708e9be72bfc28c52ea3e"
+            },
+            {
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2766,
+                "reserves": 49,
+                "allocations": 348,
+                "writes": 671,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 526,
+                "responses": 524,
+                "outputs": 512,
+                "bytes": 3957,
+                "frees": 267,
+                "done": 43
+              },
+              "sample_sha256": "d1dbb47848404806bebf0a6c6fa10c2c25d6c6a4e184daf294fee38efdbde20b",
+              "original_sample_sha256": "d1dbb47848404806bebf0a6c6fa10c2c25d6c6a4e184daf294fee38efdbde20b",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 43
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 526,
+                  "response": 526,
+                  "reserve": 49,
+                  "allocate": 348,
+                  "free": 267,
+                  "done": 43,
+                  "input_bytes": 5229,
+                  "outputs": 512,
+                  "output_bytes": 3957
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 12,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed53-run2/public-inputs.jsonl",
+              "public_stimulus_sha256": "d271aaa7d2a86372f7ecf5c22abf751bdb2485fed946d5fedaaf14cc2f0e03ec",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed53-run2/public-output-checks.jsonl",
+              "expected_observed_sha256": "466a51275cc2e35cb9c23b331e5f86ae1aab1cb861f40bd04eaefeca26df90e7"
+            },
+            {
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "counts": {
+                "edges": 2648,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 514,
+                "responses": 512,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+              "original_sample_sha256": "77eba524988f1ddec2dfa7f1062a174ed5a58cbcaf287399bbdc6bdb41f32e5f",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 514,
+                  "response": 514,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 12,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed17-run3/public-inputs.jsonl",
+              "public_stimulus_sha256": "63b23095ef69d4fbe2cf28d38a29922d2c7d829028b1b40a2fc47224e5616898",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D4-seed17-run3/public-output-checks.jsonl",
+              "expected_observed_sha256": "63e1b62d86701169d5faadbc0dba0d02fa05ec8db36ddcf1ddfb30c683004cb2"
+            }
+          ]
+        },
+        {
+          "profile": "I1",
+          "configuration": {
+            "latency": 1,
+            "depth": 8,
+            "cell_bytes": 16,
+            "cells": 32,
+            "descriptors": 16,
+            "max_length": 256,
+            "queues": 4,
+            "sources": 2
+          },
+          "result": "PASS",
+          "seeds": [
+            17,
+            31,
+            53,
+            17
+          ],
+          "runs": [
+            {
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2785,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 526,
+                "responses": 524,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+              "original_sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 526,
+                  "response": 526,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 24,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed17-run0/public-inputs.jsonl",
+              "public_stimulus_sha256": "02324ab9242e0191711959b583ca58def2048df26a2d7b77fb0b8406ea4fca1a",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed17-run0/public-output-checks.jsonl",
+              "expected_observed_sha256": "cce309449e83b1972413ac7dc5f8a28d555565a731695354b23675d4c5f1b80b"
+            },
+            {
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 3066,
+                "reserves": 49,
+                "allocations": 378,
+                "writes": 731,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 598,
+                "responses": 596,
+                "outputs": 572,
+                "bytes": 4461,
+                "frees": 297,
+                "done": 43
+              },
+              "sample_sha256": "065e4b4abea2ca055796ce9cd1ad29587a3d25166179ab17903f397b3135cdb6",
+              "original_sample_sha256": "065e4b4abea2ca055796ce9cd1ad29587a3d25166179ab17903f397b3135cdb6",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 66
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 598,
+                  "response": 598,
+                  "reserve": 49,
+                  "allocate": 378,
+                  "free": 297,
+                  "done": 43,
+                  "input_bytes": 5733,
+                  "outputs": 572,
+                  "output_bytes": 4461
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 24,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed31-run1/public-inputs.jsonl",
+              "public_stimulus_sha256": "020ee322b5a35c3b98e43d68171954d5d4082b7752c0d6c7055380ef76004652",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed31-run1/public-output-checks.jsonl",
+              "expected_observed_sha256": "1e64a3c1433bc30b9d6c76f05fcdcdd27c3e3e11ba92dcbbaf4a2890fb90931d"
+            },
+            {
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2914,
+                "reserves": 49,
+                "allocations": 348,
+                "writes": 671,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 538,
+                "responses": 536,
+                "outputs": 512,
+                "bytes": 3957,
+                "frees": 267,
+                "done": 43
+              },
+              "sample_sha256": "3f77f189ab683371b85b1972785a22b1c565913e5cdda0bf227785cbc2483fb4",
+              "original_sample_sha256": "3f77f189ab683371b85b1972785a22b1c565913e5cdda0bf227785cbc2483fb4",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 43
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 538,
+                  "response": 538,
+                  "reserve": 49,
+                  "allocate": 348,
+                  "free": 267,
+                  "done": 43,
+                  "input_bytes": 5229,
+                  "outputs": 512,
+                  "output_bytes": 3957
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 24,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed53-run2/public-inputs.jsonl",
+              "public_stimulus_sha256": "c226b1376ccf2eddb40f2f52f54f2faff17108923d1e2610ace84f2502970b00",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed53-run2/public-output-checks.jsonl",
+              "expected_observed_sha256": "4b903c334f794991bd361db8269f121a274f738f77c6fae2d7af90a3079a6806"
+            },
+            {
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "counts": {
+                "edges": 2785,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 526,
+                "responses": 524,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+              "original_sample_sha256": "2a14e26707b10c5b5155d65ed74b23bdfe93b1d5eb138006490913854b3c18f1",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 3,
+                "ready_first_valid_max": 3,
+                "first_valid_bound": 5,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 526,
+                  "response": 526,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 2,
+                  "buffered": 24,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 1
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 28,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed17-run3/public-inputs.jsonl",
+              "public_stimulus_sha256": "02324ab9242e0191711959b583ca58def2048df26a2d7b77fb0b8406ea4fca1a",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L1-D8-seed17-run3/public-output-checks.jsonl",
+              "expected_observed_sha256": "cce309449e83b1972413ac7dc5f8a28d555565a731695354b23675d4c5f1b80b"
+            }
+          ]
+        },
+        {
+          "profile": "I1",
+          "configuration": {
+            "latency": 2,
+            "depth": 4,
+            "cell_bytes": 16,
+            "cells": 32,
+            "descriptors": 16,
+            "max_length": 256,
+            "queues": 4,
+            "sources": 2
+          },
+          "result": "PASS",
+          "seeds": [
+            17,
+            31,
+            53,
+            17
+          ],
+          "runs": [
+            {
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2699,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 514,
+                "responses": 511,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+              "original_sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 514,
+                  "response": 514,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 11,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed17-run0/public-inputs.jsonl",
+              "public_stimulus_sha256": "89253aa4ef23c1fc1ce41413f2f102d5c6e56a859634e361d8f89b27131808da",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed17-run0/public-output-checks.jsonl",
+              "expected_observed_sha256": "438c9572cce5e3b2f043606983eeb99a0d8fe6e2bf5603d605d6bbe6ecc9fcc3"
+            },
+            {
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2982,
+                "reserves": 49,
+                "allocations": 378,
+                "writes": 731,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 586,
+                "responses": 583,
+                "outputs": 572,
+                "bytes": 4461,
+                "frees": 297,
+                "done": 43
+              },
+              "sample_sha256": "9e70c4dad3ea37d5f3413e7c6a2b1f2b47baad348beb9a7bbe391ae687b0541a",
+              "original_sample_sha256": "9e70c4dad3ea37d5f3413e7c6a2b1f2b47baad348beb9a7bbe391ae687b0541a",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 66
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 586,
+                  "response": 586,
+                  "reserve": 49,
+                  "allocate": 378,
+                  "free": 297,
+                  "done": 43,
+                  "input_bytes": 5733,
+                  "outputs": 572,
+                  "output_bytes": 4461
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 11,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed31-run1/public-inputs.jsonl",
+              "public_stimulus_sha256": "2a050e1c53997e7efc4ad9fd607df97369e83606ff42d224eebffe34ca939685",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed31-run1/public-output-checks.jsonl",
+              "expected_observed_sha256": "67839202f49f6b4a99c1762e3eb8ce7cd8748fe2e421366fefe1ae762dd7cc01"
+            },
+            {
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2816,
+                "reserves": 49,
+                "allocations": 348,
+                "writes": 671,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 526,
+                "responses": 523,
+                "outputs": 512,
+                "bytes": 3957,
+                "frees": 267,
+                "done": 43
+              },
+              "sample_sha256": "fc5e36fccc599323c46d91e6b025392070902f367c92838c83fe62e67aa4b2ba",
+              "original_sample_sha256": "fc5e36fccc599323c46d91e6b025392070902f367c92838c83fe62e67aa4b2ba",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 43
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 526,
+                  "response": 526,
+                  "reserve": 49,
+                  "allocate": 348,
+                  "free": 267,
+                  "done": 43,
+                  "input_bytes": 5229,
+                  "outputs": 512,
+                  "output_bytes": 3957
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 11,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed53-run2/public-inputs.jsonl",
+              "public_stimulus_sha256": "737ef5712e1b93a40389132c29e7a1c2b74e3a52caab5319ee48872c8a41fe2c",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed53-run2/public-output-checks.jsonl",
+              "expected_observed_sha256": "9465dc7367ad346ddbbcaa1e88bf921a263eeda823a9732dca2537cb224d2a8d"
+            },
+            {
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "counts": {
+                "edges": 2699,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 514,
+                "responses": 511,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+              "original_sample_sha256": "fffedd6be8c92b3382a16504e0d9c8641570a012bc0315e44368a16a64cf5901",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 514,
+                  "response": 514,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 11,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed17-run3/public-inputs.jsonl",
+              "public_stimulus_sha256": "89253aa4ef23c1fc1ce41413f2f102d5c6e56a859634e361d8f89b27131808da",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D4-seed17-run3/public-output-checks.jsonl",
+              "expected_observed_sha256": "438c9572cce5e3b2f043606983eeb99a0d8fe6e2bf5603d605d6bbe6ecc9fcc3"
+            }
+          ]
+        },
+        {
+          "profile": "I1",
+          "configuration": {
+            "latency": 2,
+            "depth": 8,
+            "cell_bytes": 16,
+            "cells": 32,
+            "descriptors": 16,
+            "max_length": 256,
+            "queues": 4,
+            "sources": 2
+          },
+          "result": "PASS",
+          "seeds": [
+            17,
+            31,
+            53,
+            17
+          ],
+          "runs": [
+            {
+              "seed": 17,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2837,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 526,
+                "responses": 523,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+              "original_sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 526,
+                  "response": 526,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 23,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed17-run0/public-inputs.jsonl",
+              "public_stimulus_sha256": "1e6bafefb2fcb632ae34a8fa2adeeac81da5a2e365ac2a0f128d69d6903a4f88",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed17-run0/public-output-checks.jsonl",
+              "expected_observed_sha256": "c807f56ff03b113db20a7b6aaecf76a68539053ea2663adbeded2a5b3750c7e9"
+            },
+            {
+              "seed": 31,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 3122,
+                "reserves": 49,
+                "allocations": 378,
+                "writes": 731,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 598,
+                "responses": 595,
+                "outputs": 572,
+                "bytes": 4461,
+                "frees": 297,
+                "done": 43
+              },
+              "sample_sha256": "dddec81f0601babd2edbb72b62e29fba1ba0c751c9d7017c435b32ca71c57d48",
+              "original_sample_sha256": "dddec81f0601babd2edbb72b62e29fba1ba0c751c9d7017c435b32ca71c57d48",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 66
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 598,
+                  "response": 598,
+                  "reserve": 49,
+                  "allocate": 378,
+                  "free": 297,
+                  "done": 43,
+                  "input_bytes": 5733,
+                  "outputs": 572,
+                  "output_bytes": 4461
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 23,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "b89150b6c8665252460f5309319ac4467da984e26b38e27d22946e0a51cc319a",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed31-run1/public-inputs.jsonl",
+              "public_stimulus_sha256": "70122e60a5918e4ed92ddced82a5be358ce72b22a2b31d141763411e5bf170b4",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed31-run1/public-output-checks.jsonl",
+              "expected_observed_sha256": "42f74c0c924dfa6b4213e813a3f0e3e26898ec03927e2f20a8e1363f4a8acb89"
+            },
+            {
+              "seed": 53,
+              "replay": false,
+              "result": "PASS",
+              "counts": {
+                "edges": 2974,
+                "reserves": 49,
+                "allocations": 348,
+                "writes": 671,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 538,
+                "responses": 535,
+                "outputs": 512,
+                "bytes": 3957,
+                "frees": 267,
+                "done": 43
+              },
+              "sample_sha256": "9c351e8a2ac7abc78d0e6695b3f96929a1cb36220eea124179986a535e81ffa3",
+              "original_sample_sha256": "9c351e8a2ac7abc78d0e6695b3f96929a1cb36220eea124179986a535e81ffa3",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 43
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 538,
+                  "response": 538,
+                  "reserve": 49,
+                  "allocate": 348,
+                  "free": 267,
+                  "done": 43,
+                  "input_bytes": 5229,
+                  "outputs": 512,
+                  "output_bytes": 3957
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 23,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "f7cb38efd00b153a895a0d13378c2bfbdb063f102a9be706fdcbcc3b09f4fe42",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed53-run2/public-inputs.jsonl",
+              "public_stimulus_sha256": "de73eb5c8be0f40829609cc8b14bb3426688df073b17cd2b582a68dfb6890c72",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed53-run2/public-output-checks.jsonl",
+              "expected_observed_sha256": "f1be1cfceb17ca20efcd5f36bdc5b3d8eedc95f1b8980287c307aa1c19080b7c"
+            },
+            {
+              "seed": 17,
+              "replay": true,
+              "result": "PASS",
+              "counts": {
+                "edges": 2837,
+                "reserves": 49,
+                "allocations": 342,
+                "writes": 659,
+                "commits": 49,
+                "dispatches": 49,
+                "reads": 526,
+                "responses": 523,
+                "outputs": 500,
+                "bytes": 3864,
+                "frees": 261,
+                "done": 43
+              },
+              "sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+              "original_sample_sha256": "e477bffef81cf6f43bd744821a28684f1fbe5336db501dbb9d413987e0de066e",
+              "samples_identical": true,
+              "performance": {
+                "ready_first_valid_min": 4,
+                "ready_first_valid_max": 4,
+                "first_valid_bound": 6,
+                "always_ready_packets": 11,
+                "max_ready_gap": 1,
+                "max_cell_boundary_gap": 1,
+                "observed_ready_cell_boundaries": 56
+              },
+              "end_accounting": {
+                "observed_totals": {
+                  "read": 526,
+                  "response": 526,
+                  "reserve": 49,
+                  "allocate": 342,
+                  "free": 261,
+                  "done": 43,
+                  "input_bytes": 5136,
+                  "outputs": 500,
+                  "output_bytes": 3864
+                },
+                "reset_cancelled": {
+                  "pending": 3,
+                  "buffered": 23,
+                  "descriptors": 6,
+                  "cells": 81,
+                  "bytes": 1272
+                },
+                "equalities": {
+                  "physical_responses": true,
+                  "read_accounting": true,
+                  "arrival_accounting": true,
+                  "descriptor_accounting": true,
+                  "cell_accounting": true,
+                  "byte_accounting": true
+                },
+                "final": {
+                  "buffered": 0,
+                  "outstanding": 0,
+                  "owned_cells": 0,
+                  "live_descriptors": 0,
+                  "unreserved_cells": 32
+                }
+              },
+              "ram_component": {
+                "counts": {
+                  "writes": 12,
+                  "reads": 13,
+                  "simultaneous_1r1w": 6,
+                  "responses": 13,
+                  "response_during_reset": 2
+                },
+                "response_data_sha256": "c6fe3cf98d0d640781e623f80d9739bd5a4cda8116defdb156cc45955cd660e2",
+                "sampled_edges": 29,
+                "readback_after_reset": true
+              },
+              "public_stimulus": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed17-run3/public-inputs.jsonl",
+              "public_stimulus_sha256": "1e6bafefb2fcb632ae34a8fa2adeeac81da5a2e365ac2a0f128d69d6903a4f88",
+              "expected_observed_interfaces": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/p05-public/559c1c5e58204b3284e8418947d192d9/runs/regression-2026-11-14T151202.291023+0000-ba149a36/memory-tx-L2-D8-seed17-run3/public-output-checks.jsonl",
+              "expected_observed_sha256": "c807f56ff03b113db20a7b6aaecf76a68539053ea2663adbeded2a5b3750c7e9"
+            }
+          ]
+        }
+      ],
+      "command": "python3 tools/p05_candidate.py --rtl-revision 3ede1a5e40791ff00d98a0faa8389154d632e0c5 --profile I1 --seed 17 --jobs 2",
+      "child_returncode": 0,
+      "all_16_samples_counts_bins_match_original": true,
+      "saved_coverage_cases": 16,
+      "reset_accounting_equations_per_run": 6,
+      "tools_dependencies_and_setup_unchanged": true,
+      "doctor_main": "PASS",
+      "doctor_combined": "PASS",
+      "repository_contracts": "PASS",
+      "light_tests": {
+        "result": "PASS",
+        "tests": 114
+      },
+      "contract_violations": []
+    }
+  }
+}

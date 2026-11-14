@@ -16,7 +16,7 @@ def profile(name):
 
 
 def sources(name, seen=()):
-    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation'):
+    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation', 'memory-tx', 'memory-tx-formal'):
         raise ValueError('Unknown or cyclic source set: ' + name)
     data = read('sources/' + name + '.json')
     if name == 'memory-tx-preparation':
@@ -35,9 +35,9 @@ def sources(name, seen=()):
             target = (ROOT / path).resolve()
             if not target.is_relative_to(ROOT) or not target.exists():
                 raise ValueError('Missing or external registered path: ' + path)
-            if key != 'include_dirs' and name in ('production', 'formal', 'synthesis') and not (path.startswith('rtl/') or (name=='formal' and path.startswith('formal/'))):
+            if key != 'include_dirs' and name in ('production', 'formal', 'synthesis', 'memory-tx-formal') and not (path.startswith('rtl/') or (name in ('formal','memory-tx-formal') and path.startswith('formal/'))):
                 raise ValueError('Non-production source in ' + name + ': ' + path)
-    if name == 'formal':
+    if name in ('formal','memory-tx-formal'):
         from formal_symbols import check_sources
         # No registry-provided exception list: diagnostic fixtures cannot opt in.
         check_sources([ROOT / p for p in result['sources'] + result['headers']],
@@ -51,7 +51,7 @@ def selection(profile_name, tests):
     selected = ['contracts'] if tests is None else tests
     if not selected or len(set(selected)) != len(selected):
         raise ValueError('Empty or duplicate regression selection')
-    preparation={'memory-tx-oracle','memory-tx-bench','memory-tx'}
+    preparation={'memory-tx-oracle','memory-tx-bench'}
     if any(name in preparation for name in selected) and not all(name in preparation for name in selected):
         raise ValueError('Preparation modes cannot be mixed with production suites')
     for name in selected:

@@ -46,9 +46,8 @@ def memory_tx_bench(run,args):
 
 
 def memory_tx_dut(run,args):
-    case=Case(run,'memory-tx-dut')
-    case.finish('NOT_IMPLEMENTED','Preparation has no authorized implementation source selection; no DUT executed',
-                scope='Future exact-source DUT adapter required; oracle/bench PASS cannot satisfy this mode')
+    from memory_tx_dut import memory_tx_dut as execute_candidate
+    execute_candidate(run,args)
 
 
 def parameter_probes(run,args):
