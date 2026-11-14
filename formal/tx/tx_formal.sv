@@ -128,6 +128,7 @@ always_ff @(posedge clk) begin
         a_outstanding_mapping:assert(int'(dut.outstanding)==slots-arrived);
         a_live_mapping:assert(dut.active==live);
         if(live)begin
+            a_length_domain:assert(length>0 && int'(length)<=MAX_PACKET_BYTES && total==(int'(length)+7)/8 && retired<total);
             a_packet_mapping:assert(dut.packet.info.length==length && dut.packet.info.tag==tag && dut.packet.qid==qid && dut.packet.desc==descriptor && dut.packet.info.source==0 && dut.packet.info.qid==qid && dut.packet.info.head==chain(0) && int'(dut.packet.info.ncell)==(int'(length)+CELL_BYTES-1)/CELL_BYTES);
             a_fetch_cell:assert(dut.fetch_cell==chain(issued==total ? (total-1)/CW : issued/CW));
             a_fetch_word:assert(int'(dut.fetch_word)==(issued==total ? 0 : issued%CW));
@@ -139,7 +140,7 @@ always_ff @(posedge clk) begin
         a_pending_mapping:assert(dut.pending_valid==live_valid);
         a_pointer_bounds:assert(int'(dut.rd_ptr)<TX_FIFO_DEPTH && int'(dut.wr_ptr)<TX_FIFO_DEPTH);
         a_pointer_distance:assert(int'(dut.wr_ptr)==(int'(dut.rd_ptr)+arrived)%TX_FIFO_DEPTH);
-        a_count_order:assert(retired<=issued && issued<=total && slots==issued-retired);
+        a_count_order:assert(retired>=0 && retired<=issued && issued<=total && total<=(MAX_PACKET_BYTES+7)/8 && slots==issued-retired);
         c_full_credit:cover(slots==TX_FIFO_DEPTH);
         c_full_pending:cover(slots==TX_FIFO_DEPTH && |live_valid);
         c_pending_stall:cover(|live_valid && !sink_ready);
