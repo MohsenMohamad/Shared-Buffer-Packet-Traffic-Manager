@@ -1,19 +1,71 @@
-# P05 production memory/TX: RTL-author results
+# P05 production memory/TX: RTL and integration results
 
-The production payload RAM, metadata wrapper and TX engine pass the designer
-checks below. This report establishes RTL-author component evidence only.
-Independent P05 candidate qualification, FP-TX and hardware acceptance remain
-NOT_RUN. Independent DV implementation, reports, patches, source hashes and
-source-bearing raw output were not manually inspected. Standard commands may
-process/hash DV internally under the clarified task authorization.
+The refreshed branch passes its local environment, repository and designer
+checks. Production RTL, public APIs/contracts, production source registration
+and designer smoke are unchanged from independently qualified candidate
+`479b5c1ceee2eee8db58d863bd5de5e20305cc8c` under the scoped comparisons below.
 
-## Tested candidate and boundary
+The user-provided handoff reports **PRE-MERGE CANDIDATE PASS** in
+[DV PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26)
+for that named candidate, delivered at
+`dc541cd5fe428a1dc7e1f1e175e1dfe1c2fc52dc`. These independent runs are not
+relabeled onto this refreshed head. The DV owner must confirm applicability
+before the maintainer merges RTL. Independent implementations/reports and
+source-bearing raw logs were not inspected; standard commands may process/hash
+DV internally.
+
+## Integration refresh
+
+Merged current `origin/main` at
+`a4df0dd61802355e91b4c0c96e57b79241c86851` into `feat/p05-memory-tx`, preserving
+both parents and shared history. The tested merge commit is
+`fa09f31732bedf5c4986c42acae7fe803e1aeb2b`. There were no merge conflicts,
+rebases, squashes or force pushes. PR #26 was not merged into the RTL branch.
+The report-only successor is the submitted review head recorded in PR #24;
+its qualification-relevant inputs remain the same.
+
+Compared `479b5c1ceee2eee8db58d863bd5de5e20305cc8c` to the merge using
+`git diff --quiet` and `git diff --name-status`, each restricted to these paths:
+
+| Qualification-relevant scope | Comparison |
+| --- | --- |
+| `rtl/`, including public type/port declarations | Unchanged |
+| `docs/spec/`, public behavioral/API contracts | Unchanged |
+| `verification/sources/production.json` | Unchanged |
+| `dv/designer/`, smoke/runner/source registration | Unchanged |
+
+No DV-owned patch, source, implementation report or source-bearing log was
+opened to establish these results. No speculative RTL changes were made.
+
+| Refresh check | Result on tested merge |
+| --- | --- |
+| `make doctor` | PASS, exit 0; prepared toolchain, no mismatch or setup changes. |
+| `python3 tools/check_repository.py` | PASS, exit 0. |
+| `python3 tools/check_light.py` | PASS, exit 0. The earlier error no longer reproduces after incorporating interface-check repair #25 through main. |
+| Designer simulation | PASS, 36 runs: all six profiles, depths 4/8, seeds 17/19/23; 3,324 completed packets. |
+| Scoped Verilator lint | PASS, 60 module checks: RAM/metadata/TX and affected queue/scheduler APIs. |
+| Slang lowering/synthesis | PASS, 12 module checks: RAM/metadata/TX, I0/I1, depths 4/8. |
+
+No new unexpected local failures occurred. Prior failure captures below remain
+preserved. The prepared environment was activated with `.tools/activate.sh`;
+no tool rebuild/install or setup-input change was made. The exact commands,
+times, tested identities, profile parameters and observations are retained in
+`integration_refresh` in [the compact record](P05-memory-tx-rtl.json).
+
+Full hosted CI is requested by marking #24 ready after these local checks and
+pushing the report update. Its authoritative latest run URL, tested head and
+outcome are recorded in the [PR description](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24)
+and [checks](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24/checks),
+so recording the final CI result does not create another source revision.
+A local pass is not a hosted full-CI pass or independent qualification.
+
+## Original designer evidence and boundary
 
 Candidate `fa91a3fe3e675a1b42dd684359758acfbcdb0b94` on
-`feat/p05-memory-tx`, based on current-main
+`feat/p05-memory-tx`, based on the then-current main
 `f54fedebd1cfa94d44fee1c759bc9d5e7aa44b52`. Final checks ran with clean
 production/designer source state. Later report-only commits do not change the
-tested RTL. [Draft PR #24](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24)
+tested RTL. [PR #24](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24)
 is the implementation review and qualification handoff.
 
 The existing public port declarations were moved into
@@ -33,7 +85,7 @@ Subsequently, the authorized standard `make doctor` passed on
 `6982a5e7837e5723f4a0698cff140da239cb30e6` using the prepared installation.
 No toolchain installation, rebuild, lock/stamp edit or bypass was performed.
 
-## Executed results
+## Earlier executed results
 
 | Check | Result | Scope and observations |
 | --- | --- | --- |
@@ -112,7 +164,7 @@ archived P04 source snapshot. The original bytes remain in `source.tar.gz`;
 archiving the snapshot avoids presenting unchanged historical RTL as new source.
 No production code was changed for that archival warning.
 
-## Standard light-check failure
+## Preserved earlier light-check failure
 
 [Failure capture](../../verification/failures/p05-standard-light-20261114T042319106270Z/capture.json)
 records the exact candidate, prepared environment, command, exit status and
@@ -130,31 +182,22 @@ P05-DV must triage the independent preparation test and provide a contract-level
 failure if production RTL is implicated. Independent DV and shared check tooling
 remain unchanged.
 
-## Independent qualification handoff
+## Remaining qualification and integration gates
 
-The public [P05 task card](../implementation/tasks/P05-memory-tx.md) on the
-fetched main still records preparation independence as unresolved. Its linked
-DV implementation report was not opened. The published automation/module
-contracts provide no candidate-RTL memory/TX qualification command or guarantee
-that its output is limited to contract-level symptoms. No candidate command was
-available to repeat; no oracle self-test was substituted.
+The local light-check failure recorded above is resolved for this refresh:
+#25 is incorporated from main and the standard command now passes. The
+independent test implementation and its repair were not inspected.
 
-The earlier restriction on standard commands' internal DV processing/hashing
-was explicitly clarified. Doctor and repository checks now pass; the light
-check executes and fails as recorded above, rather than remaining blocked.
-Its failure belongs to the independent preparation test's triage until a
-contract-level RTL defect is supplied. No independent functional memory/TX
-regression or FP-TX proof was run, and no independent qualification is claimed.
+DV PR #26's user-provided **PRE-MERGE CANDIDATE PASS** applies only to
+`479b5c1ceee2eee8db58d863bd5de5e20305cc8c`, with delivery revision
+`dc541cd5fe428a1dc7e1f1e175e1dfe1c2fc52dc`. Production/designer equality is
+supporting applicability evidence, not a substitute for the DV owner's
+confirmation for the refreshed review head. This RTL session did not rerun
+or inspect #26's tests, properties, mutations or implementation report.
 
-P05-DV must triage the light-check error, publish a candidate-RTL command with
-source-free result output, and qualify the final `feat/p05-memory-tx` head
-recorded in PR #24 against its frozen expectations. Its production/designer
-sources remain identical to tested RTL revision
-`fa91a3fe3e675a1b42dd684359758acfbcdb0b94`. Return command, candidate revision, configuration, seed, public
-stimulus, observed/expected interface behavior and contract violation only.
-Public APIs retain exact response timing and no response backpressure. Credit
-includes buffered plus outstanding beats and current external retirement;
-responses never free credits. Cells retire only on cell-final external
-handshakes, descriptors only through final `tx_done`, and reset cancels all
-live tags. Independent expectations, detectors and registrations were not
-modified. This PR remains draft pending that qualification and integration review.
+Required full hosted CI must complete successfully on the refreshed PR head.
+The DV owner must confirm applicability before maintainer integration and
+perform exact merged-source confirmation afterward. PR #24 is not merged by
+this task. Independent expectations and verification sources are unchanged.
+Public response timing, absence of response backpressure, merged
+buffered-plus-outstanding credits and external retirement rules are preserved.
