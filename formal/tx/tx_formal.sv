@@ -13,7 +13,7 @@ localparam integer CW=CELL_BYTES/8;
 logic history=0;
 logic [1:0] startup=0;
 logic initialized=0, live=0;
-logic ever_work=0, reset_after_work=0;
+logic ever_work=0, reset_after_work=0, reset_pending_seen=0;
 logic [MEM_RD_LATENCY-1:0] physical_valid='0, live_valid='0;
 logic [63:0] physical_data[MEM_RD_LATENCY];
 integer slots=0, arrived=0, issued=0, retired=0, total=0;
@@ -73,7 +73,8 @@ always_ff @(posedge clk) begin
     if(dispatch.valid) ever_work<=1;
     if(!rst_n && ever_work) reset_after_work<=1;
     c_reset_pending:cover(!rst_n && slots>0 && |physical_valid);
-    c_reset_reuse:cover(reset_after_work && dispatch.valid);
+    if(!rst_n && slots>0) reset_pending_seen<=1;
+    c_reset_reuse:cover(reset_pending_seen && dispatch.valid && tag_input==tag && descriptor_input==descriptor);
     if(!rst_n)begin
         initialized<=0;live<=0;slots<=0;arrived<=0;issued<=0;retired<=0;total<=0;
         live_valid<='0;returned<='0;held<=0;
@@ -127,12 +128,14 @@ always_ff @(posedge clk) begin
         a_outstanding_mapping:assert(int'(dut.outstanding)==slots-arrived);
         a_live_mapping:assert(dut.active==live);
         if(live)begin
-            a_packet_mapping:assert(dut.packet.info.length==length && dut.packet.info.tag==tag && dut.packet.qid==qid && dut.packet.desc==descriptor);
+            a_packet_mapping:assert(dut.packet.info.length==length && dut.packet.info.tag==tag && dut.packet.qid==qid && dut.packet.desc==descriptor && dut.packet.info.source==0 && dut.packet.info.qid==qid && dut.packet.info.head==chain(0) && int'(dut.packet.info.ncell)==(int'(length)+CELL_BYTES-1)/CELL_BYTES);
             a_fetch_cell:assert(dut.fetch_cell==chain(issued==total ? (total-1)/CW : issued/CW));
             a_fetch_word:assert(int'(dut.fetch_word)==(issued==total ? 0 : issued%CW));
             a_fetch_bytes:assert(int'(dut.fetch_bytes)==(issued==total ? 0 : int'(length)-issued*8));
             a_fetch_cells:assert(int'(dut.fetch_cells)==(issued==total ? 0 : (int'(length)+CELL_BYTES-1)/CELL_BYTES-issued/CW));
         end
+        a_pending_count:assert(slots-arrived==$countones(live_valid));
+        a_slot_bound:assert(slots<=TX_FIFO_DEPTH);
         a_pending_mapping:assert(dut.pending_valid==live_valid);
         a_pointer_bounds:assert(int'(dut.rd_ptr)<TX_FIFO_DEPTH && int'(dut.wr_ptr)<TX_FIFO_DEPTH);
         a_pointer_distance:assert(int'(dut.wr_ptr)==(int'(dut.rd_ptr)+arrived)%TX_FIFO_DEPTH);
@@ -168,4 +171,9 @@ end
             end
         end
 
+for(genvar i=0;i<8;i++)begin:g_returned
+    always_ff @(posedge clk) if(rst_n && live)begin
+        a_return_mask:assert(returned[chain(i)]==(i*CW<total && retired>=((i+1)*CW<total ? (i+1)*CW : total)));
+    end
+end
 endmodule

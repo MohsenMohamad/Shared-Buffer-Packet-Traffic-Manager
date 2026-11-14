@@ -14,6 +14,14 @@ from oracle import Oracle, Profile, Violation, require
 from ledger import Ledger
 
 
+def decode_edge(line, expected_tick):
+    require(line.startswith('TM_EDGE '), 'adapter_protocol', line.strip())
+    values = [int(value,16) for value in line.split()[1:]]
+    require(len(values)==12, 'adapter_sample_shape')
+    require(values[0]==expected_tick, 'adapter_sample_sequence', f'expected={expected_tick} observed={values[0]}')
+    return values[1:]
+
+
 class Live:
     def __init__(self, binary, profile, seed, directory):
         self.p, self.seed, self.path = profile, seed, Path(directory)
@@ -28,6 +36,7 @@ class Live:
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                         stderr=self.errors, text=True, bufsize=1)
         self.cycle, self.epoch, self.was_reset = -1, 0, False
+        self.transport_tick = 0
         self.info, self.links, self.queue_links = {}, {}, {}
         self.bins, self.crosses, self.reset_hits = Counter(), Counter(), Counter()
         self.free_edges, self.previous, self.last = {}, None, None
@@ -44,8 +53,9 @@ class Live:
         require(bool(select.select([self.process.stdout], [], [], 15)[0]), 'adapter_timeout')
         line = self.process.stdout.readline()
         self.raw.write(line); self.raw.flush()
-        require(line.startswith('TM_EDGE '), 'adapter_protocol', line.strip())
-        return [int(value, 16) for value in line.split()[1:]]
+        values = decode_edge(line,self.transport_tick)
+        self.transport_tick += 1
+        return values
 
     def edge(self, actions=None, *, reset=False, ready=True, queue_write=None):
         actions = actions or {}
@@ -90,7 +100,8 @@ class Live:
         self.observe(sample, B, O)
         if 'info' in observed: self.info[observed['info']['desc']] = observed['info'].copy()
         if 'link' in observed: self.links[observed['link']['cell']] = observed['link']['next']
-        self.expected_public = dict(response=dict(valid=bool(self.oracle.physical_reads and
+        self.expected_public = dict(reset_output_valid=False if reset or self.was_reset else None,
+                                    response=dict(valid=bool(self.oracle.physical_reads and
                                           self.oracle.physical_reads[0]['due']==self.cycle)))
         if self.expected_public['response']['valid']:
             self.expected_public['response']['data'] = self.oracle.physical_reads[0]['data']

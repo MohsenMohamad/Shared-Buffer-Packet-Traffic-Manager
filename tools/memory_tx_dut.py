@@ -71,7 +71,11 @@ def memory_tx_dut(run,args):
                                      '--profile-json',path,'--seed',str(value),'--output',case.path],timeout=args.timeout)
                 result,reason = completed(step,'TM_MEMORY_TX_DUT_PASS')
                 row = dict(seed=value,replay=index==3,result=result)
-                if (case.path/'violation.json').is_file(): row['contract_violation']=json.loads((case.path/'violation.json').read_text())
+                if (case.path/'violation.json').is_file():
+                    row['contract_violation']=json.loads((case.path/'violation.json').read_text())
+                    if step['result']!='TIMEOUT' and row['contract_violation'].get('server_returncode')==0:
+                        result,reason='FAIL',row['contract_violation'].get('detail',row['contract_violation']['detector'])
+                        row['result']=result
                 if result=='PASS':
                     report = json.loads((case.path/'result.json').read_text())
                     case.data['observed_qualification']=report
@@ -87,6 +91,7 @@ def memory_tx_dut(run,args):
             case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing, nonrepeatable or seed-independent production samples',sample_sha256=signatures)
     if args.profile=='E0' and any(c['configuration']['latency']==2 and c['configuration']['depth']==4 for c in public['configurations']):
         simulation_mutations(run,args,identity,seed)
+    public['detector_qualification'] = [dict(test=c.data['test'],result=c.data.get('result'),expected=c.data.get('expected'),intended_detector=c.data.get('intended_detector'),observed_violation=c.data.get('observed_violation')) for c in run.cases if 'source-fault-' in c.data['test']]
     public['result'] = 'PASS' if public['configurations'] and all(c['build_result']=='PASS' and len(c['runs'])==4 and
                          all(r['result']=='PASS' for r in c['runs']) for c in public['configurations']) and all(c.data.get('result')=='PASS' for c in run.cases) else 'FAIL'
     (run.path/'candidate-public.json').write_text(json.dumps(public,indent=2)+'\n')

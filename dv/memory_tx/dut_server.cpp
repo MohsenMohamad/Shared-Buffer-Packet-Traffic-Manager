@@ -31,7 +31,7 @@ int main(int argc,char** argv) {
         read_hex(top->stimulus,stimulus);read_hex(top->heads,heads);
         top->abort_cell=abort_cell;top->queue_write_valid=qvalid;top->queue_id=qid;
         top->queue_value=qnext;top->queue_query=qquery;top->eval();
-        std::cout<<"TM_EDGE "<<std::hex;
+        std::cout<<"TM_EDGE "<<std::hex<<context->time()<<' ';
         write_hex(top->observed);
         std::cout<<' '<<unsigned(top->output_valid)<<' '<<top->output_data<<' '<<unsigned(top->output_keep)
                  <<' '<<unsigned(top->output_last)<<' '<<top->output_user<<' '<<unsigned(top->dispatch_ready)
