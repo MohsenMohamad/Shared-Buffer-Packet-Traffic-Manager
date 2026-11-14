@@ -44,7 +44,7 @@ and original failure capture remain intact on their existing revisions.
 | `python3 tests/toolchain/test_memory_tx_preparation.py -v` | PASS, 12 tests | PASS, 12 tests | Includes no-ready rejection in both layouts, missing/unterminated header rejection and a body-read guard |
 | `python3 tools/check_repository.py` | PASS, exit 0 | PASS, exit 0 | Repository contract only |
 | `python3 tools/check_light.py` | PASS, 111 tests, exit 0 | PASS, 111 tests, exit 0 | Python/JSON/shell checks and units; no HDL execution |
-| `PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v` | PASS, 9 tests | PASS, 9 tests | Failure-capture isolation |
+| `PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v` | PASS, 2 tests | PASS, 2 tests | Failure-capture isolation |
 
 The original focused candidate test reproduced the intended integration failure
 with exit 1 before repair. Added isolated negatives reject a response-ready port
