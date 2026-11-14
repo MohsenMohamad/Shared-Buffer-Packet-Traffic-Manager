@@ -35,8 +35,9 @@ See [frozen expectations](../../dv/memory_tx/contract.md) for the risk/cover map
 
 The `memory-tx` formal selection now binds `tx_formal.sv` to the named production
 `tm_tx_api`; replay obligations above remain preparation evidence only. Safety
-uses ABC/PDR with the pinned Slang frontend. Covers and intentional source-copy
-counterexamples use SMTBMC/Z3. Only an actual completed prove status establishes
+uses SMTBMC/Z3 k-induction with the pinned Slang frontend. Covers and intentional
+source-copy counterexamples use SMTBMC/Z3 too. Earlier ABC/PDR preprocessing
+experiments are retained as non-success; they establish no property result. Only an actual completed prove status establishes
 unbounded safety; timeouts, UNKNOWN and cover/replay PASS do not.
 
 The production-supported formal dimensions are N_RX=1, N_Q=2, N_CELL=16,
