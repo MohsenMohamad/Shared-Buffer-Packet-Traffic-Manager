@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "period_ns": 10.0,
+  "input_transition_ns": 0.05,
+  "driving_cell": "BUF_X1",
+  "driving_pin": "Z",
+  "output_load_ff": 10.0,
+  "studies": {
+    "fifo-capability-r01": {"data_min_ns": 0.2, "data_max_ns": 1.0, "uncertainty_ns": 0.05},
+    "allocator-r01": {"data_min_ns": 0.2, "data_max_ns": 2.0, "uncertainty_ns": 0.10},
+    "p08-production-r01": {"data_min_ns": 0.2, "data_max_ns": 2.0, "uncertainty_ns": 0.10},
+    "p12-production-r01": {"data_min_ns": 0.2, "data_max_ns": 2.0, "uncertainty_ns": 0.10}
+  },
+  "scenarios": {
+    "fall-reference-r01": {"edge": "fall", "reset_min_ns": 0.0, "reset_max_ns": 0.2, "source": "Reference model only: ideal falling-edge release plus 0..0.2 ns boundary transport; no characterized external source"},
+    "rise-phase-sensitivity-r01": {"edge": "rise", "reset_min_ns": 0.0, "reset_max_ns": 0.2, "source": "Phase-only sensitivity of reference model; not a physical source"},
+    "rise-historical-shape-r01": {"edge": "rise", "reset_min_ns": 0.2, "reset_max_ns": 2.0, "source": "Historical allocator reset-delay shape, newly identified scenario; not a historical rerun or physical source"}
+  },
+  "modes": ["slew", "drive"],
+  "points": [
+    {"name": "E0-fifo2", "profile": "E0", "top": "tm_axis_rx_fifo_api", "depth": 2, "study": "fifo-capability-r01"},
+    {"name": "E0-fifo4", "profile": "E0", "top": "tm_axis_rx_fifo_api", "depth": 4, "study": "fifo-capability-r01"},
+    {"name": "I0-cell", "profile": "I0", "top": "tm_cell_pool_api", "study": "allocator-r01"},
+    {"name": "I0-descriptor", "profile": "I0", "top": "tm_desc_pool_api", "study": "allocator-r01"},
+    {"name": "F0-cell", "profile": "F0", "top": "tm_cell_pool_api", "study": "allocator-r01"},
+    {"name": "F0-descriptor", "profile": "F0", "top": "tm_desc_pool_api", "study": "allocator-r01"}
+  ],
+  "negative_cases": ["missing-reset-min", "missing-reset-max", "reversed-envelope", "missing-reset-port", "false-path-reset", "drop-removal", "bad-command"],
+  "synthesis_timeout_s": 1800,
+  "sta_timeout_s": 300
+}
