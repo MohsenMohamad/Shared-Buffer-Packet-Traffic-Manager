@@ -1,0 +1,562 @@
+diff --git a/Makefile b/Makefile
+index f1a0e48..3ec76f4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,9 +2,9 @@ PYTHON ?= python3
+ JOBS ?= 2
+ RUN_ARGS ?=
+ 
+-.PHONY: setup doctor repo-check lint test-unit test-uvm-smoke uvm-dpi formal-smoke formal-rtl synth-smoke frontends formal-symbols allocator-scaling ci regression coverage benchmark synthesis sta
++.PHONY: setup doctor repo-check lint test-unit test-uvm-smoke uvm-dpi formal-smoke formal-rtl synth-smoke frontends formal-symbols allocator-scaling reset-timing ci regression coverage benchmark synthesis sta
+ setup:
+ 	bash tools/setup.sh --jobs $(JOBS)
+ 
+-doctor repo-check lint test-unit test-uvm-smoke uvm-dpi formal-smoke formal-rtl synth-smoke frontends formal-symbols allocator-scaling ci regression coverage benchmark synthesis sta:
++doctor repo-check lint test-unit test-uvm-smoke uvm-dpi formal-smoke formal-rtl synth-smoke frontends formal-symbols allocator-scaling reset-timing ci regression coverage benchmark synthesis sta:
+ 	$(PYTHON) tools/run.py $@ --jobs $(JOBS) $(RUN_ARGS)
+diff --git a/experiments/reset-timing/README.md b/experiments/reset-timing/README.md
+index 8b15bf8..0cfad3b 100644
+--- a/experiments/reset-timing/README.md
++++ b/experiments/reset-timing/README.md
+@@ -87,3 +87,20 @@ or reset-distribution signoff. Existing allocator architectural conclusions and
+ functional evidence are not requalified by R01. P08 consumer and P12 integrated
+ studies remain future work and must use the shared configuration API with new
+ study/scenario identities if assumptions change.
++
++## Executable interpretation clarification
++
++`set_driving_cell` models both the virtual BUF_X1 input driver delay and its
++load-dependent output slew. Its SDC delay envelope is referenced **before** that
++virtual driver; actual block-port release includes the driver delay reported by
++OpenSTA. Fixed-slew mode has no virtual driver delay. Report both the SDC source
++window and actual modeled block-port window, and derive required port windows
++from port arrival minus removal slack / plus recovery slack. This clarifies the
++existing drive sensitivity, without changing its envelope or choosing a delay
++from observed slack. Neither source is physical characterization.
++
++OpenSTA can include recovery/removal even with `-to` register data pins. The
++reset-effects report therefore explicitly selects the `clk` path group, while
++reset-pin reports retain `asynchronous`. Bulk endpoint enumeration must prove
++every mapped asynchronous pin and output has max/min coverage, and mapped/STA
++inventories must agree. These are evidence corrections, not timing exceptions.
+diff --git a/tools/run.py b/tools/run.py
+index 91dfea8..879f81b 100644
+--- a/tools/run.py
++++ b/tools/run.py
+@@ -448,7 +448,8 @@ def main(argv=None):
+     from symbolic_qualification import qualify as symbolic_qualify
+     from frontend_qualification import audit as frontend_audit
+     from allocator_scaling import characterize
+-    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit,  **{'formal-symbols': symbolic_qualify, 'allocator-scaling': characterize})
++    from reset_timing import characterize as reset_characterize
++    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit,  **{'formal-symbols': symbolic_qualify, 'allocator-scaling': characterize, 'reset-timing': reset_characterize})
+     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
+     gates['uvm-dpi'] = uvm_dpi
+     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
+@@ -471,7 +472,7 @@ def main(argv=None):
+     else:
+         # Version records accompany direct capability runs as well as CI. Independent
+         # gates continue after failures; compilation remains prerequisite to execution.
+-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'formal-symbols', 'allocator-scaling', 'uvm-dpi')):
++        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'formal-symbols', 'allocator-scaling', 'reset-timing', 'uvm-dpi')):
+             qualify(run)
+         for name in selected:
+             try:
+diff --git a/experiments/reset-timing/timing.tcl b/experiments/reset-timing/timing.tcl
+new file mode 100644
+index 0000000..efd28b4
+--- /dev/null
++++ b/experiments/reset-timing/timing.tcl
+@@ -0,0 +1,81 @@
++# Shared reporting/coverage gate; inputs and expected envelope supplied by runner.
++read_liberty $::env(TM_LIBERTY)
++read_verilog $::env(TM_NETLIST)
++link_design $::env(TM_TOP)
++# Observe explicit reset bounds while OpenSTA executes the SDC. OpenSTA can
++# silently reuse a lone max bound for min; that is not an explicit min model.
++rename set_input_delay r01_input_delay
++proc set_input_delay {args} {
++    if {[lsearch -exact [lindex $args end] [get_ports rst_n]] >= 0} {
++        foreach bound {min max} {
++            if {[lsearch -exact $args -$bound] >= 0} {
++                set ::r01_reset($bound) [lindex $args end-1]
++            }
++        }
++        set ::r01_edge [expr {[lsearch -exact $args -clock_fall] >= 0 ? "fall" : "rise"}]
++    }
++    uplevel 1 [linsert $args 0 r01_input_delay]
++}
++# No timing exceptions are part of this recipe; reject rather than hide checks.
++foreach command {set_false_path set_disable_timing set_multicycle_path} {
++    rename $command r01_$command
++    proc $command {args} {error "R01_TIMING_EXCEPTION"}
++}
++read_sdc $::env(TM_SDC)
++foreach bound {min max} {
++    if {![info exists ::r01_reset($bound)]} {error "R01_MISSING_RESET_$bound"}
++    if {$::r01_reset($bound) != $::env(TM_RESET_[string toupper $bound])} {error "R01_RESET_BOUND_$bound"}
++}
++if {$::r01_edge ne $::env(TM_RESET_EDGE)} {error "R01_RESET_EDGE"}
++report_units
++if {![check_setup -verbose]} {error "R01_CONSTRAINT_COVERAGE"}
++set reset [get_ports rst_n]
++set data_inputs [get_ports -filter {direction == input && name != clk && name != rst_n}]
++set regs [all_registers -clock_pins]
++set data_pins [all_registers -data_pins]
++set async_pins [all_registers -async_pins]
++if {[llength $async_pins] == 0} {error "R01_NO_RESET_PINS"}
++# Collect one worst path per endpoint in bulk, then prove set equality. This
++# avoids repeated full-design searches on the 1036-pin mapped allocator.
++proc require_endpoints {name endpoints args} {
++    foreach delay {max min} {
++        set seen [dict create]
++        foreach path [find_timing_paths -path_delay $delay -to $endpoints -group_path_count [llength $endpoints] -endpoint_path_count 1 {*}$args] {
++            dict set seen [get_full_name [get_property $path endpoint]] 1
++        }
++        foreach endpoint $endpoints {
++            if {![dict exists $seen [get_full_name $endpoint]]} {error "R01_${name}_PATH_$delay [get_full_name $endpoint]"}
++        }
++    }
++}
++require_endpoints RESET $async_pins -rise_from $reset
++require_endpoints OUTPUT [all_outputs]
++puts "R01_COVERAGE [llength [all_outputs]] [llength $regs] [llength $async_pins]"
++# Explicit sections retain each endpoint class without reassigning path groups.
++proc section {name required args} {
++    foreach delay {max min} {
++        set paths [find_timing_paths -path_delay $delay {*}$args]
++        if {$required && [llength $paths] == 0} {error "R01_EMPTY_${name}_$delay"}
++        puts "R01_${name}_${delay}_BEGIN"
++        if {[llength $paths]} {
++            report_checks -path_delay $delay {*}$args -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
++        } else {puts R01_NOT_PRESENT}
++        puts "R01_${name}_${delay}_END"
++    }
++}
++section overall 1
++section data 1 -from [concat $data_inputs $regs] -to [concat $data_pins [all_outputs]]
++section data_rr 1 -from $regs -to $data_pins
++section data_ir 1 -from $data_inputs -to $data_pins
++section data_ro 1 -from $regs -to [all_outputs]
++section data_io 0 -from $data_inputs -to [all_outputs]
++section reset_checks 1 -rise_from $reset -to $async_pins
++section reset_effects 1 -path_group clk -from $reset -to [concat $data_pins [all_outputs]]
++if {$::env(TM_TOP) ne "tm_axis_rx_fifo_api"} {
++    section selection 1 -from $regs -to [get_ports {available_id*}]
++    section availability 1 -to [get_ports available]
++    section count 1 -to [get_ports {free_count*}]
++}
++report_check_types -max_delay -min_delay -recovery -removal -max_slew -max_capacitance -max_fanout -digits 5
++puts R01_DONE
++exit
+diff --git a/tests/toolchain/test_reset_timing.py b/tests/toolchain/test_reset_timing.py
+new file mode 100644
+index 0000000..d5e1d27
+--- /dev/null
++++ b/tests/toolchain/test_reset_timing.py
+@@ -0,0 +1,81 @@
++"""Guard complete separated timing evidence and explicit source envelopes."""
++from copy import deepcopy
++import json
++from pathlib import Path
++import sys
++import unittest
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'tools'))
++from reset_timing import BASE_GROUPS, measurements
++from timing_constraints import CONFIG, constraints, render
++
++
++def report():
++    text = 'R01_COVERAGE 4 5 5\n'
++    for group in BASE_GROUPS:
++        for delay in ('max', 'min'):
++            asynchronous = group == 'reset_checks'
++            check = 'recovery' if delay == 'max' else 'removal'
++            block = ('Startpoint: rst_n\nEndpoint: ff\nPath Group: ' + ('asynchronous' if asynchronous else 'clk') + '\n'
++                     ' 5.00000 ^ rst_n (in)\n 5.10000 ^ ff/RN (DFFR_X1)\n'
++                     ' 5.10000 data arrival time\n' + (f' 0.10000 library {check} time\n' if asynchronous else '') +
++                     ' -0.10000 slack (VIOLATED)\n')
++            text += f'R01_{group}_{delay}_BEGIN\n{block}R01_{group}_{delay}_END\n'
++    return text + 'R01_DONE\n'
++
++
++class ResetTimingTests(unittest.TestCase):
++    def setUp(self):
++        self.config = json.loads(CONFIG.read_text())
++        self.model = constraints(self.config, 'fifo-capability-r01', 'fall-reference-r01', 'slew')
++
++    def test_negative_slack_is_valid_measurement_with_unresolved_source(self):
++        data = measurements(report(), self.model, False)
++        self.assertEqual(data['model_closure'], 'FAIL')
++        self.assertEqual(data['source_closure'], 'UNRESOLVED')
++        self.assertEqual(data['required_port_release_window_ns_after_rise'], [5.1, 4.9])
++        self.assertFalse(data['release_window_nonempty'])
++
++    def test_missing_removal_or_recovery_and_diagnostics_rejected(self):
++        good = report()
++        for bad in (good.replace('R01_reset_checks_min_END', ''),
++                    good.replace('library removal time', 'library hold time'),
++                    good.replace('R01_reset_checks_max_BEGIN', ''),
++                    good.replace('R01_COVERAGE 4 5 5', 'R01_COVERAGE 4 5 0'),
++                    'Error 123: bad SDC\n' + good, 'Warning: unconstrained\n' + good,
++                    good + 'R01_DONE\n'):
++            with self.subTest(bad=bad), self.assertRaises(ValueError):
++                measurements(bad, self.model, False)
++
++    def test_asynchronous_category_overlap_rejected(self):
++        bad = report().replace('R01_reset_effects_min_BEGIN\nStartpoint: rst_n\nEndpoint: ff\nPath Group: clk',
++                               'R01_reset_effects_min_BEGIN\nStartpoint: rst_n\nEndpoint: ff\nPath Group: asynchronous')
++        with self.assertRaisesRegex(ValueError, 'Asynchronous check'):
++            measurements(bad, self.model, False)
++
++    def test_missing_bounds_reversed_and_nonfinite_models_rejected(self):
++        for change in ('missing', 'reverse', 'nan', 'negative'):
++            bad = deepcopy(self.config)
++            reset = bad['scenarios']['fall-reference-r01']
++            if change == 'missing':
++                del reset['reset_min_ns']
++            elif change == 'reverse':
++                reset['reset_min_ns'] = 0.3
++            elif change == 'nan':
++                reset['reset_min_ns'] = float('nan')
++            else:
++                reset['reset_min_ns'] = -0.1
++            with self.subTest(change=change), self.assertRaises((ValueError, KeyError)):
++                constraints(bad, 'fifo-capability-r01', 'fall-reference-r01', 'slew')
++
++    def test_all_consumers_use_same_reset_events_with_explicit_data_budgets(self):
++        for study in self.config['studies']:
++            text = render(constraints(self.config, study, 'fall-reference-r01', 'slew'))
++            self.assertIn('set_input_delay -min -clock clk -clock_fall 0.0 $reset', text)
++            self.assertIn('set_input_delay -max -clock clk -clock_fall 0.2 $reset', text)
++            self.assertNotIn('false_path', text)
++            self.assertIn('name != rst_n', text)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tools/reset_timing.py b/tools/reset_timing.py
+new file mode 100644
+index 0000000..ac95499
+--- /dev/null
++++ b/tools/reset_timing.py
+@@ -0,0 +1,243 @@
++"""Focused actual mapped FIFO/allocator qualification of the frozen R01 model."""
++from collections import Counter, defaultdict
++from copy import deepcopy
++import json
++import os
++import re
++
++from allocator_scaling import mapping_measurements
++from evidence import Case, ROOT, execute, output, sha
++from frontend import read_sources
++from registry import profile, sources
++from timing_constraints import CONFIG, constraints, render
++
++EXPERIMENT = CONFIG.parent
++DIAGNOSTIC = re.compile(r'(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:')
++BASE_GROUPS = ('overall', 'data', 'data_rr', 'data_ir', 'data_ro', 'data_io', 'reset_checks', 'reset_effects')
++
++
++def measurements(text, model, allocator):
++    if DIAGNOSTIC.search(text) or text.count('R01_DONE') != 1:
++        raise ValueError('STA diagnostic or incomplete execution')
++    coverage = re.findall(r'^R01_COVERAGE (\d+) (\d+) (\d+)$', text, re.M)
++    if len(coverage) != 1 or any(int(n) == 0 for n in coverage[0]):
++        raise ValueError('Missing nonempty endpoint coverage')
++    data = dict(coverage=dict(zip(('output_bits', 'registers', 'async_pins'), map(int, coverage[0]))), paths={})
++    groups = BASE_GROUPS + (('selection', 'availability', 'count') if allocator else ())
++    for group in groups:
++        for delay in ('max', 'min'):
++            tag = f'R01_{group}_{delay}'
++            if text.count(tag + '_BEGIN') != 1 or text.count(tag + '_END') != 1:
++                raise ValueError('Missing timing section: ' + tag)
++            section = text.split(tag + '_BEGIN')[1].split(tag + '_END')[0]
++            paths = []
++            for block in section.split('Startpoint: ')[1:]:
++                def field(pattern):
++                    match = re.search(pattern, block, re.M)
++                    if match is None:
++                        raise ValueError('Incomplete path in ' + tag)
++                    return match[1]
++                arrival = float(field(r'([-+]?\d+\.\d+)\s+data arrival time'))
++                paths.append(dict(startpoint=block.splitlines()[0], endpoint=field(r'^Endpoint: (.+)'),
++                                  path_group=field(r'^Path Group: (.+)'), arrival_ns=arrival,
++                                  slack_ns=float(field(r'([-+]?\d+\.\d+)\s+slack'))))
++                # The last cell/port row before arrival names the actual path pin.
++                rows = re.findall(r'^.*?\s([\w.\[\]/]+) \([^()]+\)\s*$', block.split('data arrival time')[0], re.M)
++                paths[-1]['endpoint_pin'] = rows[-1] if rows else paths[-1]['endpoint']
++                if group.startswith('data') or group == 'reset_effects':
++                    if paths[-1]['path_group'] != 'clk':
++                        raise ValueError('Asynchronous check in data/reset-effects category')
++                if group == 'reset_checks':
++                    check = 'recovery' if delay == 'max' else 'removal'
++                    port_row = re.search(r'^.*?([-+]?\d+\.\d+)\s+\^ rst_n \(in\)\s*$', block, re.M)
++                    if port_row is None:
++                        raise ValueError('Missing rising reset port event')
++                    paths[-1]['port_arrival_ns'] = float(port_row[1])
++                    if not re.search(r'library ' + check + r' time', block):
++                        raise ValueError('Required reset check type absent: ' + check)
++            if not paths:
++                if group != 'data_io' or section.strip() != 'R01_NOT_PRESENT':
++                    raise ValueError('Empty timing section: ' + tag)
++                data['paths'][group + '_' + delay] = None
++            else:
++                data['paths'][group + '_' + delay] = min(paths, key=lambda p: p['slack_ns'])
++    paths = data['paths']
++    phase = model['period_ns'] / 2 if model['edge'] == 'fall' else 0
++    lower = phase + model['reset_min_ns'] - paths['reset_checks_min']['slack_ns']
++    upper = phase + model['reset_max_ns'] + paths['reset_checks_max']['slack_ns']
++    # A rising launch belongs to the window after that rise and before the next.
++    data['required_source_delay_window_ns_after_rise'] = [round(lower, 5), round(upper, 5)]
++    port_min = paths['reset_checks_min']['port_arrival_ns']
++    port_max = paths['reset_checks_max']['port_arrival_ns']
++    data['modeled_port_release_ns_after_rise'] = [port_min, port_max]
++    data['required_port_release_window_ns_after_rise'] = [
++        round(port_min - paths['reset_checks_min']['slack_ns'], 5),
++        round(port_max + paths['reset_checks_max']['slack_ns'], 5)]
++    data['release_window_nonempty'] = lower <= upper
++    data['category_closure'] = {
++        category: 'PASS' if all(paths[group + '_' + delay]['slack_ns'] >= 0
++                               for delay in ('max', 'min')) else 'FAIL'
++        for category, group in (('data_setup_hold', 'data'), ('reset_recovery_removal', 'reset_checks'),
++                                ('reset_effects', 'reset_effects'))}
++    data['model_closure'] = 'PASS' if all(v == 'PASS' for v in data['category_closure'].values()) else 'FAIL'
++    data['source_closure'] = 'UNRESOLVED'
++    return data
++
++
++def structure(module, point, params):
++    if 'fifo' not in point['name']:
++        capacity = params['N_CELL' if point['top'] == 'tm_cell_pool_api' else 'N_DESC']
++        result = mapping_measurements(module, capacity + capacity.bit_length() + 1)
++    else:
++        depth = point['depth']
++        beat_width = params['DATA_W'] + params['DATA_W'] // 8 + 65
++        expected = beat_width * depth + 2 * (depth - 1).bit_length() + depth.bit_length() + 1
++        histogram = Counter(c['type'] for c in module['cells'].values())
++        if any(t.startswith('$') or t.startswith('LAT') for t in histogram):
++            raise ValueError('Unmapped cells or latches')
++        state = sum(n for t, n in histogram.items() if t.startswith('DFF'))
++        if state != expected:
++            raise ValueError(f'FIFO state {state} != {expected}')
++        outputs = {name: len(p['bits']) for name, p in module['ports'].items() if p['direction'] == 'output'}
++        if outputs != dict(s_ready=1, m_valid=1, empty=1, m_beat=beat_width):
++            raise ValueError('Incomplete FIFO outputs')
++        driven = {b for c in module['cells'].values() for p, bs in c['connections'].items()
++                  if c['port_directions'][p] == 'output' for b in bs}
++        if any(b not in driven for p in module['ports'].values() if p['direction'] == 'output' for b in p['bits']):
++            raise ValueError('Undriven or constant FIFO output')
++        result = dict(state_bits=state, mapped_cells=dict(histogram), outputs=outputs,
++                      payload_bits=beat_width * depth)
++    sinks = defaultdict(list)
++    reset_bits = set(module['ports']['rst_n']['bits'])
++    async_pins = []
++    for name, cell in module['cells'].items():
++        for pin, bits in cell['connections'].items():
++            if cell['port_directions'][pin] == 'input':
++                for bit in bits:
++                    sinks[bit].append(name + '/' + pin)
++            if cell['type'].startswith('DFF') and pin in ('RN', 'SN'):
++                async_pins.append(name + '/' + pin)
++    # Propagate reset classification only through mapped buffers/inverters.
++    changed = True
++    while changed:
++        changed = False
++        for cell in module['cells'].values():
++            ins = [b for p, bs in cell['connections'].items() if cell['port_directions'][p] == 'input' for b in bs]
++            outs = [b for p, bs in cell['connections'].items() if cell['port_directions'][p] == 'output' for b in bs]
++            if cell['type'].startswith(('BUF_X', 'INV_X')) and len(ins) == 1 and ins[0] in reset_bits:
++                for bit in outs:
++                    if bit not in reset_bits:
++                        reset_bits.add(bit)
++                        changed = True
++    result['reset_fanout'] = dict(root_sink_pins=sum(len(sinks[b]) for b in module['ports']['rst_n']['bits']),
++                                  async_pin_count=len(async_pins), tree_net_count=len(reset_bits),
++                                  max_tree_sink_pins=max(len(sinks[b]) for b in reset_bits))
++    return result
++
++
++def sta(case, netlist, point, model, mapped_structure, negative=None):
++    sdc = render(model)
++    expected = None
++    if negative == 'missing-reset-min':
++        sdc = '\n'.join(line for line in sdc.splitlines() if not (line.startswith('set_input_delay -min') and line.endswith('$reset'))) + '\n'
++        expected = 'R01_MISSING_RESET_min'
++    elif negative == 'missing-reset-max':
++        sdc = '\n'.join(line for line in sdc.splitlines() if not (line.startswith('set_input_delay -max') and line.endswith('$reset'))) + '\n'
++        expected = 'R01_MISSING_RESET_max'
++    elif negative == 'missing-reset-port':
++        sdc = sdc.replace('set reset [get_ports rst_n]', 'set reset [get_ports no_such_reset]')
++        expected = 'R01_RESET_PORT'
++    elif negative in ('false-path-reset', 'drop-removal'):
++        sdc += ('set_false_path -from [get_ports rst_n]\n' if negative == 'false-path-reset' else
++                'set_disable_timing -from CK -to RN [all_registers]\n')
++        expected = 'R01_TIMING_EXCEPTION'
++    elif negative == 'bad-command':
++        sdc += 'r01_deliberate_bad_command\n'
++        expected = 'r01_deliberate_bad_command'
++    sdc_path = case.path / 'timing.sdc'
++    sdc_path.write_text(sdc)
++    env = dict(os.environ, TM_NETLIST=str(netlist), TM_LIBERTY=str(ROOT / '.deps/liberty.lib'),
++               TM_SDC=str(sdc_path), TM_TOP=point['top'], TM_RESET_MIN=str(model['reset_min_ns']),
++               TM_RESET_MAX=str(model['reset_max_ns']), TM_RESET_EDGE=model['edge'])
++    step = execute(['sta', '-no_init', '-exit', str(EXPERIMENT / 'timing.tcl')], case.path, 'sta', 300, env=env)
++    case.data['steps'].append(step)
++    case.data.update(model=model, netlist_sha256=sha(netlist), sdc_sha256=sha(sdc_path))
++    if negative:
++        ok = step['result'] != 'TIMEOUT' and expected in output(step) and DIAGNOSTIC.search(output(step)) is not None
++        case.finish('PASS' if ok else 'FAIL', None if ok else 'Intended constraint rejection absent',
++                    expected_negative=negative, intended_detector=expected, measurement_valid=False)
++        return
++    if step['result'] != 'PASS':
++        case.finish(step['result'], step['first_failure'])
++        return
++    try:
++        data = measurements(output(step), model, 'fifo' not in point['name'])
++        expected = dict(output_bits=sum(mapped_structure['outputs'].values()),
++                        registers=mapped_structure['state_bits'],
++                        async_pins=mapped_structure['reset_fanout']['async_pin_count'])
++        if data['coverage'] != expected:
++            raise ValueError('STA endpoint inventory differs from mapped structure')
++        case.finish('PASS', measurement_valid=True, measurements=data)
++    except (ValueError, KeyError, IndexError) as error:
++        case.finish('FAIL', str(error))
++
++
++def characterize(run, args):
++    run.scope = 'R01 actual standalone mapped FIFO/allocator; valid execution is separate from closure; physical source unresolved'
++    config = json.loads(CONFIG.read_text())
++    liberty = ROOT / '.deps/liberty.lib'
++    if sha(liberty) != config['library_sha256'] or any(c.data.get('result') != 'PASS' for c in run.cases):
++        raise ValueError('Locked library and doctor PASS required')
++    registered = sources('synthesis')
++    maps = {}
++    for point in config['points']:
++        params = profile(point['profile'])
++        if 'depth' in point:
++            params['RX_FIFO_DEPTH'] = point['depth']
++        case = Case(run, 'r01-map-' + point['name'])
++        case.data.update(point=point, parameters=params, registered_sources=registered)
++        paths = {key: case.path / filename for key, filename in
++                 (('NETLIST', 'mapped.v'), ('JSON', 'mapped.json'), ('STATS', 'stats.json'))}
++        values = dict(READ=read_sources(registered['sources'], point['top'], registered['include_dirs'], params=params).strip(),
++                      TOP=point['top'], LIBERTY=liberty, ABC_CONSTR=ROOT / 'experiments/allocator-scaling/abc.constr', **paths)
++        script = (ROOT / 'experiments/allocator-scaling/mapping.ys.in').read_text()
++        for key, value in values.items():
++            script = script.replace('@' + key + '@', str(value))
++        script_path = case.path / 'mapping.ys'
++        script_path.write_text(script)
++        step = case.execute(['yosys', '-Q', '-T', '-s', str(script_path)], timeout=config['synthesis_timeout_s'])
++        if step['result'] != 'PASS':
++            case.finish(step['result'], step['first_failure'])
++            continue
++        try:
++            data = structure(json.loads(paths['JSON'].read_text())['modules'][point['top']], point, params)
++            data['area_um2'] = json.loads(paths['STATS'].read_text())['modules']['\\' + point['top']]['area']
++            case.finish('PASS', measurements=data, netlist_sha256=sha(paths['NETLIST']),
++                        mapping_script_sha256=sha(script_path))
++        except (ValueError, KeyError, OSError) as error:
++            case.finish('FAIL', str(error))
++            continue
++        maps[point['name']] = (paths['NETLIST'], data)
++        for scenario in config['scenarios']:
++            for mode in config['modes']:
++                case = Case(run, f'r01-{point["name"]}-{scenario}-{mode}')
++                case.data['point'] = point
++                sta(case, paths['NETLIST'], point, constraints(config, point['study'], scenario, mode), data)
++    for point in (config['points'][0], config['points'][2]):
++        for negative in config['negative_cases']:
++            case = Case(run, f'r01-negative-{point["name"]}-{negative}')
++            if point['name'] not in maps:
++                case.finish('NOT_RUN', 'Mapped representative unavailable')
++                continue
++            bad = deepcopy(config)
++            scenario = 'fall-reference-r01'
++            if negative == 'reversed-envelope':
++                bad['scenarios'][scenario]['reset_min_ns'] = 0.3
++                try:
++                    constraints(bad, point['study'], scenario, 'slew')
++                except ValueError as error:
++                    case.finish('PASS', expected_negative=negative, intended_detector=str(error), measurement_valid=False)
++                else:
++                    case.finish('FAIL', 'Reversed envelope accepted')
++            else:
++                sta(case, maps[point['name']][0], point, constraints(config, point['study'], scenario, 'slew'), maps[point['name']][1], negative)
+diff --git a/tools/timing_constraints.py b/tools/timing_constraints.py
+new file mode 100644
+index 0000000..1401179
+--- /dev/null
++++ b/tools/timing_constraints.py
+@@ -0,0 +1,69 @@
++"""Shared, explicit data/reset constraints for R01 and future P08/P12 studies."""
++import argparse
++import json
++import math
++from pathlib import Path
++
++from evidence import ROOT
++
++CONFIG = ROOT / 'experiments/reset-timing/config.json'
++
++
++def constraints(config, study, scenario, mode):
++    """Resolve a named model; an omitted reset bound is never defaulted."""
++    if config['schema_version'] != 1 or mode not in config['modes']:
++        raise ValueError('Unknown constraint schema or drive mode')
++    data, reset = config['studies'][study], config['scenarios'][scenario]
++    for key, values in ((('data_min_ns', 'data_max_ns', 'uncertainty_ns'), data),
++                        (('reset_min_ns', 'reset_max_ns'), reset),
++                        (('period_ns', 'input_transition_ns', 'output_load_ff'), config)):
++        for name in key:
++            value = values[name]
++            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
++                raise ValueError('Invalid constraint value: ' + name)
++    if config['period_ns'] <= 0 or reset['edge'] not in ('rise', 'fall') or not reset['source']:
++        raise ValueError('Invalid clock/reset source model')
++    if data['data_min_ns'] > data['data_max_ns'] or reset['reset_min_ns'] > reset['reset_max_ns']:
++        raise ValueError('Reversed constraint envelope')
++    for key in ('driving_cell', 'driving_pin'):
++        if not config[key].replace('_', '').isalnum():
++            raise ValueError('Invalid drive identifier')
++    return dict(study=study, scenario=scenario, mode=mode, **data, **reset,
++                **{k: config[k] for k in ('period_ns', 'input_transition_ns', 'output_load_ff', 'driving_cell', 'driving_pin')})
++
++
++def render(model):
++    phase = ' -clock_fall' if model['edge'] == 'fall' else ''
++    lines = [f'# {model["study"]} / {model["scenario"]} / {model["mode"]}; ns/fF; ideal clock',
++             f'create_clock -name clk -period {model["period_ns"]} [get_ports clk]',
++             f'set_clock_uncertainty {model["uncertainty_ns"]} [get_clocks clk]',
++             'set reset [get_ports rst_n]',
++             'if {[llength $reset] != 1} {error "R01_RESET_PORT"}',
++             'set data_inputs [get_ports -filter {direction == input && name != clk && name != rst_n}]']
++    for bound in ('min', 'max'):
++        lines += [f'set_input_delay -{bound} -clock clk {model["data_" + bound + "_ns"]} $data_inputs',
++                  f'set_output_delay -{bound} -clock clk {model["data_" + bound + "_ns"]} [all_outputs]',
++                  f'set_input_delay -{bound} -clock clk{phase} {model["reset_" + bound + "_ns"]} $reset']
++    if model['mode'] == 'slew':
++        lines += [f'set_input_transition {model["input_transition_ns"]} [all_inputs -no_clocks]']
++    else:
++        lines += [f'set_driving_cell -lib_cell {model["driving_cell"]} -pin {model["driving_pin"]} [all_inputs -no_clocks]']
++    lines += [f'set_load {model["output_load_ff"]} [all_outputs]']
++    return '\n'.join(lines) + '\n'
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--config', type=Path, default=CONFIG)
++    parser.add_argument('--study', required=True)
++    parser.add_argument('--scenario', required=True)
++    parser.add_argument('--mode', choices=('slew', 'drive'), required=True)
++    parser.add_argument('--output', type=Path, required=True)
++    args = parser.parse_args()
++    model = constraints(json.loads(args.config.read_text()), args.study, args.scenario, args.mode)
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    args.output.write_text(render(model))
++
++
++if __name__ == '__main__':
++    main()

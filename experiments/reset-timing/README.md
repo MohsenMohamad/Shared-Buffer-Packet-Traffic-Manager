@@ -87,3 +87,20 @@ or reset-distribution signoff. Existing allocator architectural conclusions and
 functional evidence are not requalified by R01. P08 consumer and P12 integrated
 studies remain future work and must use the shared configuration API with new
 study/scenario identities if assumptions change.
+
+## Executable interpretation clarification
+
+`set_driving_cell` models both the virtual BUF_X1 input driver delay and its
+load-dependent output slew. Its SDC delay envelope is referenced **before** that
+virtual driver; actual block-port release includes the driver delay reported by
+OpenSTA. Fixed-slew mode has no virtual driver delay. Report both the SDC source
+window and actual modeled block-port window, and derive required port windows
+from port arrival minus removal slack / plus recovery slack. This clarifies the
+existing drive sensitivity, without changing its envelope or choosing a delay
+from observed slack. Neither source is physical characterization.
+
+OpenSTA can include recovery/removal even with `-to` register data pins. The
+reset-effects report therefore explicitly selects the `clk` path group, while
+reset-pin reports retain `asynchronous`. Bulk endpoint enumeration must prove
+every mapped asynchronous pin and output has max/min coverage, and mapped/STA
+inventories must agree. These are evidence corrections, not timing exceptions.

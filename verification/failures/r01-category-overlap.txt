@@ -1,0 +1,64 @@
+Rejected first run: .build/runs/reset-timing-2026-11-14T180225.674987+0000-6639b232
+Source: b507086 plus patch in reset-effects-category-audit capture.
+Reproduce: apply capture patch, make reset-timing RUN_ARGS="--timeout 1800"; inspect reset_effects_min.
+Stopped after category audit failed, during first F0-cell STA; no complete-run PASS.
+
+
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _1367_ (removal check against rising-edge clock clk)
+Path Group: asynchronous
+Path Type: min
+
+Fanout        Cap       Slew      Delay       Time   Description
+-----------------------------------------------------------------------------------------
+                     0.00000    5.00000    5.00000   clock clk (fall edge)
+                                0.00000    5.00000   clock network delay (ideal)
+                                0.00000    5.00000 ^ input external delay
+     9   15.64483    0.05000    0.00000    5.00000 ^ rst_n (in)
+                     0.05000    0.00000    5.00000 ^ _1367_/RN (DFFR_X1)
+                                           5.00000   data arrival time
+
+                     0.00000    0.00000    0.00000   clock clk (rise edge)
+                                0.00000    0.00000   clock network delay (ideal)
+                                0.05000    0.05000   clock uncertainty
+                                0.00000    0.05000   clock reconvergence pessimism
+                                           0.05000 ^ _1367_/CK (DFFR_X1)
+                                0.24368    0.29368   library removal time
+                                           0.29368   data required time
+-----------------------------------------------------------------------------------------
+                                           0.29368   data required time
+                                          -5.00000   data arrival time
+-----------------------------------------------------------------------------------------
+                                           4.70632   slack (MET)
+
+
+Startpoint: rst_n (input port clocked by clk)
+Endpoint: _1367_ (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+Fanout        Cap       Slew      Delay       Time   Description
+-----------------------------------------------------------------------------------------
+                     0.00000    5.00000    5.00000   clock clk (fall edge)
+                                0.00000    5.00000   clock network delay (ideal)
+                                0.00000    5.00000 v input external delay
+     9   15.23708    0.05000    0.00000    5.00000 v rst_n (in)
+     6   12.51085    0.00807    0.05087    5.05087 v _629_/ZN (AND4_X4)
+     1    1.12828    0.00972    0.02330    5.07418 ^ _644_/ZN (OAI21_X1)
+                     0.00972    0.00000    5.07418 ^ _1367_/D (DFFR_X1)
+                                           5.07418   data arrival time
+
+                     0.00000    0.00000    0.00000   clock clk (rise edge)
+                                0.00000    0.00000   clock network delay (ideal)
+                                0.05000    0.05000   clock uncertainty
+                                0.00000    0.05000   clock reconvergence pessimism
+                                           0.05000 ^ _1367_/CK (DFFR_X1)
+                                0.00573    0.05573   library hold time
+                                           0.05573   data required time
+-----------------------------------------------------------------------------------------
+                                           0.05573   data required time
+                                          -5.07418   data arrival time
+-----------------------------------------------------------------------------------------
+                                           5.01845   slack (MET)
+
+
