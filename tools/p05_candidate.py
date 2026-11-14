@@ -35,6 +35,12 @@ def main():
                 executed_command=command,diagnostics=str(directory),summary=summary)
     candidate=list((directory/'runs').glob('*/candidate-public.json'))
     if len(candidate)==1:report['candidate']=json.loads(candidate[0].read_text())
+    if args.formal:
+        report['formal_results']=[]
+        for row in summary.get('cases',[]):
+            case=json.loads(Path(row['manifest']).read_text())
+            if 'candidate' in case:
+                report['formal_results'].append({key:case.get(key) for key in ('test','result','configuration','candidate','engine','method','engine_status','expected','reached_covers')})
     (directory/'public-result.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(dict(result=report['result'],rtl_revision=args.rtl_revision,profile=args.profile,
                          child_returncode=child.returncode,public_result=str(directory/'public-result.json'))))

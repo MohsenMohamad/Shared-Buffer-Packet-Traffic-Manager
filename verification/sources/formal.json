@@ -12,8 +12,7 @@
     "formal/symbolic/symbolic_inputs.sv",
     "formal/queue/queue_formal.sv",
     "formal/scheduler/scheduler_formal.sv",
-    "formal/scheduler/scheduler_progress.sv",
-    "formal/tx/tx_formal.sv"
+    "formal/scheduler/scheduler_progress.sv"
   ],
   "headers": [
     "formal/pools/bitmap_properties.svh",
@@ -22,6 +21,6 @@
     "formal/symbolic/symbolic_checks.svh",
     "formal/scheduler/scheduler_policy.svh"
   ],
-  "scope": "Local production storage, queue/controller-link, scheduler and CSR protocol proofs; no integrated TM ownership or datapath proof. FP-TX exact-candidate route is selected separately.",
+  "scope": "Local production storage, queue/controller-link, scheduler and CSR protocol proofs; no integrated TM ownership or datapath proof.",
   "frontend": "slang"
 }

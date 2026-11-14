@@ -42,3 +42,18 @@ class CandidateAdapterTests(unittest.TestCase):
                 (root/memory_tx_dut.RTL_PATHS[-1]).write_text('// changed synthetic source\n')
                 with self.assertRaisesRegex(ValueError,'Selected candidate source differs'):
                     memory_tx_dut.candidate_identity(revision)
+
+
+class DedicatedFormalGuardTests(unittest.TestCase):
+    def test_candidate_formal_list_has_the_same_symbol_guard(self):
+        import registry
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source=root/'formal/tx/probe.sv';source.parent.mkdir(parents=True)
+            (root/'rtl/include').mkdir(parents=True)
+            data=dict(sources=['formal/tx/probe.sv'],headers=[],include_dirs=['rtl/include'])
+            with patch.object(registry,'ROOT',root),patch.object(registry,'read',return_value=data):
+                source.write_text('module probe(input logic changing); endmodule\n')
+                self.assertEqual(registry.sources('memory-tx-formal')['sources'],data['sources'])
+                source.write_text('module probe; (* anyseq *) logic forbidden; endmodule\n')
+                with self.assertRaises(ValueError) as caught:registry.sources('memory-tx-formal')
+                self.assertIn('anyseq',str(caught.exception))

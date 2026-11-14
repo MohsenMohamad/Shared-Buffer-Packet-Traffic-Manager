@@ -5,6 +5,7 @@ from evidence import Case, ROOT, output, sha
 from frontend import read_sources
 from formal_symbols import check_sources
 from memory_tx_dut import candidate_identity
+from registry import sources, fingerprint
 
 MUTATIONS = {
     'outstanding-credit': ("int'(buffered)+int'(outstanding)-int'(retire)", "int'(buffered)-int'(retire)", 'a_credit'),
@@ -22,6 +23,7 @@ def mutate(text, name):
 def formal_tx(run,args,configuration):
     if not args.candidate_revision: raise ValueError('FP-TX requires explicit --candidate-revision')
     identity = candidate_identity(args.candidate_revision)
+    registered=sources('memory-tx-formal')
     for latency in (args.memory_latency or [1,2]):
         for depth in (args.tx_depth or [4,8]):
             tasks = ['prove','cover']+list(MUTATIONS) if (latency,depth)==(2,4) else ['prove','cover']
@@ -30,11 +32,11 @@ def formal_tx(run,args,configuration):
                 params = {k:configuration[k] for k in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
                 params.update(MEM_RD_LATENCY=latency,TX_FIFO_DEPTH=depth)
                 induction_depth=2
-                case.data.update(configuration=params,candidate=identity,source_set='formal',
+                case.data.update(configuration=params,candidate=identity,source_set='memory-tx-formal',registered_source_digests=fingerprint('memory-tx-formal'),
                     engine='smtbmc z3',method=f'unbounded k-induction, maximum depth {induction_depth}' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
                     assumptions='Two startup reset samples; arbitrary later resets and sink stalls. Legal idle-only dispatch, 1..128 byte packets. An arbitrary distinct eight-cell permutation is captured per accepted dispatch using F01 explicit time-varying input ports; tails and returned links are arbitrary; arbitrary input word captured on each read with exact unreset physical response latency. Returned links may change immediately. No fairness assumption.')
-                paths=['rtl/include/tm_fixed.sv','rtl/tx/tm_tx.sv','formal/tx/tx_formal.sv']
-                headers=['rtl/include/tm_types.svh','rtl/include/tm_parameters.svh','rtl/include/tm_validate.svh']
+                paths=registered['sources']
+                headers=registered['headers']
                 check_sources([ROOT/p for p in paths+headers],[ROOT/'rtl/include'])
                 files=[]
                 for path in paths+headers:

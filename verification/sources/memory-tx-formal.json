@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "include_dirs": [
+    "rtl/include",
+    "formal/tx"
+  ],
+  "sources": [
+    "rtl/include/tm_fixed.sv",
+    "rtl/tx/tm_tx.sv",
+    "formal/tx/tx_formal.sv"
+  ],
+  "headers": [
+    "rtl/include/tm_types.svh",
+    "rtl/include/tm_parameters.svh",
+    "rtl/include/tm_validate.svh"
+  ],
+  "frontend": "slang",
+  "scope": "Exact-candidate FP-TX only, independent of other component compilation lists. Complete source/header/include guard applies without exceptions."
+}

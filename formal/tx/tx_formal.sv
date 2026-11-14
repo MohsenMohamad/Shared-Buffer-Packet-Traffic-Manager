@@ -79,7 +79,7 @@ always_ff @(posedge clk) begin
     c_reset_pending:cover(!rst_n && slots>0 && |physical_valid);
     if(!rst_n && slots>0) reset_pending_seen<=1;
     c_reset_reuse:cover(reset_pending_seen && dispatch.valid && tag_input==tag && descriptor_input==descriptor && chain_input[0 +: CELL_ID_W]==chain(0));
-    c_new_chain:cover(ever_work && dispatch.valid && chain_input!=owned_chain);
+    c_new_chain:cover(ever_work && dispatch.valid && int'(length)>CELL_BYTES && int'(length_input)>CELL_BYTES && chain_input[0 +: CELL_ID_W]==chain(0) && chain_input[CELL_ID_W +: CELL_ID_W]!=chain(1));
     if(!rst_n)begin
         initialized<=0;live<=0;slots<=0;arrived<=0;issued<=0;retired<=0;total<=0;
         live_valid<='0;returned<='0;held<=0;
