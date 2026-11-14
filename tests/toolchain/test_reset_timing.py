@@ -17,11 +17,11 @@ def report():
             asynchronous = group == 'reset_checks'
             check = 'recovery' if delay == 'max' else 'removal'
             block = ('Startpoint: rst_n\nEndpoint: ff\nPath Group: ' + ('asynchronous' if asynchronous else 'clk') + '\n'
-                     ' 5.00000 ^ rst_n (in)\n 5.10000 ^ ff/RN (DFFR_X1)\n'
+                     ' 9 15.6 0.05000 0.00000 5.00000 ^ rst_n (in)\n 5.10000 ^ ff/RN (DFFR_X1)\n'
                      ' 5.10000 data arrival time\n' + (f' 0.10000 library {check} time\n' if asynchronous else '') +
                      ' -0.10000 slack (VIOLATED)\n')
             text += f'R01_{group}_{delay}_BEGIN\n{block}R01_{group}_{delay}_END\n'
-    return text + 'R01_DONE\n'
+    return text + '\nmax slew\n\nPin Limit Slew Slack\n----\npin 0.19853 0.05000 0.14853 (MET)\n\nmax capacitance\n\nPin Limit Cap Slack\n----\npin 60.00000 15.60000 44.40000 (MET)\nR01_DONE\n'
 
 
 class ResetTimingTests(unittest.TestCase):
@@ -53,6 +53,13 @@ class ResetTimingTests(unittest.TestCase):
                                'R01_reset_effects_min_BEGIN\nStartpoint: rst_n\nEndpoint: ff\nPath Group: asynchronous')
         with self.assertRaisesRegex(ValueError, 'Asynchronous check'):
             measurements(bad, self.model, False)
+
+    def test_electrical_failures_remain_valid_but_do_not_close_model(self):
+        data = measurements(report().replace('0.14853 (MET)', '-3.03176 (VIOLATED)'), self.model, False)
+        self.assertEqual(data['category_closure']['electrical'], 'FAIL')
+        self.assertEqual(data['model_closure'], 'FAIL')
+        with self.assertRaisesRegex(ValueError, 'Missing electrical report'):
+            measurements(report().replace('max capacitance', 'omitted'), self.model, False)
 
     def test_missing_bounds_reversed_and_nonfinite_models_rejected(self):
         for change in ('missing', 'reverse', 'nan', 'negative'):

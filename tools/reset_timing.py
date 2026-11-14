@@ -49,10 +49,11 @@ def measurements(text, model, allocator):
                         raise ValueError('Asynchronous check in data/reset-effects category')
                 if group == 'reset_checks':
                     check = 'recovery' if delay == 'max' else 'removal'
-                    port_row = re.search(r'^.*?([-+]?\d+\.\d+)\s+\^ rst_n \(in\)\s*$', block, re.M)
+                    port_row = re.search(r'^\s*\d+\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+\^ rst_n \(in\)\s*$', block, re.M)
                     if port_row is None:
                         raise ValueError('Missing rising reset port event')
-                    paths[-1]['port_arrival_ns'] = float(port_row[1])
+                    paths[-1].update(port_capacitance_ff=float(port_row[1]), port_slew_ns=float(port_row[2]),
+                                     virtual_driver_delay_ns=float(port_row[3]), port_arrival_ns=float(port_row[4]))
                     if not re.search(r'library ' + check + r' time', block):
                         raise ValueError('Required reset check type absent: ' + check)
             if not paths:
@@ -79,6 +80,16 @@ def measurements(text, model, allocator):
                                for delay in ('max', 'min')) else 'FAIL'
         for category, group in (('data_setup_hold', 'data'), ('reset_recovery_removal', 'reset_checks'),
                                 ('reset_effects', 'reset_effects'))}
+    data['electrical'] = {}
+    for name in ('max slew', 'max capacitance'):
+        section = re.search(r'\n' + name + r'\n.*?^-+\n([^\n]+)', text, re.M | re.S)
+        if section is None:
+            raise ValueError('Missing electrical report: ' + name)
+        row = re.fullmatch(r'(\S+)\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+\((?:MET|VIOLATED)\)', section[1])
+        if row is None:
+            raise ValueError('Incomplete electrical report: ' + name)
+        data['electrical'][name] = dict(pin=row[1], limit=float(row[2]), actual=float(row[3]), slack=float(row[4]))
+    data['category_closure']['electrical'] = 'PASS' if all(e['slack'] >= 0 for e in data['electrical'].values()) else 'FAIL'
     data['model_closure'] = 'PASS' if all(v == 'PASS' for v in data['category_closure'].values()) else 'FAIL'
     data['source_closure'] = 'UNRESOLVED'
     return data

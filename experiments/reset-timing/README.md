@@ -104,3 +104,11 @@ reset-effects report therefore explicitly selects the `clk` path group, while
 reset-pin reports retain `asynchronous`. Bulk endpoint enumeration must prove
 every mapped asynchronous pin and output has max/min coverage, and mapped/STA
 inventories must agree. These are evidence corrections, not timing exceptions.
+
+Electrical max-slew and max-capacitance checks are separate from timing slack.
+The aggregate reference-model verdict requires these checks as well as data,
+recovery/removal and reset effects. Out-of-limit driver sensitivity remains valid
+numerical execution with failed model closure, never physical source evidence.
+Keep the reported port slew/capacitance and virtual driver delay, especially when
+library tables are extrapolated. This tightens the reporting verdict; it changes
+no constraints, source model, scenario, path or numerical timing criterion.
