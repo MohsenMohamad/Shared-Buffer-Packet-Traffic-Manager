@@ -1,0 +1,13 @@
+{
+  "scope": "RTL-owned designer smoke only; no independent verification",
+  "include_dirs": ["rtl/include"],
+  "sources": [
+    "rtl/include/tm_fixed.sv",
+    "rtl/queue/tm_desc_links.sv",
+    "rtl/memory/tm_metadata.sv",
+    "rtl/memory/tm_packet_ram.sv",
+    "rtl/tx/tm_tx.sv",
+    "dv/designer/tm_memory_tx_smoke.sv"
+  ],
+  "top": "tm_memory_tx_smoke"
+}

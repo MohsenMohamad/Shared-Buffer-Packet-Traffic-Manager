@@ -1,0 +1,2221 @@
+{
+  "scope": "RTL-author component/local integration checks; separate DV PR #26 reported PASS only for named prior candidate",
+  "candidate_revision": "fa91a3fe3e675a1b42dd684359758acfbcdb0b94",
+  "source_dirty": false,
+  "source_registration": "verification/sources/production.json",
+  "designer_registration": "dv/designer/p05_sources.json",
+  "tool_versions": {
+    "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
+    "yosys": "Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)"
+  },
+  "checks": [
+    {
+      "profile": "F0",
+      "depth": 4,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F0 --depth 4 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224626926325Z-F0-l1-d4",
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2860,
+          "full": 103,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2858,
+          "full": 107,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2861,
+          "full": 104,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "F0",
+      "depth": 4,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F0 --depth 4 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224635402345Z-F0-l1-d4",
+      "observations": []
+    },
+    {
+      "profile": "F0",
+      "depth": 8,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F0 --depth 8 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224635926139Z-F0-l1-d8",
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2834,
+          "full": 99,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2832,
+          "full": 103,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2834,
+          "full": 99,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "F0",
+      "depth": 8,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F0 --depth 8 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224642448063Z-F0-l1-d8",
+      "observations": []
+    },
+    {
+      "profile": "F1",
+      "depth": 4,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F1 --depth 4 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224642953957Z-F1-l2-d4",
+      "observations": [
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2725,
+          "full": 115,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2727,
+          "full": 114,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2727,
+          "full": 108,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "F1",
+      "depth": 4,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F1 --depth 4 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224649649131Z-F1-l2-d4",
+      "observations": []
+    },
+    {
+      "profile": "F1",
+      "depth": 8,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F1 --depth 8 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224650144043Z-F1-l2-d8",
+      "observations": [
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2703,
+          "full": 109,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2706,
+          "full": 104,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2707,
+          "full": 106,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "F1",
+      "depth": 8,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 16,
+        "CELL_BYTES": 64,
+        "N_CELL": 1024,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile F1 --depth 8 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224656639959Z-F1-l2-d8",
+      "observations": []
+    },
+    {
+      "profile": "I0",
+      "depth": 4,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I0 --depth 4 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224657153990Z-I0-l1-d4",
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 342,
+          "full": 22,
+          "first": 3,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 342,
+          "full": 21,
+          "first": 3,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 338,
+          "full": 25,
+          "first": 3,
+          "streamed": 376,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "I0",
+      "depth": 4,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I0 --depth 4 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224701099755Z-I0-l1-d4",
+      "observations": []
+    },
+    {
+      "profile": "I0",
+      "depth": 8,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I0 --depth 8 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224701585507Z-I0-l1-d8",
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 340,
+          "full": 19,
+          "first": 3,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 338,
+          "full": 19,
+          "first": 3,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 334,
+          "full": 23,
+          "first": 3,
+          "streamed": 376,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "I0",
+      "depth": 8,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I0 --depth 8 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224705823872Z-I0-l1-d8",
+      "observations": []
+    },
+    {
+      "profile": "I1",
+      "depth": 4,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I1 --depth 4 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224706487686Z-I1-l2-d4",
+      "observations": [
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 309,
+          "full": 24,
+          "first": 4,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 311,
+          "full": 23,
+          "first": 4,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 309,
+          "full": 25,
+          "first": 4,
+          "streamed": 376,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "I1",
+      "depth": 4,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I1 --depth 4 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224710612548Z-I1-l2-d4",
+      "observations": []
+    },
+    {
+      "profile": "I1",
+      "depth": 8,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I1 --depth 8 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224711123524Z-I1-l2-d8",
+      "observations": [
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 305,
+          "full": 20,
+          "first": 4,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 307,
+          "full": 17,
+          "first": 4,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 306,
+          "full": 20,
+          "first": 4,
+          "streamed": 376,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "I1",
+      "depth": 8,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I1 --depth 8 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224715663864Z-I1-l2-d8",
+      "observations": []
+    },
+    {
+      "profile": "E0",
+      "depth": 4,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "CELL_BYTES": 16,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E0 --depth 4 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224716210251Z-E0-l1-d4",
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 186,
+          "full": 16,
+          "first": 3,
+          "streamed": 248,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 183,
+          "full": 20,
+          "first": 3,
+          "streamed": 248,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 186,
+          "full": 16,
+          "first": 3,
+          "streamed": 248,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "E0",
+      "depth": 4,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "CELL_BYTES": 16,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E0 --depth 4 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224720253598Z-E0-l1-d4",
+      "observations": []
+    },
+    {
+      "profile": "E0",
+      "depth": 8,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "CELL_BYTES": 16,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E0 --depth 8 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224720791123Z-E0-l1-d8",
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 182,
+          "full": 14,
+          "first": 3,
+          "streamed": 248,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 180,
+          "full": 18,
+          "first": 3,
+          "streamed": 248,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 182,
+          "full": 14,
+          "first": 3,
+          "streamed": 248,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "E0",
+      "depth": 8,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 1,
+        "N_Q": 2,
+        "CELL_BYTES": 16,
+        "N_CELL": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E0 --depth 8 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224724693079Z-E0-l1-d8",
+      "observations": []
+    },
+    {
+      "profile": "E1",
+      "depth": 4,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 8,
+        "CELL_BYTES": 32,
+        "N_CELL": 64,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E1 --depth 4 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224725185261Z-E1-l2-d4",
+      "observations": [
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 772,
+          "full": 89,
+          "first": 4,
+          "streamed": 872,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 771,
+          "full": 92,
+          "first": 4,
+          "streamed": 872,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 773,
+          "full": 88,
+          "first": 4,
+          "streamed": 872,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "E1",
+      "depth": 4,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 8,
+        "CELL_BYTES": 32,
+        "N_CELL": 64,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E1 --depth 4 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224729316710Z-E1-l2-d4",
+      "observations": []
+    },
+    {
+      "profile": "E1",
+      "depth": 8,
+      "mode": "smoke",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 8,
+        "CELL_BYTES": 32,
+        "N_CELL": 64,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E1 --depth 8 --seed 17 --seed 19 --seed 23",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224729796399Z-E1-l2-d8",
+      "observations": [
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 769,
+          "full": 21,
+          "first": 4,
+          "streamed": 872,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 767,
+          "full": 23,
+          "first": 4,
+          "streamed": 872,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 769,
+          "full": 23,
+          "first": 4,
+          "streamed": 872,
+          "seed": 23
+        }
+      ]
+    },
+    {
+      "profile": "E1",
+      "depth": 8,
+      "mode": "lint",
+      "parameters": {
+        "N_RX": 4,
+        "N_Q": 8,
+        "CELL_BYTES": 32,
+        "N_CELL": 64,
+        "N_DESC": 32,
+        "MAX_PACKET_BYTES": 512,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile E1 --depth 8 --lint",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224733960645Z-E1-l2-d8",
+      "observations": []
+    },
+    {
+      "profile": "I0",
+      "depth": 4,
+      "mode": "synth",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I0 --depth 4 --synth",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224626900085Z-I0-l1-d4",
+      "observations": []
+    },
+    {
+      "profile": "I0",
+      "depth": 8,
+      "mode": "synth",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I0 --depth 8 --synth",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224627733477Z-I0-l1-d8",
+      "observations": []
+    },
+    {
+      "profile": "I1",
+      "depth": 4,
+      "mode": "synth",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 4
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I1 --depth 4 --synth",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224628693955Z-I1-l2-d4",
+      "observations": []
+    },
+    {
+      "profile": "I1",
+      "depth": 8,
+      "mode": "synth",
+      "parameters": {
+        "N_RX": 2,
+        "N_Q": 4,
+        "CELL_BYTES": 16,
+        "N_CELL": 32,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 2,
+        "TX_FIFO_DEPTH": 8
+      },
+      "command": "python3 dv/designer/run_p05.py --profile I1 --depth 8 --synth",
+      "result": "PASS",
+      "artifact_directory": "work/p05/20261113T224629574638Z-I1-l2-d8",
+      "observations": []
+    }
+  ],
+  "standard_checks_revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+  "standard_checks": [
+    {
+      "command": [
+        "make",
+        "doctor"
+      ],
+      "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+      "configuration": "prepared .tools/activate.sh environment",
+      "seed": null,
+      "start_utc": "2026-11-14T04:23:09.615938+00:00",
+      "end_utc": "2026-11-14T04:23:12.454385+00:00",
+      "result": "PASS",
+      "exit_code": 0,
+      "output_directory": "work/p05-followup/doctor",
+      "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details."
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_repository.py"
+      ],
+      "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+      "configuration": "prepared .tools/activate.sh environment",
+      "seed": null,
+      "start_utc": "2026-11-14T04:23:12.454882+00:00",
+      "end_utc": "2026-11-14T04:23:12.518994+00:00",
+      "result": "PASS",
+      "exit_code": 0,
+      "output_directory": "work/p05-followup/repository",
+      "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details."
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_light.py"
+      ],
+      "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+      "configuration": "prepared .tools/activate.sh environment",
+      "seed": null,
+      "start_utc": "2026-11-14T04:23:12.519425+00:00",
+      "end_utc": "2026-11-14T04:23:19.106162+00:00",
+      "result": "FAIL",
+      "exit_code": 1,
+      "output_directory": "work/p05-followup/light",
+      "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details.",
+      "disposition": "unresolved",
+      "source_identity": "Exact clean committed candidate; no repair performed before capture.",
+      "opaque_output_archive": "uninspected-output.tar.gz",
+      "failure_capture": "verification/failures/p05-standard-light-20261114T042319106270Z",
+      "sanitized_summary": {
+        "unittest_failures": [
+          {
+            "status": "ERROR",
+            "test": "test_public_response_has_no_backpressure",
+            "owner": "test_memory_tx_preparation.PreparationBoundaryTests.test_public_response_has_no_backpressure"
+          }
+        ],
+        "test_totals": [
+          "Ran 109 tests in 6.364s",
+          "FAILED (errors=1)"
+        ],
+        "exception_classes": [
+          "IndexError"
+        ],
+        "recognized_status": []
+      },
+      "triage_owner": "P05-DV",
+      "diagnosis": "Independent preparation unit test execution error (IndexError). Test implementation and traceback were not inspected. No contract-level RTL violation was provided; no source repair attempted."
+    }
+  ],
+  "inspection_policy": "Standard commands may internally process/hash DV. Independent DV implementation, reports, source-bearing output and source hashes were not manually inspected.",
+  "designer_source_hashes_collected": false,
+  "standard_command_internal_processing": "DV processing/hashing authorized; native source-bearing output withheld.",
+  "integration_refresh": {
+    "qualified_candidate": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "refreshed_merge": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+    "main_merge": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "independent_dv_delivery_reported_by_user": "dc541cd5fe428a1dc7e1f1e175e1dfe1c2fc52dc",
+    "independent_dv_pr": 26,
+    "independent_qualification_status_reported_by_user": "PRE-MERGE CANDIDATE PASS",
+    "comparison": {
+      "production_rtl_and_public_declarations": {
+        "paths": [
+          "rtl"
+        ],
+        "unchanged": true,
+        "differences": []
+      },
+      "public_contracts": {
+        "paths": [
+          "docs/spec"
+        ],
+        "unchanged": true,
+        "differences": []
+      },
+      "production_source_registration": {
+        "paths": [
+          "verification/sources/production.json"
+        ],
+        "unchanged": true,
+        "differences": []
+      },
+      "designer_smoke_and_registration": {
+        "paths": [
+          "dv/designer"
+        ],
+        "unchanged": true,
+        "differences": []
+      }
+    },
+    "merge_conflicts": false,
+    "dv_pr_merged_into_rtl_branch": false,
+    "local_checks": [
+      {
+        "name": "doctor",
+        "command": [
+          "make",
+          "doctor"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:11.186315+00:00",
+        "end_utc": "2026-11-14T11:37:13.428886+00:00",
+        "output_directory": "work/p05-refresh/doctor"
+      },
+      {
+        "name": "repository",
+        "command": [
+          "python3",
+          "tools/check_repository.py"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:13.429349+00:00",
+        "end_utc": "2026-11-14T11:37:13.493430+00:00",
+        "output_directory": "work/p05-refresh/repository"
+      },
+      {
+        "name": "light",
+        "command": [
+          "python3",
+          "tools/check_light.py"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:13.494005+00:00",
+        "end_utc": "2026-11-14T11:37:20.075655+00:00",
+        "output_directory": "work/p05-refresh/light"
+      },
+      {
+        "name": "smoke-F0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F0",
+          "--depth",
+          "4",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:20.076125+00:00",
+        "end_utc": "2026-11-14T11:37:26.614133+00:00",
+        "output_directory": "work/p05-refresh/smoke-F0-d4"
+      },
+      {
+        "name": "lint-F0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F0",
+          "--depth",
+          "4",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:26.615169+00:00",
+        "end_utc": "2026-11-14T11:37:27.141013+00:00",
+        "output_directory": "work/p05-refresh/lint-F0-d4"
+      },
+      {
+        "name": "smoke-F0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F0",
+          "--depth",
+          "8",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:27.141401+00:00",
+        "end_utc": "2026-11-14T11:37:33.791052+00:00",
+        "output_directory": "work/p05-refresh/smoke-F0-d8"
+      },
+      {
+        "name": "lint-F0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F0",
+          "--depth",
+          "8",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:33.791581+00:00",
+        "end_utc": "2026-11-14T11:37:34.363321+00:00",
+        "output_directory": "work/p05-refresh/lint-F0-d8"
+      },
+      {
+        "name": "smoke-F1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F1",
+          "--depth",
+          "4",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:34.363826+00:00",
+        "end_utc": "2026-11-14T11:37:41.054845+00:00",
+        "output_directory": "work/p05-refresh/smoke-F1-d4"
+      },
+      {
+        "name": "lint-F1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F1",
+          "--depth",
+          "4",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:41.055173+00:00",
+        "end_utc": "2026-11-14T11:37:41.585913+00:00",
+        "output_directory": "work/p05-refresh/lint-F1-d4"
+      },
+      {
+        "name": "smoke-F1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F1",
+          "--depth",
+          "8",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:41.586503+00:00",
+        "end_utc": "2026-11-14T11:37:48.185246+00:00",
+        "output_directory": "work/p05-refresh/smoke-F1-d8"
+      },
+      {
+        "name": "lint-F1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "F1",
+          "--depth",
+          "8",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:48.186184+00:00",
+        "end_utc": "2026-11-14T11:37:48.701078+00:00",
+        "output_directory": "work/p05-refresh/lint-F1-d8"
+      },
+      {
+        "name": "smoke-I0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I0",
+          "--depth",
+          "4",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:48.701466+00:00",
+        "end_utc": "2026-11-14T11:37:52.781180+00:00",
+        "output_directory": "work/p05-refresh/smoke-I0-d4"
+      },
+      {
+        "name": "lint-I0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I0",
+          "--depth",
+          "4",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:52.781697+00:00",
+        "end_utc": "2026-11-14T11:37:53.296886+00:00",
+        "output_directory": "work/p05-refresh/lint-I0-d4"
+      },
+      {
+        "name": "smoke-I0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I0",
+          "--depth",
+          "8",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:53.297297+00:00",
+        "end_utc": "2026-11-14T11:37:57.331070+00:00",
+        "output_directory": "work/p05-refresh/smoke-I0-d8"
+      },
+      {
+        "name": "lint-I0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I0",
+          "--depth",
+          "8",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:57.331494+00:00",
+        "end_utc": "2026-11-14T11:37:57.854120+00:00",
+        "output_directory": "work/p05-refresh/lint-I0-d8"
+      },
+      {
+        "name": "smoke-I1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I1",
+          "--depth",
+          "4",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:37:57.855217+00:00",
+        "end_utc": "2026-11-14T11:38:01.982132+00:00",
+        "output_directory": "work/p05-refresh/smoke-I1-d4"
+      },
+      {
+        "name": "lint-I1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I1",
+          "--depth",
+          "4",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:01.982855+00:00",
+        "end_utc": "2026-11-14T11:38:02.551626+00:00",
+        "output_directory": "work/p05-refresh/lint-I1-d4"
+      },
+      {
+        "name": "smoke-I1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I1",
+          "--depth",
+          "8",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:02.552060+00:00",
+        "end_utc": "2026-11-14T11:38:06.784107+00:00",
+        "output_directory": "work/p05-refresh/smoke-I1-d8"
+      },
+      {
+        "name": "lint-I1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I1",
+          "--depth",
+          "8",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:06.784580+00:00",
+        "end_utc": "2026-11-14T11:38:07.353659+00:00",
+        "output_directory": "work/p05-refresh/lint-I1-d8"
+      },
+      {
+        "name": "smoke-E0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E0",
+          "--depth",
+          "4",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:07.354035+00:00",
+        "end_utc": "2026-11-14T11:38:11.384054+00:00",
+        "output_directory": "work/p05-refresh/smoke-E0-d4"
+      },
+      {
+        "name": "lint-E0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E0",
+          "--depth",
+          "4",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:11.384510+00:00",
+        "end_utc": "2026-11-14T11:38:11.899843+00:00",
+        "output_directory": "work/p05-refresh/lint-E0-d4"
+      },
+      {
+        "name": "smoke-E0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E0",
+          "--depth",
+          "8",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:11.900377+00:00",
+        "end_utc": "2026-11-14T11:38:15.931777+00:00",
+        "output_directory": "work/p05-refresh/smoke-E0-d8"
+      },
+      {
+        "name": "lint-E0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E0",
+          "--depth",
+          "8",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:15.932655+00:00",
+        "end_utc": "2026-11-14T11:38:16.501809+00:00",
+        "output_directory": "work/p05-refresh/lint-E0-d8"
+      },
+      {
+        "name": "smoke-E1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E1",
+          "--depth",
+          "4",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:16.502295+00:00",
+        "end_utc": "2026-11-14T11:38:20.838016+00:00",
+        "output_directory": "work/p05-refresh/smoke-E1-d4"
+      },
+      {
+        "name": "lint-E1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E1",
+          "--depth",
+          "4",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:20.838580+00:00",
+        "end_utc": "2026-11-14T11:38:21.360969+00:00",
+        "output_directory": "work/p05-refresh/lint-E1-d4"
+      },
+      {
+        "name": "smoke-E1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E1",
+          "--depth",
+          "8",
+          "--seed",
+          "17",
+          "--seed",
+          "19",
+          "--seed",
+          "23"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:21.361545+00:00",
+        "end_utc": "2026-11-14T11:38:25.495949+00:00",
+        "output_directory": "work/p05-refresh/smoke-E1-d8"
+      },
+      {
+        "name": "lint-E1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "E1",
+          "--depth",
+          "8",
+          "--lint"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:25.496419+00:00",
+        "end_utc": "2026-11-14T11:38:26.021025+00:00",
+        "output_directory": "work/p05-refresh/lint-E1-d8"
+      },
+      {
+        "name": "synth-I0-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I0",
+          "--depth",
+          "4",
+          "--synth"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:26.021840+00:00",
+        "end_utc": "2026-11-14T11:38:26.589708+00:00",
+        "output_directory": "work/p05-refresh/synth-I0-d4"
+      },
+      {
+        "name": "synth-I0-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I0",
+          "--depth",
+          "8",
+          "--synth"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:26.590132+00:00",
+        "end_utc": "2026-11-14T11:38:27.105468+00:00",
+        "output_directory": "work/p05-refresh/synth-I0-d8"
+      },
+      {
+        "name": "synth-I1-d4",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I1",
+          "--depth",
+          "4",
+          "--synth"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:27.105958+00:00",
+        "end_utc": "2026-11-14T11:38:27.621000+00:00",
+        "output_directory": "work/p05-refresh/synth-I1-d4"
+      },
+      {
+        "name": "synth-I1-d8",
+        "command": [
+          "python3",
+          "dv/designer/run_p05.py",
+          "--profile",
+          "I1",
+          "--depth",
+          "8",
+          "--synth"
+        ],
+        "revision": "fa09f31732bedf5c4986c42acae7fe803e1aeb2b",
+        "result": "PASS",
+        "exit_code": 0,
+        "configuration": "Prepared .tools/activate.sh; no setup inputs changed",
+        "start_utc": "2026-11-14T11:38:27.621497+00:00",
+        "end_utc": "2026-11-14T11:38:28.139240+00:00",
+        "output_directory": "work/p05-refresh/synth-I1-d8"
+      }
+    ],
+    "designer_summary": {
+      "simulation_runs": 36,
+      "lint_module_checks": 60,
+      "synthesis_module_checks": 12,
+      "completed_packets": 3324,
+      "first_valid_cycles_by_latency": {
+        "1": [
+          3
+        ],
+        "2": [
+          4
+        ]
+      },
+      "observations": [
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2860,
+          "full": 103,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2858,
+          "full": 107,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2861,
+          "full": 104,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 23
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2834,
+          "full": 99,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2832,
+          "full": 103,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2834,
+          "full": 99,
+          "first": 3,
+          "streamed": 2760,
+          "seed": 23
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2725,
+          "full": 115,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2727,
+          "full": 114,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2727,
+          "full": 108,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 23
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2703,
+          "full": 109,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2706,
+          "full": 104,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 1024,
+          "bytes": 64,
+          "packets": 151,
+          "triple": 2707,
+          "full": 106,
+          "first": 4,
+          "streamed": 2760,
+          "seed": 23
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 342,
+          "full": 22,
+          "first": 3,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 342,
+          "full": 21,
+          "first": 3,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 338,
+          "full": 25,
+          "first": 3,
+          "streamed": 376,
+          "seed": 23
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 340,
+          "full": 19,
+          "first": 3,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 338,
+          "full": 19,
+          "first": 3,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 334,
+          "full": 23,
+          "first": 3,
+          "streamed": 376,
+          "seed": 23
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 309,
+          "full": 24,
+          "first": 4,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 311,
+          "full": 23,
+          "first": 4,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 309,
+          "full": 25,
+          "first": 4,
+          "streamed": 376,
+          "seed": 23
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 305,
+          "full": 20,
+          "first": 4,
+          "streamed": 376,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 307,
+          "full": 17,
+          "first": 4,
+          "streamed": 376,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 32,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 306,
+          "full": 20,
+          "first": 4,
+          "streamed": 376,
+          "seed": 23
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 186,
+          "full": 16,
+          "first": 3,
+          "streamed": 248,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 183,
+          "full": 20,
+          "first": 3,
+          "streamed": 248,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 4,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 186,
+          "full": 16,
+          "first": 3,
+          "streamed": 248,
+          "seed": 23
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 182,
+          "full": 14,
+          "first": 3,
+          "streamed": 248,
+          "seed": 17
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 180,
+          "full": 18,
+          "first": 3,
+          "streamed": 248,
+          "seed": 19
+        },
+        {
+          "latency": 1,
+          "depth": 8,
+          "cells": 16,
+          "bytes": 16,
+          "packets": 55,
+          "triple": 182,
+          "full": 14,
+          "first": 3,
+          "streamed": 248,
+          "seed": 23
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 772,
+          "full": 89,
+          "first": 4,
+          "streamed": 872,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 771,
+          "full": 92,
+          "first": 4,
+          "streamed": 872,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 4,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 773,
+          "full": 88,
+          "first": 4,
+          "streamed": 872,
+          "seed": 23
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 769,
+          "full": 21,
+          "first": 4,
+          "streamed": 872,
+          "seed": 17
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 767,
+          "full": 23,
+          "first": 4,
+          "streamed": 872,
+          "seed": 19
+        },
+        {
+          "latency": 2,
+          "depth": 8,
+          "cells": 64,
+          "bytes": 32,
+          "packets": 87,
+          "triple": 769,
+          "full": 23,
+          "first": 4,
+          "streamed": 872,
+          "seed": 23
+        }
+      ]
+    },
+    "hosted_ci": {
+      "status_at_report_commit": "NOT_RUN; requested after local checks and push",
+      "authoritative_latest_results": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24/checks",
+      "run_identity_and_outcome_record": "PR #24 description; updates do not change the submitted source head"
+    },
+    "qualification_applicability": "PENDING independent DV-owner confirmation for refreshed PR head"
+  },
+  "historical_blockers": [
+    "Independent candidate-RTL memory/TX qualification: no candidate command published in the available public interface",
+    "FP-TX independent formal qualification"
+  ],
+  "historical_open_failures": [
+    {
+      "command": "python3 tools/check_light.py",
+      "result": "FAIL",
+      "exit_code": 1,
+      "test": "test_memory_tx_preparation.PreparationBoundaryTests.test_public_response_has_no_backpressure",
+      "error_class": "IndexError",
+      "disposition": "unresolved",
+      "owner": "P05-DV",
+      "capture": "verification/failures/p05-standard-light-20261114T042319106270Z/capture.json",
+      "refresh_resolution": {
+        "main_repair_pr": 25,
+        "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+        "check_light_on_merge": "PASS",
+        "test_implementation_inspected": false
+      }
+    }
+  ],
+  "open_failures": [],
+  "remaining_gates": [
+    "Required full hosted CI on refreshed PR head",
+    "P05-DV applicability confirmation for refreshed candidate",
+    "Exact merged-source confirmation after maintainer integration"
+  ]
+}
