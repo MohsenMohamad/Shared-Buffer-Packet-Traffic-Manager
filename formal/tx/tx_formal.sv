@@ -137,8 +137,17 @@ always_ff @(posedge clk) begin
         a_pointer_bounds:assert(int'(dut.rd_ptr)<TX_FIFO_DEPTH && int'(dut.wr_ptr)<TX_FIFO_DEPTH);
         a_pointer_distance:assert(int'(dut.wr_ptr)==(int'(dut.rd_ptr)+arrived)%TX_FIFO_DEPTH);
         a_count_order:assert(retired<=issued && issued<=total && slots==issued-retired);
-        for(int j=0;j<MEM_RD_LATENCY;j++)begin
-            if(live_valid[j])begin
+        c_full_credit:cover(slots==TX_FIFO_DEPTH);
+        c_full_pending:cover(slots==TX_FIFO_DEPTH && |live_valid);
+        c_pending_stall:cover(|live_valid && !sink_ready);
+        c_exchange:cover(slots==TX_FIFO_DEPTH && arrival && read_req.valid && fire);
+        c_final_hold:cover(valid && beat.last && !sink_ready);
+        c_returned_link_change:cover(live && |returned && reused_link!=chain(1));
+        c_completed:cover(done.valid);
+    end
+end
+        for(genvar j=0;j<MEM_RD_LATENCY;j++)begin:g_pending
+            always_ff @(posedge clk) if(rst_n && live_valid[j])begin
                 integer newer;
                 newer=0;
                 for(int n=0;n<j;n++) newer+=int'(live_valid[n]);
@@ -149,8 +158,8 @@ always_ff @(posedge clk) begin
                 a_pending_keep:assert(dut.pending_tag[j].keep==(response_index[j]+1<total || length%8==0 ? 8'hff : 8'((1<<(length%8))-1)));
             end
         end
-        for(int k=0;k<TX_FIFO_DEPTH;k++)begin
-            if(k<arrived)begin
+        for(genvar k=0;k<TX_FIFO_DEPTH;k++)begin:g_fifo
+            always_ff @(posedge clk) if(rst_n && k<arrived)begin
                 a_fifo_cell:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].cell_id==chain((retired+k)/CW));
                 a_fifo_cell_last:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].cell_last==((retired+k)%CW==CW-1 || retired+k+1==total));
                 a_fifo_last:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].beat.last==(retired+k+1==total));
@@ -158,13 +167,5 @@ always_ff @(posedge clk) begin
                 a_fifo_user:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].beat.user==({56'b0,8'(qid)} | (64'(length)<<8) | (64'(tag)<<24)));
             end
         end
-        c_full_credit:cover(slots==TX_FIFO_DEPTH);
-        c_full_pending:cover(slots==TX_FIFO_DEPTH && |live_valid);
-        c_pending_stall:cover(|live_valid && !sink_ready);
-        c_exchange:cover(slots==TX_FIFO_DEPTH && arrival && read_req.valid && fire);
-        c_final_hold:cover(valid && beat.last && !sink_ready);
-        c_returned_link_change:cover(live && |returned && reused_link!=chain(1));
-        c_completed:cover(done.valid);
-    end
-end
+
 endmodule
