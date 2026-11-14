@@ -76,68 +76,11 @@ module tm_resource_accounting_api import tm_fixed::*; #(
 `include "tm_validate.svh"
 endmodule
 
-module tm_metadata_api import tm_fixed::*; #(
-`include "tm_parameters.svh"
-,
-`define TM_ANSI_TYPES
-`include "tm_types.svh"
-`undef TM_ANSI_TYPES
-) (
-    input logic clk,
-    input cell_link_write_t cell_write,
-    input desc_link_write_t queue_write,
-    input desc_write_t info_write,
-    input cell_id_t tx_cell,
-    input cell_id_t abort_cell,
-    output cell_id_t tx_next,
-    output cell_id_t abort_next,
-    input logic [N_Q*DESC_ID_W-1:0] queue_heads,
-    output logic [N_Q*DESC_INFO_W-1:0] head_info,
-    input desc_id_t queue_head,
-    output desc_id_t queue_next
-);
-`include "tm_validate.svh"
-endmodule
 
-module tm_packet_ram_api import tm_fixed::*; #(
-`include "tm_parameters.svh"
-,
-`define TM_ANSI_TYPES
-`include "tm_types.svh"
-`undef TM_ANSI_TYPES
-) (
-    input logic clk,
-    input ram_write_t write_req,
-    input ram_read_t read_req,
-    output ram_response_t response
-);
-`include "tm_validate.svh"
-endmodule
 
-module tm_tx_api import tm_fixed::*; #(
-`include "tm_parameters.svh"
-,
-`define TM_ANSI_TYPES
-`include "tm_types.svh"
-`undef TM_ANSI_TYPES
-) (
-    input logic clk,
-    input logic rst_n,
-    input dispatch_t dispatch,
-    output logic dispatch_ready,
-    output ram_read_t read_req,
-    input ram_response_t response,
-    output cell_id_t link_cell,
-    input cell_id_t next_cell,
-    output logic m_valid,
-    output beat_t m_beat,
-    input logic m_ready,
-    output cell_return_t cell_return,
-    output tx_done_t tx_done,
-    output logic idle
-);
-`include "tm_validate.svh"
-endmodule
+
+
+
 
 module tm_abort_reclaim_api import tm_fixed::*; #(
 `include "tm_parameters.svh"

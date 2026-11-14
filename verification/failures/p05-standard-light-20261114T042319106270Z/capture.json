@@ -1,0 +1,43 @@
+{
+  "command": [
+    "python3",
+    "tools/check_light.py"
+  ],
+  "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+  "configuration": "prepared .tools/activate.sh environment",
+  "seed": null,
+  "start_utc": "2026-11-14T04:23:12.519425+00:00",
+  "end_utc": "2026-11-14T04:23:19.106162+00:00",
+  "result": "FAIL",
+  "exit_code": 1,
+  "output_directory": "work/p05-followup/light",
+  "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details.",
+  "disposition": "unresolved",
+  "source_identity": "Exact clean committed candidate; no repair performed before capture.",
+  "opaque_output_archive": "uninspected-output.tar.gz",
+  "sanitized_summary": {
+    "unittest_failures": [
+      {
+        "status": "ERROR",
+        "test": "test_public_response_has_no_backpressure",
+        "owner": "test_memory_tx_preparation.PreparationBoundaryTests.test_public_response_has_no_backpressure"
+      }
+    ],
+    "test_totals": [
+      "Ran 109 tests in 6.364s",
+      "FAILED (errors=1)"
+    ],
+    "exception_classes": [
+      "IndexError"
+    ],
+    "recognized_status": []
+  },
+  "triage_owner": "P05-DV",
+  "diagnosis": "Independent preparation unit test execution error (IndexError). Test implementation and traceback were not inspected. No contract-level RTL violation was provided; no source repair attempted.",
+  "rtl_public_api_review": "Production RAM response and TX response input have no response-ready port.",
+  "reproduction": [
+    "source .tools/activate.sh",
+    "python3 tools/check_light.py"
+  ],
+  "raw_output_policy": "Opaque archive retained without inspecting independent source-bearing output."
+}
