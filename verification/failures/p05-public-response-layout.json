@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "source_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+  "dirty": false,
+  "command": [
+    "python3",
+    "tests/toolchain/test_memory_tx_preparation.py",
+    "PreparationBoundaryTests.test_public_response_has_no_backpressure",
+    "-v"
+  ],
+  "cwd": "/workspace/work/p05-response-candidate",
+  "profile": null,
+  "seed": null,
+  "stimulus": "Static public RAM response declaration check; no HDL simulation.",
+  "result": "FAIL",
+  "returncode": 1,
+  "stdout": "",
+  "stderr": "test_public_response_has_no_backpressure (__main__.PreparationBoundaryTests.test_public_response_has_no_backpressure) ... ERROR\n\n======================================================================\nERROR: test_public_response_has_no_backpressure (__main__.PreparationBoundaryTests.test_public_response_has_no_backpressure)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/workspace/work/p05-response-candidate/tests/toolchain/test_memory_tx_preparation.py\", line 130, in test_public_response_has_no_backpressure\n    ram=ports.split('module tm_packet_ram_api',1)[1].split('endmodule',1)[0]\n        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\nIndexError: list index out of range\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nFAILED (errors=1)\n",
+  "disposition": "verification-defect",
+  "original_capture": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/479b5c1ceee2eee8db58d863bd5de5e20305cc8c/verification/failures/p05-standard-light-20261114T042319106270Z/capture.json",
+  "original_output_sha256": "a07fdee9c594cb852a43e32ab5d636057daa51e122d4bdfe4cbe0fbe08056ffd",
+  "diagnosis": "The test splits only rtl/include/tm_module_ports.sv and indexes the absent tm_packet_ram_api declaration after PR #24 moves it to rtl/memory/tm_packet_ram.sv. The failure occurs before response-port validation; it is not an observed RTL contract violation.",
+  "contract_basis": "docs/spec/module-contracts.md: ram_response_t has valid/data and no response ready; tm_packet_ram_api has fixed L=1/2 unbackpressured responses. docs/spec/buffer-management.md: logical payload storage has one 64-bit write and synchronous read port.",
+  "repair": "Resolve either public module header, require its response output and no ready port, and stop before any implementation body. Preparation source registries and frozen expectations are unchanged."
+}
