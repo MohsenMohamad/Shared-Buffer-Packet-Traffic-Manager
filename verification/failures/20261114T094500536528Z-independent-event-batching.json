@@ -3,7 +3,7 @@
   "test": "independent-event-batching",
   "result": "TOOL_ERROR",
   "disposition": "verification-defect",
-  "diagnosis": "The exact-set routing unit assertion omitted newly registered memory-tx. Add that suite to the expected set; retain exact equality, all negative routing cases and nonempty requirements. No production expectation changes.",
+  "diagnosis": "The exact-set routing unit assertion omitted newly registered memory-tx. Add that suite to the expected set; retain exact equality, all negative routing cases and nonempty requirements. No production expectation changes. Later integration review corrected that initial triage: the original exact default set was appropriate because main/storage defaults have no candidate identity. The final fix keeps memory-tx registered for explicit selection only and restores the original default set. See candidate-formal-default-isolation capture.",
   "source_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
   "reproduction_sources": {
     "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",

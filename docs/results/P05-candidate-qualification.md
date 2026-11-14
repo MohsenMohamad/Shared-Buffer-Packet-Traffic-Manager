@@ -112,10 +112,10 @@ Caller/pool composition and physical RAM structure are not proved by FP-TX.
 
 ## Findings and retained limits
 
-All 33 unexpected records are retained:
-21 verification defects and
+All 34 unexpected records are retained:
+22 verification defects and
 12 tool/environment outcomes.
-They cover binding/stimulus/CI defects, a stale exact-set suite registration assertion, missing mandatory stimulus, incomplete
+They cover binding/stimulus/CI defects, candidate-only proof selection leaking into the default storage gate, missing mandatory stimulus, incomplete
 induction history, secondary-worktree tool paths, frontend lowering limits and
 solver budgets. Source/input/command/output evidence was captured before repair.
 The index links each disposition and exact source reconstruction.

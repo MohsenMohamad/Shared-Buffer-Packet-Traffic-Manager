@@ -23337,6 +23337,10 @@
       },
       "path": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.build/runs/lint-2026-11-14T084534.670715+0000-51773904/summary.json",
       "sha256": "f09ea86d0059462a436466d0df10b228fb14d522b6e7afb93484e20e6242a698"
+    },
+    "candidate_formal_default_isolation": {
+      "result": "PASS",
+      "scope": "Exact default main suites preserved; memory-tx remains registered and explicit in dedicated pinned-candidate CI."
     }
   },
   "frozen_expectations": {
@@ -24418,11 +24422,26 @@
         "rtl_revision": null,
         "reconstruction": "Execute tests/contracts at the published DV revision; no candidate production RTL is needed."
       }
+    },
+    {
+      "record": "verification/failures/20261114T095354924921Z-candidate-formal-default-isolation-23f043ef0ac1.json",
+      "disposition": "verification-defect",
+      "diagnosis": "New exact-candidate memory-tx proof was unintentionally included in default formal selection. Existing storage CI uses that default without candidate identity and must remain executable on main. Make candidate-only memory-tx explicit; retain registration, exact source validation and its dedicated mandatory CI job.",
+      "reproduction_sources": {
+        "dv_revision": "755be493f4c46a89400de459ce0b474bef20902f",
+        "source_patch": null,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "import sys;sys.path.insert(0,'tools');from argparse import Namespace;from formal_storage import selection;selected=selection(Namespace(profile='E0',test=None,seed=None))[1];print(selected);assert 'memory-tx' not in selected, 'Candidate-only proof requires explicit selection and candidate revision; storage CI default has neither'"
+        ],
+        "rtl_revision": null
+      }
     }
   ],
   "failure_dispositions": {
     "tool-environment": 12,
-    "verification-defect": 21
+    "verification-defect": 22
   },
   "historical_preparation_provenance": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
   "hosted_ci": {

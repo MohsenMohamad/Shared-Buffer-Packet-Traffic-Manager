@@ -8,7 +8,9 @@ from frontend import read_sources, selected as selected_frontend
 
 def selection(args):
     specs = json.loads((ROOT/'verification/formal.json').read_text())['configurations']
-    selected = list(specs) if args.test is None else args.test
+    # The unmerged exact-candidate proof needs an explicit selection and source
+    # identity. Existing main/storage gates must not acquire that dependency.
+    selected = [name for name in specs if name != 'memory-tx'] if args.test is None else args.test
     if args.profile != 'E0' or not selected or len(set(selected))!=len(selected) or any(s not in specs for s in selected):
         raise ValueError('formal-rtl requires profile E0 and nonempty distinct production selections: '+', '.join(specs))
     if args.seed is not None:
