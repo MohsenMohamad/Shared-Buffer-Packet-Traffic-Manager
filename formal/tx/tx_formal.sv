@@ -17,6 +17,7 @@ logic ever_work=0, reset_after_work=0;
 logic [MEM_RD_LATENCY-1:0] physical_valid='0, live_valid='0;
 logic [63:0] physical_data[MEM_RD_LATENCY];
 integer slots=0, arrived=0, issued=0, retired=0, total=0;
+integer response_index[MEM_RD_LATENCY];
 logic [15:0] length, tag;
 desc_id_t descriptor;
 qid_t qid;
@@ -114,6 +115,8 @@ always_ff @(posedge clk) begin
         if(fire)retired<=retired+1;
         slots<=slots+int'(read_req.valid)-int'(fire);
         arrived<=arrived+int'(arrival)-int'(fire);
+        response_index[0]<=issued;
+        for(int j=1;j<MEM_RD_LATENCY;j++) response_index[j]<=response_index[j-1];
         live_valid<=(live_valid<<1)|MEM_RD_LATENCY'(read_req.valid);
         if(dispatch.valid)begin
             live<=1;issued<=0;retired<=0;length<=length_input;tag<=tag_input;
@@ -122,6 +125,39 @@ always_ff @(posedge clk) begin
         // Binding lemmas relate production storage to independently observed event totals.
         a_buffer_mapping:assert(int'(dut.buffered)==arrived);
         a_outstanding_mapping:assert(int'(dut.outstanding)==slots-arrived);
+        a_live_mapping:assert(dut.active==live);
+        if(live)begin
+            a_packet_mapping:assert(dut.packet.info.length==length && dut.packet.info.tag==tag && dut.packet.qid==qid && dut.packet.desc==descriptor);
+            a_fetch_cell:assert(dut.fetch_cell==chain(issued==total ? (total-1)/CW : issued/CW));
+            a_fetch_word:assert(int'(dut.fetch_word)==(issued==total ? 0 : issued%CW));
+            a_fetch_bytes:assert(int'(dut.fetch_bytes)==(issued==total ? 0 : int'(length)-issued*8));
+            a_fetch_cells:assert(int'(dut.fetch_cells)==(issued==total ? 0 : (int'(length)+CELL_BYTES-1)/CELL_BYTES-issued/CW));
+        end
+        a_pending_mapping:assert(dut.pending_valid==live_valid);
+        a_pointer_bounds:assert(int'(dut.rd_ptr)<TX_FIFO_DEPTH && int'(dut.wr_ptr)<TX_FIFO_DEPTH);
+        a_pointer_distance:assert(int'(dut.wr_ptr)==(int'(dut.rd_ptr)+arrived)%TX_FIFO_DEPTH);
+        a_count_order:assert(retired<=issued && issued<=total && slots==issued-retired);
+        for(int j=0;j<MEM_RD_LATENCY;j++)begin
+            if(live_valid[j])begin
+                integer newer;
+                newer=0;
+                for(int n=0;n<j;n++) newer+=int'(live_valid[n]);
+                a_pending_index:assert(response_index[j]==issued-1-newer);
+                a_pending_cell:assert(dut.pending_tag[j].cell_id==chain(response_index[j]/CW));
+                a_pending_cell_last:assert(dut.pending_tag[j].cell_last==(response_index[j]%CW==CW-1 || response_index[j]+1==total));
+                a_pending_last:assert(dut.pending_tag[j].packet_last==(response_index[j]+1==total));
+                a_pending_keep:assert(dut.pending_tag[j].keep==(response_index[j]+1<total || length%8==0 ? 8'hff : 8'((1<<(length%8))-1)));
+            end
+        end
+        for(int k=0;k<TX_FIFO_DEPTH;k++)begin
+            if(k<arrived)begin
+                a_fifo_cell:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].cell_id==chain((retired+k)/CW));
+                a_fifo_cell_last:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].cell_last==((retired+k)%CW==CW-1 || retired+k+1==total));
+                a_fifo_last:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].beat.last==(retired+k+1==total));
+                a_fifo_keep:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].beat.keep==(retired+k+1<total || length%8==0 ? 8'hff : 8'((1<<(length%8))-1)));
+                a_fifo_user:assert(dut.fifo[(int'(dut.rd_ptr)+k)%TX_FIFO_DEPTH].beat.user==({56'b0,8'(qid)} | (64'(length)<<8) | (64'(tag)<<24)));
+            end
+        end
         c_full_credit:cover(slots==TX_FIFO_DEPTH);
         c_full_pending:cover(slots==TX_FIFO_DEPTH && |live_valid);
         c_pending_stall:cover(|live_valid && !sink_ready);

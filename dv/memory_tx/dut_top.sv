@@ -36,7 +36,7 @@ desc_id_t queue_next;
 logic [N_Q*DESC_ID_W-1:0] queue_heads;
 localparam int INFO_W=$bits(descriptor_t);
 logic [N_Q*INFO_W-1:0] head_info;
-descriptor_t selected_info;
+descriptor_t selected_info, commit_info;
 assign drive=stimulus;
 assign observed=sample;
 assign write_req='{valid:1'(drive.write_v),addr:ADDR_W'(drive.write_addr),data:drive.write_data};
@@ -47,6 +47,9 @@ assign info_write.id=desc_id_t'(drive.info_desc);
 assign info_write.info='{head:cell_id_t'(drive.info_head),ncell:cell_count_t'(drive.info_ncell),
     length:16'(drive.info_length),qid:qid_t'(drive.info_qid),tag:16'(drive.info_tag),source:port_id_t'(drive.info_source)};
 assign selected_info=descriptor_t'(head_info[0 +: INFO_W]);
+// RX may publish first allocation/write/commit atomically. Its commit handoff
+// carries the write metadata; the independent head mux check still sees pre-state.
+assign commit_info=drive.info_v!=0 ? info_write.info : selected_info;
 assign dispatch='{valid:1'(drive.dispatch_v),qid:qid_t'(drive.dispatch_info_qid),desc:desc_id_t'(drive.dispatch_desc),info:selected_info};
 assign output_valid=tx_valid;
 logic tx_valid;
@@ -79,9 +82,9 @@ always_comb begin
         sample.dispatch_info_length=32'(selected_info.length); sample.dispatch_info_qid=32'(selected_info.qid);
         sample.dispatch_info_tag=32'(selected_info.tag); sample.dispatch_info_source=32'(selected_info.source);
         sample.commit_info_v=drive.commit_v; sample.commit_info_desc=drive.commit_desc;
-        sample.commit_info_head=32'(selected_info.head); sample.commit_info_ncell=32'(selected_info.ncell);
-        sample.commit_info_length=32'(selected_info.length); sample.commit_info_qid=32'(selected_info.qid);
-        sample.commit_info_tag=32'(selected_info.tag); sample.commit_info_source=32'(selected_info.source);
+        sample.commit_info_head=32'(commit_info.head); sample.commit_info_ncell=32'(commit_info.ncell);
+        sample.commit_info_length=32'(commit_info.length); sample.commit_info_qid=32'(commit_info.qid);
+        sample.commit_info_tag=32'(commit_info.tag); sample.commit_info_source=32'(commit_info.source);
     end
 end
 tm_packet_ram_api #(.DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BYTES), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_PACKET_BYTES(MAX_PACKET_BYTES), .RX_FIFO_DEPTH(RX_FIFO_DEPTH), .MEM_RD_LATENCY(MEM_RD_LATENCY), .TX_FIFO_DEPTH(TX_FIFO_DEPTH), .SCHED_MODE(SCHED_MODE), .QUANTUM_DEFAULT(QUANTUM_DEFAULT), .TRACE_ENABLE(TRACE_ENABLE), .CELL_ID_W(CELL_ID_W), .DESC_ID_W(DESC_ID_W), .CELL_COUNT_W(CELL_COUNT_W), .DESC_COUNT_W(DESC_COUNT_W), .DEFICIT_W(DEFICIT_W)) ram(.clk,.write_req,.read_req,.response);

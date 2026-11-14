@@ -31,6 +31,7 @@ class Live:
         self.info, self.links, self.queue_links = {}, {}, {}
         self.bins, self.crosses, self.reset_hits = Counter(), Counter(), Counter()
         self.free_edges, self.previous, self.last = {}, None, None
+        self.reset_cells = set()
         self.dispatch_cycle, self.first_valid, self.last_transfer = None, False, None
         self.ready_run = True
         self.seen_tags = set()
@@ -115,7 +116,9 @@ class Live:
         fire = out['valid'] and out['ready']
         self.crosses[f'L{self.p.latency}/D{self.p.depth}/B{B}/O{O}/I{int("read" in a)}/R{int("response" in a)}/T{int(fire)}/X{int(s["reset"])}'] += 1
         if s['reset']:
+            if 'response' in a: self.bins['stale_physical_response'] += 1
             if not self.was_reset:
+                self.reset_cells = set(self.oracle.owners)
                 prev = self.previous
                 if prev and 'dispatch' in prev['actions']: self.reset_hits['dispatch'] += 1
                 if O: self.reset_hits['pending'] += 1
@@ -170,6 +173,10 @@ class Live:
         if 'allocate' in a:
             cell = a['allocate']['cell']
             if self.free_edges.get(cell) == self.cycle-1: self.bins['earliest_cell_reuse'] += 1
+            if cell in self.free_edges and self.free_edges[cell]<self.cycle-1: self.bins['delayed_legal_reuse'] += 1
+            if cell in self.reset_cells: self.bins['reset_id_reuse'] += 1
+        if 'write' in a and a['write']['addr']//(self.p.cell_bytes//8) in self.reset_cells:
+            if self.oracle.memory.get(a['write']['addr']) != a['write']['data']: self.bins['distinctive_reset_payload'] += 1
         if 'write' in a and a['write']['addr']//(self.p.cell_bytes//8) in self.free_edges:
             self.bins['rewritten_returned_payload'] += 1
         if 'link' in a and a['link']['cell'] in self.free_edges:
@@ -206,8 +213,10 @@ class Live:
                     a['reserve'] = {k:v for k,v in info.items() if k not in ('head','ncell')}
                     a['info'] = info.copy()
                 else: a['link'] = dict(cell=chain[i//cw-1], next=cell)
+            if len(words)==1:
+                a['commit']=desc; a['commit_info']=info.copy()
             yield a
-        yield dict(commit=desc)
+        if len(words)>1: yield dict(commit=desc)
 
     def load(self, packet):
         for a in self.load_steps(packet): self.edge(a)
@@ -245,11 +254,14 @@ class Live:
                         if self.last and self.last['out']['valid']: held[index] += 1
                 elif mode == 'random': ready = self.rng.randrange(4) != 0
             actions = None
-            if background is not None and background_steps is None and self.last and 'free' in self.last['actions']:
-                returned = self.last['actions']['free']
-                spare = next(c for c in range(self.p.cells) if c not in packet['chain'])
-                background['packet'] = self.packet(self.p.cell_bytes+3, 991, [returned,spare], 0)
-                background_steps = iter(self.load_steps(background['packet']))
+            if background is not None and background_steps is None:
+                if 'returned' not in background and self.last and 'free' in self.last['actions']:
+                    background['returned'] = self.last['actions']['free']
+                    background['due'] = self.cycle+1+background.get('delay',0)
+                if 'due' in background and self.cycle+1>=background['due']:
+                    spare = self.rng.choice([c for c in range(self.p.cells) if c not in packet['chain']])
+                    background['packet'] = self.packet(self.p.cell_bytes+3, 991, [background['returned'],spare], 0)
+                    background_steps = iter(self.load_steps(background['packet']))
             if background_steps is not None:
                 actions = next(background_steps, None)
             s, _, _ = self.edge(actions, ready=ready)
@@ -275,13 +287,14 @@ class Live:
             self.drain(packet, mode='ready' if ordinal%3==0 else 'random' if ordinal%3==1 else 'holds')
             self.edge()
         # Exact capacity, per-cell/final holds, immediate legal reuse and altered old payload/links.
-        packet = self.packet(self.p.max_length, 333)
-        self.load(packet); self.dispatch(packet)
-        background = {}
-        _, triggered = self.drain(packet, background=background)
-        require(triggered, 'required_reuse_trigger')
-        self.dispatch(background['packet']); self.drain(background['packet'])
-        self.edge()
+        for delay in (0,self.rng.randint(1,7)):
+            packet = self.packet(self.p.max_length, 333)
+            self.load(packet); self.dispatch(packet)
+            background = {'delay':delay}
+            _, triggered = self.drain(packet, background=background)
+            require(triggered, 'required_reuse_trigger')
+            self.dispatch(background['packet']); self.drain(background['packet'])
+            self.edge()
         for phase in ('dispatch','pending','full','partial','cell-final','packet-final'):
             packet = self.packet(self.p.max_length, 444)
             self.load(packet); self.dispatch(packet)
@@ -291,7 +304,7 @@ class Live:
             self.load(restart); self.dispatch(restart); self.drain(restart)
             self.edge()
         for _ in range(self.p.latency+3): self.edge()
-        required = ['complete','exact_full','full_arrival','full_stall','full_exchange',
+        required = ['complete','atomic_commit','exact_full','full_arrival','full_stall','full_exchange',
                     'cell_final_hold','packet_final_hold','link_query','maximum_descriptor']
         required += [f'keep_{i}' for i in range(1,9)]
         required += [f'source_{i}' for i in range(self.p.sources)]+[f'qid_{i}' for i in range(self.p.queues)]
@@ -300,6 +313,7 @@ class Live:
                      'simultaneous_1r1w','rewritten_returned_payload','ready_contiguous',
                      'metadata_abort_mux','metadata_queue_mux','altered_returned_link','tail_not_traversed',
                      'single_cell','multi_cell','fragmented_chain','duplicate_tag','ignored_lanes','long_output_hold',
+                     'delayed_legal_reuse','stale_physical_response','reset_id_reuse','distinctive_reset_payload',
                      'length_word_minus','length_word','length_word_plus','length_cell_minus','length_cell',
                      'length_cell_plus','length_max_minus','length_max'):
             require(self.bins[name]>0, 'required_dut_bin', name)
@@ -338,6 +352,9 @@ def main():
                      public_stimulus=(live.path/'stimulus.txt').read_text().splitlines()[-1:])
         (args.output/'violation.json').write_text(json.dumps(error, indent=2)+'\n')
     code, tail = live.close()
+    if error:
+        error['server_returncode']=code
+        (args.output/'violation.json').write_text(json.dumps(error,indent=2)+'\n')
     if error or code != 0 or 'TM_SERVER_DONE' not in tail:
         print('TM_MEMORY_TX_DUT_FAIL '+json.dumps(error or dict(detector='adapter_exit',returncode=code)))
         return 1

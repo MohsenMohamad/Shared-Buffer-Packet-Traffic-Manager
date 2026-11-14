@@ -85,8 +85,48 @@ def memory_tx_dut(run,args):
             case = Case(run,f'memory-tx-L{latency}-D{depth}-seed-replay',seed)
             ok = len(signatures)==4 and signatures[0]==signatures[3] and len(set(signatures[:3]))==3
             case.finish('PASS' if ok else 'FAIL',None if ok else 'Missing, nonrepeatable or seed-independent production samples',sample_sha256=signatures)
+    if args.profile=='E0' and any(c['configuration']['latency']==2 and c['configuration']['depth']==4 for c in public['configurations']):
+        simulation_mutations(run,args,identity,seed)
     public['result'] = 'PASS' if public['configurations'] and all(c['build_result']=='PASS' and len(c['runs'])==4 and
                          all(r['result']=='PASS' for r in c['runs']) for c in public['configurations']) and all(c.data.get('result')=='PASS' for c in run.cases) else 'FAIL'
     (run.path/'candidate-public.json').write_text(json.dumps(public,indent=2)+'\n')
     print('P05_CANDIDATE_RESULT '+json.dumps(dict(result=public['result'],rtl_revision=identity['rtl_revision'],
                                                profile=args.profile,report=str(run.path/'candidate-public.json'))),flush=True)
+
+
+def simulation_mutations(run,args,identity,seed):
+    from formal_tx import MUTATIONS, mutate
+    config=dict(latency=2,depth=4,cell_bytes=16,cells=16,descriptors=8,max_length=128,queues=2,sources=1)
+    params=profile('E0');params.update(MEM_RD_LATENCY=2,TX_FIFO_DEPTH=4)
+    detectors={'outstanding-credit':'read_credit','premature-return':'cell_completion_presence','stale-validity':'reset_output'}
+    for name in ['legal-neighbor']+list(MUTATIONS):
+        case=Case(run,'memory-tx-source-fault-'+name,seed)
+        case.data.update(parameters=config,candidate=identity,source_set='memory-tx',
+                         expected='LEGAL_NEIGHBOR' if name=='legal-neighbor' else 'SEEDED_DEFECT_DETECTION')
+        paths=[]
+        for path in sources('memory-tx')['sources']:
+            source=ROOT/path
+            if path=='rtl/tx/tm_tx.sv' and name!='legal-neighbor':
+                original=source.read_text();source=case.path/'tm_tx.sv'
+                source.write_text(mutate(original,name));case.data['mutant_sha256']=sha(source)
+            paths.append(str(source))
+        binary=case.path/'obj/Vmemory_tx_dut_top'
+        argv=['verilator','--cc','--exe','--build','--assert','--coverage','+define+SYNTHESIS',
+              '--top-module','memory_tx_dut_top','--build-jobs',str(args.jobs),'--Mdir',str(binary.parent),
+              '-CFLAGS','-O0','-I'+str(ROOT/'rtl/include'),'-I'+str(ROOT/'dv/memory_tx')]
+        argv+=['-G'+k+'='+str(v) for k,v in params.items()]+paths+[str(ROOT/'dv/memory_tx/dut_server.cpp')]
+        step=case.execute(argv,timeout=args.build_timeout)
+        if step['result']!='PASS':
+            case.finish(step['result'],step['first_failure']);continue
+        path=case.path/'profile.json';path.write_text(json.dumps(config))
+        step=case.execute([sys.executable,ROOT/'dv/memory_tx/dut.py','--binary',binary,'--profile-json',path,
+                           '--seed',str(seed),'--output',case.path],timeout=args.timeout)
+        if name=='legal-neighbor': result,reason=completed(step,'TM_MEMORY_TX_DUT_PASS')
+        else:
+            violation=json.loads((case.path/'violation.json').read_text()) if (case.path/'violation.json').is_file() else {}
+            detector=detectors[name]
+            ok=step['result']!='TIMEOUT' and step['returncode']==1 and violation.get('detector')==detector and violation.get('server_returncode')==0
+            result,reason=('PASS',None) if ok else ('FAIL','Source fault did not hit intended independent '+detector+' detector without a server crash')
+            case.data.update(intended_detector=detector,observed_violation=violation)
+        case.data['artifacts'].update(stimulus=str(case.path/'stimulus.txt'),samples=str(case.path/'samples.jsonl'))
+        case.finish(result,reason)
