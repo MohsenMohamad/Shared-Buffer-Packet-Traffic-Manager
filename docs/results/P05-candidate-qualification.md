@@ -76,8 +76,16 @@ Relevant merged-main CI is
 [43608539930](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43608539930);
 final run conclusions and exact delivery identities are recorded on PR #26.
 
-No new unexpected failure, RTL defect or outstanding required technical finding
-was observed. The historical preparation-independence caveat remains unresolved;
+Fresh local merged-source checks had no failures or RTL defect. The first final
+hosted attempt (`43609541413`, delivery `1b22a7d66c494efed9ebe05b93ef954f49ab62b7`)
+was interrupted in F0 scheduler by a GitHub worker shutdown, exit 143. All
+completed cases in its log passed; unfinished work remains non-success. The full
+available job log, annotations and exact-source manual capture are committed
+under `verification/failures/p05-merged-ci-scheduler-F0-43609541413.*`. The worker
+stopped before even always-upload steps, so private in-flight process artifacts
+were unavailable; that evidence limit is explicit. Disposition is tool/environment.
+No RTL, expectation, timeout or setup change is made. A fresh required full run
+must complete, with the final result recorded on PR #26. The historical preparation-independence caveat remains unresolved;
 this result does not establish retroactive provenance acceptance. Safety retains
 its reduced FP-TX assumptions and caller/pool composition limits. P12B structural
 comparison is separate, and code-coverage closure is not claimed. The maintainer

@@ -29783,10 +29783,23 @@
         "status_record": "PR #26 final handoff"
       },
       "qualification_full": {
-        "status_record": "PR #26 final handoff: ready-for-review triggers required full CI; light-only success is insufficient"
+        "status_record": "PR #26 final handoff: ready-for-review triggers required full CI; light-only success is insufficient",
+        "interrupted_attempt": {
+          "run_id": 43609541413,
+          "head_sha": "1b22a7d66c494efed9ebe05b93ef954f49ab62b7",
+          "job_id": 132491518277,
+          "result": "TOOL_ERROR",
+          "reason": "Runner shutdown, exit 143; incomplete work is not PASS."
+        }
       }
     },
-    "new_unexpected_failures": [],
+    "new_unexpected_failures": [
+      {
+        "record": "verification/failures/p05-merged-ci-scheduler-F0-43609541413.json",
+        "disposition": "tool-environment",
+        "symptom": "Hosted worker shutdown, exit 143; required F0 scheduler job interrupted."
+      }
+    ],
     "new_rtl_defects": [],
     "outstanding_required_technical_findings": [],
     "historical_preparation_provenance": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
