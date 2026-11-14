@@ -16,8 +16,12 @@ logic initialized=0, live=0;
 logic ever_work=0, reset_after_work=0, reset_pending_seen=0;
 logic [MEM_RD_LATENCY-1:0] physical_valid='0, live_valid='0;
 logic [63:0] physical_data[MEM_RD_LATENCY];
-integer slots=0, arrived=0, issued=0, retired=0, total=0;
-integer response_index[MEM_RD_LATENCY];
+// Finite event counters retain headroom for the first illegal credit/read edge.
+localparam integer SLOT_W=$clog2(TX_FIFO_DEPTH+2);
+localparam integer BEAT_W=$clog2((MAX_PACKET_BYTES+7)/8+2);
+logic [SLOT_W-1:0] slots=0, arrived=0;
+logic [BEAT_W-1:0] issued=0, retired=0, total=0;
+logic [BEAT_W-1:0] response_index[MEM_RD_LATENCY];
 logic [15:0] length, tag;
 desc_id_t descriptor;
 qid_t qid;
@@ -82,7 +86,10 @@ always_ff @(posedge clk) begin
     end else begin
         initialized<=1;
         a_credit:assert(slots+int'(read_req.valid)-int'(fire)<=TX_FIFO_DEPTH);
-        a_nonnegative:assert(slots>=0 && arrived>=0 && arrived<=slots);
+        a_nonnegative:assert(arrived<=slots);
+        a_slot_delta:assert(int'(slots)+int'(read_req.valid)-int'(fire)>=0);
+        a_arrival_delta:assert(int'(arrived)+int'(arrival)-int'(fire)>=0 && int'(arrived)+int'(arrival)-int'(fire)<=TX_FIFO_DEPTH);
+        a_outstanding_delta:assert(int'(slots)-int'(arrived)+int'(read_req.valid)-int'(arrival)>=0);
         a_arrival_space:assert(!arrival || arrived<TX_FIFO_DEPTH || fire);
         a_output_arrived:assert(!valid || (arrived>0 && live));
         a_validity:assert(valid==(arrived>0));

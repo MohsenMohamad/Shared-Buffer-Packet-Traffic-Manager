@@ -30,7 +30,7 @@ def formal_tx(run,args,configuration):
                 params = {k:configuration[k] for k in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
                 params.update(MEM_RD_LATENCY=latency,TX_FIFO_DEPTH=depth)
                 case.data.update(configuration=params,candidate=identity,source_set='formal',
-                    engine='abc pdr' if task=='prove' else 'smtbmc z3',method='unbounded IC3/PDR' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
+                    engine='smtbmc z3',method='unbounded k-induction, maximum depth 8' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
                     assumptions='Two startup reset samples; arbitrary later resets and sink stalls. Legal idle-only dispatch, 1..128 byte packets. Eight distinct arbitrary fixed cell IDs stable across every reset by F01 history; arbitrary input word captured on each read with exact unreset physical response latency. Returned links may change immediately. No fairness assumption.')
                 paths=['rtl/include/tm_fixed.sv','rtl/tx/tm_tx.sv','formal/tx/tx_formal.sv']
                 headers=['rtl/include/tm_types.svh','rtl/include/tm_parameters.svh','rtl/include/tm_validate.svh']
@@ -44,8 +44,7 @@ def formal_tx(run,args,configuration):
                         case.data.update(mutation=task,mutant_sha256=sha(source),detector=MUTATIONS[task][2])
                     files.append(source.name+' '+str(source))
                 script=read_sources([Path(p).name for p in paths],'tx_formal',params=params,defines=['SYNTHESIS'],formal=True)
-                script+='prep -top tx_formal\nasync2sync\ndffunmap\nmemory_map -formal\nsetundef -anyseq\nopt_clean'
-                if task=='prove':script+='\ntechmap\nopt -fast\nsimplemap\naigmap\nsetundef -anyseq\nopt_clean'
+                script+='prep -top tx_formal\nasync2sync\ndffunmap'
                 config=case.path/'tx.sby'
                 config.write_text((ROOT/'formal/tx/tx.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
                 step=case.execute(['sby','-f','-d',case.path/'engine',config,task if task in ('prove','cover') else 'mutation'],timeout=args.timeout,cwd=case.path)
@@ -61,7 +60,7 @@ def formal_tx(run,args,configuration):
                     ok=step['returncode'] not in (0,None) and status=='FAIL' and waves and any(n.rsplit('.',1)[-1]==intended for n in failures)
                     result,reason=('PASS',None) if ok else ('FAIL','Intended '+intended+' counterexample absent')
                 else:
-                    marker='returned PASS' if task=='prove' else 'Reached cover statement'
+                    marker='successful proof by k-induction' if task=='prove' else 'Reached cover statement'
                     ok=status=='PASS' and step['returncode']==0 and marker in text
                     result,reason=('PASS',None) if ok else ('FAIL' if status=='FAIL' else 'INCONCLUSIVE' if status=='UNKNOWN' else 'TOOL_ERROR','Completed FP-TX result absent')
                 case.data['artifacts'].update(configuration=str(config),status=str(statusfile),waveforms=waves)
