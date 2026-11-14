@@ -1,0 +1,281 @@
+﻿2026-11-14T16:48:08.5487158Z Current runner version: '2.338.2'
+2026-11-14T16:48:08.5514998Z ##[group]Runner Image Provisioner
+2026-11-14T16:48:08.5516064Z Hosted Compute Agent
+2026-11-14T16:48:08.5516720Z Version: 20261103.629
+2026-11-14T16:48:08.5517423Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-14T16:48:08.5518160Z Build Date: 2026-11-03T17:26:59Z
+2026-11-14T16:48:08.5518891Z Worker ID: {720b17f3-65c9-41d3-9c02-89642875e8b0}
+2026-11-14T16:48:08.5519590Z Region: westus2
+2026-11-14T16:48:08.5520113Z Cloud: Azure
+2026-11-14T16:48:08.5521222Z ##[endgroup]
+2026-11-14T16:48:08.5522893Z ##[group]Operating System
+2026-11-14T16:48:08.5523629Z Ubuntu
+2026-11-14T16:48:08.5524146Z 24.04.5
+2026-11-14T16:48:08.5524642Z LTS
+2026-11-14T16:48:08.5525262Z ##[endgroup]
+2026-11-14T16:48:08.5525812Z ##[group]Runner Image
+2026-11-14T16:48:08.5526450Z Image: ubuntu-24.04
+2026-11-14T16:48:08.5527055Z Version: 20261111.370.1
+2026-11-14T16:48:08.5528417Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.370/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-14T16:48:08.5530020Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261111.370
+2026-11-14T16:48:08.5531426Z ##[endgroup]
+2026-11-14T16:48:08.5532595Z ##[group]GITHUB_TOKEN Permissions
+2026-11-14T16:48:08.5534961Z Contents: read
+2026-11-14T16:48:08.5535597Z Metadata: read
+2026-11-14T16:48:08.5536192Z ##[endgroup]
+2026-11-14T16:48:08.5538489Z Secret source: Actions
+2026-11-14T16:48:08.5539420Z Cache mode: write
+2026-11-14T16:48:08.5540247Z Prepare workflow directory
+2026-11-14T16:48:08.6015775Z Prepare all required actions
+2026-11-14T16:48:08.6066091Z Getting action download info
+2026-11-14T16:48:08.9789080Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-14T16:48:09.1114967Z Download action repository 'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333' (SHA:9000827ccba6bdab643e8b6fd33ac0654aef8333)
+2026-11-14T16:48:09.3620343Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-14T16:48:09.5465591Z Uses: MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/.github/workflows/memory-tx.yml@refs/heads/main (a96121fe723ba1c84a5169f6507c629341762bef)
+2026-11-14T16:48:09.5470498Z ##[group] Inputs
+2026-11-14T16:48:09.5471342Z   toolchain-artifact: toolchain-43617402959-1
+2026-11-14T16:48:09.5471944Z ##[endgroup]
+2026-11-14T16:48:09.5472434Z Complete job name: memory_tx / candidate (E1)
+2026-11-14T16:48:09.6443300Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-14T16:48:09.6444389Z with:
+2026-11-14T16:48:09.6444816Z   fetch-depth: 0
+2026-11-14T16:48:09.6445424Z   repository: MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:09.6449411Z   token: ***
+2026-11-14T16:48:09.6449842Z   ssh-strict: true
+2026-11-14T16:48:09.6450277Z   ssh-user: git
+2026-11-14T16:48:09.6451142Z   persist-credentials: true
+2026-11-14T16:48:09.6451706Z   clean: true
+2026-11-14T16:48:09.6452154Z   sparse-checkout-cone-mode: true
+2026-11-14T16:48:09.6452673Z   fetch-tags: false
+2026-11-14T16:48:09.6453112Z   show-progress: true
+2026-11-14T16:48:09.6453552Z   lfs: false
+2026-11-14T16:48:09.6453957Z   submodules: false
+2026-11-14T16:48:09.6454397Z   set-safe-directory: true
+2026-11-14T16:48:09.6454894Z   allow-unsafe-pr-checkout: false
+2026-11-14T16:48:09.6455704Z env:
+2026-11-14T16:48:09.6456119Z   CXX: g++-14
+2026-11-14T16:48:09.6456527Z ##[endgroup]
+2026-11-14T16:48:09.9913054Z Syncing repository: MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:09.9916566Z ##[group]Getting Git version info
+2026-11-14T16:48:09.9918627Z Working directory is '/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager'
+2026-11-14T16:48:09.9921191Z [command]/usr/bin/git version
+2026-11-14T16:48:10.0032812Z git version 2.56.1
+2026-11-14T16:48:10.0061402Z ##[endgroup]
+2026-11-14T16:48:10.0073601Z Temporarily overriding HOME='/home/runner/work/_temp/82965b12-bd47-4a74-a879-a0a1a4307ffb' before making global git config changes
+2026-11-14T16:48:10.0076969Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T16:48:10.0083030Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:10.0147239Z Deleting the contents of '/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager'
+2026-11-14T16:48:10.0151111Z ##[group]Determining repository object format
+2026-11-14T16:48:10.0153260Z ##[endgroup]
+2026-11-14T16:48:10.0154719Z ##[group]Initializing the repository
+2026-11-14T16:48:10.0159398Z [command]/usr/bin/git init /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:10.0305427Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-14T16:48:10.0306896Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-14T16:48:10.0308349Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-14T16:48:10.0309290Z hint: call:
+2026-11-14T16:48:10.0309761Z hint:
+2026-11-14T16:48:10.0310380Z hint: 	git config --global init.defaultBranch <name>
+2026-11-14T16:48:10.0311787Z hint:
+2026-11-14T16:48:10.0313002Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-14T16:48:10.0314848Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-14T16:48:10.0316438Z hint:
+2026-11-14T16:48:10.0317376Z hint: 	git branch -m <name>
+2026-11-14T16:48:10.0318423Z hint:
+2026-11-14T16:48:10.0319833Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-14T16:48:10.0323141Z Initialized empty Git repository in /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git/
+2026-11-14T16:48:10.0332130Z [command]/usr/bin/git remote add origin https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:10.0402940Z ##[endgroup]
+2026-11-14T16:48:10.0405321Z ##[group]Disabling automatic garbage collection
+2026-11-14T16:48:10.0407408Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-14T16:48:10.0451316Z ##[endgroup]
+2026-11-14T16:48:10.0453887Z ##[group]Setting up auth
+2026-11-14T16:48:10.0455519Z Removing SSH command configuration
+2026-11-14T16:48:10.0464224Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T16:48:10.0524265Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T16:48:10.1008140Z Removing HTTP extra header
+2026-11-14T16:48:10.1014545Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T16:48:10.1067538Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T16:48:10.1324049Z Removing includeIf entries pointing to credentials config files
+2026-11-14T16:48:10.1329465Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T16:48:10.1379977Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T16:48:10.1647687Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-14T16:48:10.1704952Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git.path /home/runner/work/_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:10.1754344Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:10.1800381Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:10.1937557Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:10.1944337Z ##[endgroup]
+2026-11-14T16:48:10.1945855Z ##[group]Fetching the repository
+2026-11-14T16:48:10.1947544Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-11-14T16:48:10.7991554Z From https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:10.7994726Z  * [new branch]      audit/rtl-frontend-probes -> origin/audit/rtl-frontend-probes
+2026-11-14T16:48:10.7997364Z  * [new branch]      feat/p05-memory-tx -> origin/feat/p05-memory-tx
+2026-11-14T16:48:10.8000333Z  * [new branch]      fix/p05-response-interface-check -> origin/fix/p05-response-interface-check
+2026-11-14T16:48:10.8004347Z  * [new branch]      fix/preserve-unexpected-failures -> origin/fix/preserve-unexpected-failures
+2026-11-14T16:48:10.8007216Z  * [new branch]      main               -> origin/main
+2026-11-14T16:48:10.8009566Z  * [new branch]      verify/p05-dv-preparation -> origin/verify/p05-dv-preparation
+2026-11-14T16:48:10.8013081Z  * [new branch]      verify/p05-dv-qualification -> origin/verify/p05-dv-qualification
+2026-11-14T16:48:10.8018221Z [command]/usr/bin/git branch --list --remote origin/main
+2026-11-14T16:48:10.8060279Z   origin/main
+2026-11-14T16:48:10.8069933Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+2026-11-14T16:48:10.8109020Z a96121fe723ba1c84a5169f6507c629341762bef
+2026-11-14T16:48:10.8115956Z ##[endgroup]
+2026-11-14T16:48:10.8117581Z ##[group]Determining the checkout info
+2026-11-14T16:48:10.8119557Z ##[endgroup]
+2026-11-14T16:48:10.8121851Z [command]/usr/bin/git sparse-checkout disable
+2026-11-14T16:48:10.8201451Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-14T16:48:10.8267527Z ##[group]Checking out the ref
+2026-11-14T16:48:10.8270554Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-11-14T16:48:10.8821877Z Switched to a new branch 'main'
+2026-11-14T16:48:10.8828915Z branch 'main' set up to track 'origin/main'.
+2026-11-14T16:48:10.8844087Z ##[endgroup]
+2026-11-14T16:48:10.8905722Z [command]/usr/bin/git log -1 --format=%H
+2026-11-14T16:48:10.8948359Z a96121fe723ba1c84a5169f6507c629341762bef
+2026-11-14T16:48:10.9308058Z Prepare all required actions
+2026-11-14T16:48:10.9415611Z ##[group]Run ./.github/actions/native-prerequisites
+2026-11-14T16:48:10.9417085Z env:
+2026-11-14T16:48:10.9418003Z   CXX: g++-14
+2026-11-14T16:48:10.9418914Z ##[endgroup]
+2026-11-14T16:48:10.9488893Z ##[start-action display=Check bootstrap tools;id=__self.__run]
+2026-11-14T16:48:10.9562509Z ##[group]Run set -euo pipefail
+2026-11-14T16:48:10.9563849Z [36;1mset -euo pipefail[0m
+2026-11-14T16:48:10.9564959Z [36;1mmissing=()[0m
+2026-11-14T16:48:10.9566580Z [36;1mfor tool in g++-14 make perl curl git dpkg-deb python3 zstd pkg-config; do[0m
+2026-11-14T16:48:10.9568582Z [36;1m  if ! command -v "$tool" >/dev/null 2>&1; then[0m
+2026-11-14T16:48:10.9570006Z [36;1m    case "$tool" in[0m
+2026-11-14T16:48:10.9571406Z [36;1m      dpkg-deb) missing+=(dpkg) ;;[0m
+2026-11-14T16:48:10.9572767Z [36;1m      *) missing+=("$tool") ;;[0m
+2026-11-14T16:48:10.9573969Z [36;1m    esac[0m
+2026-11-14T16:48:10.9574905Z [36;1m  fi[0m
+2026-11-14T16:48:10.9575862Z [36;1mdone[0m
+2026-11-14T16:48:10.9576808Z [36;1mif ((${#missing[@]})); then[0m
+2026-11-14T16:48:10.9578298Z [36;1m  sudo apt-get update[0m
+2026-11-14T16:48:10.9579592Z [36;1m  sudo apt-get install -y "${missing[@]}"[0m
+2026-11-14T16:48:10.9581320Z [36;1mfi[0m
+2026-11-14T16:48:10.9608503Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-14T16:48:10.9610019Z env:
+2026-11-14T16:48:10.9611080Z   CXX: g++-14
+2026-11-14T16:48:10.9611995Z ##[endgroup]
+2026-11-14T16:48:10.9729082Z ##[end-action id=__self.__run;outcome=success;conclusion=success;duration_ms=23]
+2026-11-14T16:48:10.9914902Z ##[group]Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+2026-11-14T16:48:10.9916651Z with:
+2026-11-14T16:48:10.9917535Z   name: toolchain-43617402959-1
+2026-11-14T16:48:10.9918660Z   path: .build/toolchain-transfer
+2026-11-14T16:48:10.9919789Z   merge-multiple: false
+2026-11-14T16:48:10.9921468Z   repository: MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:10.9923020Z   run-id: 43617402959
+2026-11-14T16:48:10.9923987Z   skip-decompress: false
+2026-11-14T16:48:10.9925048Z   digest-mismatch: error
+2026-11-14T16:48:10.9926022Z env:
+2026-11-14T16:48:10.9926829Z   CXX: g++-14
+2026-11-14T16:48:10.9927688Z ##[endgroup]
+2026-11-14T16:48:11.1424148Z Downloading single artifact
+2026-11-14T16:48:11.4145825Z Preparing to download the following artifacts:
+2026-11-14T16:48:11.4151153Z - toolchain-43617402959-1 (ID: 14122518887, Size: 436277991, Expected Digest: sha256:24064cae14118d0f4928436b5ea44021074cd609a29d46ad4e7baafa3f4ebef9)
+2026-11-14T16:48:11.9557797Z Redirecting to blob download url: https://productionresultssa9.blob.core.windows.net/actions-results/a90b61e8-0e3f-8cfc-a508-2c744eee2f00/workflow-job-run-d0770ae6-d657-58f0-b448-368c0fbef686/artifacts/e68aa47c5dd96c656d2f4b4b466bca0aea67041b66dbe13f11336349f8a0fa0e.zip
+2026-11-14T16:48:11.9561705Z Starting download of artifact to: /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.build/toolchain-transfer
+2026-11-14T16:48:12.3064001Z (node:2840) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-11-14T16:48:12.3065570Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-14T16:48:25.4261510Z SHA256 digest of downloaded artifact is 24064cae14118d0f4928436b5ea44021074cd609a29d46ad4e7baafa3f4ebef9
+2026-11-14T16:48:25.4262374Z Artifact download completed successfully.
+2026-11-14T16:48:25.4262742Z Total of 1 artifact(s) downloaded
+2026-11-14T16:48:25.4271700Z Download artifact has finished successfully
+2026-11-14T16:48:25.4432067Z ##[group]Run tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
+2026-11-14T16:48:25.4432730Z [36;1mtar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst[0m
+2026-11-14T16:48:25.4433215Z [36;1mpython3 tools/toolchain_cache.py validate[0m
+2026-11-14T16:48:25.4455463Z shell: /usr/bin/bash -e {0}
+2026-11-14T16:48:25.4455791Z env:
+2026-11-14T16:48:25.4456043Z   CXX: g++-14
+2026-11-14T16:48:25.4456298Z ##[endgroup]
+2026-11-14T16:48:35.6684455Z Restored toolchain integrity, compatibility and doctor: PASS
+2026-11-14T16:48:35.6803856Z ##[group]Run python3 tools/p05_ci.py
+2026-11-14T16:48:35.6804258Z [36;1mpython3 tools/p05_ci.py[0m
+2026-11-14T16:48:35.6824433Z shell: /usr/bin/bash -e {0}
+2026-11-14T16:48:35.6824724Z env:
+2026-11-14T16:48:35.6824933Z   CXX: g++-14
+2026-11-14T16:48:35.6825156Z ##[endgroup]
+2026-11-14T16:48:35.7185097Z Candidate CI staging requires a detached disposable checkout
+2026-11-14T16:48:35.7245385Z ##[error]Process completed with exit code 1.
+2026-11-14T16:48:35.7412153Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-14T16:48:35.7412646Z with:
+2026-11-14T16:48:35.7412964Z   name: p05-public-E1-a96121fe723ba1c84a5169f6507c629341762bef
+2026-11-14T16:48:35.7413715Z   path: .build/p05-ci-combination.json
+.build/runs/regression-*/candidate-public.json
+.build/runs/regression-*/memory-tx-L*/public-*.json*
+
+2026-11-14T16:48:35.7414653Z   include-hidden-files: true
+2026-11-14T16:48:35.7414957Z   retention-days: 14
+2026-11-14T16:48:35.7415247Z   if-no-files-found: error
+2026-11-14T16:48:35.7415519Z   compression-level: 6
+2026-11-14T16:48:35.7415773Z   overwrite: false
+2026-11-14T16:48:35.7416012Z   archive: true
+2026-11-14T16:48:35.7416237Z env:
+2026-11-14T16:48:35.7416443Z   CXX: g++-14
+2026-11-14T16:48:35.7416664Z ##[endgroup]
+2026-11-14T16:48:35.9032091Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-14T16:48:35.9044256Z The least common ancestor is /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.build. This will be the root directory of the artifact
+2026-11-14T16:48:35.9062891Z ##[error]No files were found with the provided path: .build/p05-ci-combination.json
+.build/runs/regression-*/candidate-public.json
+.build/runs/regression-*/memory-tx-L*/public-*.json*. No artifacts will be uploaded.
+2026-11-14T16:48:35.9206582Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-14T16:48:35.9207097Z with:
+2026-11-14T16:48:35.9207390Z   name: p05-dv-E1-a96121fe723ba1c84a5169f6507c629341762bef
+2026-11-14T16:48:35.9208022Z   path: .build/runs/
+verification/failures/
+
+2026-11-14T16:48:35.9208555Z   include-hidden-files: true
+2026-11-14T16:48:35.9209000Z   retention-days: 14
+2026-11-14T16:48:35.9209434Z   if-no-files-found: error
+2026-11-14T16:48:35.9209853Z   compression-level: 6
+2026-11-14T16:48:35.9210240Z   overwrite: false
+2026-11-14T16:48:35.9210845Z   archive: true
+2026-11-14T16:48:35.9211212Z env:
+2026-11-14T16:48:35.9211534Z   CXX: g++-14
+2026-11-14T16:48:35.9211879Z ##[endgroup]
+2026-11-14T16:48:36.1139054Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-14T16:48:36.1142849Z The least common ancestor is /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager. This will be the root directory of the artifact
+2026-11-14T16:48:36.1144419Z With the provided path, there will be 153 files uploaded
+2026-11-14T16:48:36.1150203Z Artifact name is valid!
+2026-11-14T16:48:36.1151842Z Root directory input is valid!
+2026-11-14T16:48:36.4761793Z Uploading artifact: p05-dv-E1-a96121fe723ba1c84a5169f6507c629341762bef.zip
+2026-11-14T16:48:36.4816219Z Beginning upload of artifact content to blob storage
+2026-11-14T16:48:37.4885631Z Uploaded bytes 1713392
+2026-11-14T16:48:37.5694677Z Finished uploading artifact content to blob storage!
+2026-11-14T16:48:37.5696034Z SHA256 digest of uploaded artifact is 895ec44f93d056b38402dfd078f66cc772af5c425e986bb68454ac1101ec8eaf
+2026-11-14T16:48:37.5696999Z Finalizing artifact upload
+2026-11-14T16:48:38.0837098Z Artifact p05-dv-E1-a96121fe723ba1c84a5169f6507c629341762bef successfully finalized. Artifact ID 14123090083
+2026-11-14T16:48:38.0838657Z Artifact p05-dv-E1-a96121fe723ba1c84a5169f6507c629341762bef has been successfully uploaded! Final size is 1713392 bytes. Artifact ID is 14123090083
+2026-11-14T16:48:38.0842294Z Artifact download URL: https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43617402959/artifacts/14123090083
+2026-11-14T16:48:38.1106325Z Post job cleanup.
+2026-11-14T16:48:38.1985557Z [command]/usr/bin/git version
+2026-11-14T16:48:38.2034849Z git version 2.56.1
+2026-11-14T16:48:38.2075029Z Temporarily overriding HOME='/home/runner/work/_temp/0cc35dee-5170-4043-8bfb-01f72585c174' before making global git config changes
+2026-11-14T16:48:38.2076443Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T16:48:38.2081331Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager
+2026-11-14T16:48:38.2121295Z Removing SSH command configuration
+2026-11-14T16:48:38.2128861Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T16:48:38.2189818Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T16:48:38.2473582Z Removing HTTP extra header
+2026-11-14T16:48:38.2482255Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T16:48:38.2530961Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T16:48:38.2818644Z Removing includeIf entries pointing to credentials config files
+2026-11-14T16:48:38.2825164Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T16:48:38.2876037Z includeif.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git.path
+2026-11-14T16:48:38.2877302Z includeif.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git/worktrees/*.path
+2026-11-14T16:48:38.2878246Z includeif.gitdir:/github/workspace/.git.path
+2026-11-14T16:48:38.2879068Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T16:48:38.2887021Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git.path
+2026-11-14T16:48:38.2924653Z /home/runner/work/_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:38.2935989Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-1a41c572\-f87d\-4221\-b0b3\-196f779952e2\.config
+2026-11-14T16:48:38.2986521Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git/worktrees/*.path
+2026-11-14T16:48:38.3032625Z /home/runner/work/_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:38.3043798Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Shared-Buffer-Packet-Traffic-Manager/Shared-Buffer-Packet-Traffic-Manager/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-1a41c572\-f87d\-4221\-b0b3\-196f779952e2\.config
+2026-11-14T16:48:38.3099999Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-14T16:48:38.3147828Z /github/runner_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:38.3161542Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-1a41c572\-f87d\-4221\-b0b3\-196f779952e2\.config
+2026-11-14T16:48:38.3226599Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T16:48:38.3277357Z /github/runner_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config
+2026-11-14T16:48:38.3289974Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-1a41c572\-f87d\-4221\-b0b3\-196f779952e2\.config
+2026-11-14T16:48:38.3357328Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T16:48:38.3623133Z Removing credentials config '/home/runner/work/_temp/git-credentials-1a41c572-f87d-4221-b0b3-196f779952e2.config'
+2026-11-14T16:48:38.3783383Z Cleaning up orphan processes
+

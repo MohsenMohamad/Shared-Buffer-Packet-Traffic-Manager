@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "test": "p05-main-push-checkout-I1",
+  "result": "TOOL_ERROR",
+  "disposition": "verification-defect",
+  "diagnosis": "The reusable P05 workflow allowed actions/checkout default event-dependent ref selection. Pull-request runs used a detached merge ref; a push to main checked out attached main. The required detached-checkout staging guard correctly rejected it. Pin checkout ref to github.sha; retain the clean/detached guards. Missing public-artifact upload is a consequence of staging abort, not an executed DUT failure.",
+  "source_revision": "a96121fe723ba1c84a5169f6507c629341762bef",
+  "source_tree": "a5f3b43885611b20edd9ece172b647094e4ebc21",
+  "main_revision": "a96121fe723ba1c84a5169f6507c629341762bef",
+  "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+  "profile": "I1",
+  "seed": null,
+  "requested_seed": 17,
+  "execution_phase": "CI staging before DUT build/run",
+  "command": [
+    "python3",
+    "tools/p05_ci.py"
+  ],
+  "exit_code": 1,
+  "run_id": 43617402959,
+  "job_id": 132515569568,
+  "run_url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43617402959",
+  "reproduction_sources": {
+    "dv_and_main_revision": "a96121fe723ba1c84a5169f6507c629341762bef",
+    "condition": "Clean attached main checkout with the unchanged prepared environment; invoking tools/p05_ci.py refuses attached HEAD."
+  },
+  "log": "verification/failures/p05-postmerge-checkout-43617402959/I1.log",
+  "log_sha256": "58436fc81b603e7945cbad159228ab507f26d0abe1d31f9776d4ab30807b0466",
+  "public_artifact_upload": "FAIL: no public results were produced because staging aborted",
+  "input_capture_note": "Full hosted job log captured before repair. Staging refused HEAD before constructing a runner case; no DUT stimulus, binaries or production result exist for this failed attempt. The checked-in source and workflow command reproduce the rejection without weakening doctor or branch isolation."
+}

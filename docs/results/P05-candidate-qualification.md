@@ -9,6 +9,37 @@ Required final full-CI and relevant main-CI conclusions are recorded on
 [PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26);
 a light-only result does not satisfy that final merge handoff.
 
+## Post-qualification merge CI checkout repair
+
+After PR #26 merged at `a96121fe723ba1c84a5169f6507c629341762bef`, main push run
+[43617402959](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43617402959)
+failed all six memory/TX jobs during staging. No DUT build or execution occurred
+in those attempts. The later public-artifact errors are secondary: staging never
+produced a result to upload.
+
+This is a workflow checkout defect. Default `actions/checkout` behavior detached
+the PR merge ref but attached the `main` branch for a push. The unchanged P05
+staging guard correctly refused attached HEAD. The repair pins checkout to
+`${{ github.sha }}` for every event, keeping both clean/detached safety guards.
+The merge tree `a5f3b43885611b20edd9ece172b647094e4ebc21` exactly matches the
+qualified DV delivery, so the failure does not demonstrate an RTL contract
+violation or change earlier qualification inputs/results.
+
+All six complete job logs and per-job dispositions were captured before repair
+under `verification/failures/p05-postmerge-checkout-43617402959/`. A regression
+exercises the actual staging helper against isolated Git push/PR commit checkouts,
+and confirms attached main is still rejected. Its initial fixture omitted Python
+cache ignores; that separate light-check failure was preserved before aligning
+the fixture with the real repository. No staging check was relaxed.
+
+Local checks pass: repository contracts, 115 light tests, two capture-isolation
+tests, doctor on actual merged main, and real staging of that detached main
+checkout. The production RTL, checkers, parameters, formal properties, timeouts
+and prepared toolchain are unchanged. The focused CI checkout repair PR records
+its final hosted validation. Main remains blocked by this configuration defect
+until maintainer integration of that repair and a successful subsequent main run;
+the original failed attempt is not relabeled PASS.
+
 ## Actual integrated-source confirmation
 
 | Input | Actual identity |
