@@ -1,8 +1,9 @@
 # Prepared FP-TX boundary
 
 `memory_tx_obligations.sv` compiles and executes only on labeled public-action
-replay during preparation. It is not registered as a production proof and no
-production prove/cover/mutation result exists. `sample_enable` gates the finite
+replay during preparation. It is not registered as a production proof; its
+preparation results establish no production prove/cover/mutation result.
+The separate production binding and its scope are described below. `sample_enable` gates the finite
 replay capture window; a production binding must tie it high, never assume it
 low to hide work. All arbitrary inputs are explicit ports; there are no native
 anyconst/anyseq constructs. Fixed future packet/byte witnesses must use the

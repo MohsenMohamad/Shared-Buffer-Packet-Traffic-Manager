@@ -37,7 +37,7 @@ first-allocation/write/commit carries the RX handoff metadata directly; metadata
 read muxes are independently compared with pre-edge array contents.
 
 ```sh
-python3 tools/run.py formal-rtl --profile E0 --test memory-tx --candidate-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --timeout 300
+python3 tools/run.py formal-rtl --profile E0 --test memory-tx --candidate-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --timeout 600
 python3 tools/run.py coverage --profile I1 --test memory-tx --coverage-manifest PATH_TO_PASSING_UNMUTATED_CASE_MANIFEST
 ```
 

@@ -465,5 +465,13 @@
       }
     }
   ],
-  "diagnosis": "Strengthened FP-TX assertions passed the depth8 base case, but Z3 induction exhausted 240 seconds. No completed proof or reachable counterexample was obtained. Retain this TIMEOUT and try the same assertion set with the already prepared ABC/PDR engine; do not weaken assertions, assumptions or memory contracts."
+  "diagnosis": "Strengthened FP-TX assertions passed the depth8 base case, but Z3 induction exhausted 240 seconds. No completed proof or reachable counterexample was obtained. Retain this TIMEOUT and try the same assertion set with the already prepared ABC/PDR engine; do not weaken assertions, assumptions or memory contracts.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "d2795e6e854e255d1c7c90c6743399f6150284be",
+    "combined_tree": "d24ea76a9fa6ed7e72946de96298075c96a41e7f",
+    "canonical_recombination_tree": "d24ea76a9fa6ed7e72946de96298075c96a41e7f",
+    "canonical_tree_matches": true
+  }
 }

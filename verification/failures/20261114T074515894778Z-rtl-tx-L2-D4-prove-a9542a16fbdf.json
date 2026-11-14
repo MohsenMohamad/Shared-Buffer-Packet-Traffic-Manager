@@ -451,5 +451,13 @@
       }
     }
   ],
-  "diagnosis": "Initial unbounded FP-TX k-induction attempt exhausted the explicit 180-second solver budget without a counterexample or proof. All required covers and three intended mutation checks completed separately. Add asserted storage/pipeline correspondence invariants derived from public issue/arrival/retirement counts; do not add environment assumptions or claim closure from this timeout."
+  "diagnosis": "Initial unbounded FP-TX k-induction attempt exhausted the explicit 180-second solver budget without a counterexample or proof. All required covers and three intended mutation checks completed separately. Add asserted storage/pipeline correspondence invariants derived from public issue/arrival/retirement counts; do not add environment assumptions or claim closure from this timeout.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "2bd4a321b0f9aeb133cecf69ef2d7d66ce2cfcf6",
+    "combined_tree": "d5346315985dee949f97ffe172822ea34189a239",
+    "canonical_recombination_tree": "d5346315985dee949f97ffe172822ea34189a239",
+    "canonical_tree_matches": true
+  }
 }

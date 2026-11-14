@@ -625,5 +625,13 @@
       }
     }
   ],
-  "diagnosis": "Doctor rejects a secondary worktree sharing the primary checkout installation through symlinks: resolved tool paths and UVM_HOME are outside that worktree. Tool versions/locks are unchanged. Qualification uses the detached combined source tree at the original prepared checkout path; the submitted DV branch is isolated in its own worktree. No doctor check, setup input, stamp or tool was changed."
+  "diagnosis": "Doctor rejects a secondary worktree sharing the primary checkout installation through symlinks: resolved tool paths and UVM_HOME are outside that worktree. Tool versions/locks are unchanged. Qualification uses the detached combined source tree at the original prepared checkout path; the submitted DV branch is isolated in its own worktree. No doctor check, setup input, stamp or tool was changed.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "combined_tree": "a11d6cac835e43d6eb92a59c8db8815c40b76c76",
+    "canonical_recombination_tree": "a11d6cac835e43d6eb92a59c8db8815c40b76c76",
+    "canonical_tree_matches": true
+  }
 }

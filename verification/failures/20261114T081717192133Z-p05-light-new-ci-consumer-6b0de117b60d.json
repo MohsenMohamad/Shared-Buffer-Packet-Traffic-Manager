@@ -440,5 +440,13 @@
       }
     }
   ],
-  "diagnosis": "The CI cleanup test expected the old consumer set. Register the newly required memory_tx consumer in the expected complete set; retain exact equality and the wait-for-all-consumers requirement."
+  "diagnosis": "The CI cleanup test expected the old consumer set. Register the newly required memory_tx consumer in the expected complete set; retain exact equality and the wait-for-all-consumers requirement.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "42452bae98f78ac6cbf3b8defb045f12eeac450c",
+    "combined_tree": "141a3ec96ccca5beb72976ae981b0b2145ef364b",
+    "canonical_recombination_tree": "141a3ec96ccca5beb72976ae981b0b2145ef364b",
+    "canonical_tree_matches": true
+  }
 }

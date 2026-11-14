@@ -477,5 +477,13 @@
       }
     }
   ],
-  "diagnosis": "Conservative PDR preparation exhausted 300 seconds in full combinational lowering before ABC started. No proof/counterexample exists. Retain TIMEOUT. Replace oversized 32-bit verification counters with contract-bounded counters retaining first-error headroom and explicit next-delta underflow/overflow assertions, then retry qualified SMT induction; production RTL and environment assumptions are unchanged."
+  "diagnosis": "Conservative PDR preparation exhausted 300 seconds in full combinational lowering before ABC started. No proof/counterexample exists. Retain TIMEOUT. Replace oversized 32-bit verification counters with contract-bounded counters retaining first-error headroom and explicit next-delta underflow/overflow assertions, then retry qualified SMT induction; production RTL and environment assumptions are unchanged.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "93eaae785a9ba7c42618c6e4c7c920099405dc85",
+    "combined_tree": "d3bd50047b7775d39a70c0e4cb923d4bcfb4a2d1",
+    "canonical_recombination_tree": "d3bd50047b7775d39a70c0e4cb923d4bcfb4a2d1",
+    "canonical_tree_matches": true
+  }
 }

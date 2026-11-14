@@ -474,5 +474,13 @@
     }
   ],
   "diagnosis": "E0 L2 depth8 seed31 had no observed full-capacity simultaneous issue/response/retirement event. The required-bin detector correctly rejected this incomplete stimulus; add a directed fill followed by an always-ready drain, retaining the mandatory bin. Replay failure is consequential.",
-  "retained_public_inputs": "p05-E0-L2-D8-seed31-missing-full-exchange.tar.gz"
+  "retained_public_inputs": "p05-E0-L2-D8-seed31-missing-full-exchange.tar.gz",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "880d593e00ee4ea2fa58215a28a79e70b636974c",
+    "combined_tree": "a64a0ed331b5f9e22f628e49562daf35ce1b53bb",
+    "canonical_recombination_tree": "a64a0ed331b5f9e22f628e49562daf35ce1b53bb",
+    "canonical_tree_matches": true
+  }
 }

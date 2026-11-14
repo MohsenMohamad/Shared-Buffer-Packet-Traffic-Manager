@@ -453,5 +453,13 @@
       }
     }
   ],
-  "diagnosis": "Pinned Slang/Yosys fails with internal duplicate-cell assertion count_id(cell->name)==0 while lowering added procedural-loop storage correspondence assertions. No engine or production-property verdict exists for these runs; mutation failures are consequential frontend failures and do not qualify detectors. Isolate with named generate instances before changing any assertion semantics."
+  "diagnosis": "Pinned Slang/Yosys fails with internal duplicate-cell assertion count_id(cell->name)==0 while lowering added procedural-loop storage correspondence assertions. No engine or production-property verdict exists for these runs; mutation failures are consequential frontend failures and do not qualify detectors. Isolate with named generate instances before changing any assertion semantics.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "880d593e00ee4ea2fa58215a28a79e70b636974c",
+    "combined_tree": "a64a0ed331b5f9e22f628e49562daf35ce1b53bb",
+    "canonical_recombination_tree": "a64a0ed331b5f9e22f628e49562daf35ce1b53bb",
+    "canonical_tree_matches": true
+  }
 }

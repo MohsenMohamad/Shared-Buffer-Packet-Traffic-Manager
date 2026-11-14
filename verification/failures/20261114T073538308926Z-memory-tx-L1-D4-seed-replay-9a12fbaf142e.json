@@ -402,5 +402,13 @@
   "source_patch": null,
   "changed_since_run_start": [],
   "log_tails": [],
-  "diagnosis": "Live driver tested an initially empty background-plan dict for truth rather than testing whether a background schedule was requested. This suppressed the legal reuse scenario. Required observed reuse-trigger detection correctly failed; replay failure is consequential. Fix the stimulus enable condition without changing expected behavior."
+  "diagnosis": "Live driver tested an initially empty background-plan dict for truth rather than testing whether a background schedule was requested. This suppressed the legal reuse scenario. Required observed reuse-trigger detection correctly failed; replay failure is consequential. Fix the stimulus enable condition without changing expected behavior.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "f11c4b6174d104eb72d0c08c9813dad44018e3f8",
+    "combined_tree": "b2c2e2ad708a96196ad87b96697725e7ae2e236d",
+    "canonical_recombination_tree": "b2c2e2ad708a96196ad87b96697725e7ae2e236d",
+    "canonical_tree_matches": true
+  }
 }

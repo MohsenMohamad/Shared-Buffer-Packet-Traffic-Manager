@@ -486,5 +486,13 @@
       }
     }
   ],
-  "diagnosis": "L2 depth8 SMT induction at maximum search depth8 exhausted 600 seconds; depth8 base case and required covers passed separately. No unbounded result or RTL counterexample was obtained. Retry maximum induction depth2 with exactly the same assertions/assumptions: a completed induction proof remains unbounded and uses a stronger induction step, not a weaker bounded check."
+  "diagnosis": "L2 depth8 SMT induction at maximum search depth8 exhausted 600 seconds; depth8 base case and required covers passed separately. No unbounded result or RTL counterexample was obtained. Retry maximum induction depth2 with exactly the same assertions/assumptions: a completed induction proof remains unbounded and uses a stronger induction step, not a weaker bounded check.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "7b250c672ee984fdcdd5c4ebafce0275bc07ef85",
+    "combined_tree": "22632f6f511ffba93c15e285f7059e09a22cebe4",
+    "canonical_recombination_tree": "22632f6f511ffba93c15e285f7059e09a22cebe4",
+    "canonical_tree_matches": true
+  }
 }

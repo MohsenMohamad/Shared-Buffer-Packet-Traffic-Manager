@@ -490,5 +490,13 @@
       }
     }
   ],
-  "diagnosis": "Depth2 induction found an unreachable history with inactive TX but outstanding live credit and arbitrary old packet metadata. Base case passed; this is UNKNOWN, not an RTL counterexample. Assert that inactive packet history has no live slots and that initialized work has F01 history established, then retry the same unbounded architectural properties. These are asserted invariants, not environment assumptions."
+  "diagnosis": "Depth2 induction found an unreachable history with inactive TX but outstanding live credit and arbitrary old packet metadata. Base case passed; this is UNKNOWN, not an RTL counterexample. Assert that inactive packet history has no live slots and that initialized work has F01 history established, then retry the same unbounded architectural properties. These are asserted invariants, not environment assumptions.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "5a66c653eddf37695a6aeaa1fc6e84095b940c95",
+    "combined_tree": "8bcfb965eba2311a6e214cfebbc8915140304d62",
+    "canonical_recombination_tree": "8bcfb965eba2311a6e214cfebbc8915140304d62",
+    "canonical_tree_matches": true
+  }
 }

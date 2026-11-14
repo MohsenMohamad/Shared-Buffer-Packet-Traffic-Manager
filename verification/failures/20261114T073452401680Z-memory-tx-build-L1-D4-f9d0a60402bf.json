@@ -481,5 +481,13 @@
     "main": "a4df0dd61802355e91b4c0c96e57b79241c86851",
     "rtl": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
     "dv": "368768a"
+  },
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "368768af1e783e9835ecae1ba327ab019d10253b",
+    "combined_tree": "d213209134f13803fc394d14729128dcf3c33a5f",
+    "canonical_recombination_tree": "d213209134f13803fc394d14729128dcf3c33a5f",
+    "canonical_tree_matches": true
   }
 }

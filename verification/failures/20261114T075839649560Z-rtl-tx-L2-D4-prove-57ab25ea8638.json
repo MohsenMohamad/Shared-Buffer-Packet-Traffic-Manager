@@ -464,5 +464,13 @@
       }
     }
   ],
-  "diagnosis": "Base case passed through depth8; induction was UNKNOWN, not a reachable RTL counterexample. Its arbitrary initial monitor state had live=1, length=0, total=1073741824, issued=-2 and retired=-6. Add asserted legal-length, nonnegative event-count and fixed-response/returned-mask correspondence invariants. Keep them as proved assertions, never assumptions; no environment or oracle expectation is weakened."
+  "diagnosis": "Base case passed through depth8; induction was UNKNOWN, not a reachable RTL counterexample. Its arbitrary initial monitor state had live=1, length=0, total=1073741824, issued=-2 and retired=-6. Add asserted legal-length, nonnegative event-count and fixed-response/returned-mask correspondence invariants. Keep them as proved assertions, never assumptions; no environment or oracle expectation is weakened.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "a62bf2565ea07c8f5f8e42dc976f625096c2477d",
+    "combined_tree": "621ade2dcc4ca9b8a15e4db57ca640da54274a1a",
+    "canonical_recombination_tree": "621ade2dcc4ca9b8a15e4db57ca640da54274a1a",
+    "canonical_tree_matches": true
+  }
 }

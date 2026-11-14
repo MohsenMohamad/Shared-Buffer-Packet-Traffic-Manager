@@ -492,5 +492,13 @@
       }
     }
   ],
-  "diagnosis": "Short-step induction permits an arbitrary live-response tag without its matching physical RAM response, so the pending-count correspondence fails. This is an unreachable monitor/environment-history state, not a reachable DUT counterexample. Assert the fixed-latency contract consequence live_valid subset of physical_valid; retain stale physical responses as legal. Audit also removes the earlier globally fixed chain restriction: capture an arbitrary legal chain per accepted dispatch and allow arbitrary tail/returned links."
+  "diagnosis": "Short-step induction permits an arbitrary live-response tag without its matching physical RAM response, so the pending-count correspondence fails. This is an unreachable monitor/environment-history state, not a reachable DUT counterexample. Assert the fixed-latency contract consequence live_valid subset of physical_valid; retain stale physical responses as legal. Audit also removes the earlier globally fixed chain restriction: capture an arbitrary legal chain per accepted dispatch and allow arbitrary tail/returned links.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "891432c2ddd8dcebc383fc12c39d705337883144",
+    "combined_tree": "692dfb1a22c288962610791988b6574ad594f36f",
+    "canonical_recombination_tree": "692dfb1a22c288962610791988b6574ad594f36f",
+    "canonical_tree_matches": true
+  }
 }

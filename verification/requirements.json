@@ -16,6 +16,38 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
       }
     },
     {
@@ -46,6 +78,38 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
       }
     },
     {
@@ -63,6 +127,38 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
       }
     },
     {
@@ -80,6 +176,38 @@
           "I0"
         ],
         "evidence": "docs/results/P07-verification-foundation.json"
+      },
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
       }
     },
     {
@@ -276,21 +404,117 @@
       "name": "Read/write ports",
       "requirement": "No more than one payload read and one payload write per cycle; no physical word collision.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
+      }
     },
     {
       "id": "MEM-04",
       "name": "Output read credits",
       "requirement": "Buffered+outstanding responses never exceed FIFO capacity; long stalls start immediately after read bursts. Run read latency 1 and 2.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
+      }
     },
     {
       "id": "MEM-05",
       "name": "Cell retirement",
       "requirement": "Free a cell exactly on its final accepted output beat; capture its next link before reuse. Force rapid reuse of just-returned cells.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
+      }
     },
     {
       "id": "MEM-06",
@@ -303,7 +527,39 @@
         "formal-rtl"
       ],
       "component_scope": "Local descriptor allocation plus two-return merge and duplicate/invalid handling; TX/abort/admission composition remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md"
+      "component_evidence": "docs/results/P02-storage-primitives.md",
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
+      }
     },
     {
       "id": "Q-01",
@@ -1101,6 +1357,38 @@
           "queues_empty_tb",
           "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
         ]
+      },
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
       }
     },
     {
@@ -1328,7 +1616,39 @@
       "name": "Throughput",
       "requirement": "Saturated large packets against one-read/one-write ceiling; identify scan, metadata and boundary bubbles.",
       "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "status": "NOT_IMPLEMENTED",
+      "memory_tx_candidate_verification": {
+        "status": "PASS",
+        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
+        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+        "suite": "memory-tx",
+        "formal_selection": "formal-rtl --test memory-tx",
+        "coverage_selection": "coverage --test memory-tx",
+        "profiles": [
+          "F0",
+          "F1",
+          "I0",
+          "I1",
+          "E0",
+          "E1"
+        ],
+        "seeds": [
+          17,
+          31,
+          53,
+          17
+        ],
+        "latencies": [
+          1,
+          2
+        ],
+        "fifo_depths": [
+          4,
+          8
+        ],
+        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
+        "evidence": "docs/results/P05-candidate-qualification.json"
+      }
     },
     {
       "id": "PERF-02",

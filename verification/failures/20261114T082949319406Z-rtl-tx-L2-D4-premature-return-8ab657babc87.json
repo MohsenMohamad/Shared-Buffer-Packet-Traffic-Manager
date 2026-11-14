@@ -480,5 +480,13 @@
       }
     }
   ],
-  "diagnosis": "The new bounded monitor counter parameter BEAT_W collided with the public tm_types.svh packed beat-width localparam. Rename the monitor-only constant; no production RTL, assertion expectation or environment assumption changes. Other task failures are consequential elaboration failures and do not qualify mutations."
+  "diagnosis": "The new bounded monitor counter parameter BEAT_W collided with the public tm_types.svh packed beat-width localparam. Rename the monitor-only constant; no production RTL, assertion expectation or environment assumption changes. Other task failures are consequential elaboration failures and do not qualify mutations.",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+    "dv_revision": "d267ed9e2148dbad6a93d554dff8c1782a81c049",
+    "combined_tree": "9c5d669d234b20ebab2993c0f3fd3abb8b4e6ea3",
+    "canonical_recombination_tree": "9c5d669d234b20ebab2993c0f3fd3abb8b4e6ea3",
+    "canonical_tree_matches": true
+  }
 }
