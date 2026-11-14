@@ -73,13 +73,14 @@ always_comb begin
         head_fields[q*192 +: 192]={32'(info.head),32'(info.ncell),32'(info.length),32'(info.qid),32'(info.tag),32'(info.source)};
     end
     sample=drive;
+    sample.dispatch_v=32'(drive.dispatch_v!=0 && dispatch_ready);
     sample.read_v=32'(read_req.valid); sample.read_addr=32'(read_req.addr);
     sample.response_v=32'(response.valid); sample.response_data=response.data;
     sample.query_v=32'(rst_n && !idle); sample.query_cell=32'(link_cell); sample.query_next=32'(next_cell);
     sample.free_v=32'(cell_return.valid); sample.free_cell=32'(cell_return.id);
     sample.done_v=32'(tx_done.valid); sample.done_desc=32'(tx_done.desc);
     if(drive.dispatch_v!=0 || drive.commit_v!=0)begin
-        sample.dispatch_info_v=drive.dispatch_v;
+        sample.dispatch_info_v=sample.dispatch_v;
         sample.dispatch_info_desc=drive.dispatch_desc;
         sample.dispatch_info_head=32'(selected_info.head); sample.dispatch_info_ncell=32'(selected_info.ncell);
         sample.dispatch_info_length=32'(selected_info.length); sample.dispatch_info_qid=32'(selected_info.qid);

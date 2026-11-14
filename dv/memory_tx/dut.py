@@ -135,6 +135,9 @@ class Live:
                 require((observed_retirement['completion_qid'],observed_retirement['completion_length'])==(owner['qid'],owner['length']), 'completion_metadata')
         self.public_checks.write(json.dumps(dict(cycle=self.cycle,expected=self.expected_public,
             observed=dict(out=sample['out'],actions=observed,retirement_metadata=observed_retirement)),sort_keys=True)+'\n');self.public_checks.flush()
+        if not reset:
+            expected_idle=self.oracle.active is None and not self.oracle.buffered and not self.oracle.pending
+            require(bool(idle)==expected_idle and bool(dispatch_ready)==expected_idle, 'dispatch_readiness',f'expected_idle={expected_idle} observed_idle={idle} observed_ready={dispatch_ready}')
         self.oracle.step(sample)
         self.ledger.observe(sample, self.oracle)
         self.was_reset, self.previous = reset, sample
@@ -199,7 +202,7 @@ class Live:
                         entry['cell_boundaries']+=1
                 self.last_transfer = self.cycle
             if 'done' in a:
-                self.performance[-1]['always_ready_packet']=self.ready_run
+                if self.performance and self.first_valid: self.performance[-1]['always_ready_packet']=self.ready_run
                 self.dispatch_cycle = None
         if self.previous and 'read' in self.previous['actions'] and not out['ready']:
             self.bins['stall_after_issue'] += 1
