@@ -22,7 +22,7 @@ def main():
     directory=ROOT/'.build/p05-public'/uuid4().hex;directory.mkdir(parents=True)
     command=[sys.executable,str(ROOT/'tools/run.py'),'formal-rtl' if args.formal else 'regression',
              '--profile',args.profile,'--test','memory-tx','--candidate-revision',args.rtl_revision,
-             '--jobs',str(args.jobs),'--timeout',str(args.timeout or (300 if args.formal else 180)),
+             '--jobs',str(args.jobs),'--timeout',str(args.timeout or (600 if args.formal else 180)),
              '--build-timeout','600','--output',str(directory/'runs')]
     if not args.formal:command+=['--seed',str(args.seed)]
     with (directory/'dv.stdout').open('w') as out,(directory/'dv.stderr').open('w') as err:

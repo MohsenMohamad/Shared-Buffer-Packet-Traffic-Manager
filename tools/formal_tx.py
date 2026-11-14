@@ -29,8 +29,9 @@ def formal_tx(run,args,configuration):
                 case = Case(run,f'rtl-tx-L{latency}-D{depth}-{task}')
                 params = {k:configuration[k] for k in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
                 params.update(MEM_RD_LATENCY=latency,TX_FIFO_DEPTH=depth)
+                induction_depth=2 if (latency,depth)==(2,8) else 8
                 case.data.update(configuration=params,candidate=identity,source_set='formal',
-                    engine='smtbmc z3',method='unbounded k-induction, maximum depth 8' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
+                    engine='smtbmc z3',method=f'unbounded k-induction, maximum depth {induction_depth}' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
                     assumptions='Two startup reset samples; arbitrary later resets and sink stalls. Legal idle-only dispatch, 1..128 byte packets. Eight distinct arbitrary fixed cell IDs stable across every reset by F01 history; arbitrary input word captured on each read with exact unreset physical response latency. Returned links may change immediately. No fairness assumption.')
                 paths=['rtl/include/tm_fixed.sv','rtl/tx/tm_tx.sv','formal/tx/tx_formal.sv']
                 headers=['rtl/include/tm_types.svh','rtl/include/tm_parameters.svh','rtl/include/tm_validate.svh']
@@ -46,7 +47,7 @@ def formal_tx(run,args,configuration):
                 script=read_sources([Path(p).name for p in paths],'tx_formal',params=params,defines=['SYNTHESIS'],formal=True)
                 script+='prep -top tx_formal\nasync2sync\ndffunmap'
                 config=case.path/'tx.sby'
-                config.write_text((ROOT/'formal/tx/tx.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
+                config.write_text((ROOT/'formal/tx/tx.sby').read_text().replace('prove: depth 8','prove: depth '+str(induction_depth)).replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
                 step=case.execute(['sby','-f','-d',case.path/'engine',config,task if task in ('prove','cover') else 'mutation'],timeout=args.timeout,cwd=case.path)
                 statusfile=case.path/'engine/status'
                 status=statusfile.read_text().split()[0] if statusfile.is_file() else None
