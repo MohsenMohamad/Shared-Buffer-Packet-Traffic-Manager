@@ -62,6 +62,7 @@ jobs:
           path: |
             .build/p05-ci-combination.json
             .build/runs/regression-*/candidate-public.json
+            .build/runs/regression-*/memory-tx-L*/public-*.json*
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error

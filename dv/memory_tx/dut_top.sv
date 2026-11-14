@@ -16,7 +16,8 @@ module memory_tx_dut_top #(
     output logic [7:0] output_keep,
     output logic output_last,
     output logic [3071:0] head_fields,
-    output logic [31:0] abort_next_value, queue_next_value
+    output logic [31:0] abort_next_value, queue_next_value,
+    output logic [127:0] retirement_fields
 );
 `include "tm_types.svh"
 import memory_tx_dut_wires::*;
@@ -60,6 +61,7 @@ assign output_keep=beat.keep;
 assign output_last=beat.last;
 assign abort_next_value=32'(abort_next);
 assign queue_next_value=32'(queue_next);
+assign retirement_fields={32'(cell_return.desc),32'(cell_return.qid),32'(tx_done.qid),32'(tx_done.length)};
 for(genvar q=0;q<N_Q;q++)begin
     assign queue_heads[q*DESC_ID_W +: DESC_ID_W]=DESC_ID_W'(heads[q*32 +: 32]);
 end

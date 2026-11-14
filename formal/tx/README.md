@@ -30,3 +30,38 @@ RUN/initialized/committed input premises. Check first valid <= L+4 and one beat
 per cycle after fill, including cell boundaries for CELL_WORDS>=2. Do not import
 those assumptions into safety or report bounded progress as unbounded safety.
 See [frozen expectations](../../dv/memory_tx/contract.md) for the risk/cover map.
+
+## Production candidate binding
+
+The `memory-tx` formal selection now binds `tx_formal.sv` to the named production
+`tm_tx_api`; replay obligations above remain preparation evidence only. Safety
+uses ABC/PDR with the pinned Slang frontend. Covers and intentional source-copy
+counterexamples use SMTBMC/Z3. Only an actual completed prove status establishes
+unbounded safety; timeouts, UNKNOWN and cover/replay PASS do not.
+
+The production-supported formal dimensions are N_RX=1, N_Q=2, N_CELL=16,
+N_DESC=8, CELL_BYTES=16 and MAX_PACKET_BYTES=128. Latency 1/2 crosses depth 4/8.
+An independent eight-cell symbolic permutation is a committed-chain environment
+knob, not a claim that the production module elaborates at eight physical cells.
+
+| Environment contract | Excluded behavior and nonvacuity |
+| --- | --- |
+| Two startup reset samples; arbitrary later resets, including short later resets | New dispatch waits through initialization. Pending-reset and same-ID/tag restart covers remain required. |
+| Legal idle-only dispatch, every length 1..128, arbitrary descriptor/tag/qid | Excludes busy dispatch and malformed descriptors outside the TX API contract; no packet size is selected from DUT state. |
+| Eight distinct arbitrary chain cells, fixed across all resets by F01 sticky history | Allows every cell permutation and one-to-eight-cell packet prefixes. Owned links are immutable; returned links may change immediately. This is a local ownership contract, not a caller/pool composition proof. |
+| Arbitrary 64-bit word sampled at each read, exact unreset physical response pipeline | No response backpressure or reset cancellation is assumed. Payload memory structure/byte readback is independently exercised in simulation. |
+| Sink readiness is an unconstrained input | Safety has no fairness, maximum-stall or always-ready assumption. Performance simulation names its readiness boundary separately. |
+
+The checker counts issue, live arrival and external retirement independently.
+FIFO/pending-tag/cursor correspondence, valid ranges and returned-ID masks are
+asserted helper invariants, not assumptions. Assertions cover credit, arrival
+space, held fields, ordered address/metadata/keep/last, exact cell/descriptor
+retirement, no read after return, tail handling and reset validity.
+
+Required covers include full credit with pending responses, pending sink stall,
+full response/issue/retirement exchange, final-beat hold, pending reset, returned
+link alteration, completion and same-ID/tag reuse after a pending reset. Covers
+are reached separately from proofs. Omitted outstanding credit, premature cell
+return and stale-response validity mutations are disposable production-source
+copies; each must hit its named independent detector. Simulation additionally
+requires a normally exiting server and a passing legal neighbor.

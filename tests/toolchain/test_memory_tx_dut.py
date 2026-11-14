@@ -16,8 +16,8 @@ import memory_tx_dut
 
 class CandidateAdapterTests(unittest.TestCase):
     def test_missing_duplicate_mixed_and_truncated_edges_fail(self):
-        row='TM_EDGE 0 '+' '.join('0' for _ in range(11))+'\n'
-        self.assertEqual(len(decode_edge(row,0)),11)
+        row='TM_EDGE 0 '+' '.join('0' for _ in range(12))+'\n'
+        self.assertEqual(len(decode_edge(row,0)),12)
         for line,tick,detector in [(row,1,'adapter_sample_sequence'),
                                    (row.replace('TM_EDGE 0','TM_EDGE 2'),0,'adapter_sample_sequence'),
                                    ('TM_EDGE 0 0\n',0,'adapter_sample_shape'),

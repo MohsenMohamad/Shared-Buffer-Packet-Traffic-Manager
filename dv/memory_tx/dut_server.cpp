@@ -37,7 +37,8 @@ int main(int argc,char** argv) {
                  <<' '<<unsigned(top->output_last)<<' '<<top->output_user<<' '<<unsigned(top->dispatch_ready)
                  <<' '<<unsigned(top->idle)<<' ';
         write_hex(top->head_fields);
-        std::cout<<' '<<top->abort_next_value<<' '<<top->queue_next_value<<std::endl;
+        std::cout<<' '<<top->abort_next_value<<' '<<top->queue_next_value<<' ';
+        write_hex(top->retirement_fields);std::cout<<std::endl;
         top->clk=1;top->eval();context->timeInc(1);
     }
     top->final();context->coveragep()->write("coverage.dat");

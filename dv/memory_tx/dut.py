@@ -17,7 +17,7 @@ from ledger import Ledger
 def decode_edge(line, expected_tick):
     require(line.startswith('TM_EDGE '), 'adapter_protocol', line.strip())
     values = [int(value,16) for value in line.split()[1:]]
-    require(len(values)==12, 'adapter_sample_shape')
+    require(len(values)==13, 'adapter_sample_shape')
     require(values[0]==expected_tick, 'adapter_sample_sequence', f'expected={expected_tick} observed={values[0]}')
     return values[1:]
 
@@ -32,6 +32,8 @@ class Live:
         self.raw = (self.path/'server.stdout').open('w')
         self.errors = (self.path/'server.stderr').open('w')
         self.samples = (self.path/'samples.jsonl').open('w')
+        self.public_inputs = (self.path/'public-inputs.jsonl').open('w')
+        self.public_checks = (self.path/'public-output-checks.jsonl').open('w')
         self.process = subprocess.Popen([str(Path(binary).resolve())], cwd=self.path,
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                         stderr=self.errors, text=True, bufsize=1)
@@ -46,6 +48,7 @@ class Live:
         self.seen_tags = set()
         self.hold_run = 0
         self.expected_public = {}
+        self.observed_public = {}
         self.performance = []
         self.started = time.monotonic()
 
@@ -68,10 +71,13 @@ class Live:
         row = [int(not reset), int(ready), encode_actions(actions),
                sum(d << (32*q) for q, d in enumerate(heads)), abort, qv, qi, qn, query, 0]
         text = ' '.join(f'{v:x}' for v in row)+'\n'
+        self.public_inputs.write(json.dumps(dict(cycle=self.cycle+1,reset=reset,sink_ready=ready,
+            ownership_and_input_actions=actions,metadata_queries=dict(head_descriptors=heads,abort_cell=abort,queue_head=query),
+            descriptor_link_write=dict(valid=qv,id=qi,next_id=qn)),sort_keys=True)+'\n');self.public_inputs.flush()
         self.inputs.write(text); self.inputs.flush()
         self.process.stdin.write(text); self.process.stdin.flush()
         values = self.line()
-        packed, valid, data, keep, last, user, dispatch_ready, idle, infos, abort_next, queue_next = values
+        packed, valid, data, keep, last, user, dispatch_ready, idle, infos, abort_next, queue_next, retirement = values
         observed = decode_actions(packed)
         self.cycle += 1
         if reset and not self.was_reset: self.epoch += 1
@@ -110,13 +116,25 @@ class Live:
             chunk = packet.image[packet.output_index*8:packet.output_index*8+8]
             meta = packet.info
             self.expected_public['output_when_valid'] = dict(data=int.from_bytes(chunk,'little'),
-                keep=(1<<len(chunk))-1,last=packet.output_index*8+8>=len(packet.image),
+                keep=(1<<len(chunk))-1,data_mask=(1<<(len(chunk)*8))-1,last=packet.output_index*8+8>=len(packet.image),
                 user=meta['qid'] | meta['length']<<8 | meta['tag']<<24 | meta['source']<<40)
             if packet.read_index*8>=len(packet.image) and 'query' in observed:
                 require(observed['query']['cell']==packet.cells[-1], 'tail_traversal')
                 self.bins['tail_not_traversed'] += 1
         if self.was_reset and not reset:
             require(not sample['out']['valid'], 'reset_release_output')
+        observed_retirement=dict(cell_descriptor=(retirement>>96)&0xffffffff,cell_qid=(retirement>>64)&0xffffffff,
+                                 completion_qid=(retirement>>32)&0xffffffff,completion_length=retirement&0xffffffff)
+        self.observed_public=dict(out=sample['out'],actions=observed,retirement_metadata=observed_retirement)
+        if self.oracle.active is not None:
+            owner=self.oracle.packets[self.oracle.active].info
+            self.expected_public['retirement_metadata_when_valid']=dict(cell_descriptor=self.oracle.active,cell_qid=owner['qid'],completion_qid=owner['qid'],completion_length=owner['length'])
+            if 'free' in observed:
+                require((observed_retirement['cell_descriptor'],observed_retirement['cell_qid'])==(self.oracle.active,owner['qid']), 'cell_return_metadata')
+            if 'done' in observed:
+                require((observed_retirement['completion_qid'],observed_retirement['completion_length'])==(owner['qid'],owner['length']), 'completion_metadata')
+        self.public_checks.write(json.dumps(dict(cycle=self.cycle,expected=self.expected_public,
+            observed=dict(out=sample['out'],actions=observed,retirement_metadata=observed_retirement)),sort_keys=True)+'\n');self.public_checks.flush()
         self.oracle.step(sample)
         self.ledger.observe(sample, self.oracle)
         self.was_reset, self.previous = reset, sample
@@ -358,7 +376,7 @@ class Live:
             code = self.process.wait(timeout=15)
         except subprocess.TimeoutExpired:
             self.process.kill(); code = self.process.wait(); rest = ''
-        self.raw.close(); self.errors.close(); self.samples.close(); self.inputs.close()
+        self.raw.close(); self.errors.close(); self.samples.close(); self.inputs.close();self.public_inputs.close();self.public_checks.close()
         return code, rest
 
 
@@ -441,7 +459,7 @@ def main():
     try: report = live.run()
     except (Violation, OSError, ValueError, BrokenPipeError) as failure:
         error = dict(detector=getattr(failure,'detector','adapter_error'), detail=str(failure),
-                     sample=live.last, seed=args.seed, expected_interface=live.expected_public,
+                     sample=live.last, seed=args.seed, expected_interface=live.expected_public,observed_interface=live.observed_public,
                      public_stimulus=(live.path/'stimulus.txt').read_text().splitlines()[-1:])
         (args.output/'violation.json').write_text(json.dumps(error, indent=2)+'\n')
     code, tail = live.close()
@@ -455,6 +473,7 @@ def main():
                   stimulus_sha256=hashlib.sha256((args.output/'stimulus.txt').read_bytes()).hexdigest(),
                   sample_sha256=hashlib.sha256((args.output/'samples.jsonl').read_bytes()).hexdigest())
     (args.output/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+    (args.output/'public-interface-result.json').write_text(json.dumps(dict(seed=args.seed,configuration=vars(profile),result='PASS',expected_end_state=dict(buffered=0,outstanding=0,live_cells=0,live_descriptors=0,unreserved_cells=profile.cells),observed_end_state=dict(buffered=len(live.oracle.buffered),outstanding=len(live.oracle.pending),live_cells=len(live.oracle.owners),live_descriptors=len(live.oracle.packets),unreserved_cells=live.oracle.U),observed_counts=report['counts'],contract_violations=[]),indent=2)+'\n')
     print('TM_MEMORY_TX_DUT_PASS')
     return 0
 

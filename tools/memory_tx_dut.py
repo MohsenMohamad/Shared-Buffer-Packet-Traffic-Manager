@@ -70,7 +70,7 @@ def memory_tx_dut(run,args):
                 step = case.execute([sys.executable,ROOT/'dv/memory_tx/dut.py','--binary',binary,
                                      '--profile-json',path,'--seed',str(value),'--output',case.path],timeout=args.timeout)
                 result,reason = completed(step,'TM_MEMORY_TX_DUT_PASS')
-                row = dict(seed=value,replay=index==3,result=result)
+                row = dict(seed=value,replay=index==3,result=result,public_stimulus=str(case.path/'public-inputs.jsonl'),expected_observed_interfaces=str(case.path/'public-output-checks.jsonl'),interface_result=str(case.path/'public-interface-result.json'))
                 if (case.path/'violation.json').is_file():
                     row['contract_violation']=json.loads((case.path/'violation.json').read_text())
                     if step['result']!='TIMEOUT' and row['contract_violation'].get('server_returncode')==0:
@@ -103,8 +103,8 @@ def simulation_mutations(run,args,identity,seed):
     from formal_tx import MUTATIONS, mutate
     config=dict(latency=2,depth=4,cell_bytes=16,cells=16,descriptors=8,max_length=128,queues=2,sources=1)
     params=profile('E0');params.update(MEM_RD_LATENCY=2,TX_FIFO_DEPTH=4)
-    detectors={'outstanding-credit':'read_credit','premature-return':'cell_completion_presence','stale-validity':'reset_output'}
-    for name in ['legal-neighbor']+list(MUTATIONS):
+    detectors={'outstanding-credit':'read_credit','premature-return':'cell_completion_presence','stale-validity':'reset_output','missing-final-output':'missing_final_output_or_completion'}
+    for name in ['legal-neighbor']+list(MUTATIONS)+['missing-final-output']:
         case=Case(run,'memory-tx-source-fault-'+name,seed)
         case.data.update(parameters=config,candidate=identity,source_set='memory-tx',
                          expected='LEGAL_NEIGHBOR' if name=='legal-neighbor' else 'SEEDED_DEFECT_DETECTION')
@@ -113,7 +113,7 @@ def simulation_mutations(run,args,identity,seed):
             source=ROOT/path
             if path=='rtl/tx/tm_tx.sv' and name!='legal-neighbor':
                 original=source.read_text();source=case.path/'tm_tx.sv'
-                source.write_text(mutate(original,name));case.data['mutant_sha256']=sha(source)
+                source.write_text(original.replace('assign m_valid = rst_n && buffered!=0;', 'assign m_valid = rst_n && buffered!=0 && !retiring.beat.last;') if name=='missing-final-output' else mutate(original,name));case.data['mutant_sha256']=sha(source)
             paths.append(str(source))
         binary=case.path/'obj/Vmemory_tx_dut_top'
         argv=['verilator','--cc','--exe','--build','--assert','--coverage','+define+SYNTHESIS',
