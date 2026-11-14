@@ -56,7 +56,7 @@ class Live:
         query = self.rng.randrange(self.p.descriptors)
         qv, qi, qn = (1, *queue_write) if queue_write else (0, 0, 0)
         row = [int(not reset), int(ready), encode_actions(actions),
-               sum(d << (32*q) for q, d in enumerate(heads)), abort, qv, qi, qn, query]
+               sum(d << (32*q) for q, d in enumerate(heads)), abort, qv, qi, qn, query, 0]
         text = ' '.join(f'{v:x}' for v in row)+'\n'
         self.inputs.write(text); self.inputs.flush()
         self.process.stdin.write(text); self.process.stdin.flush()
@@ -248,7 +248,7 @@ class Live:
             if mode != 'ready':
                 if initial_stall < self.p.depth+self.p.latency+5:
                     ready = False; initial_stall += 1
-                elif (index+1)%cw==0 or index+1==count:
+                elif mode!='pressure' and ((index+1)%cw==0 or index+1==count):
                     if held[index] < 5:
                         ready = False
                         if self.last and self.last['out']['valid']: held[index] += 1
@@ -286,6 +286,10 @@ class Live:
             self.load(packet); self.dispatch(packet)
             self.drain(packet, mode='ready' if ordinal%3==0 else 'random' if ordinal%3==1 else 'holds')
             self.edge()
+        # Deterministic full-credit exchange witness, independent of random sink choices.
+        pressure = self.packet(self.p.max_length, 222)
+        self.load(pressure); self.dispatch(pressure); self.drain(pressure,mode='pressure')
+        self.edge()
         # Exact capacity, per-cell/final holds, immediate legal reuse and altered old payload/links.
         for delay in (0,self.rng.randint(1,7)):
             packet = self.packet(self.p.max_length, 333)
@@ -336,14 +340,81 @@ class Live:
         return code, rest
 
 
+def ram_probe(binary, p, seed, directory):
+    raw = Live(binary,p,seed,directory)
+    memory, pending, responses = {}, {}, []
+    cycle = -1
+    counter = Counter()
+    rng = random.Random(seed)
+    def edge(*, reset=False, write=None, read=None):
+        nonlocal cycle
+        cycle += 1
+        actions = {}
+        if write: actions['write'] = dict(addr=write[0],data=write[1])
+        if read is not None: actions['read'] = read
+        row = [int(not reset),0,encode_actions(actions),0,0,0,0,0,0,1]
+        line = ' '.join(f'{v:x}' for v in row)+'\n'
+        raw.inputs.write(line);raw.inputs.flush()
+        raw.process.stdin.write(line);raw.process.stdin.flush()
+        values = raw.line();actual = decode_actions(values[0])
+        sample = dict(cycle=cycle,reset=reset,actions=actual,output_valid=bool(values[1]))
+        raw.samples.write(json.dumps(sample,sort_keys=True)+'\n');raw.samples.flush()
+        raw.last = sample
+        due = pending.pop(cycle,None)
+        require(('response' in actual)==(due is not None),'response_presence',f'RAM cycle={cycle}')
+        if due is not None:
+            require(actual['response']['data']==due,'response_data',f'RAM cycle={cycle} expected={due} observed={actual["response"]}')
+            responses.append(due);counter['responses']+=1
+            if reset:counter['response_during_reset']+=1
+        require(not values[1],'reset_output' if reset else 'idle_output')
+        if read is not None:
+            require(read in memory,'environment_unwritten_ram_probe')
+            require(not write or write[0]!=read,'environment_ram_collision')
+            pending[cycle+p.latency] = memory[read];counter['reads']+=1
+        if write:
+            memory[write[0]]=write[1];counter['writes']+=1
+            if read is not None:counter['simultaneous_1r1w']+=1
+    error = None
+    try:
+        edge(reset=True);edge(reset=True);edge()
+        words = p.cells*p.cell_bytes//8
+        addresses = sorted({0,1,p.cell_bytes//8-1,p.cell_bytes//8,p.cell_bytes//8+1,words-2,words-1})
+        for i,addr in enumerate(addresses):
+            data = [0,(1<<64)-1,0x0123456789abcdef,0xfedcba9876543210][i%4] ^ rng.getrandbits(64)
+            edge(write=(addr,data))
+        for i,addr in enumerate(addresses):
+            other = addresses[(i+1)%len(addresses)]
+            edge(read=addr,write=(other,rng.getrandbits(64)))
+        edge(read=addresses[0])
+        edge(reset=True);edge(reset=True);edge() # Contents and pending physical responses survive.
+        for addr in addresses:edge(read=addr)
+        for _ in range(p.latency+2):edge()
+        require(not pending,'shutdown_transactions')
+        require(counter['reads']==counter['responses'] and counter['response_during_reset']>0 and counter['simultaneous_1r1w']>0,'required_ram_component_bins')
+    except (Violation,OSError,ValueError) as failure:
+        error = dict(detector=getattr(failure,'detector','adapter_error'),detail=str(failure),phase='ram-component',sample=raw.last)
+    code,tail=raw.close()
+    if error or code!=0 or 'TM_SERVER_DONE' not in tail:
+        error = error or dict(detector='adapter_exit',phase='ram-component')
+        error['server_returncode']=code
+        (Path(directory).parent/'violation.json').write_text(json.dumps(error,indent=2)+'\n')
+        print('TM_MEMORY_TX_DUT_FAIL '+json.dumps(error))
+        raise SystemExit(1)
+    return dict(counts=dict(counter),response_data_sha256=hashlib.sha256(json.dumps(responses).encode()).hexdigest(),
+                sampled_edges=cycle+1,readback_after_reset=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--binary', required=True, type=Path)
     parser.add_argument('--profile-json', required=True, type=Path)
     parser.add_argument('--seed', type=int, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--tx-only', action='store_true')
     args = parser.parse_args()
-    live = Live(args.binary, Profile(**json.loads(args.profile_json.read_text())), args.seed, args.output)
+    profile = Profile(**json.loads(args.profile_json.read_text()))
+    ram_result = None if args.tx_only else ram_probe(args.binary, profile, args.seed, args.output/'ram-probe')
+    live = Live(args.binary, profile, args.seed, args.output)
     error, report = None, None
     try: report = live.run()
     except (Violation, OSError, ValueError, BrokenPipeError) as failure:
@@ -358,7 +429,7 @@ def main():
     if error or code != 0 or 'TM_SERVER_DONE' not in tail:
         print('TM_MEMORY_TX_DUT_FAIL '+json.dumps(error or dict(detector='adapter_exit',returncode=code)))
         return 1
-    report.update(seed=args.seed, elapsed_seconds=time.monotonic()-live.started,
+    report.update(ram_component=ram_result, seed=args.seed, elapsed_seconds=time.monotonic()-live.started,
                   stimulus_sha256=hashlib.sha256((args.output/'stimulus.txt').read_bytes()).hexdigest(),
                   sample_sha256=hashlib.sha256((args.output/'samples.jsonl').read_bytes()).hexdigest())
     (args.output/'result.json').write_text(json.dumps(report,indent=2)+'\n')

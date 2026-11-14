@@ -120,7 +120,7 @@ def simulation_mutations(run,args,identity,seed):
             case.finish(step['result'],step['first_failure']);continue
         path=case.path/'profile.json';path.write_text(json.dumps(config))
         step=case.execute([sys.executable,ROOT/'dv/memory_tx/dut.py','--binary',binary,'--profile-json',path,
-                           '--seed',str(seed),'--output',case.path],timeout=args.timeout)
+                           '--seed',str(seed),'--output',case.path,'--tx-only'],timeout=args.timeout)
         if name=='legal-neighbor': result,reason=completed(step,'TM_MEMORY_TX_DUT_PASS')
         else:
             violation=json.loads((case.path/'violation.json').read_text()) if (case.path/'violation.json').is_file() else {}

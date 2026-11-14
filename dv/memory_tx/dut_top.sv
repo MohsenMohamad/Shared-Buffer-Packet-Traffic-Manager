@@ -5,7 +5,7 @@ endpackage
 module memory_tx_dut_top #(
 `include "tm_parameters.svh"
 )(
-    input logic clk, rst_n, sink_ready,
+    input logic clk, rst_n, sink_ready, probe_mode,
     input logic [1792-1:0] stimulus,
     input logic [511:0] heads,
     input logic [31:0] abort_cell, queue_id, queue_value, queue_query,
@@ -22,7 +22,7 @@ module memory_tx_dut_top #(
 import memory_tx_dut_wires::*;
 memory_actions_t drive, sample;
 ram_write_t write_req;
-ram_read_t read_req;
+ram_read_t read_req, tx_read;
 ram_response_t response;
 cell_link_write_t cell_write;
 desc_link_write_t queue_write;
@@ -40,6 +40,7 @@ descriptor_t selected_info, commit_info;
 assign drive=stimulus;
 assign observed=sample;
 assign write_req='{valid:1'(drive.write_v),addr:ADDR_W'(drive.write_addr),data:drive.write_data};
+assign read_req=probe_mode ? ram_read_t'({1'(drive.read_v),ADDR_W'(drive.read_addr)}) : tx_read;
 assign cell_write='{valid:1'(drive.link_v),id:cell_id_t'(drive.link_cell),next_id:cell_id_t'(drive.link_next)};
 assign queue_write='{valid:queue_write_valid,id:desc_id_t'(queue_id),next_id:desc_id_t'(queue_value)};
 assign info_write.valid=1'(drive.info_v);
@@ -91,6 +92,6 @@ tm_packet_ram_api #(.DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BY
 tm_metadata_api #(.DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BYTES), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_PACKET_BYTES(MAX_PACKET_BYTES), .RX_FIFO_DEPTH(RX_FIFO_DEPTH), .MEM_RD_LATENCY(MEM_RD_LATENCY), .TX_FIFO_DEPTH(TX_FIFO_DEPTH), .SCHED_MODE(SCHED_MODE), .QUANTUM_DEFAULT(QUANTUM_DEFAULT), .TRACE_ENABLE(TRACE_ENABLE), .CELL_ID_W(CELL_ID_W), .DESC_ID_W(DESC_ID_W), .CELL_COUNT_W(CELL_COUNT_W), .DESC_COUNT_W(DESC_COUNT_W), .DEFICIT_W(DEFICIT_W)) metadata(.clk,.cell_write,.queue_write,.info_write,
     .tx_cell(link_cell),.abort_cell(cell_id_t'(abort_cell)),.tx_next(next_cell),.abort_next,
     .queue_heads,.head_info,.queue_head(desc_id_t'(queue_query)),.queue_next);
-tm_tx_api #(.DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BYTES), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_PACKET_BYTES(MAX_PACKET_BYTES), .RX_FIFO_DEPTH(RX_FIFO_DEPTH), .MEM_RD_LATENCY(MEM_RD_LATENCY), .TX_FIFO_DEPTH(TX_FIFO_DEPTH), .SCHED_MODE(SCHED_MODE), .QUANTUM_DEFAULT(QUANTUM_DEFAULT), .TRACE_ENABLE(TRACE_ENABLE), .CELL_ID_W(CELL_ID_W), .DESC_ID_W(DESC_ID_W), .CELL_COUNT_W(CELL_COUNT_W), .DESC_COUNT_W(DESC_COUNT_W), .DEFICIT_W(DEFICIT_W)) tx(.clk,.rst_n,.dispatch,.dispatch_ready,.read_req,.response,
+tm_tx_api #(.DATA_W(DATA_W), .N_RX(N_RX), .N_Q(N_Q), .CELL_BYTES(CELL_BYTES), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_PACKET_BYTES(MAX_PACKET_BYTES), .RX_FIFO_DEPTH(RX_FIFO_DEPTH), .MEM_RD_LATENCY(MEM_RD_LATENCY), .TX_FIFO_DEPTH(TX_FIFO_DEPTH), .SCHED_MODE(SCHED_MODE), .QUANTUM_DEFAULT(QUANTUM_DEFAULT), .TRACE_ENABLE(TRACE_ENABLE), .CELL_ID_W(CELL_ID_W), .DESC_ID_W(DESC_ID_W), .CELL_COUNT_W(CELL_COUNT_W), .DESC_COUNT_W(DESC_COUNT_W), .DEFICIT_W(DEFICIT_W)) tx(.clk,.rst_n,.dispatch,.dispatch_ready,.read_req(tx_read),.response,
     .link_cell,.next_cell,.m_valid(tx_valid),.m_beat(beat),.m_ready(sink_ready),.cell_return,.tx_done,.idle);
 endmodule

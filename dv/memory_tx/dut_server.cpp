@@ -25,9 +25,9 @@ int main(int argc,char** argv) {
     std::string line,stimulus,heads;
     while(std::getline(std::cin,line)) {
         std::istringstream input(line);
-        unsigned reset,ready,abort_cell,qvalid,qid,qnext,qquery;
-        if(!(input>>std::hex>>reset>>ready>>stimulus>>heads>>abort_cell>>qvalid>>qid>>qnext>>qquery)) return 2;
-        top->clk=0;top->rst_n=reset;top->sink_ready=ready;
+        unsigned reset,ready,abort_cell,qvalid,qid,qnext,qquery,probe;
+        if(!(input>>std::hex>>reset>>ready>>stimulus>>heads>>abort_cell>>qvalid>>qid>>qnext>>qquery>>probe)) return 2;
+        top->clk=0;top->rst_n=reset;top->sink_ready=ready;top->probe_mode=probe;
         read_hex(top->stimulus,stimulus);read_hex(top->heads,heads);
         top->abort_cell=abort_cell;top->queue_write_valid=qvalid;top->queue_id=qid;
         top->queue_value=qnext;top->queue_query=qquery;top->eval();
