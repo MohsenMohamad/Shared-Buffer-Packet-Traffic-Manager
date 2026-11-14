@@ -211,7 +211,7 @@ class Live:
                         if self.last and self.last['out']['valid']: held[index] += 1
                 elif mode == 'random': ready = self.rng.randrange(4) != 0
             actions = None
-            if background and background_steps is None and self.last and 'free' in self.last['actions']:
+            if background is not None and background_steps is None and self.last and 'free' in self.last['actions']:
                 returned = self.last['actions']['free']
                 spare = next(c for c in range(self.p.cells) if c not in packet['chain'])
                 background['packet'] = self.packet(self.p.cell_bytes+3, 991, [returned,spare], 0)
