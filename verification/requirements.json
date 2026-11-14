@@ -47,7 +47,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -109,7 +115,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -158,7 +170,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -207,7 +225,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -435,7 +459,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -474,7 +504,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -513,7 +549,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -558,7 +600,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -1388,7 +1436,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {
@@ -1647,7 +1701,13 @@
           8
         ],
         "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json"
+        "evidence": "docs/results/P05-candidate-qualification.json",
+        "refreshed_head_applicability": {
+          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        }
       }
     },
     {

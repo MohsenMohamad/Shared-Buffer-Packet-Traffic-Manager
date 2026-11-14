@@ -1,5 +1,10 @@
 # P05 exact-candidate qualification
 
+**PRE-MERGE APPLICABILITY PASS** for refreshed PR #24 head
+`dc7682f16dcdba05b1f2b7d80b1bf11732d17c47`. The pre-merge DV gate is satisfied
+within the recorded component scope. The mapping and fresh confirmation below
+extend applicability; original executions retain their original identities.
+
 **PRE-MERGE CANDIDATE PASS** for production RAM, finite-port metadata and TX at
 RTL revision `479b5c1ceee2eee8db58d863bd5de5e20305cc8c`. All required local functional, coverage,
 source-fault and reduced production safety checks pass. No RTL defect is
@@ -20,6 +25,94 @@ computations against public specifications and observed actions. It does not
 retroactively clear the earlier model-author exposure documented in
 [the preparation report](P05-fresh-dv-preparation.md) and
 [exposure inventory](P05-source-exposure.json).
+
+## Refreshed-head applicability
+
+The refreshed candidate incorporates main/repair #25 and changes RTL-author
+result records. Independent Git/blob comparison confirms unchanged relevant
+inputs; the RTL author's statement and designer test outcomes are not the basis
+for this applicability verdict.
+
+| Input | Actual identity |
+| --- | --- |
+| Original qualified RTL | `479b5c1ceee2eee8db58d863bd5de5e20305cc8c` |
+| Refreshed RTL | `dc7682f16dcdba05b1f2b7d80b1bf11732d17c47` |
+| Main / repair #25 | `a4df0dd61802355e91b4c0c96e57b79241c86851` |
+| Executed DV input | `dc541cd5fe428a1dc7e1f1e175e1dfe1c2fc52dc` |
+| Fresh confirmation combined commit | `47080a820dc9fc506a2c2ec85e474387d3c11f39` |
+| Fresh confirmation combined tree | `643ecf9d742c16757001845103ba1e70cc79ed53` |
+| Original final-delivery combined tree | `2748b19207641bc861dbb3c4aa7733a104f6ea1a` |
+
+The fresh combination is clean, with no conflicts or resolutions. It uses the
+existing detached checkout at the prepared installation path; the submitted DV
+worktree contains no production RTL. Both combinations can be reconstructed by
+locally merging the respective RTL head into the recorded DV input. Generated
+merge commit timestamps may differ; the recorded tree must match.
+
+| Independently compared input group | Byte-identical files |
+| --- | --- |
+| Entire production RTL, including all transitive RTL headers | 19 |
+| Public contracts and P05 task card | 17 |
+| Registrations, profiles and parameters | 19 |
+| DV and formal inputs | 79 |
+| Runner, build/proof/setup configuration and workflows | 58 |
+| Tests, including the merged interface repair | 36 |
+
+All 228 files match between the original final-delivery combination and the
+refreshed combination. Both registered DUT/formal include closures were resolved
+and compared. Candidate-to-candidate changes are limited to the two RTL-author
+reports and the three already-incorporated repair files. Combined-to-combined,
+only `P05-memory-tx-rtl.md` and `.json` differ. No executable, parameter, contract,
+checker, assertion, assumption, mutation, compile flag or solver configuration
+changed. Tool versions, dependency digests and the prepared setup stamp match
+the original evidence. The index records per-file SHA-256 and include mappings;
+the public report carries group fingerprints and interface results.
+
+Freshly executed checks all PASS:
+
+- Doctor on current main and the clean refreshed combination; no setup changes.
+- Repository contracts and all 114 light tests on the combined checkout,
+  including the repaired public-response interface check.
+- The published command below: four I1 latency/depth builds and sixteen actual
+  production runs (latencies 1/2, depths 4/8, seeds 17/31/53 plus seed-17 replay),
+  child exit zero, all mandatory bins and shutdown checks satisfied.
+- Saved production coverage validation for all sixteen fresh runs. An independent
+  replay of each fresh trace also passes all six reset-aware accounting equations,
+  ending with no live cells/descriptors, pending reads or buffered output.
+
+```sh
+python3 tools/p05_candidate.py --rtl-revision dc7682f16dcdba05b1f2b7d80b1bf11732d17c47 --profile I1 --seed 17 --jobs 2
+```
+
+Each fresh trace hash, count and functional-bin count equals its corresponding
+original I1 run. For seed 17, every latency/depth configuration accepts 500 beats
+and 3,864 bytes, returns 261 cells and completes 43 packets; reset cancellations
+are accounted separately. First valid is three/four cycles for latency one/two,
+within bounds five/six; all 32 cells are unreserved at shutdown. Per-seed metrics,
+public input/output hashes, exact commands and actual fresh manifests are saved
+under the refreshed-head mapping, separate from the original 96-run table.
+
+The unchanged inputs support applicability of the existing six-profile 96-run
+matrix, four unbounded safety proofs, four cover runs (ten covers each), and
+intended simulation/formal mutation detections. Those unaffected checks were
+not rerun merely for the changed SHA. The sixteen new runs are confirmation,
+not a relabeled replacement for the original executions. No new unexpected
+failure or RTL defect was observed.
+
+The original DV full CI [43582750040](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43582750040)
+passed all 34 jobs at the recorded DV delivery. Refreshed RTL full CI
+[43591176269](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43591176269)
+is independently verified as completed/success at the refreshed head, all 28 jobs
+successful. For this evidence/pin-only update, PR #26 stays draft and its persistent
+`full-ci` request is removed: light checks validate delivery without mechanically
+repeating unchanged heavy suites. This is not a new full-CI execution claim.
+
+There is no new technical blocker to the scoped pre-merge qualification gate.
+The historical preparation-independence caveat remains unresolved and still
+requires independent review; it is not cleared by input equality or CI. P12B
+structural comparison retains its scope. Exact merged-source confirmation is a
+separate NOT_RUN follow-up after maintainer integration. Keep #26 open for it;
+neither #24 nor #26 is merged here.
 
 ## Exact sources and isolation
 
@@ -170,7 +263,8 @@ behavior without DV source excerpts. Full stdout/stderr, raw samples, coverage
 and counterexamples remain in local/CI DV artifacts. Commands regenerate them
 after hosted artifact expiry.
 
-PR #24 must include the merged interface repair and pass its own required CI.
-Any changed RTL candidate requires recorded identity and affected retesting.
+PR #24 now includes the merged interface repair and has passing required CI.
+The refreshed-head applicability mapping above satisfies the scoped pre-merge
+DV gate. Any further candidate change requires recorded identity and affected retesting.
 The maintainer controls RTL integration. Keep qualification PR #26 for final
 exact merged-source confirmation before its own merge; neither PR is merged here.

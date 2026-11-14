@@ -43,7 +43,7 @@ scope can satisfy an acceptance gate; preparation tests cannot substitute.
 
 ## Exact candidate qualification handoff
 
-The current pre-merge candidate verdict is PASS for
+The original pre-merge candidate verdict is PASS for
 `479b5c1ceee2eee8db58d863bd5de5e20305cc8c`, combined with main
 `a4df0dd61802355e91b4c0c96e57b79241c86851` and the independent DV inputs
 recorded in [the public result](../results/P05-candidate-public.json).
@@ -67,3 +67,25 @@ Record any new RTL identity and run affected qualification before applying this
 verdict to it. [DV PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26)
 remains available for exact merged-source confirmation after maintainer-controlled
 RTL integration. Neither PR is merged by this qualification task.
+
+## Refreshed candidate applicability
+
+**PRE-MERGE APPLICABILITY PASS** applies to
+`dc7682f16dcdba05b1f2b7d80b1bf11732d17c47`. Independent comparison finds
+unchanged production/header, contract, registration, parameter and build/proof
+inputs. Existing six-profile simulation and reduced safety evidence therefore
+apply without relabeling their original execution SHAs. Sixteen fresh I1
+production runs and saved-coverage checks pass, with identical public trace
+hashes to the original corresponding runs. The refreshed mapping in
+[the public result](../results/P05-candidate-public.json) records the exact
+combined identity and new interface-level measurements.
+
+```sh
+python3 tools/p05_candidate.py --rtl-revision dc7682f16dcdba05b1f2b7d80b1bf11732d17c47 --profile I1 --seed 17 --jobs 2
+```
+
+PR #24 has incorporated repair #25 and its full CI passed all 28 jobs in
+[43591176269](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43591176269).
+Its scoped pre-merge DV gate is satisfied. The historical preparation provenance
+caveat remains unchanged. After maintainer-controlled RTL integration, keep
+PR #26 open for exact merged-source confirmation before its own merge.
