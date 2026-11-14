@@ -89,3 +89,24 @@ PR #24 has incorporated repair #25 and its full CI passed all 28 jobs in
 Its scoped pre-merge DV gate is satisfied. The historical preparation provenance
 caveat remains unchanged. After maintainer-controlled RTL integration, keep
 PR #26 open for exact merged-source confirmation before its own merge.
+
+## Actual merged-source confirmation
+
+**MERGED-SOURCE PASS** applies to PR #24's actual merge/current main
+`3ede1a5e40791ff00d98a0faa8389154d632e0c5`. Its entire tree equals the qualified
+head's tree. Tested DV/combined revision is
+`fd129b1e0d7566c460962b6869aa2274f7a24fa9`, tree
+`c1c3033decc4fc1b16aab4702ac9da4714ef2353`, after a clean normal main merge.
+Sixteen fresh integrated I1 runs, saved-coverage validation and accounting pass;
+old execution identities remain unchanged. [Public results](../results/P05-candidate-public.json)
+retain the actual merge mapping and source-free interface measurements.
+
+```sh
+python3 tools/p05_candidate.py --rtl-revision 3ede1a5e40791ff00d98a0faa8389154d632e0c5 --profile I1 --seed 17 --jobs 2
+```
+
+The current pin selects the merged source. Earlier commands above are historical.
+Required final DV full CI and relevant main CI are recorded on PR #26 before its
+maintainer merge handoff. Historical provenance, reduced FP-TX/composition limits,
+P12B structural comparison and absence of code-coverage closure remain unchanged.
+No production repair or PR #26 merge is performed by this task.

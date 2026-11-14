@@ -53,6 +53,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -121,6 +127,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -176,6 +188,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -231,6 +249,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -465,6 +489,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -510,6 +540,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -555,6 +591,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -606,6 +648,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -1442,6 +1490,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },
@@ -1707,6 +1761,12 @@
           "status": "PASS",
           "evidence": "docs/results/P05-candidate-qualification.json",
           "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
+        },
+        "merged_source_confirmation": {
+          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
+          "status": "PASS",
+          "evidence": "docs/results/P05-candidate-qualification.json",
+          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
         }
       }
     },

@@ -1,4 +1,89 @@
-# P05 exact-candidate qualification
+# P05 qualification and merged-source confirmation
+
+**MERGED-SOURCE PASS** for RTL merge/current main
+`3ede1a5e40791ff00d98a0faa8389154d632e0c5`, within the existing component scope.
+GitHub confirms this is PR #24's actual merge commit. Fresh production execution,
+coverage and accounting pass with the integrated source selected explicitly.
+Earlier candidate/applicability records below retain their own execution identities.
+Required final full-CI and relevant main-CI conclusions are recorded on
+[PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26);
+a light-only result does not satisfy that final merge handoff.
+
+## Actual integrated-source confirmation
+
+| Input | Actual identity |
+| --- | --- |
+| GitHub RTL PR #24 merge | `3ede1a5e40791ff00d98a0faa8389154d632e0c5` |
+| Current main at confirmation | `3ede1a5e40791ff00d98a0faa8389154d632e0c5` |
+| Previously qualified RTL head | `dc7682f16dcdba05b1f2b7d80b1bf11732d17c47` |
+| Previous applicability delivery | `c8dfe3d290775eef855dad7937f9ba38e14c3c52` |
+| Tested DV commit, after normal main merge | `fd129b1e0d7566c460962b6869aa2274f7a24fa9` |
+| Actual combined/test checkout revision | `fd129b1e0d7566c460962b6869aa2274f7a24fa9` |
+| Actual combined/test tree | `c1c3033decc4fc1b16aab4702ac9da4714ef2353` |
+| Common entire qualified-head/merged-main tree | `6e9b5deaf839a89cc88c9dd8570af02e40fc37e9` |
+
+Main was fetched and the merge identity obtained independently from GitHub.
+The actual merge and qualified head have identical complete trees: no production
+source, header, public contract, registration or configuration difference exists.
+The existing DV branch incorporated main with a normal merge, no shared-history
+rewrite, conflict or resolution. The PR diff against merged main is DV-only;
+no production or designer source was modified.
+
+The tested checkout also exactly matches the canonical tree from combining the
+previous applicability delivery and qualified RTL head. Compared with the prior
+actual execution, all 215 audited behavior/configuration files match, including
+resolved DUT/formal include closures, profiles, checkers and build/proof settings.
+The seven differences are the already-published applicability reports, README,
+candidate pin and requirement-evidence metadata. Requirement semantics are unchanged.
+Per-file SHA-256, include resolutions and the exact Git comparisons are retained
+under `merged_source_confirmation` in the existing evidence index.
+
+| Fresh integrated check | Result |
+| --- | --- |
+| Prepared doctor on merged main and tested DV checkout | PASS; tool versions, dependency digests and setup stamp unchanged. |
+| Repository and light checks | PASS; all 114 light tests, including the public-response check. |
+| Actual production confirmation | PASS; I1, both latencies and FIFO depths, seeds 17/31/53 plus seed-17 replay: four builds, sixteen runs, child exit zero. |
+| Mandatory bins and old/new trace comparison | PASS; all sixteen trace hashes, counts and functional-bin counts match the original corresponding runs. |
+| Saved production coverage | PASS; all sixteen fresh manifests validated against actual source, binary and artifact hashes. |
+| Independent reset-aware accounting replay | PASS; all six equations in every fresh trace, with zero outstanding/buffered beats or live cells/descriptors at shutdown. |
+
+The seed-17 runs each accept 500 beats/3,864 bytes, return 261 cells and complete
+43 packets. Intentional reset cancellations are counted separately. First valid
+is three/four cycles for latency one/two within bounds five/six; all 32 cells are
+unreserved at shutdown. Per-seed counts, reset crosses, public stimulus and masked
+expected/observed output hashes are in both the full and public reports.
+
+Use the prepared installation's checkout path. Reproduce the actual tested source
+by detaching at the recorded tested DV commit, whose history already includes
+merged main; its tree must match the table. The executed public command is:
+
+```sh
+python3 tools/p05_candidate.py --rtl-revision 3ede1a5e40791ff00d98a0faa8389154d632e0c5 --profile I1 --seed 17 --jobs 2
+```
+
+Current candidate/CI selection pins the actual RTL merge SHA and records phase
+`merged-source`. The existing CI staging/identity guard validates that integrated
+source; it does not silently select the previous candidate. The merge is already
+an ancestor of the DV branch, so staging needs no additional candidate merge.
+Historical commands remain below for their named source identities.
+
+Input equality retains the original six-profile 96-run matrix, four unbounded
+FP-TX proofs, four cover runs with ten covers each, and intended mutation
+detections without relabeling old executions. Unaffected local proofs/regressions
+were not repeated merely for a new SHA. The separately required ready-for-review
+full hosted workflow executes its configured suites as the final integration gate.
+Relevant merged-main CI is
+[43608539930](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43608539930);
+final run conclusions and exact delivery identities are recorded on PR #26.
+
+No new unexpected failure, RTL defect or outstanding required technical finding
+was observed. The historical preparation-independence caveat remains unresolved;
+this result does not establish retroactive provenance acceptance. Safety retains
+its reduced FP-TX assumptions and caller/pool composition limits. P12B structural
+comparison is separate, and code-coverage closure is not claimed. The maintainer
+controls PR #26 integration; this task does not merge it.
+
+## Historical pre-merge verdicts
 
 **PRE-MERGE APPLICABILITY PASS** for refreshed PR #24 head
 `dc7682f16dcdba05b1f2b7d80b1bf11732d17c47`. The pre-merge DV gate is satisfied
@@ -26,7 +111,7 @@ retroactively clear the earlier model-author exposure documented in
 [the preparation report](P05-fresh-dv-preparation.md) and
 [exposure inventory](P05-source-exposure.json).
 
-## Refreshed-head applicability
+## Historical refreshed-head applicability
 
 The refreshed candidate incorporates main/repair #25 and changes RTL-author
 result records. Independent Git/blob comparison confirms unchanged relevant
@@ -226,14 +311,16 @@ entry for these DV/tool failures.
 
 This is two-state component execution plus reduced unbounded safety. Historical
 preparation independence acceptance is not retroactively established. P12B
-retains structural comparison. Exact merged-source confirmation is NOT_RUN while
-PR #24 is unmerged; that follow-up does not block this pre-merge verdict.
+retains structural comparison. At the original pre-merge execution, exact merged-source confirmation was
+NOT_RUN. The actual integrated-source result above completes that follow-up
+without changing these original execution identities.
 
-## Exact reproduction and RTL-facing command
+## Historical candidate reproduction and RTL-facing command
 
 Use the prepared installation's original checkout path. In that disposable
-checkout, detach at a recorded DV input and merge the named RTL locally. Keep
-`verify/p05-dv-qualification` itself free of production RTL:
+checkout, detach at a recorded DV input and merge the named RTL locally. These historical instructions kept
+unmerged candidate RTL out of the submitted DV branch. The current branch now
+contains merged main, with a DV-only PR diff:
 
 ```sh
 git fetch origin 2e81b00d0f6072c8f8f61c8bcf0d7bfcc5ba4b29 479b5c1ceee2eee8db58d863bd5de5e20305cc8c
@@ -244,8 +331,9 @@ python3 tools/check_repository.py
 python3 tools/check_light.py
 ```
 
-The resulting tree must equal `9aa68fffba67cc225414053afe6f07349d2f3ac3`. CI performs the
-same isolation at its prepared path with `python3 tools/p05_ci.py`.
+The resulting tree must equal `9aa68fffba67cc225414053afe6f07349d2f3ac3`. At that phase CI performed the
+same isolation at its prepared path with `python3 tools/p05_ci.py`. Current CI
+selection instead pins the actual merged source as described above.
 
 ```sh
 python3 tools/p05_candidate.py --rtl-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --profile I1 --seed 17

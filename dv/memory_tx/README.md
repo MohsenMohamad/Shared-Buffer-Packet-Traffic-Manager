@@ -9,7 +9,7 @@ In a detached combination of current main, the named RTL revision and the
 DV-only qualification revision:
 
 ```sh
-python3 tools/run.py regression --profile I1 --test memory-tx --candidate-revision dc7682f16dcdba05b1f2b7d80b1bf11732d17c47 --seed 17 --jobs 2 --timeout 180 --build-timeout 600
+python3 tools/run.py regression --profile I1 --test memory-tx --candidate-revision 3ede1a5e40791ff00d98a0faa8389154d632e0c5 --seed 17 --jobs 2 --timeout 180 --build-timeout 600
 ```
 
 The command checks candidate source identities before executing, then crosses
@@ -37,7 +37,7 @@ first-allocation/write/commit carries the RX handoff metadata directly; metadata
 read muxes are independently compared with pre-edge array contents.
 
 ```sh
-python3 tools/run.py formal-rtl --profile E0 --test memory-tx --candidate-revision dc7682f16dcdba05b1f2b7d80b1bf11732d17c47 --timeout 600
+python3 tools/run.py formal-rtl --profile E0 --test memory-tx --candidate-revision 3ede1a5e40791ff00d98a0faa8389154d632e0c5 --timeout 600
 python3 tools/run.py coverage --profile I1 --test memory-tx --coverage-manifest PATH_TO_PASSING_UNMUTATED_CASE_MANIFEST
 ```
 
