@@ -1,10 +1,9 @@
 {
-  "scope": "RTL-author designer checks only; independent qualification NOT_RUN",
+  "scope": "RTL-author designer evidence plus standard environment/repository checks; independent RTL qualification NOT_RUN",
   "candidate_revision": "fa91a3fe3e675a1b42dd684359758acfbcdb0b94",
   "source_dirty": false,
   "source_registration": "verification/sources/production.json",
   "designer_registration": "dv/designer/p05_sources.json",
-  "source_hashes_collected": false,
   "tool_versions": {
     "verilator": "Verilator 5.054 2026-11-01 rev vUNKNOWN-built20261112",
     "yosys": "Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)"
@@ -988,8 +987,93 @@
     }
   ],
   "blocked": [
-    "Independent candidate-RTL memory/TX qualification: no published command or sanitized-output contract",
-    "FP-TX independent formal qualification",
-    "Doctor, repository/light checks and existing independent regressions: boundary safety not established"
-  ]
+    "Independent candidate-RTL memory/TX qualification: no candidate command published in the available public interface",
+    "FP-TX independent formal qualification"
+  ],
+  "standard_checks_revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+  "standard_checks": [
+    {
+      "command": [
+        "make",
+        "doctor"
+      ],
+      "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+      "configuration": "prepared .tools/activate.sh environment",
+      "seed": null,
+      "start_utc": "2026-11-14T04:23:09.615938+00:00",
+      "end_utc": "2026-11-14T04:23:12.454385+00:00",
+      "result": "PASS",
+      "exit_code": 0,
+      "output_directory": "work/p05-followup/doctor",
+      "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details."
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_repository.py"
+      ],
+      "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+      "configuration": "prepared .tools/activate.sh environment",
+      "seed": null,
+      "start_utc": "2026-11-14T04:23:12.454882+00:00",
+      "end_utc": "2026-11-14T04:23:12.518994+00:00",
+      "result": "PASS",
+      "exit_code": 0,
+      "output_directory": "work/p05-followup/repository",
+      "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details."
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_light.py"
+      ],
+      "revision": "6982a5e7837e5723f4a0698cff140da239cb30e6",
+      "configuration": "prepared .tools/activate.sh environment",
+      "seed": null,
+      "start_utc": "2026-11-14T04:23:12.519425+00:00",
+      "end_utc": "2026-11-14T04:23:19.106162+00:00",
+      "result": "FAIL",
+      "exit_code": 1,
+      "output_directory": "work/p05-followup/light",
+      "output_inspection": "Raw stdout/stderr withheld; may contain independent verification details.",
+      "disposition": "unresolved",
+      "source_identity": "Exact clean committed candidate; no repair performed before capture.",
+      "opaque_output_archive": "uninspected-output.tar.gz",
+      "failure_capture": "verification/failures/p05-standard-light-20261114T042319106270Z",
+      "sanitized_summary": {
+        "unittest_failures": [
+          {
+            "status": "ERROR",
+            "test": "test_public_response_has_no_backpressure",
+            "owner": "test_memory_tx_preparation.PreparationBoundaryTests.test_public_response_has_no_backpressure"
+          }
+        ],
+        "test_totals": [
+          "Ran 109 tests in 6.364s",
+          "FAILED (errors=1)"
+        ],
+        "exception_classes": [
+          "IndexError"
+        ],
+        "recognized_status": []
+      },
+      "triage_owner": "P05-DV",
+      "diagnosis": "Independent preparation unit test execution error (IndexError). Test implementation and traceback were not inspected. No contract-level RTL violation was provided; no source repair attempted."
+    }
+  ],
+  "open_failures": [
+    {
+      "command": "python3 tools/check_light.py",
+      "result": "FAIL",
+      "exit_code": 1,
+      "test": "test_memory_tx_preparation.PreparationBoundaryTests.test_public_response_has_no_backpressure",
+      "error_class": "IndexError",
+      "disposition": "unresolved",
+      "owner": "P05-DV",
+      "capture": "verification/failures/p05-standard-light-20261114T042319106270Z/capture.json"
+    }
+  ],
+  "inspection_policy": "Standard commands may internally process/hash DV. Independent DV implementation, reports, source-bearing output and source hashes were not manually inspected.",
+  "designer_source_hashes_collected": false,
+  "standard_command_internal_processing": "DV processing/hashing authorized; native source-bearing output withheld."
 }
