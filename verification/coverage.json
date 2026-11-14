@@ -10,6 +10,11 @@
       "handler": "scheduler_saved_coverage",
       "source_set": "scheduler",
       "scope": "Saved DRR/packet-RR functional and production code coverage, matched profile, parameters, source and artifact hashes; no integrated closure."
+    },
+    "memory-tx": {
+      "handler": "memory_tx_coverage",
+      "source_set": "memory-tx",
+      "scope": "Exact-source unmutated RAM/metadata/TX code counters and observed functional/occupancy/reset/performance bins per elaboration; no merging or P12B structural closure."
     }
   }
 }

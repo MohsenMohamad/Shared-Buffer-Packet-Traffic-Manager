@@ -164,14 +164,25 @@ class Live:
             if out['valid'] and not self.first_valid:
                 delay = self.cycle-self.dispatch_cycle
                 self.performance.append(dict(dispatch=self.dispatch_cycle, first_valid=delay,
-                                             ready_since_dispatch=self.ready_run))
+                                             ready_since_dispatch=self.ready_run,always_ready_packet=None,
+                                             max_ready_gap=0,max_cell_boundary_gap=0,cell_boundaries=0))
                 if self.ready_run: require(delay <= self.p.latency+4, 'first_valid_bound', str(delay))
                 self.first_valid = True
             if self.ready_run and self.first_valid and self.last_transfer is not None:
                 require(out['valid'], 'cell_boundary_bubble', f'cycle={self.cycle}')
                 self.bins['ready_contiguous'] += 1
-            if fire: self.last_transfer = self.cycle
-            if 'done' in a: self.dispatch_cycle = None
+            if fire:
+                if self.ready_run and self.last_transfer is not None:
+                    gap=self.cycle-self.last_transfer
+                    entry=self.performance[-1]
+                    entry['max_ready_gap']=max(entry['max_ready_gap'],gap)
+                    if self.oracle.packets[self.oracle.active].output_index%(self.p.cell_bytes//8)==0:
+                        entry['max_cell_boundary_gap']=max(entry['max_cell_boundary_gap'],gap)
+                        entry['cell_boundaries']+=1
+                self.last_transfer = self.cycle
+            if 'done' in a:
+                self.performance[-1]['always_ready_packet']=self.ready_run
+                self.dispatch_cycle = None
         if self.previous and 'read' in self.previous['actions'] and not out['ready']:
             self.bins['stall_after_issue'] += 1
         if 'response' in a and not out['ready']: self.bins['stalled_response'] += 1
@@ -440,7 +451,7 @@ def main():
     if error or code != 0 or 'TM_SERVER_DONE' not in tail:
         print('TM_MEMORY_TX_DUT_FAIL '+json.dumps(error or dict(detector='adapter_exit',returncode=code)))
         return 1
-    report.update(ram_component=ram_result, seed=args.seed, elapsed_seconds=time.monotonic()-live.started,
+    report.update(coverage_sha256=hashlib.sha256((args.output/'coverage.dat').read_bytes()).hexdigest(), ram_component=ram_result, seed=args.seed, elapsed_seconds=time.monotonic()-live.started,
                   stimulus_sha256=hashlib.sha256((args.output/'stimulus.txt').read_bytes()).hexdigest(),
                   sample_sha256=hashlib.sha256((args.output/'samples.jsonl').read_bytes()).hexdigest())
     (args.output/'result.json').write_text(json.dumps(report,indent=2)+'\n')

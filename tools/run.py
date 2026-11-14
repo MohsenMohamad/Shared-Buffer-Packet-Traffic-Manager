@@ -394,7 +394,10 @@ def main(argv=None):
         from scheduler_coverage import scheduler_saved_coverage
         run.scope = 'Component coverage by elaboration; no integrated coverage closure'
         try:
-            if args.test==['scheduler']:
+            if args.test==['memory-tx']:
+                from memory_tx_coverage import memory_tx_coverage
+                memory_tx_coverage(run,args)
+            elif args.test==['scheduler']:
                 scheduler_saved_coverage(run, args)
             else:
                 queue_coverage(run, args)

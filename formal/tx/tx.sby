@@ -10,7 +10,9 @@ cover: depth 64
 mutation: mode bmc
 mutation: depth 32
 [engines]
-smtbmc z3
+prove: abc pdr
+cover: smtbmc z3
+mutation: smtbmc z3
 [script]
 @SCRIPT@
 [files]

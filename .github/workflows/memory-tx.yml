@@ -1,0 +1,78 @@
+name: P05 candidate memory and TX
+on:
+  workflow_call:
+    inputs:
+      toolchain-artifact:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  candidate:
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [F0, F1, I0, I1, E0, E1]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Ensure native build prerequisites
+        uses: ./.github/actions/native-prerequisites
+      - name: Receive prepared installation
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ inputs.toolchain-artifact }}
+          path: .build/toolchain-transfer
+      - name: Validate unchanged prepared installation
+        run: |
+          tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
+          python3 tools/toolchain_cache.py validate
+      - name: Combine exact candidate in detached checkout
+        run: python3 tools/p05_ci.py
+      - name: Execute production latency/depth/seed matrix
+        run: |
+          candidate=$(python3 -c 'import json;print(json.load(open("verification/candidates/p05.json"))["rtl_revision"])')
+          python3 tools/run.py regression --profile '${{ matrix.profile }}' --test memory-tx --candidate-revision "$candidate" --seed 17 --jobs 2 --timeout 180 --build-timeout 600
+      - name: Validate exact-source saved production coverage
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import subprocess
+          paths=sorted(Path('.build/runs').glob('regression-*/memory-tx-L[12]-D[48]-seed*-run[0-3]/manifest.json'))
+          if len(paths)!=16:raise SystemExit('Expected sixteen unmutated production run manifests')
+          argv=['python3','tools/run.py','coverage','--profile','${{ matrix.profile }}','--test','memory-tx']
+          for path in paths:argv+=['--coverage-manifest',str(path)]
+          subprocess.run(argv,check=True)
+          PYCODE
+      - name: Prove production FP-TX and qualify source-copy mutations
+        if: matrix.profile == 'E0'
+        run: |
+          candidate=$(python3 -c 'import json;print(json.load(open("verification/candidates/p05.json"))["rtl_revision"])')
+          python3 tools/run.py formal-rtl --profile E0 --test memory-tx --candidate-revision "$candidate" --timeout 300
+      - name: Retain candidate public-interface results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: p05-public-${{ matrix.profile }}-${{ github.sha }}
+          path: |
+            .build/p05-ci-combination.json
+            .build/runs/regression-*/candidate-public.json
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error
+      - name: Retain full DV diagnostics, samples, coverage and counterexamples
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: p05-dv-${{ matrix.profile }}-${{ github.sha }}
+          path: |
+            .build/runs/
+            verification/failures/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error
