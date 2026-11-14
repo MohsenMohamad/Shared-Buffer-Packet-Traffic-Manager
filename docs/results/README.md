@@ -4,6 +4,7 @@ Reports identify executed source/dependency/constraint digests and separate loca
 RTL results, models, tool fixtures and unexecuted checks. Raw logs, waves,
 coverage databases and generated netlists remain ignored build/CI artifacts.
 
+- [R01 shared reset timing qualification](R01-reset-timing.md)
 - [Production allocator scaling](allocator-scaling.md)
 - [F01 symbolic-input recipe](F01-formal-symbols.md)
 - [RTL representation migration](rtl-representation.md)

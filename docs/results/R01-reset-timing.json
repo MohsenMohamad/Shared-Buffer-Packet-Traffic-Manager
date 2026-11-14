@@ -1,0 +1,1546 @@
+{
+  "schema_version": 1,
+  "scope": "Standalone actual mapped E0 FIFO2/4, I0/F0 cell/descriptor pools; numerical execution distinct from reference-model and physical-source closure",
+  "tested_revision": "952e1ee60785c60de35e368c2327063464abedc6",
+  "dirty": false,
+  "base_revision": "61d4c4c2b751642e6b79a995b710f186a8ce0281",
+  "definition_revision": "b5070868f368ff2e3c79d48da715db2b82aa389a",
+  "measurement_result": "PASS",
+  "physical_source_closure": "UNRESOLVED",
+  "artifact_directory": ".build/runs/reset-timing-2026-11-14T180843.496927+0000-7509b487",
+  "command": "make reset-timing RUN_ARGS='--timeout 1800'",
+  "seed": null,
+  "library_sha256": "8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1",
+  "dependency_digests": {
+    "tools/dependencies.json": "4bc7cf21fed06e8ba7e3a2196c45e5aa5e58897d0164c4c0af55d9d1ea3fdc38",
+    "tools/packages.lock.json": "13ce46997fccbd49662be8140443e7321e4c8a8d29a1efc54fd56dd11d797996"
+  },
+  "configuration_and_recipe_digests": {
+    "experiments/reset-timing/README.md": "214ad8b32e2e2ceba1d362aa4613a4e10b0442d074e4fd69856f9e60127c8eb4",
+    "experiments/reset-timing/config.json": "8e8175c875a493b6e97e6ffcd921a97b8850f7087b148277ec59507d74993fef",
+    "experiments/reset-timing/timing.tcl": "fafce71b089ed4a04aa336b1636d4a28f90bf94d868b05319fa9800408b3fd63",
+    "experiments/allocator-scaling/mapping.ys.in": "22d48f97f1d0927e1c628969bccbbeabd85aea92430ba978329c1db7d856a52b",
+    "experiments/allocator-scaling/abc.constr": "57947f140a2ab2795e7318aa70cae726825234738d67366df3b0a149660efb22",
+    "tools/timing_constraints.py": "77bb6c59e22b4b55931c4bd001fe4ebc11fe46fe3d8b306fc4265c2fefc7f5fb",
+    "tools/reset_timing.py": "6c2b34d7ee0c55dfb750b9a9a2b85521701fca88202adc8e258903473117d2cb",
+    "tools/allocator_scaling.py": "c24601f3e316e94939cef27d80162312bdd4e8bf9c5cf4c3a3e4f3c29a388e25",
+    "tools/run.py": "82aa5611967b7c77adce72724dfa693c530289c2947a7e5821fd1f80f613a045",
+    "tools/frontend.py": "a3ade09454f846f7f45baad7e2a2340e6923df637adf83006247e1269534d97e",
+    "tools/registry.py": "77b77ff4b18f7fe28244e8b4aa0af506dde8fe0d5941ab4c4f430c6bdbccaaca",
+    "tools/evidence.py": "7afb8f4053b22f71f7bbd6231182960ca4afd3061c2438755454c7a91648210c",
+    "verification/profiles.json": "4ae6674f7b08ab45e8ee78bb7685846418bac796f71e8cdd47ddefd5cb7391a3",
+    "verification/sources/production.json": "84115c9a6767bcd0c329357f9f1813aeef502a171c387981008c5de8edce8777",
+    "verification/sources/synthesis.json": "608985aad177193609758b637cf5e9d10f97bcdee3e3422401c012cd22659aca"
+  },
+  "production_source_digests": {
+    "rtl/AGENTS.md": "ba2883257fe46b02bb4dbb562311f8fb14c416c813959e8ff72f063c5f56d208",
+    "rtl/common/tm_axis_rx_fifo.sv": "40627938a5beb46fdbfe40054d6a16e2e7f1594e21749de8605493dfa5f24507",
+    "rtl/csr/tm_axil_regs.sv": "b57b2dab4387ebe6da45bffebb7a8267180356b2be25c5cfb50522599000de01",
+    "rtl/csr/tm_statistics.sv": "1012718b79b7ddf9667464bcb1545e4e595ef5d5252aa64f99f76b5384c3d904",
+    "rtl/include/tm_fixed.sv": "3876b11920c745510ef5b47422b653a36f51529476fd376f7b4fea8e644dba00",
+    "rtl/include/tm_module_ports.sv": "6c442f2800d66ef414dec5a0a057fed3b2371770d167999f3094762e84cd1461",
+    "rtl/include/tm_parameters.svh": "1d3801825421fea1573cd72ff9c8063b11d67e81a0ece1d89f74120f8cbd9497",
+    "rtl/include/tm_types.svh": "97c480aed782c877cd189f12cb0e3c494e912a2089cade1bf7a6e27efd34bb1c",
+    "rtl/include/tm_validate.svh": "96cdb865feb42b3dddafaabbdb1921b0e86a8d5463bf749eb3f1c72692a9359a",
+    "rtl/memory/tm_metadata.sv": "c4698904cb19cdfda82e966201ea7c48a8b574f3c6c93a4688916821bca29ea1",
+    "rtl/memory/tm_packet_ram.sv": "ad594ad20d3b6a17158ad211baa29a84d44e525951c1928ebafb1ac0ffe6918d",
+    "rtl/pools/tm_bitmap_pool.sv": "bf7ea22acc7639836d1d07d0763774a4852856eb8fb435f43507a070c1932d02",
+    "rtl/pools/tm_cell_pool.sv": "84b5a385ad640ae09bd6f1ecbdf3e7fb9e0c55d63e1f3b54fdedfb7f2b1ae344",
+    "rtl/pools/tm_desc_pool.sv": "d2bf2ef32eed4bedd16a2f0574c0e9674cc21c089c5f43a9a3c785d035c9d014",
+    "rtl/queue/tm_desc_links.sv": "7e2cec163f3e08e3ed37afd1d08d8ea7d7f84899a72b14b228d3fde0f6b5c07c",
+    "rtl/queue/tm_queue_ctrl.sv": "45078d1c22f2fd021378e3b2706e8e0a7b1dd5a65dd3fe6dab3f512ffe996396",
+    "rtl/scheduler/tm_drr.sv": "f93079f4875a48e7de6f7a2336d8c9436d3de332767f0802d136a3a2fa84149a",
+    "rtl/tm_top.sv": "a6b55a72714baabcf3b3df9aef62714e1327e84ec2efc429705aef528acf33ac",
+    "rtl/tx/tm_tx.sv": "190b9250d698489c1a30583c868fac7bed79a66bcc0bc4b928a7a1d2d61f1514"
+  },
+  "tool_identities": {
+    "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3: Python 3.12.14",
+    "rtl_frontend": "slang",
+    "yosys": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: Yosys 0.70+post (git sha1 28ba3cb926fe376fa05ebfc1b921747d011d4557, Release, GNU /usr/bin/g++-14 14.2.0)",
+    "abc": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys-abc: ======== ABC command line \"version\"\nUC Berkeley, ABC 1.01 (compiled Nov 12 2026 06:11:18)",
+    "opensta": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/sta: 3.2.0",
+    "slang_revision": "/workspace/Shared-Buffer-Packet-Traffic-Manager/.tools/install/bin/yosys: -- Running command `slang_version' --\nsv-elab revision 9dcee13ea3862347e1715dc51f63e9f845cdd222\nslang revision 545f88b2ed3a2d20325fbd17413af177a6bca72f"
+  },
+  "doctor_cases": [
+    {
+      "test": "versions",
+      "result": "PASS"
+    },
+    {
+      "test": "opensta-source",
+      "result": "PASS"
+    },
+    {
+      "test": "cxx20",
+      "result": "PASS"
+    },
+    {
+      "test": "solver-sat-unsat",
+      "result": "PASS"
+    }
+  ],
+  "maps": {
+    "E0-fifo2": {
+      "point": {
+        "name": "E0-fifo2",
+        "profile": "E0",
+        "top": "tm_axis_rx_fifo_api",
+        "depth": 2,
+        "study": "fifo-capability-r01"
+      },
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "netlist_sha256": "9c6e4ac875fdc4e134a5fc12b94e9c585e2a0361d98e4e3961af2e5a80ab1058",
+      "mapping_script_sha256": "4830b973643768d59ca896cc56809ca5c1afff92babfd6bfb32a4804a983374e",
+      "measurements": {
+        "state_bits": 279,
+        "mapped_cells": {
+          "MUX2_X1": 413,
+          "BUF_X2": 15,
+          "BUF_X1": 3,
+          "DFF_X1": 274,
+          "DFFR_X1": 4,
+          "DFFS_X1": 1,
+          "AND3_X1": 1,
+          "OAI21_X1": 4,
+          "INV_X1": 2,
+          "NOR2_X1": 1,
+          "OAI211_X1": 1,
+          "AND4_X4": 1,
+          "XOR2_X1": 1,
+          "NAND2_X1": 2,
+          "XNOR2_X1": 1,
+          "AND2_X1": 2,
+          "NAND2_X2": 2,
+          "BUF_X4": 29
+        },
+        "outputs": {
+          "s_ready": 1,
+          "m_valid": 1,
+          "m_beat": 137,
+          "empty": 1
+        },
+        "payload_bits": 274,
+        "reset_fanout": {
+          "root_sink_pins": 9,
+          "async_pin_count": 5,
+          "tree_net_count": 1,
+          "max_tree_sink_pins": 9
+        },
+        "area_um2": 2128.798
+      },
+      "manifest_sha256": "a6b4778c8a9e0a247a236590c59320e9ffdaca74a37117c4d6e5bdf725090af1"
+    },
+    "E0-fifo4": {
+      "point": {
+        "name": "E0-fifo4",
+        "profile": "E0",
+        "top": "tm_axis_rx_fifo_api",
+        "depth": 4,
+        "study": "fifo-capability-r01"
+      },
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 4,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 1,
+        "N_Q": 2,
+        "N_CELL": 16,
+        "CELL_BYTES": 16,
+        "N_DESC": 8,
+        "MAX_PACKET_BYTES": 128,
+        "MEM_RD_LATENCY": 1
+      },
+      "netlist_sha256": "c1f69f38394dbbfe1d56fcbed3fce34b0bf94faf99f63cccbc988ea8d7b9a388",
+      "mapping_script_sha256": "bd30f46fb448351bbcf586251082e9064d10cc0f65e337f246d1a88ae93cb97a",
+      "measurements": {
+        "state_bits": 556,
+        "mapped_cells": {
+          "AND3_X4": 2,
+          "OR3_X1": 1,
+          "AND2_X1": 1,
+          "INV_X1": 1,
+          "NAND4_X1": 3,
+          "XOR2_X1": 2,
+          "XNOR2_X1": 4,
+          "NAND3_X1": 5,
+          "AND2_X4": 1,
+          "MUX2_X2": 1,
+          "BUF_X1": 37,
+          "CLKBUF_X1": 10,
+          "OR2_X1": 1,
+          "OAI21_X1": 1,
+          "BUF_X4": 44,
+          "AOI21_X1": 1,
+          "NOR2_X1": 1,
+          "BUF_X2": 16,
+          "MUX2_X1": 962,
+          "DFFR_X1": 7,
+          "DFF_X1": 548,
+          "DFFS_X1": 1
+        },
+        "outputs": {
+          "s_ready": 1,
+          "m_valid": 1,
+          "m_beat": 137,
+          "empty": 1
+        },
+        "payload_bits": 548,
+        "reset_fanout": {
+          "root_sink_pins": 13,
+          "async_pin_count": 8,
+          "tree_net_count": 1,
+          "max_tree_sink_pins": 13
+        },
+        "area_um2": 4484.76
+      },
+      "manifest_sha256": "deff9b9f47f0f25925c12b44b4176963102f238a861b5f36327132807087e232"
+    },
+    "I0-cell": {
+      "point": {
+        "name": "I0-cell",
+        "profile": "I0",
+        "top": "tm_cell_pool_api",
+        "study": "allocator-r01"
+      },
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "netlist_sha256": "61d86e1fb62c95c1384266d9ba5b7ea9891b65e3abcbd68e9e7d02a8aef18ea7",
+      "mapping_script_sha256": "0c4ca1d1cf3cdca42a9b3cd3f52759d9035cf8a8e24a0b2a85a383ee4fa0eb1a",
+      "measurements": {
+        "mapped_cells": {
+          "BUF_X1": 14,
+          "INV_X1": 52,
+          "AOI21_X2": 1,
+          "NOR2_X1": 21,
+          "NOR4_X4": 5,
+          "NOR3_X2": 1,
+          "NAND4_X4": 2,
+          "OR4_X4": 2,
+          "NAND2_X1": 22,
+          "NAND4_X1": 13,
+          "NOR3_X1": 45,
+          "AOI21_X1": 16,
+          "CLKBUF_X1": 1,
+          "OR3_X1": 7,
+          "OAI211_X2": 1,
+          "OR2_X1": 3,
+          "OAI211_X1": 3,
+          "NOR4_X1": 9,
+          "AND4_X1": 4,
+          "NAND4_X2": 2,
+          "XOR2_X1": 3,
+          "AOI22_X1": 18,
+          "NAND3_X1": 20,
+          "AOI221_X1": 1,
+          "OAI21_X1": 12,
+          "AND2_X1": 5,
+          "AOI211_X1": 2,
+          "AOI211_X2": 1,
+          "AND3_X1": 3,
+          "XNOR2_X2": 1,
+          "OAI22_X1": 33,
+          "OAI221_X2": 1,
+          "NAND2_X2": 1,
+          "NAND3_X2": 1,
+          "XNOR2_X1": 8,
+          "OR4_X2": 1,
+          "AOI221_X2": 1,
+          "MUX2_X1": 4,
+          "MUX2_X2": 3,
+          "OAI21_X2": 1,
+          "OAI22_X2": 1,
+          "DFFR_X1": 6,
+          "DFFS_X1": 33
+        },
+        "state_bits": 39,
+        "outputs": {
+          "available_id": 5,
+          "free_count": 6,
+          "available": 1,
+          "invariant_error": 1
+        },
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "allocate": {
+            "direction": "input",
+            "width": 10,
+            "loaded_bits": 6
+          },
+          "release_cell": {
+            "direction": "input",
+            "width": 13,
+            "loaded_bits": 6
+          },
+          "available_id": {
+            "direction": "output",
+            "width": 5,
+            "loaded_bits": 2
+          },
+          "free_count": {
+            "direction": "output",
+            "width": 6,
+            "loaded_bits": 6
+          },
+          "available": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "invariant_error": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          }
+        },
+        "fanout": {
+          "data": [
+            {
+              "driver": "_405_/Z",
+              "aliases": [
+                "_238_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_519_/ZN",
+              "aliases": [
+                "_323_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_520_/Z",
+              "aliases": [
+                "_324_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_640_/Z",
+              "aliases": [
+                "_59_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_666_/Z",
+              "aliases": [
+                "_75_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            }
+          ],
+          "reset": [
+            {
+              "driver": "input:pool.rst_n,rst_n",
+              "aliases": [
+                "pool.rst_n",
+                "rst_n"
+              ],
+              "sink_pins": 40,
+              "kind": "reset"
+            },
+            {
+              "driver": "_374_/Z",
+              "aliases": [
+                "_268_"
+              ],
+              "sink_pins": 9,
+              "kind": "reset"
+            },
+            {
+              "driver": "_375_/ZN",
+              "aliases": [
+                "_267_"
+              ],
+              "sink_pins": 7,
+              "kind": "reset"
+            }
+          ],
+          "clock": [
+            {
+              "driver": "input:clk,pool.clk",
+              "aliases": [
+                "clk",
+                "pool.clk"
+              ],
+              "sink_pins": 39,
+              "kind": "clock"
+            }
+          ]
+        },
+        "buffers": 14,
+        "reset_fanout": {
+          "root_sink_pins": 40,
+          "async_pin_count": 39,
+          "tree_net_count": 3,
+          "max_tree_sink_pins": 40
+        },
+        "area_um2": 617.652
+      },
+      "manifest_sha256": "81e16c58e326d926aa4070ef7939f20213d766195655381fe9a405d4cc21d5ae"
+    },
+    "I0-descriptor": {
+      "point": {
+        "name": "I0-descriptor",
+        "profile": "I0",
+        "top": "tm_desc_pool_api",
+        "study": "allocator-r01"
+      },
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 2,
+        "N_Q": 4,
+        "N_CELL": 32,
+        "CELL_BYTES": 16,
+        "N_DESC": 16,
+        "MAX_PACKET_BYTES": 256,
+        "MEM_RD_LATENCY": 1
+      },
+      "netlist_sha256": "a6fd0ddae4ff059a0d1d9b0496a78057e23a4357aa3e1531d878db0ebdc53345",
+      "mapping_script_sha256": "d80e27832180c7136c8ec35bdd381d4a1a8015e163fcace4f2a77a398e02c7b7",
+      "measurements": {
+        "mapped_cells": {
+          "BUF_X1": 21,
+          "INV_X1": 41,
+          "AOI21_X1": 17,
+          "NOR2_X1": 19,
+          "BUF_X2": 2,
+          "BUF_X4": 1,
+          "NOR4_X4": 2,
+          "NOR3_X1": 5,
+          "NAND4_X2": 2,
+          "AND4_X2": 3,
+          "OAI33_X1": 17,
+          "NOR4_X1": 2,
+          "NAND3_X1": 11,
+          "OR3_X1": 5,
+          "NOR4_X2": 1,
+          "AOI211_X1": 1,
+          "NAND2_X1": 43,
+          "AOI22_X1": 26,
+          "OR4_X1": 2,
+          "OR2_X1": 5,
+          "XOR2_X1": 7,
+          "NAND4_X1": 8,
+          "OAI221_X1": 2,
+          "OAI21_X1": 17,
+          "OAI211_X1": 3,
+          "AND3_X2": 2,
+          "AND3_X4": 1,
+          "OAI222_X1": 1,
+          "XNOR2_X1": 4,
+          "MUX2_X1": 3,
+          "AOI211_X2": 1,
+          "MUX2_X2": 2,
+          "AND2_X1": 1,
+          "NAND4_X4": 1,
+          "NOR3_X2": 1,
+          "OAI21_X2": 1,
+          "CLKBUF_X1": 1,
+          "OAI22_X1": 1,
+          "OAI22_X2": 1,
+          "DFFR_X1": 5,
+          "DFFS_X1": 17
+        },
+        "state_bits": 22,
+        "outputs": {
+          "available_id": 4,
+          "free_count": 5,
+          "available": 1,
+          "invariant_error": 1
+        },
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "admit": {
+            "direction": "input",
+            "width": 57,
+            "loaded_bits": 6
+          },
+          "tx_return": {
+            "direction": "input",
+            "width": 5,
+            "loaded_bits": 5
+          },
+          "abort_return": {
+            "direction": "input",
+            "width": 5,
+            "loaded_bits": 5
+          },
+          "available_id": {
+            "direction": "output",
+            "width": 4,
+            "loaded_bits": 0
+          },
+          "free_count": {
+            "direction": "output",
+            "width": 5,
+            "loaded_bits": 5
+          },
+          "available": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 0
+          },
+          "invariant_error": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          }
+        },
+        "fanout": {
+          "data": [
+            {
+              "driver": "_436_/Z",
+              "aliases": [
+                "_281_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_477_/Z",
+              "aliases": [
+                "_24_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_488_/Z",
+              "aliases": [
+                "_34_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_479_/ZN",
+              "aliases": [
+                "_26_"
+              ],
+              "sink_pins": 9,
+              "kind": "data"
+            },
+            {
+              "driver": "_298_/Z",
+              "aliases": [
+                "_223_"
+              ],
+              "sink_pins": 8,
+              "kind": "data"
+            }
+          ],
+          "reset": [
+            {
+              "driver": "input:pool.rst_n,rst_n",
+              "aliases": [
+                "pool.rst_n",
+                "rst_n"
+              ],
+              "sink_pins": 23,
+              "kind": "reset"
+            },
+            {
+              "driver": "_438_/Z",
+              "aliases": [
+                "_283_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_481_/Z",
+              "aliases": [
+                "_28_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_328_/Z",
+              "aliases": [
+                "_194_"
+              ],
+              "sink_pins": 9,
+              "kind": "reset"
+            },
+            {
+              "driver": "_571_/ZN",
+              "aliases": [
+                "_100_"
+              ],
+              "sink_pins": 1,
+              "kind": "reset"
+            }
+          ],
+          "clock": [
+            {
+              "driver": "input:clk,pool.clk",
+              "aliases": [
+                "clk",
+                "pool.clk"
+              ],
+              "sink_pins": 22,
+              "kind": "clock"
+            }
+          ]
+        },
+        "buffers": 24,
+        "reset_fanout": {
+          "root_sink_pins": 23,
+          "async_pin_count": 22,
+          "tree_net_count": 5,
+          "max_tree_sink_pins": 23
+        },
+        "area_um2": 440.496
+      },
+      "manifest_sha256": "6a15b688648f3febaebee1fe42690efe18019cbd664d5c9f584e8c58f5f14d34"
+    },
+    "F0-cell": {
+      "point": {
+        "name": "F0-cell",
+        "profile": "F0",
+        "top": "tm_cell_pool_api",
+        "study": "allocator-r01"
+      },
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "netlist_sha256": "f8a16dcdd15a599d1125c9dc7de1b84ad9531b162d308fd36997548800c51251",
+      "mapping_script_sha256": "088e4e3b620637896e10e0b2194a3e4a35e142d0b4aad2b83c0eb8f6c073fbc7",
+      "measurements": {
+        "mapped_cells": {
+          "BUF_X4": 338,
+          "CLKBUF_X2": 233,
+          "INV_X1": 939,
+          "BUF_X2": 8,
+          "BUF_X1": 140,
+          "AOI21_X1": 414,
+          "NOR2_X1": 560,
+          "NOR4_X4": 10,
+          "NOR3_X1": 368,
+          "NAND4_X1": 556,
+          "NOR4_X1": 420,
+          "OR3_X1": 35,
+          "NAND4_X4": 29,
+          "NOR4_X2": 84,
+          "AND4_X4": 13,
+          "OR4_X1": 39,
+          "OR4_X2": 23,
+          "NAND4_X2": 22,
+          "AND4_X2": 24,
+          "OR2_X1": 120,
+          "NAND3_X1": 520,
+          "NAND2_X1": 1742,
+          "OR4_X4": 2,
+          "AND2_X2": 5,
+          "NOR3_X2": 3,
+          "OAI21_X1": 425,
+          "AND2_X1": 205,
+          "AND3_X1": 117,
+          "OAI211_X1": 37,
+          "AND2_X4": 1,
+          "NAND2_X2": 25,
+          "AND4_X1": 176,
+          "AOI211_X1": 68,
+          "AOI22_X1": 536,
+          "OR2_X2": 19,
+          "AOI221_X1": 10,
+          "OAI33_X1": 2,
+          "AOI221_X4": 3,
+          "XOR2_X1": 5,
+          "OAI21_X2": 1389,
+          "XNOR2_X1": 15,
+          "NOR2_X2": 4,
+          "XNOR2_X2": 3,
+          "OR2_X4": 1,
+          "BUF_X16": 12,
+          "NAND3_X2": 2,
+          "CLKBUF_X1": 73,
+          "AOI22_X2": 1,
+          "INV_X2": 1,
+          "OAI21_X4": 449,
+          "MUX2_X1": 8,
+          "AOI211_X2": 1,
+          "AOI221_X2": 1,
+          "OAI22_X1": 12,
+          "AOI21_X2": 1,
+          "BUF_X32": 99,
+          "AND3_X2": 1,
+          "INV_X16": 1,
+          "NAND3_X4": 1,
+          "BUF_X8": 3,
+          "OAI22_X2": 7,
+          "MUX2_X2": 2,
+          "DFFR_X1": 11,
+          "DFFS_X1": 1025
+        },
+        "state_bits": 1036,
+        "outputs": {
+          "available_id": 10,
+          "free_count": 11,
+          "available": 1,
+          "invariant_error": 1
+        },
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "allocate": {
+            "direction": "input",
+            "width": 19,
+            "loaded_bits": 11
+          },
+          "release_cell": {
+            "direction": "input",
+            "width": 24,
+            "loaded_bits": 11
+          },
+          "available_id": {
+            "direction": "output",
+            "width": 10,
+            "loaded_bits": 3
+          },
+          "free_count": {
+            "direction": "output",
+            "width": 11,
+            "loaded_bits": 11
+          },
+          "available": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "invariant_error": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          }
+        },
+        "fanout": {
+          "data": [
+            {
+              "driver": "_12935_/ZN",
+              "aliases": [
+                "_7704_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_14251_/Z",
+              "aliases": [
+                "_6386_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_15097_/Z",
+              "aliases": [
+                "_10877_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_16110_/Z",
+              "aliases": [
+                "_512_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_16122_/Z",
+              "aliases": [
+                "_524_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            }
+          ],
+          "reset": [
+            {
+              "driver": "input:pool.rst_n,rst_n",
+              "aliases": [
+                "pool.rst_n",
+                "rst_n"
+              ],
+              "sink_pins": 1038,
+              "kind": "reset"
+            },
+            {
+              "driver": "_11379_/Z",
+              "aliases": [
+                "_9259_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_17198_/ZN",
+              "aliases": [
+                "_1600_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_17199_/Z",
+              "aliases": [
+                "_1601_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_18176_/Z",
+              "aliases": [
+                "_2536_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            }
+          ],
+          "clock": [
+            {
+              "driver": "input:clk,pool.clk",
+              "aliases": [
+                "clk",
+                "pool.clk"
+              ],
+              "sink_pins": 1036,
+              "kind": "clock"
+            }
+          ]
+        },
+        "buffers": 600,
+        "reset_fanout": {
+          "root_sink_pins": 1038,
+          "async_pin_count": 1036,
+          "tree_net_count": 7,
+          "max_tree_sink_pins": 1038
+        },
+        "area_um2": 20109.334
+      },
+      "manifest_sha256": "2220f1e04563be9f5aab5b0663c806e8be8725cdef1b79d579fbf83e62df6835"
+    },
+    "F0-descriptor": {
+      "point": {
+        "name": "F0-descriptor",
+        "profile": "F0",
+        "top": "tm_desc_pool_api",
+        "study": "allocator-r01"
+      },
+      "parameters": {
+        "DATA_W": 64,
+        "RX_FIFO_DEPTH": 2,
+        "TX_FIFO_DEPTH": 4,
+        "SCHED_MODE": 1,
+        "TRACE_ENABLE": 1,
+        "N_RX": 4,
+        "N_Q": 16,
+        "N_CELL": 1024,
+        "CELL_BYTES": 64,
+        "N_DESC": 256,
+        "MAX_PACKET_BYTES": 1536,
+        "MEM_RD_LATENCY": 1
+      },
+      "netlist_sha256": "dcbcd2594465c0559b4000cf6ada5404d1e71e6c5e97fdfcd920a6c6b2442e83",
+      "mapping_script_sha256": "c6510e0c2e1137accc8c44ceab104b10ca35e8695d718b5cf01e16b0069ee576",
+      "measurements": {
+        "mapped_cells": {
+          "BUF_X1": 263,
+          "INV_X1": 496,
+          "CLKBUF_X1": 42,
+          "CLKBUF_X2": 1,
+          "AOI21_X1": 468,
+          "NOR2_X1": 181,
+          "BUF_X2": 9,
+          "NOR4_X4": 30,
+          "NAND3_X2": 1,
+          "BUF_X4": 2,
+          "NOR3_X2": 2,
+          "NAND2_X2": 1,
+          "NOR3_X1": 103,
+          "NAND4_X2": 11,
+          "NAND4_X4": 18,
+          "AND2_X1": 54,
+          "AND4_X4": 8,
+          "OR3_X1": 15,
+          "OR4_X4": 8,
+          "AND4_X2": 1,
+          "OR2_X1": 33,
+          "NOR4_X2": 3,
+          "NAND2_X1": 309,
+          "AOI22_X1": 365,
+          "NOR4_X1": 99,
+          "OAI22_X1": 15,
+          "OAI21_X1": 303,
+          "AND4_X1": 37,
+          "OR4_X1": 6,
+          "OAI222_X1": 2,
+          "AOI222_X1": 1,
+          "XOR2_X1": 8,
+          "AOI221_X1": 1,
+          "XNOR2_X1": 19,
+          "OAI221_X1": 3,
+          "NAND3_X1": 372,
+          "OAI211_X1": 14,
+          "AND3_X1": 27,
+          "AOI211_X4": 2,
+          "NAND4_X1": 105,
+          "AOI211_X1": 26,
+          "INV_X4": 1,
+          "AOI221_X4": 1,
+          "OR4_X2": 2,
+          "AND3_X2": 1,
+          "MUX2_X1": 11,
+          "MUX2_X2": 1,
+          "OAI211_X2": 1,
+          "OAI33_X1": 1,
+          "OAI21_X2": 1,
+          "DFFR_X1": 9,
+          "DFFS_X1": 257
+        },
+        "state_bits": 266,
+        "outputs": {
+          "available_id": 8,
+          "free_count": 9,
+          "available": 1,
+          "invariant_error": 1
+        },
+        "ports": {
+          "clk": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "rst_n": {
+            "direction": "input",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "admit": {
+            "direction": "input",
+            "width": 67,
+            "loaded_bits": 10
+          },
+          "tx_return": {
+            "direction": "input",
+            "width": 9,
+            "loaded_bits": 9
+          },
+          "abort_return": {
+            "direction": "input",
+            "width": 9,
+            "loaded_bits": 9
+          },
+          "available_id": {
+            "direction": "output",
+            "width": 8,
+            "loaded_bits": 3
+          },
+          "free_count": {
+            "direction": "output",
+            "width": 9,
+            "loaded_bits": 9
+          },
+          "available": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          },
+          "invariant_error": {
+            "direction": "output",
+            "width": 1,
+            "loaded_bits": 1
+          }
+        },
+        "fanout": {
+          "data": [
+            {
+              "driver": "_4047_/Z",
+              "aliases": [
+                "_2839_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_4051_/Z",
+              "aliases": [
+                "_2835_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_4048_/Z",
+              "aliases": [
+                "_2838_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_4052_/Z",
+              "aliases": [
+                "_2834_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            },
+            {
+              "driver": "_4055_/Z",
+              "aliases": [
+                "_2831_"
+              ],
+              "sink_pins": 10,
+              "kind": "data"
+            }
+          ],
+          "reset": [
+            {
+              "driver": "input:pool.rst_n,rst_n",
+              "aliases": [
+                "pool.rst_n",
+                "rst_n"
+              ],
+              "sink_pins": 267,
+              "kind": "reset"
+            },
+            {
+              "driver": "_5479_/Z",
+              "aliases": [
+                "_569_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_5480_/Z",
+              "aliases": [
+                "_570_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_5481_/Z",
+              "aliases": [
+                "_571_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            },
+            {
+              "driver": "_5866_/Z",
+              "aliases": [
+                "_927_"
+              ],
+              "sink_pins": 10,
+              "kind": "reset"
+            }
+          ],
+          "clock": [
+            {
+              "driver": "input:clk,pool.clk",
+              "aliases": [
+                "clk",
+                "pool.clk"
+              ],
+              "sink_pins": 266,
+              "kind": "clock"
+            }
+          ]
+        },
+        "buffers": 274,
+        "reset_fanout": {
+          "root_sink_pins": 267,
+          "async_pin_count": 266,
+          "tree_net_count": 12,
+          "max_tree_sink_pins": 267
+        },
+        "area_um2": 5128.746
+      },
+      "manifest_sha256": "66b039afc2a15dd9a6f9fcb4d8b89b332a1c72599845be0a1a429ccd9140cdb3"
+    }
+  },
+  "paths": {
+    "p001": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":5.27696,"slack_ns":3.67304,"endpoint_pin":"s_ready"},
+    "p002": {"startpoint":"_1368_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_1368_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.09639,"slack_ns":0.04127,"endpoint_pin":"_1368_/D"},
+    "p003": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":1.07763,"slack_ns":7.87237,"endpoint_pin":"s_ready"},
+    "p004": {"startpoint":"_1372_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_1369_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.29633,"slack_ns":9.61285,"endpoint_pin":"_1369_/D"},
+    "p005": {"startpoint":"s_valid (input port clocked by clk)","endpoint":"_1110_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":1.21193,"slack_ns":8.69743,"endpoint_pin":"_1110_/D"},
+    "p006": {"startpoint":"s_beat[127] (input port clocked by clk)","endpoint":"_1100_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.24417,"slack_ns":0.18873,"endpoint_pin":"_1100_/D"},
+    "p007": {"startpoint":"_1368_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"m_beat[116] (output port clocked by clk)","path_group":"clk","arrival_ns":0.29134,"slack_ns":8.65866,"endpoint_pin":"m_beat[116]"},
+    "p008": {"startpoint":"_1371_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.13443,"slack_ns":0.28443,"endpoint_pin":"s_ready"},
+    "p009": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.26648,"slack_ns":0.41648,"endpoint_pin":"s_ready"},
+    "p010": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1371_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.2,"slack_ns":4.78947,"endpoint_pin":"_1371_/SN","port_capacitance_ff":15.64483,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.2},
+    "p011": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.0,"slack_ns":4.70632,"endpoint_pin":"_1367_/RN","port_capacitance_ff":15.64483,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.0},
+    "p012": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.07418,"slack_ns":5.01845,"endpoint_pin":"_1367_/D"},
+    "p013": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":5.31266,"slack_ns":3.63734,"endpoint_pin":"s_ready"},
+    "p014": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":1.07779,"slack_ns":7.87221,"endpoint_pin":"s_ready"},
+    "p015": {"startpoint":"s_valid (input port clocked by clk)","endpoint":"_1110_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":1.19957,"slack_ns":8.7099,"endpoint_pin":"_1110_/D"},
+    "p016": {"startpoint":"s_beat[127] (input port clocked by clk)","endpoint":"_1100_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.23886,"slack_ns":0.18342,"endpoint_pin":"_1100_/D"},
+    "p017": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.25438,"slack_ns":0.40438,"endpoint_pin":"s_ready"},
+    "p018": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1371_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.23881,"slack_ns":4.7508,"endpoint_pin":"_1371_/SN","port_capacitance_ff":15.64483,"port_slew_ns":0.03847,"virtual_driver_delay_ns":0.03881,"port_arrival_ns":5.23881},
+    "p019": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.03881,"slack_ns":4.75951,"endpoint_pin":"_1367_/RN","port_capacitance_ff":15.64483,"port_slew_ns":0.03847,"virtual_driver_delay_ns":0.03881,"port_arrival_ns":5.03881},
+    "p020": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.08444,"slack_ns":5.02871,"endpoint_pin":"_1367_/D"},
+    "p021": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.29368,"endpoint_pin":"_1367_/RN"},
+    "p022": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1371_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":9.78947,"endpoint_pin":"_1371_/SN","port_capacitance_ff":15.64483,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p023": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.29368,"endpoint_pin":"_1367_/RN","port_capacitance_ff":15.64483,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.0},
+    "p024": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.27696,"slack_ns":8.67304,"endpoint_pin":"s_ready"},
+    "p025": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.07418,"slack_ns":0.01845,"endpoint_pin":"_1367_/D"},
+    "p026": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.03881,"slack_ns":-0.24049,"endpoint_pin":"_1367_/RN"},
+    "p027": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1371_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.23881,"slack_ns":9.7508,"endpoint_pin":"_1371_/SN","port_capacitance_ff":15.64483,"port_slew_ns":0.03847,"virtual_driver_delay_ns":0.03881,"port_arrival_ns":0.23881},
+    "p028": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.03881,"slack_ns":-0.24049,"endpoint_pin":"_1367_/RN","port_capacitance_ff":15.64483,"port_slew_ns":0.03847,"virtual_driver_delay_ns":0.03881,"port_arrival_ns":0.03881},
+    "p029": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.31266,"slack_ns":8.63734,"endpoint_pin":"s_ready"},
+    "p030": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.08444,"slack_ns":0.02871,"endpoint_pin":"_1367_/D"},
+    "p031": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":2.07696,"slack_ns":6.87304,"endpoint_pin":"s_ready"},
+    "p032": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.09368,"endpoint_pin":"_1367_/RN"},
+    "p033": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1371_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.0,"slack_ns":7.98947,"endpoint_pin":"_1371_/SN","port_capacitance_ff":15.64483,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":2.0},
+    "p034": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.09368,"endpoint_pin":"_1367_/RN","port_capacitance_ff":15.64483,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p035": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.27418,"slack_ns":0.21845,"endpoint_pin":"_1367_/D"},
+    "p036": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":2.11266,"slack_ns":6.83734,"endpoint_pin":"s_ready"},
+    "p037": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.23881,"slack_ns":-0.04049,"endpoint_pin":"_1367_/RN"},
+    "p038": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1371_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.03881,"slack_ns":7.9508,"endpoint_pin":"_1371_/SN","port_capacitance_ff":15.64483,"port_slew_ns":0.03847,"virtual_driver_delay_ns":0.03881,"port_arrival_ns":2.03881},
+    "p039": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.23881,"slack_ns":-0.04049,"endpoint_pin":"_1367_/RN","port_capacitance_ff":15.64483,"port_slew_ns":0.03847,"virtual_driver_delay_ns":0.03881,"port_arrival_ns":0.23881},
+    "p040": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_1367_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.28444,"slack_ns":0.22871,"endpoint_pin":"_1367_/D"},
+    "p041": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"m_valid (output port clocked by clk)","path_group":"clk","arrival_ns":5.26768,"slack_ns":3.68232,"endpoint_pin":"m_valid"},
+    "p042": {"startpoint":"_2603_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_2603_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.09576,"slack_ns":0.04065,"endpoint_pin":"_2603_/D"},
+    "p043": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":1.05683,"slack_ns":7.89317,"endpoint_pin":"s_ready"},
+    "p044": {"startpoint":"_3157_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_3030_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.35018,"slack_ns":9.55919,"endpoint_pin":"_3030_/D"},
+    "p045": {"startpoint":"enable (input port clocked by clk)","endpoint":"_3030_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":1.26474,"slack_ns":8.64462,"endpoint_pin":"_3030_/D"},
+    "p046": {"startpoint":"s_beat[127] (input port clocked by clk)","endpoint":"_3020_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.24395,"slack_ns":0.1885,"endpoint_pin":"_3020_/D"},
+    "p047": {"startpoint":"_3144_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"m_beat[10] (output port clocked by clk)","path_group":"clk","arrival_ns":0.39441,"slack_ns":8.55559,"endpoint_pin":"m_beat[10]"},
+    "p048": {"startpoint":"_3157_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.12299,"slack_ns":0.27299,"endpoint_pin":"s_ready"},
+    "p049": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.25307,"slack_ns":0.40307,"endpoint_pin":"s_ready"},
+    "p050": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3157_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.2,"slack_ns":4.78947,"endpoint_pin":"_3157_/SN","port_capacitance_ff":22.44187,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.2},
+    "p051": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.0,"slack_ns":4.70632,"endpoint_pin":"_2603_/RN","port_capacitance_ff":22.44187,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.0},
+    "p052": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3151_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.07202,"slack_ns":5.01691,"endpoint_pin":"_3151_/D"},
+    "p053": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"m_valid (output port clocked by clk)","path_group":"clk","arrival_ns":5.32353,"slack_ns":3.62647,"endpoint_pin":"m_valid"},
+    "p054": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":1.05975,"slack_ns":7.89025,"endpoint_pin":"s_ready"},
+    "p055": {"startpoint":"_3157_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_3030_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.35004,"slack_ns":9.55943,"endpoint_pin":"_3030_/D"},
+    "p056": {"startpoint":"enable (input port clocked by clk)","endpoint":"_3030_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":1.26751,"slack_ns":8.64196,"endpoint_pin":"_3030_/D"},
+    "p057": {"startpoint":"s_beat[127] (input port clocked by clk)","endpoint":"_3020_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.24432,"slack_ns":0.18887,"endpoint_pin":"_3020_/D"},
+    "p058": {"startpoint":"enable (input port clocked by clk)","endpoint":"s_ready (output port clocked by clk)","path_group":"clk","arrival_ns":0.24313,"slack_ns":0.39313,"endpoint_pin":"s_ready"},
+    "p059": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3157_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.25516,"slack_ns":4.73453,"endpoint_pin":"_3157_/SN","port_capacitance_ff":22.44187,"port_slew_ns":0.05399,"virtual_driver_delay_ns":0.05516,"port_arrival_ns":5.25516},
+    "p060": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.05516,"slack_ns":4.75648,"endpoint_pin":"_2603_/RN","port_capacitance_ff":22.44187,"port_slew_ns":0.05399,"virtual_driver_delay_ns":0.05516,"port_arrival_ns":5.05516},
+    "p061": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3151_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.09387,"slack_ns":5.03877,"endpoint_pin":"_3151_/D"},
+    "p062": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.29368,"endpoint_pin":"_2603_/RN"},
+    "p063": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3157_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":9.78947,"endpoint_pin":"_3157_/SN","port_capacitance_ff":22.44187,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p064": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.29368,"endpoint_pin":"_2603_/RN","port_capacitance_ff":22.44187,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.0},
+    "p065": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"m_valid (output port clocked by clk)","path_group":"clk","arrival_ns":0.26768,"slack_ns":8.68232,"endpoint_pin":"m_valid"},
+    "p066": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3151_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.07202,"slack_ns":0.01691,"endpoint_pin":"_3151_/D"},
+    "p067": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.05516,"slack_ns":-0.24352,"endpoint_pin":"_2603_/RN"},
+    "p068": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3157_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.25516,"slack_ns":9.73453,"endpoint_pin":"_3157_/SN","port_capacitance_ff":22.44187,"port_slew_ns":0.05399,"virtual_driver_delay_ns":0.05516,"port_arrival_ns":0.25516},
+    "p069": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.05516,"slack_ns":-0.24352,"endpoint_pin":"_2603_/RN","port_capacitance_ff":22.44187,"port_slew_ns":0.05399,"virtual_driver_delay_ns":0.05516,"port_arrival_ns":0.05516},
+    "p070": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"m_valid (output port clocked by clk)","path_group":"clk","arrival_ns":0.32353,"slack_ns":8.62647,"endpoint_pin":"m_valid"},
+    "p071": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3151_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.09387,"slack_ns":0.03877,"endpoint_pin":"_3151_/D"},
+    "p072": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"m_valid (output port clocked by clk)","path_group":"clk","arrival_ns":2.06768,"slack_ns":6.88232,"endpoint_pin":"m_valid"},
+    "p073": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.09368,"endpoint_pin":"_2603_/RN"},
+    "p074": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3157_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.0,"slack_ns":7.98947,"endpoint_pin":"_3157_/SN","port_capacitance_ff":22.44187,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":2.0},
+    "p075": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.09368,"endpoint_pin":"_2603_/RN","port_capacitance_ff":22.44187,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p076": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3151_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.27202,"slack_ns":0.21691,"endpoint_pin":"_3151_/D"},
+    "p077": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"m_valid (output port clocked by clk)","path_group":"clk","arrival_ns":2.12353,"slack_ns":6.82647,"endpoint_pin":"m_valid"},
+    "p078": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.25516,"slack_ns":-0.04352,"endpoint_pin":"_2603_/RN"},
+    "p079": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3157_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.05516,"slack_ns":7.93453,"endpoint_pin":"_3157_/SN","port_capacitance_ff":22.44187,"port_slew_ns":0.05399,"virtual_driver_delay_ns":0.05516,"port_arrival_ns":2.05516},
+    "p080": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_2603_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.25516,"slack_ns":-0.04352,"endpoint_pin":"_2603_/RN","port_capacitance_ff":22.44187,"port_slew_ns":0.05399,"virtual_driver_delay_ns":0.05516,"port_arrival_ns":0.25516},
+    "p081": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_3151_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.29387,"slack_ns":0.23877,"endpoint_pin":"_3151_/D"},
+    "p082": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.39931,"slack_ns":2.50069,"endpoint_pin":"available"},
+    "p083": {"startpoint":"_751_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_751_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.11087,"slack_ns":0.0087,"endpoint_pin":"_751_/D"},
+    "p084": {"startpoint":"_746_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[3] (output port clocked by clk)","path_group":"clk","arrival_ns":0.81659,"slack_ns":7.08341,"endpoint_pin":"available_id[3]"},
+    "p085": {"startpoint":"_746_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_755_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":1.1456,"slack_ns":8.71422,"endpoint_pin":"_755_/D"},
+    "p086": {"startpoint":"release_cell[7] (input port clocked by clk)","endpoint":"_755_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.51577,"slack_ns":7.34404,"endpoint_pin":"_755_/D"},
+    "p087": {"startpoint":"allocate[9] (input port clocked by clk)","endpoint":"_756_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.24326,"slack_ns":0.13753,"endpoint_pin":"_756_/D"},
+    "p088": {"startpoint":"_755_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[5] (output port clocked by clk)","path_group":"clk","arrival_ns":0.09699,"slack_ns":0.19699,"endpoint_pin":"free_count[5]"},
+    "p089": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_723_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.2,"slack_ns":4.73947,"endpoint_pin":"_723_/SN","port_capacitance_ff":56.3903,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.2},
+    "p090": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.0,"slack_ns":4.65632,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.0},
+    "p091": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.08615,"slack_ns":4.98347,"endpoint_pin":"_719_/D"},
+    "p092": {"startpoint":"_754_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[1] (output port clocked by clk)","path_group":"clk","arrival_ns":0.17248,"slack_ns":0.27248,"endpoint_pin":"available_id[1]"},
+    "p093": {"startpoint":"_754_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.15124,"slack_ns":0.25124,"endpoint_pin":"available"},
+    "p094": {"startpoint":"_722_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[0] (output port clocked by clk)","path_group":"clk","arrival_ns":0.13352,"slack_ns":7.76648,"endpoint_pin":"free_count[0]"},
+    "p095": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.54087,"slack_ns":2.35913,"endpoint_pin":"available"},
+    "p096": {"startpoint":"_746_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_755_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":1.14559,"slack_ns":8.71423,"endpoint_pin":"_755_/D"},
+    "p097": {"startpoint":"release_cell[8] (input port clocked by clk)","endpoint":"_755_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.50295,"slack_ns":7.35687,"endpoint_pin":"_755_/D"},
+    "p098": {"startpoint":"allocate[9] (input port clocked by clk)","endpoint":"_756_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.24301,"slack_ns":0.14031,"endpoint_pin":"_756_/D"},
+    "p099": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.3367,"slack_ns":4.59262,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.13147,"virtual_driver_delay_ns":0.1367,"port_arrival_ns":5.3367},
+    "p100": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.1367,"slack_ns":4.69102,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.13147,"virtual_driver_delay_ns":0.1367,"port_arrival_ns":5.1367},
+    "p101": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.17123,"slack_ns":5.06437,"endpoint_pin":"_719_/D"},
+    "p102": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_719_/RN"},
+    "p103": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_723_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":9.73947,"endpoint_pin":"_723_/SN","port_capacitance_ff":56.3903,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p104": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.0},
+    "p105": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.39931,"slack_ns":7.50069,"endpoint_pin":"available"},
+    "p106": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.08615,"slack_ns":-0.01653,"endpoint_pin":"_719_/D"},
+    "p107": {"startpoint":"_746_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.72553,"slack_ns":7.17447,"endpoint_pin":"available"},
+    "p108": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.13877,"slack_ns":0.23877,"endpoint_pin":"available"},
+    "p109": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.1367,"slack_ns":-0.30898,"endpoint_pin":"_719_/RN"},
+    "p110": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.3367,"slack_ns":9.59262,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.13147,"virtual_driver_delay_ns":0.1367,"port_arrival_ns":0.3367},
+    "p111": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.1367,"slack_ns":-0.30898,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.13147,"virtual_driver_delay_ns":0.1367,"port_arrival_ns":0.1367},
+    "p112": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.54087,"slack_ns":7.35913,"endpoint_pin":"available"},
+    "p113": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.17123,"slack_ns":0.06437,"endpoint_pin":"_719_/D"},
+    "p114": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":2.19931,"slack_ns":5.70069,"endpoint_pin":"available"},
+    "p115": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_719_/RN"},
+    "p116": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_723_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.0,"slack_ns":7.93947,"endpoint_pin":"_723_/SN","port_capacitance_ff":56.3903,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":2.0},
+    "p117": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p118": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.28615,"slack_ns":0.18347,"endpoint_pin":"_719_/D"},
+    "p119": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":2.34087,"slack_ns":5.55913,"endpoint_pin":"available"},
+    "p120": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.3367,"slack_ns":-0.10898,"endpoint_pin":"_719_/RN"},
+    "p121": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.1367,"slack_ns":7.79262,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.13147,"virtual_driver_delay_ns":0.1367,"port_arrival_ns":2.1367},
+    "p122": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.3367,"slack_ns":-0.10898,"endpoint_pin":"_719_/RN","port_capacitance_ff":56.3903,"port_slew_ns":0.13147,"virtual_driver_delay_ns":0.1367,"port_arrival_ns":0.3367},
+    "p123": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_719_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.37123,"slack_ns":0.26437,"endpoint_pin":"_719_/D"},
+    "p124": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.33202,"slack_ns":2.56798,"endpoint_pin":"available"},
+    "p125": {"startpoint":"_599_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_599_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.11943,"slack_ns":0.01728,"endpoint_pin":"_599_/D"},
+    "p126": {"startpoint":"tx_return[1] (input port clocked by clk)","endpoint":"_601_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.61002,"slack_ns":7.2498,"endpoint_pin":"_601_/D"},
+    "p127": {"startpoint":"_590_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_601_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.84788,"slack_ns":9.01194,"endpoint_pin":"_601_/D"},
+    "p128": {"startpoint":"admit[1] (input port clocked by clk)","endpoint":"_599_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.26165,"slack_ns":0.15625,"endpoint_pin":"_599_/D"},
+    "p129": {"startpoint":"_590_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[3] (output port clocked by clk)","path_group":"clk","arrival_ns":0.47333,"slack_ns":7.42667,"endpoint_pin":"available_id[3]"},
+    "p130": {"startpoint":"_601_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[4] (output port clocked by clk)","path_group":"clk","arrival_ns":0.097,"slack_ns":0.197,"endpoint_pin":"free_count[4]"},
+    "p131": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.2,"slack_ns":4.73947,"endpoint_pin":"_585_/SN","port_capacitance_ff":32.91748,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.2},
+    "p132": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.0,"slack_ns":4.65632,"endpoint_pin":"_582_/RN","port_capacitance_ff":32.91748,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.0},
+    "p133": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.09599,"slack_ns":4.99058,"endpoint_pin":"_585_/D"},
+    "p134": {"startpoint":"_600_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[0] (output port clocked by clk)","path_group":"clk","arrival_ns":0.15098,"slack_ns":0.25098,"endpoint_pin":"available_id[0]"},
+    "p135": {"startpoint":"_600_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.19047,"slack_ns":0.29047,"endpoint_pin":"available"},
+    "p136": {"startpoint":"_584_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[0] (output port clocked by clk)","path_group":"clk","arrival_ns":0.13512,"slack_ns":7.76488,"endpoint_pin":"free_count[0]"},
+    "p137": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.41503,"slack_ns":2.48497,"endpoint_pin":"available"},
+    "p138": {"startpoint":"tx_return[1] (input port clocked by clk)","endpoint":"_601_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.58831,"slack_ns":7.2715,"endpoint_pin":"_601_/D"},
+    "p139": {"startpoint":"admit[1] (input port clocked by clk)","endpoint":"_593_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.26147,"slack_ns":0.15563,"endpoint_pin":"_593_/D"},
+    "p140": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.28034,"slack_ns":4.66065,"endpoint_pin":"_585_/SN","port_capacitance_ff":32.91748,"port_slew_ns":0.0779,"virtual_driver_delay_ns":0.08034,"port_arrival_ns":5.28034},
+    "p141": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.08034,"slack_ns":4.70173,"endpoint_pin":"_582_/RN","port_capacitance_ff":32.91748,"port_slew_ns":0.0779,"virtual_driver_delay_ns":0.08034,"port_arrival_ns":5.08034},
+    "p142": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_603_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.13926,"slack_ns":5.03658,"endpoint_pin":"_603_/D"},
+    "p143": {"startpoint":"_600_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.19045,"slack_ns":0.29045,"endpoint_pin":"available"},
+    "p144": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_582_/RN"},
+    "p145": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":9.73947,"endpoint_pin":"_585_/SN","port_capacitance_ff":32.91748,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p146": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_582_/RN","port_capacitance_ff":32.91748,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.0},
+    "p147": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.33202,"slack_ns":7.56798,"endpoint_pin":"available"},
+    "p148": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.09599,"slack_ns":-0.00942,"endpoint_pin":"_585_/D"},
+    "p149": {"startpoint":"_590_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.42337,"slack_ns":7.47663,"endpoint_pin":"available"},
+    "p150": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.12151,"slack_ns":0.22151,"endpoint_pin":"available"},
+    "p151": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.08034,"slack_ns":-0.29828,"endpoint_pin":"_582_/RN"},
+    "p152": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.28034,"slack_ns":9.66065,"endpoint_pin":"_585_/SN","port_capacitance_ff":32.91748,"port_slew_ns":0.0779,"virtual_driver_delay_ns":0.08034,"port_arrival_ns":0.28034},
+    "p153": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.08034,"slack_ns":-0.29828,"endpoint_pin":"_582_/RN","port_capacitance_ff":32.91748,"port_slew_ns":0.0779,"virtual_driver_delay_ns":0.08034,"port_arrival_ns":0.08034},
+    "p154": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.41503,"slack_ns":7.48497,"endpoint_pin":"available"},
+    "p155": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_603_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.13926,"slack_ns":0.03658,"endpoint_pin":"_603_/D"},
+    "p156": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.15991,"slack_ns":0.25991,"endpoint_pin":"available"},
+    "p157": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":2.13202,"slack_ns":5.76798,"endpoint_pin":"available"},
+    "p158": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_582_/RN"},
+    "p159": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.0,"slack_ns":7.93947,"endpoint_pin":"_585_/SN","port_capacitance_ff":32.91748,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":2.0},
+    "p160": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_582_/RN","port_capacitance_ff":32.91748,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p161": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.29599,"slack_ns":0.19058,"endpoint_pin":"_585_/D"},
+    "p162": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":2.21503,"slack_ns":5.68497,"endpoint_pin":"available"},
+    "p163": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.28034,"slack_ns":-0.09828,"endpoint_pin":"_582_/RN"},
+    "p164": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_585_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.08034,"slack_ns":7.86065,"endpoint_pin":"_585_/SN","port_capacitance_ff":32.91748,"port_slew_ns":0.0779,"virtual_driver_delay_ns":0.08034,"port_arrival_ns":2.08034},
+    "p165": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_582_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.28034,"slack_ns":-0.09828,"endpoint_pin":"_582_/RN","port_capacitance_ff":32.91748,"port_slew_ns":0.0779,"virtual_driver_delay_ns":0.08034,"port_arrival_ns":0.28034},
+    "p166": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_603_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.33926,"slack_ns":0.23658,"endpoint_pin":"_603_/D"},
+    "p167": {"startpoint":"_22766_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[8] (output port clocked by clk)","path_group":"clk","arrival_ns":23.93948,"slack_ns":-16.03948,"endpoint_pin":"available_id[8]"},
+    "p168": {"startpoint":"_22760_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_22760_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.11116,"slack_ns":0.00899,"endpoint_pin":"_22760_/D"},
+    "p169": {"startpoint":"_22766_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_22775_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":24.35943,"slack_ns":-14.49976,"endpoint_pin":"_22775_/D"},
+    "p170": {"startpoint":"release_cell[16] (input port clocked by clk)","endpoint":"_22775_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.8575,"slack_ns":7.00216,"endpoint_pin":"_22775_/D"},
+    "p171": {"startpoint":"allocate[18] (input port clocked by clk)","endpoint":"_22776_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.24468,"slack_ns":0.13936,"endpoint_pin":"_22776_/D"},
+    "p172": {"startpoint":"_22775_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[10] (output port clocked by clk)","path_group":"clk","arrival_ns":0.09692,"slack_ns":0.19692,"endpoint_pin":"free_count[10]"},
+    "p173": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21751_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.2,"slack_ns":4.73947,"endpoint_pin":"_21751_/SN","port_capacitance_ff":1414.35461,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.2},
+    "p174": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.0,"slack_ns":4.65632,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.0},
+    "p175": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.28499,"slack_ns":2.61501,"endpoint_pin":"available"},
+    "p176": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21745_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.08365,"slack_ns":4.98096,"endpoint_pin":"_21745_/D"},
+    "p177": {"startpoint":"_21771_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[1] (output port clocked by clk)","path_group":"clk","arrival_ns":0.20124,"slack_ns":0.30124,"endpoint_pin":"available_id[1]"},
+    "p178": {"startpoint":"_22766_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":23.91619,"slack_ns":-16.01619,"endpoint_pin":"available"},
+    "p179": {"startpoint":"_22774_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.1962,"slack_ns":0.2962,"endpoint_pin":"available"},
+    "p180": {"startpoint":"_21744_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[6] (output port clocked by clk)","path_group":"clk","arrival_ns":0.13196,"slack_ns":7.76804,"endpoint_pin":"free_count[6]"},
+    "p181": {"startpoint":"release_cell[15] (input port clocked by clk)","endpoint":"_22775_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.85059,"slack_ns":7.00908,"endpoint_pin":"_22775_/D"},
+    "p182": {"startpoint":"allocate[18] (input port clocked by clk)","endpoint":"_22776_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.25291,"slack_ns":0.15021,"endpoint_pin":"_22776_/D"},
+    "p183": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":8.59682,"slack_ns":0.58227,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":3.2303,"virtual_driver_delay_ns":3.39682,"port_arrival_ns":8.59682},
+    "p184": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":8.39682,"slack_ns":4.07173,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":3.2303,"virtual_driver_delay_ns":3.39682,"port_arrival_ns":8.39682},
+    "p185": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":8.68921,"slack_ns":-0.78921,"endpoint_pin":"available"},
+    "p186": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21750_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":7.03032,"slack_ns":6.92346,"endpoint_pin":"_21750_/D"},
+    "p187": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_21742_/RN"},
+    "p188": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21751_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":9.73947,"endpoint_pin":"_21751_/SN","port_capacitance_ff":1414.35461,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p189": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.0},
+    "p190": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.28499,"slack_ns":7.61501,"endpoint_pin":"available"},
+    "p191": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21745_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.08365,"slack_ns":-0.01904,"endpoint_pin":"_21745_/D"},
+    "p192": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.08493,"slack_ns":0.18493,"endpoint_pin":"available"},
+    "p193": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":3.39682,"slack_ns":-0.92827,"endpoint_pin":"_21742_/RN"},
+    "p194": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":3.59682,"slack_ns":5.58227,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":3.2303,"virtual_driver_delay_ns":3.39682,"port_arrival_ns":3.59682},
+    "p195": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":3.39682,"slack_ns":-0.92827,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":3.2303,"virtual_driver_delay_ns":3.39682,"port_arrival_ns":3.39682},
+    "p196": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":3.68921,"slack_ns":4.21079,"endpoint_pin":"available"},
+    "p197": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21750_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.03032,"slack_ns":1.92346,"endpoint_pin":"_21750_/D"},
+    "p198": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_21742_/RN"},
+    "p199": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21751_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.0,"slack_ns":7.93947,"endpoint_pin":"_21751_/SN","port_capacitance_ff":1414.35461,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":2.0},
+    "p200": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p201": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":2.08499,"slack_ns":5.81501,"endpoint_pin":"available"},
+    "p202": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21745_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.28365,"slack_ns":0.18096,"endpoint_pin":"_21745_/D"},
+    "p203": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":3.59682,"slack_ns":-0.72827,"endpoint_pin":"_21742_/RN"},
+    "p204": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.39682,"slack_ns":3.78227,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":3.2303,"virtual_driver_delay_ns":3.39682,"port_arrival_ns":5.39682},
+    "p205": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21742_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":3.59682,"slack_ns":-0.72827,"endpoint_pin":"_21742_/RN","port_capacitance_ff":1414.35461,"port_slew_ns":3.2303,"virtual_driver_delay_ns":3.39682,"port_arrival_ns":3.59682},
+    "p206": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.48921,"slack_ns":2.41079,"endpoint_pin":"available"},
+    "p207": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_21750_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.23032,"slack_ns":2.12346,"endpoint_pin":"_21750_/D"},
+    "p208": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.35304,"slack_ns":2.54696,"endpoint_pin":"available"},
+    "p209": {"startpoint":"_7253_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_7253_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.11808,"slack_ns":0.01594,"endpoint_pin":"_7253_/D"},
+    "p210": {"startpoint":"_7468_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[7] (output port clocked by clk)","path_group":"clk","arrival_ns":5.34754,"slack_ns":2.55246,"endpoint_pin":"available_id[7]"},
+    "p211": {"startpoint":"_7468_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"_7481_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.90283,"slack_ns":3.95489,"endpoint_pin":"_7481_/D"},
+    "p212": {"startpoint":"tx_return[1] (input port clocked by clk)","endpoint":"_7481_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.92697,"slack_ns":6.93076,"endpoint_pin":"_7481_/D"},
+    "p213": {"startpoint":"tx_return[8] (input port clocked by clk)","endpoint":"_7482_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.26138,"slack_ns":0.15693,"endpoint_pin":"_7482_/D"},
+    "p214": {"startpoint":"_7481_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[8] (output port clocked by clk)","path_group":"clk","arrival_ns":0.09693,"slack_ns":0.19693,"endpoint_pin":"free_count[8]"},
+    "p215": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7225_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.2,"slack_ns":4.73947,"endpoint_pin":"_7225_/SN","port_capacitance_ff":365.44641,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.2},
+    "p216": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.0,"slack_ns":4.65632,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":5.0},
+    "p217": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7371_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.13978,"slack_ns":5.03438,"endpoint_pin":"_7371_/D"},
+    "p218": {"startpoint":"_7230_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available_id[4] (output port clocked by clk)","path_group":"clk","arrival_ns":0.19203,"slack_ns":0.29203,"endpoint_pin":"available_id[4]"},
+    "p219": {"startpoint":"_7480_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.1735,"slack_ns":0.2735,"endpoint_pin":"available"},
+    "p220": {"startpoint":"_7224_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"free_count[0] (output port clocked by clk)","path_group":"clk","arrival_ns":0.14065,"slack_ns":7.75935,"endpoint_pin":"free_count[0]"},
+    "p221": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":6.24396,"slack_ns":1.65604,"endpoint_pin":"available"},
+    "p222": {"startpoint":"tx_return[1] (input port clocked by clk)","endpoint":"_7481_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":2.91898,"slack_ns":6.93874,"endpoint_pin":"_7481_/D"},
+    "p223": {"startpoint":"tx_return[8] (input port clocked by clk)","endpoint":"_7482_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.26182,"slack_ns":0.15737,"endpoint_pin":"_7482_/D"},
+    "p224": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":6.07866,"slack_ns":3.67991,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.83672,"virtual_driver_delay_ns":0.87866,"port_arrival_ns":6.07866},
+    "p225": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":5.87866,"slack_ns":4.55008,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.83672,"virtual_driver_delay_ns":0.87866,"port_arrival_ns":5.87866},
+    "p226": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7371_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":5.65939,"slack_ns":5.55399,"endpoint_pin":"_7371_/D"},
+    "p227": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_7218_/RN"},
+    "p228": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7225_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":9.73947,"endpoint_pin":"_7225_/SN","port_capacitance_ff":365.44641,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p229": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.0,"slack_ns":-0.34368,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.0},
+    "p230": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.35304,"slack_ns":7.54696,"endpoint_pin":"available"},
+    "p231": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7371_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.13978,"slack_ns":0.03438,"endpoint_pin":"_7371_/D"},
+    "p232": {"startpoint":"_7468_ (rising edge-triggered flip-flop clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":5.31446,"slack_ns":2.58554,"endpoint_pin":"available"},
+    "p233": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":0.10361,"slack_ns":0.20361,"endpoint_pin":"available"},
+    "p234": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.87866,"slack_ns":-0.44992,"endpoint_pin":"_7218_/RN"},
+    "p235": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":1.07866,"slack_ns":8.67991,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.83672,"virtual_driver_delay_ns":0.87866,"port_arrival_ns":1.07866},
+    "p236": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.87866,"slack_ns":-0.44992,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.83672,"virtual_driver_delay_ns":0.87866,"port_arrival_ns":0.87866},
+    "p237": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":1.24396,"slack_ns":6.65604,"endpoint_pin":"available"},
+    "p238": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7371_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.65939,"slack_ns":0.55399,"endpoint_pin":"_7371_/D"},
+    "p239": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_7218_/RN"},
+    "p240": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7225_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.0,"slack_ns":7.93947,"endpoint_pin":"_7225_/SN","port_capacitance_ff":365.44641,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":2.0},
+    "p241": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":0.2,"slack_ns":-0.14368,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.05,"virtual_driver_delay_ns":0.0,"port_arrival_ns":0.2},
+    "p242": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":2.15304,"slack_ns":5.74695,"endpoint_pin":"available"},
+    "p243": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7371_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.33978,"slack_ns":0.23438,"endpoint_pin":"_7371_/D"},
+    "p244": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":1.07866,"slack_ns":-0.24992,"endpoint_pin":"_7218_/RN"},
+    "p245": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (recovery check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":2.87866,"slack_ns":6.87991,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.83672,"virtual_driver_delay_ns":0.87866,"port_arrival_ns":2.87866},
+    "p246": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7218_ (removal check against rising-edge clock clk)","path_group":"asynchronous","arrival_ns":1.07866,"slack_ns":-0.24992,"endpoint_pin":"_7218_/RN","port_capacitance_ff":365.44641,"port_slew_ns":0.83672,"virtual_driver_delay_ns":0.87866,"port_arrival_ns":1.07866},
+    "p247": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"available (output port clocked by clk)","path_group":"clk","arrival_ns":3.04396,"slack_ns":4.85604,"endpoint_pin":"available"},
+    "p248": {"startpoint":"rst_n (input port clocked by clk)","endpoint":"_7371_ (rising edge-triggered flip-flop clocked by clk)","path_group":"clk","arrival_ns":0.85939,"slack_ns":0.75399,"endpoint_pin":"_7371_/D"}
+  },
+  "scenarios": [
+    {"point":"E0-fifo2","scenario":"fall-reference-r01","mode":"slew","result":"PASS","model":"fifo-capability-r01/fall-reference-r01/slew","sdc_sha256":"3cc8b2d387607f4fd1b1d42380734c3a8457fb3cd817522298162ba422570179","manifest_sha256":"25d13549b4ef839dccd386b3989ad0577e0d5d3b737a97b5619aebf997bf6c6d","measurements":{"coverage":{"output_bits":140,"registers":279,"async_pins":5},"paths":{"overall_max":"p001","overall_min":"p002","data_max":"p003","data_min":"p002","data_rr_max":"p004","data_rr_min":"p002","data_ir_max":"p005","data_ir_min":"p006","data_ro_max":"p007","data_ro_min":"p008","data_io_max":"p003","data_io_min":"p009","reset_checks_max":"p010","reset_checks_min":"p011","reset_effects_max":"p001","reset_effects_min":"p012"},"required_source_delay_window_ns_after_rise":[0.29368,9.98947],"modeled_port_release_ns_after_rise":[5.0,5.2],"required_port_release_window_ns_after_rise":[0.29368,9.98947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_625_/ZN","limit":0.19853,"actual":0.05397,"slack":0.14457},"max capacitance":{"pin":"_625_/ZN","limit":26.7029,"actual":10.0,"slack":16.7029}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo2","scenario":"fall-reference-r01","mode":"drive","result":"PASS","model":"fifo-capability-r01/fall-reference-r01/drive","sdc_sha256":"5281a6aae5803b2079531c10e39c28b79cca704eb5ea2c3e537314b3ef83d3d1","manifest_sha256":"d4a6a605537d8a98496ab6520f0a02d908f0eca5efbbc5ec317f2ff974abd27c","measurements":{"coverage":{"output_bits":140,"registers":279,"async_pins":5},"paths":{"overall_max":"p013","overall_min":"p002","data_max":"p014","data_min":"p002","data_rr_max":"p004","data_rr_min":"p002","data_ir_max":"p015","data_ir_min":"p016","data_ro_max":"p007","data_ro_min":"p008","data_io_max":"p014","data_io_min":"p017","reset_checks_max":"p018","reset_checks_min":"p019","reset_effects_max":"p013","reset_effects_min":"p020"},"required_source_delay_window_ns_after_rise":[0.24049,9.9508],"modeled_port_release_ns_after_rise":[5.03881,5.23881],"required_port_release_window_ns_after_rise":[0.2793,9.98961],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_625_/ZN","limit":0.19853,"actual":0.05397,"slack":0.14457},"max capacitance":{"pin":"_625_/ZN","limit":26.7029,"actual":10.0,"slack":16.7029}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo2","scenario":"rise-phase-sensitivity-r01","mode":"slew","result":"PASS","model":"fifo-capability-r01/rise-phase-sensitivity-r01/slew","sdc_sha256":"fdb368a3ce9f55a8bb2ddc8825d5d4a3e12fc8a6983ed50611e5f057464d9197","manifest_sha256":"aec5da0d58117dbafa072ae9adc44a66d98fb32e0467f581ab312f6992161821","measurements":{"coverage":{"output_bits":140,"registers":279,"async_pins":5},"paths":{"overall_max":"p003","overall_min":"p021","data_max":"p003","data_min":"p002","data_rr_max":"p004","data_rr_min":"p002","data_ir_max":"p005","data_ir_min":"p006","data_ro_max":"p007","data_ro_min":"p008","data_io_max":"p003","data_io_min":"p009","reset_checks_max":"p022","reset_checks_min":"p023","reset_effects_max":"p024","reset_effects_min":"p025"},"required_source_delay_window_ns_after_rise":[0.29368,9.98947],"modeled_port_release_ns_after_rise":[0.0,0.2],"required_port_release_window_ns_after_rise":[0.29368,9.98947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_625_/ZN","limit":0.19853,"actual":0.05397,"slack":0.14457},"max capacitance":{"pin":"_625_/ZN","limit":26.7029,"actual":10.0,"slack":16.7029}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo2","scenario":"rise-phase-sensitivity-r01","mode":"drive","result":"PASS","model":"fifo-capability-r01/rise-phase-sensitivity-r01/drive","sdc_sha256":"4dcbe67fd43d86542d93648391a702065a8a3c77b63b32186dd908450f4468db","manifest_sha256":"54d9a493b25d72539cd7e632fbe6f4891821cfb35060f8ad59382b72e5ffbd03","measurements":{"coverage":{"output_bits":140,"registers":279,"async_pins":5},"paths":{"overall_max":"p014","overall_min":"p026","data_max":"p014","data_min":"p002","data_rr_max":"p004","data_rr_min":"p002","data_ir_max":"p015","data_ir_min":"p016","data_ro_max":"p007","data_ro_min":"p008","data_io_max":"p014","data_io_min":"p017","reset_checks_max":"p027","reset_checks_min":"p028","reset_effects_max":"p029","reset_effects_min":"p030"},"required_source_delay_window_ns_after_rise":[0.24049,9.9508],"modeled_port_release_ns_after_rise":[0.03881,0.23881],"required_port_release_window_ns_after_rise":[0.2793,9.98961],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_625_/ZN","limit":0.19853,"actual":0.05397,"slack":0.14457},"max capacitance":{"pin":"_625_/ZN","limit":26.7029,"actual":10.0,"slack":16.7029}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo2","scenario":"rise-historical-shape-r01","mode":"slew","result":"PASS","model":"fifo-capability-r01/rise-historical-shape-r01/slew","sdc_sha256":"fbb965d6f42170a47da1b537f84850e699b92ce8436e2922f5d1adbf41f2ea9c","manifest_sha256":"491ee05b410fc1f07e0d47b2d24dceb343fdd10498a3d829ee9704bce896c6ab","measurements":{"coverage":{"output_bits":140,"registers":279,"async_pins":5},"paths":{"overall_max":"p031","overall_min":"p032","data_max":"p003","data_min":"p002","data_rr_max":"p004","data_rr_min":"p002","data_ir_max":"p005","data_ir_min":"p006","data_ro_max":"p007","data_ro_min":"p008","data_io_max":"p003","data_io_min":"p009","reset_checks_max":"p033","reset_checks_min":"p034","reset_effects_max":"p031","reset_effects_min":"p035"},"required_source_delay_window_ns_after_rise":[0.29368,9.98947],"modeled_port_release_ns_after_rise":[0.2,2.0],"required_port_release_window_ns_after_rise":[0.29368,9.98947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_625_/ZN","limit":0.19853,"actual":0.05397,"slack":0.14457},"max capacitance":{"pin":"_625_/ZN","limit":26.7029,"actual":10.0,"slack":16.7029}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo2","scenario":"rise-historical-shape-r01","mode":"drive","result":"PASS","model":"fifo-capability-r01/rise-historical-shape-r01/drive","sdc_sha256":"ceb1cba69aea7e2ece886049aaaf95b8cf49d9d573b4b69df3416b5415797885","manifest_sha256":"da36b8c08691ac7b157f731fffb2069eee7d37b38af6751a17be86528b7774da","measurements":{"coverage":{"output_bits":140,"registers":279,"async_pins":5},"paths":{"overall_max":"p036","overall_min":"p037","data_max":"p014","data_min":"p002","data_rr_max":"p004","data_rr_min":"p002","data_ir_max":"p015","data_ir_min":"p016","data_ro_max":"p007","data_ro_min":"p008","data_io_max":"p014","data_io_min":"p017","reset_checks_max":"p038","reset_checks_min":"p039","reset_effects_max":"p036","reset_effects_min":"p040"},"required_source_delay_window_ns_after_rise":[0.24049,9.9508],"modeled_port_release_ns_after_rise":[0.23881,2.03881],"required_port_release_window_ns_after_rise":[0.2793,9.98961],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_625_/ZN","limit":0.19853,"actual":0.05397,"slack":0.14457},"max capacitance":{"pin":"_625_/ZN","limit":26.7029,"actual":10.0,"slack":16.7029}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo4","scenario":"fall-reference-r01","mode":"slew","result":"PASS","model":"fifo-capability-r01/fall-reference-r01/slew","sdc_sha256":"3cc8b2d387607f4fd1b1d42380734c3a8457fb3cd817522298162ba422570179","manifest_sha256":"139815c10ac7f062a83644c6926961dec2597eca76a0481e2fb9d0d307757f28","measurements":{"coverage":{"output_bits":140,"registers":556,"async_pins":8},"paths":{"overall_max":"p041","overall_min":"p042","data_max":"p043","data_min":"p042","data_rr_max":"p044","data_rr_min":"p042","data_ir_max":"p045","data_ir_min":"p046","data_ro_max":"p047","data_ro_min":"p048","data_io_max":"p043","data_io_min":"p049","reset_checks_max":"p050","reset_checks_min":"p051","reset_effects_max":"p041","reset_effects_min":"p052"},"required_source_delay_window_ns_after_rise":[0.29368,9.98947],"modeled_port_release_ns_after_rise":[5.0,5.2],"required_port_release_window_ns_after_rise":[0.29368,9.98947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_1522_/Z","limit":0.19853,"actual":0.04727,"slack":0.15127},"max capacitance":{"pin":"_1530_/ZN","limit":26.0544,"actual":4.93716,"slack":21.11724}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo4","scenario":"fall-reference-r01","mode":"drive","result":"PASS","model":"fifo-capability-r01/fall-reference-r01/drive","sdc_sha256":"5281a6aae5803b2079531c10e39c28b79cca704eb5ea2c3e537314b3ef83d3d1","manifest_sha256":"60315fbf5dd8f0b4c835e7de13007417272ced56c9c1dd5cf0df20235b4f247d","measurements":{"coverage":{"output_bits":140,"registers":556,"async_pins":8},"paths":{"overall_max":"p053","overall_min":"p042","data_max":"p054","data_min":"p042","data_rr_max":"p055","data_rr_min":"p042","data_ir_max":"p056","data_ir_min":"p057","data_ro_max":"p047","data_ro_min":"p048","data_io_max":"p054","data_io_min":"p058","reset_checks_max":"p059","reset_checks_min":"p060","reset_effects_max":"p053","reset_effects_min":"p061"},"required_source_delay_window_ns_after_rise":[0.24352,9.93453],"modeled_port_release_ns_after_rise":[5.05516,5.25516],"required_port_release_window_ns_after_rise":[0.29868,9.98969],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.05399,"slack":0.14455},"max capacitance":{"pin":"_1530_/ZN","limit":26.0544,"actual":4.93716,"slack":21.11724}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo4","scenario":"rise-phase-sensitivity-r01","mode":"slew","result":"PASS","model":"fifo-capability-r01/rise-phase-sensitivity-r01/slew","sdc_sha256":"fdb368a3ce9f55a8bb2ddc8825d5d4a3e12fc8a6983ed50611e5f057464d9197","manifest_sha256":"fab925c15f32c3434cb8a1d4c5120c4b2e8b456636bd11f6de2c68c9bf36ac9c","measurements":{"coverage":{"output_bits":140,"registers":556,"async_pins":8},"paths":{"overall_max":"p043","overall_min":"p062","data_max":"p043","data_min":"p042","data_rr_max":"p044","data_rr_min":"p042","data_ir_max":"p045","data_ir_min":"p046","data_ro_max":"p047","data_ro_min":"p048","data_io_max":"p043","data_io_min":"p049","reset_checks_max":"p063","reset_checks_min":"p064","reset_effects_max":"p065","reset_effects_min":"p066"},"required_source_delay_window_ns_after_rise":[0.29368,9.98947],"modeled_port_release_ns_after_rise":[0.0,0.2],"required_port_release_window_ns_after_rise":[0.29368,9.98947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_1522_/Z","limit":0.19853,"actual":0.04727,"slack":0.15127},"max capacitance":{"pin":"_1530_/ZN","limit":26.0544,"actual":4.93716,"slack":21.11724}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo4","scenario":"rise-phase-sensitivity-r01","mode":"drive","result":"PASS","model":"fifo-capability-r01/rise-phase-sensitivity-r01/drive","sdc_sha256":"4dcbe67fd43d86542d93648391a702065a8a3c77b63b32186dd908450f4468db","manifest_sha256":"711a5dc5c22a0e1986f82d7c1724ac9a33357883b1fbb820b522e36325e114c7","measurements":{"coverage":{"output_bits":140,"registers":556,"async_pins":8},"paths":{"overall_max":"p054","overall_min":"p067","data_max":"p054","data_min":"p042","data_rr_max":"p055","data_rr_min":"p042","data_ir_max":"p056","data_ir_min":"p057","data_ro_max":"p047","data_ro_min":"p048","data_io_max":"p054","data_io_min":"p058","reset_checks_max":"p068","reset_checks_min":"p069","reset_effects_max":"p070","reset_effects_min":"p071"},"required_source_delay_window_ns_after_rise":[0.24352,9.93453],"modeled_port_release_ns_after_rise":[0.05516,0.25516],"required_port_release_window_ns_after_rise":[0.29868,9.98969],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.05399,"slack":0.14455},"max capacitance":{"pin":"_1530_/ZN","limit":26.0544,"actual":4.93716,"slack":21.11724}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo4","scenario":"rise-historical-shape-r01","mode":"slew","result":"PASS","model":"fifo-capability-r01/rise-historical-shape-r01/slew","sdc_sha256":"fbb965d6f42170a47da1b537f84850e699b92ce8436e2922f5d1adbf41f2ea9c","manifest_sha256":"5a53498cb570508d87a407b8a99143b21ef5cb030c2d10ea2ba1b8a88ed869d9","measurements":{"coverage":{"output_bits":140,"registers":556,"async_pins":8},"paths":{"overall_max":"p072","overall_min":"p073","data_max":"p043","data_min":"p042","data_rr_max":"p044","data_rr_min":"p042","data_ir_max":"p045","data_ir_min":"p046","data_ro_max":"p047","data_ro_min":"p048","data_io_max":"p043","data_io_min":"p049","reset_checks_max":"p074","reset_checks_min":"p075","reset_effects_max":"p072","reset_effects_min":"p076"},"required_source_delay_window_ns_after_rise":[0.29368,9.98947],"modeled_port_release_ns_after_rise":[0.2,2.0],"required_port_release_window_ns_after_rise":[0.29368,9.98947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_1522_/Z","limit":0.19853,"actual":0.04727,"slack":0.15127},"max capacitance":{"pin":"_1530_/ZN","limit":26.0544,"actual":4.93716,"slack":21.11724}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"E0-fifo4","scenario":"rise-historical-shape-r01","mode":"drive","result":"PASS","model":"fifo-capability-r01/rise-historical-shape-r01/drive","sdc_sha256":"ceb1cba69aea7e2ece886049aaaf95b8cf49d9d573b4b69df3416b5415797885","manifest_sha256":"dd2aa2dc0fe982f32bec9a783ac1515c6c5ef14fe90e810a1db915a07d0bd045","measurements":{"coverage":{"output_bits":140,"registers":556,"async_pins":8},"paths":{"overall_max":"p077","overall_min":"p078","data_max":"p054","data_min":"p042","data_rr_max":"p055","data_rr_min":"p042","data_ir_max":"p056","data_ir_min":"p057","data_ro_max":"p047","data_ro_min":"p048","data_io_max":"p054","data_io_min":"p058","reset_checks_max":"p079","reset_checks_min":"p080","reset_effects_max":"p077","reset_effects_min":"p081"},"required_source_delay_window_ns_after_rise":[0.24352,9.93453],"modeled_port_release_ns_after_rise":[0.25516,2.05516],"required_port_release_window_ns_after_rise":[0.29868,9.98969],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.05399,"slack":0.14455},"max capacitance":{"pin":"_1530_/ZN","limit":26.0544,"actual":4.93716,"slack":21.11724}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-cell","scenario":"fall-reference-r01","mode":"slew","result":"PASS","model":"allocator-r01/fall-reference-r01/slew","sdc_sha256":"8bb73f0d9f040af9bea151c2156741c86027719b2743dba52d69b5d60eed12c1","manifest_sha256":"e29af71af7a767409ccf46e1a83957723d1e10912f797a3b90a78f5247fa09a6","measurements":{"coverage":{"output_bits":13,"registers":39,"async_pins":39},"paths":{"overall_max":"p082","overall_min":"p083","data_max":"p084","data_min":"p083","data_rr_max":"p085","data_rr_min":"p083","data_ir_max":"p086","data_ir_min":"p087","data_ro_max":"p084","data_ro_min":"p088","data_io_max":null,"data_io_min":null,"reset_checks_max":"p089","reset_checks_min":"p090","reset_effects_max":"p082","reset_effects_min":"p091","selection_max":"p084","selection_min":"p092","availability_max":"p082","availability_min":"p093","count_max":"p094","count_min":"p088"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[5.0,5.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_526_/ZN","limit":0.19853,"actual":0.07794,"slack":0.1206},"max capacitance":{"pin":"_449_/ZN","limit":10.4713,"actual":5.00563,"slack":5.46567}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"I0-cell","scenario":"fall-reference-r01","mode":"drive","result":"PASS","model":"allocator-r01/fall-reference-r01/drive","sdc_sha256":"977c7459f438f3db80edc78d7792b6348ff1f427c5f1568c48a19fb93701d14b","manifest_sha256":"d866fb7608e9f40183344e4df971ee535be62ab05a2e8e403279f4ac911bd811","measurements":{"coverage":{"output_bits":13,"registers":39,"async_pins":39},"paths":{"overall_max":"p095","overall_min":"p083","data_max":"p084","data_min":"p083","data_rr_max":"p096","data_rr_min":"p083","data_ir_max":"p097","data_ir_min":"p098","data_ro_max":"p084","data_ro_min":"p088","data_io_max":null,"data_io_min":null,"reset_checks_max":"p099","reset_checks_min":"p100","reset_effects_max":"p095","reset_effects_min":"p101","selection_max":"p084","selection_min":"p092","availability_max":"p095","availability_min":"p093","count_max":"p094","count_min":"p088"},"required_source_delay_window_ns_after_rise":[0.30898,9.79262],"modeled_port_release_ns_after_rise":[5.1367,5.3367],"required_port_release_window_ns_after_rise":[0.44568,9.92932],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.13147,"slack":0.06707},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":56.3903,"slack":4.2634}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"I0-cell","scenario":"rise-phase-sensitivity-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/slew","sdc_sha256":"a8d58c9e477b0d5ee390c51c418d5b27693858f7e6d8402293796c277544c5eb","manifest_sha256":"986f33a432e0513a0686f70b590a508a2835e37f611e8dae20e07108e3140e1a","measurements":{"coverage":{"output_bits":13,"registers":39,"async_pins":39},"paths":{"overall_max":"p084","overall_min":"p102","data_max":"p084","data_min":"p083","data_rr_max":"p085","data_rr_min":"p083","data_ir_max":"p086","data_ir_min":"p087","data_ro_max":"p084","data_ro_min":"p088","data_io_max":null,"data_io_min":null,"reset_checks_max":"p103","reset_checks_min":"p104","reset_effects_max":"p105","reset_effects_min":"p106","selection_max":"p084","selection_min":"p092","availability_max":"p107","availability_min":"p108","count_max":"p094","count_min":"p088"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.0,0.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"FAIL","electrical":"PASS"},"electrical":{"max slew":{"pin":"_526_/ZN","limit":0.19853,"actual":0.07794,"slack":0.1206},"max capacitance":{"pin":"_449_/ZN","limit":10.4713,"actual":5.00563,"slack":5.46567}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-cell","scenario":"rise-phase-sensitivity-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/drive","sdc_sha256":"3161dd2b986c7a1a5cae1e6ca34edf6d83a1634d963616532bce57da574ed7bf","manifest_sha256":"ce40371fc4e1348828d3bcd769c1de81b88ca4997ad026385ea536443636a4fd","measurements":{"coverage":{"output_bits":13,"registers":39,"async_pins":39},"paths":{"overall_max":"p084","overall_min":"p109","data_max":"p084","data_min":"p083","data_rr_max":"p096","data_rr_min":"p083","data_ir_max":"p097","data_ir_min":"p098","data_ro_max":"p084","data_ro_min":"p088","data_io_max":null,"data_io_min":null,"reset_checks_max":"p110","reset_checks_min":"p111","reset_effects_max":"p112","reset_effects_min":"p113","selection_max":"p084","selection_min":"p092","availability_max":"p107","availability_min":"p093","count_max":"p094","count_min":"p088"},"required_source_delay_window_ns_after_rise":[0.30898,9.79262],"modeled_port_release_ns_after_rise":[0.1367,0.3367],"required_port_release_window_ns_after_rise":[0.44568,9.92932],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.13147,"slack":0.06707},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":56.3903,"slack":4.2634}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-cell","scenario":"rise-historical-shape-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/slew","sdc_sha256":"078dcde6b62d9bb53adb8dea5985fee14728affa13edc44062e5ca14a638458a","manifest_sha256":"7caebbfb622758d6ca63c89e946301155cde1d59d342e336d5fd3b503a8ce4b1","measurements":{"coverage":{"output_bits":13,"registers":39,"async_pins":39},"paths":{"overall_max":"p114","overall_min":"p115","data_max":"p084","data_min":"p083","data_rr_max":"p085","data_rr_min":"p083","data_ir_max":"p086","data_ir_min":"p087","data_ro_max":"p084","data_ro_min":"p088","data_io_max":null,"data_io_min":null,"reset_checks_max":"p116","reset_checks_min":"p117","reset_effects_max":"p114","reset_effects_min":"p118","selection_max":"p084","selection_min":"p092","availability_max":"p114","availability_min":"p093","count_max":"p094","count_min":"p088"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.2,2.0],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_526_/ZN","limit":0.19853,"actual":0.07794,"slack":0.1206},"max capacitance":{"pin":"_449_/ZN","limit":10.4713,"actual":5.00563,"slack":5.46567}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-cell","scenario":"rise-historical-shape-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/drive","sdc_sha256":"efaf1912e89427d511ebbf2e86c1bd9d07234d818a006020fe0d326a27475529","manifest_sha256":"00904cfd13003c3d4c14ab6a8599e36a8168c4e1bf5a959059976e0b453ddefe","measurements":{"coverage":{"output_bits":13,"registers":39,"async_pins":39},"paths":{"overall_max":"p119","overall_min":"p120","data_max":"p084","data_min":"p083","data_rr_max":"p096","data_rr_min":"p083","data_ir_max":"p097","data_ir_min":"p098","data_ro_max":"p084","data_ro_min":"p088","data_io_max":null,"data_io_min":null,"reset_checks_max":"p121","reset_checks_min":"p122","reset_effects_max":"p119","reset_effects_min":"p123","selection_max":"p084","selection_min":"p092","availability_max":"p119","availability_min":"p093","count_max":"p094","count_min":"p088"},"required_source_delay_window_ns_after_rise":[0.30898,9.79262],"modeled_port_release_ns_after_rise":[0.3367,2.1367],"required_port_release_window_ns_after_rise":[0.44568,9.92932],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.13147,"slack":0.06707},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":56.3903,"slack":4.2634}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-descriptor","scenario":"fall-reference-r01","mode":"slew","result":"PASS","model":"allocator-r01/fall-reference-r01/slew","sdc_sha256":"8bb73f0d9f040af9bea151c2156741c86027719b2743dba52d69b5d60eed12c1","manifest_sha256":"4226220190d0366f98ba90217eb117dfecf524c2980d7bff401aa14086317104","measurements":{"coverage":{"output_bits":11,"registers":22,"async_pins":22},"paths":{"overall_max":"p124","overall_min":"p125","data_max":"p126","data_min":"p125","data_rr_max":"p127","data_rr_min":"p125","data_ir_max":"p126","data_ir_min":"p128","data_ro_max":"p129","data_ro_min":"p130","data_io_max":null,"data_io_min":null,"reset_checks_max":"p131","reset_checks_min":"p132","reset_effects_max":"p124","reset_effects_min":"p133","selection_max":"p129","selection_min":"p134","availability_max":"p124","availability_min":"p135","count_max":"p136","count_min":"p130"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[5.0,5.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_319_/ZN","limit":0.19853,"actual":0.08386,"slack":0.11468},"max capacitance":{"pin":"_319_/ZN","limit":11.4822,"actual":5.16929,"slack":6.31291}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"I0-descriptor","scenario":"fall-reference-r01","mode":"drive","result":"PASS","model":"allocator-r01/fall-reference-r01/drive","sdc_sha256":"977c7459f438f3db80edc78d7792b6348ff1f427c5f1568c48a19fb93701d14b","manifest_sha256":"673dcb5a8d65b5bb6e7a1e67d95b09231dca691c67ba26aae2c99bf01aca3199","measurements":{"coverage":{"output_bits":11,"registers":22,"async_pins":22},"paths":{"overall_max":"p137","overall_min":"p125","data_max":"p138","data_min":"p125","data_rr_max":"p127","data_rr_min":"p125","data_ir_max":"p138","data_ir_min":"p139","data_ro_max":"p129","data_ro_min":"p130","data_io_max":null,"data_io_min":null,"reset_checks_max":"p140","reset_checks_min":"p141","reset_effects_max":"p137","reset_effects_min":"p142","selection_max":"p129","selection_min":"p134","availability_max":"p137","availability_min":"p143","count_max":"p136","count_min":"p130"},"required_source_delay_window_ns_after_rise":[0.29827,9.86065],"modeled_port_release_ns_after_rise":[5.08034,5.28034],"required_port_release_window_ns_after_rise":[0.37861,9.94099],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_319_/ZN","limit":0.19853,"actual":0.08386,"slack":0.11468},"max capacitance":{"pin":"_319_/ZN","limit":11.4822,"actual":5.16929,"slack":6.31291}},"model_closure":"PASS","source_closure":"UNRESOLVED"}},
+    {"point":"I0-descriptor","scenario":"rise-phase-sensitivity-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/slew","sdc_sha256":"a8d58c9e477b0d5ee390c51c418d5b27693858f7e6d8402293796c277544c5eb","manifest_sha256":"0ea553e753250bea6dd412aa066fc73a711eddffab417748eb8fe9d6f280c9f4","measurements":{"coverage":{"output_bits":11,"registers":22,"async_pins":22},"paths":{"overall_max":"p126","overall_min":"p144","data_max":"p126","data_min":"p125","data_rr_max":"p127","data_rr_min":"p125","data_ir_max":"p126","data_ir_min":"p128","data_ro_max":"p129","data_ro_min":"p130","data_io_max":null,"data_io_min":null,"reset_checks_max":"p145","reset_checks_min":"p146","reset_effects_max":"p147","reset_effects_min":"p148","selection_max":"p129","selection_min":"p134","availability_max":"p149","availability_min":"p150","count_max":"p136","count_min":"p130"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.0,0.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"FAIL","electrical":"PASS"},"electrical":{"max slew":{"pin":"_319_/ZN","limit":0.19853,"actual":0.08386,"slack":0.11468},"max capacitance":{"pin":"_319_/ZN","limit":11.4822,"actual":5.16929,"slack":6.31291}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-descriptor","scenario":"rise-phase-sensitivity-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/drive","sdc_sha256":"3161dd2b986c7a1a5cae1e6ca34edf6d83a1634d963616532bce57da574ed7bf","manifest_sha256":"3561300aacb1cf297fd9867294f6a920d20eaafb31fb182c801194ad401167c3","measurements":{"coverage":{"output_bits":11,"registers":22,"async_pins":22},"paths":{"overall_max":"p138","overall_min":"p151","data_max":"p138","data_min":"p125","data_rr_max":"p127","data_rr_min":"p125","data_ir_max":"p138","data_ir_min":"p139","data_ro_max":"p129","data_ro_min":"p130","data_io_max":null,"data_io_min":null,"reset_checks_max":"p152","reset_checks_min":"p153","reset_effects_max":"p154","reset_effects_min":"p155","selection_max":"p129","selection_min":"p134","availability_max":"p149","availability_min":"p156","count_max":"p136","count_min":"p130"},"required_source_delay_window_ns_after_rise":[0.29828,9.86065],"modeled_port_release_ns_after_rise":[0.08034,0.28034],"required_port_release_window_ns_after_rise":[0.37862,9.94099],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_319_/ZN","limit":0.19853,"actual":0.08386,"slack":0.11468},"max capacitance":{"pin":"_319_/ZN","limit":11.4822,"actual":5.16929,"slack":6.31291}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-descriptor","scenario":"rise-historical-shape-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/slew","sdc_sha256":"078dcde6b62d9bb53adb8dea5985fee14728affa13edc44062e5ca14a638458a","manifest_sha256":"0cc6ab49f975b82174d37ffc39f6f2408a2c8d7f5d8cac38cfbfe28a238bdc16","measurements":{"coverage":{"output_bits":11,"registers":22,"async_pins":22},"paths":{"overall_max":"p157","overall_min":"p158","data_max":"p126","data_min":"p125","data_rr_max":"p127","data_rr_min":"p125","data_ir_max":"p126","data_ir_min":"p128","data_ro_max":"p129","data_ro_min":"p130","data_io_max":null,"data_io_min":null,"reset_checks_max":"p159","reset_checks_min":"p160","reset_effects_max":"p157","reset_effects_min":"p161","selection_max":"p129","selection_min":"p134","availability_max":"p157","availability_min":"p135","count_max":"p136","count_min":"p130"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.2,2.0],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_319_/ZN","limit":0.19853,"actual":0.08386,"slack":0.11468},"max capacitance":{"pin":"_319_/ZN","limit":11.4822,"actual":5.16929,"slack":6.31291}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"I0-descriptor","scenario":"rise-historical-shape-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/drive","sdc_sha256":"efaf1912e89427d511ebbf2e86c1bd9d07234d818a006020fe0d326a27475529","manifest_sha256":"2bb63ffc121636f9dacb03d14724518556cb0f01b7ee618ff3f60606c00f5fa0","measurements":{"coverage":{"output_bits":11,"registers":22,"async_pins":22},"paths":{"overall_max":"p162","overall_min":"p163","data_max":"p138","data_min":"p125","data_rr_max":"p127","data_rr_min":"p125","data_ir_max":"p138","data_ir_min":"p139","data_ro_max":"p129","data_ro_min":"p130","data_io_max":null,"data_io_min":null,"reset_checks_max":"p164","reset_checks_min":"p165","reset_effects_max":"p162","reset_effects_min":"p166","selection_max":"p129","selection_min":"p134","availability_max":"p162","availability_min":"p143","count_max":"p136","count_min":"p130"},"required_source_delay_window_ns_after_rise":[0.29828,9.86065],"modeled_port_release_ns_after_rise":[0.28034,2.08034],"required_port_release_window_ns_after_rise":[0.37862,9.94099],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"PASS"},"electrical":{"max slew":{"pin":"_319_/ZN","limit":0.19853,"actual":0.08386,"slack":0.11468},"max capacitance":{"pin":"_319_/ZN","limit":11.4822,"actual":5.16929,"slack":6.31291}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-cell","scenario":"fall-reference-r01","mode":"slew","result":"PASS","model":"allocator-r01/fall-reference-r01/slew","sdc_sha256":"8bb73f0d9f040af9bea151c2156741c86027719b2743dba52d69b5d60eed12c1","manifest_sha256":"01ba5f5d7f0360719e61c2471131e3e2dd8d096894b4f6f1f56ee008e2d821e2","measurements":{"coverage":{"output_bits":23,"registers":1036,"async_pins":1036},"paths":{"overall_max":"p167","overall_min":"p168","data_max":"p167","data_min":"p168","data_rr_max":"p169","data_rr_min":"p168","data_ir_max":"p170","data_ir_min":"p171","data_ro_max":"p167","data_ro_min":"p172","data_io_max":null,"data_io_min":null,"reset_checks_max":"p173","reset_checks_min":"p174","reset_effects_max":"p175","reset_effects_min":"p176","selection_max":"p167","selection_min":"p177","availability_max":"p178","availability_min":"p179","count_max":"p180","count_min":"p172"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[5.0,5.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"FAIL","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"_12990_/ZN","limit":0.19853,"actual":0.15546,"slack":0.04308},"max capacitance":{"pin":"_12990_/ZN","limit":11.4822,"actual":14.55184,"slack":-3.06964}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-cell","scenario":"fall-reference-r01","mode":"drive","result":"PASS","model":"allocator-r01/fall-reference-r01/drive","sdc_sha256":"977c7459f438f3db80edc78d7792b6348ff1f427c5f1568c48a19fb93701d14b","manifest_sha256":"5ea488290fa4a0063e521f68e3f80941df47c46a03ab881bd44f8f006c550dc2","measurements":{"coverage":{"output_bits":23,"registers":1036,"async_pins":1036},"paths":{"overall_max":"p167","overall_min":"p168","data_max":"p167","data_min":"p168","data_rr_max":"p169","data_rr_min":"p168","data_ir_max":"p181","data_ir_min":"p182","data_ro_max":"p167","data_ro_min":"p172","data_io_max":null,"data_io_min":null,"reset_checks_max":"p183","reset_checks_min":"p184","reset_effects_max":"p185","reset_effects_min":"p186","selection_max":"p167","selection_min":"p177","availability_max":"p178","availability_min":"p179","count_max":"p180","count_min":"p172"},"required_source_delay_window_ns_after_rise":[0.92827,5.78227],"modeled_port_release_ns_after_rise":[8.39682,8.59682],"required_port_release_window_ns_after_rise":[4.32509,9.17909],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"FAIL","reset_recovery_removal":"PASS","reset_effects":"FAIL","electrical":"FAIL"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":3.2303,"slack":-3.03176},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":1414.35461,"slack":-1353.70093}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-cell","scenario":"rise-phase-sensitivity-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/slew","sdc_sha256":"a8d58c9e477b0d5ee390c51c418d5b27693858f7e6d8402293796c277544c5eb","manifest_sha256":"de30c7f55be83b6772cab30804584e1e18daab4f84417501917599bd8edf5b97","measurements":{"coverage":{"output_bits":23,"registers":1036,"async_pins":1036},"paths":{"overall_max":"p167","overall_min":"p187","data_max":"p167","data_min":"p168","data_rr_max":"p169","data_rr_min":"p168","data_ir_max":"p170","data_ir_min":"p171","data_ro_max":"p167","data_ro_min":"p172","data_io_max":null,"data_io_min":null,"reset_checks_max":"p188","reset_checks_min":"p189","reset_effects_max":"p190","reset_effects_min":"p191","selection_max":"p167","selection_min":"p177","availability_max":"p178","availability_min":"p192","count_max":"p180","count_min":"p172"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.0,0.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"FAIL","reset_recovery_removal":"FAIL","reset_effects":"FAIL","electrical":"FAIL"},"electrical":{"max slew":{"pin":"_12990_/ZN","limit":0.19853,"actual":0.15546,"slack":0.04308},"max capacitance":{"pin":"_12990_/ZN","limit":11.4822,"actual":14.55184,"slack":-3.06964}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-cell","scenario":"rise-phase-sensitivity-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/drive","sdc_sha256":"3161dd2b986c7a1a5cae1e6ca34edf6d83a1634d963616532bce57da574ed7bf","manifest_sha256":"be425cab2bb0cae259d5fec65fe929f31fef15e775984eb6618267cf43cba87a","measurements":{"coverage":{"output_bits":23,"registers":1036,"async_pins":1036},"paths":{"overall_max":"p167","overall_min":"p193","data_max":"p167","data_min":"p168","data_rr_max":"p169","data_rr_min":"p168","data_ir_max":"p181","data_ir_min":"p182","data_ro_max":"p167","data_ro_min":"p172","data_io_max":null,"data_io_min":null,"reset_checks_max":"p194","reset_checks_min":"p195","reset_effects_max":"p196","reset_effects_min":"p197","selection_max":"p167","selection_min":"p177","availability_max":"p178","availability_min":"p179","count_max":"p180","count_min":"p172"},"required_source_delay_window_ns_after_rise":[0.92827,5.78227],"modeled_port_release_ns_after_rise":[3.39682,3.59682],"required_port_release_window_ns_after_rise":[4.32509,9.17909],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"FAIL","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":3.2303,"slack":-3.03176},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":1414.35461,"slack":-1353.70093}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-cell","scenario":"rise-historical-shape-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/slew","sdc_sha256":"078dcde6b62d9bb53adb8dea5985fee14728affa13edc44062e5ca14a638458a","manifest_sha256":"9f4d03be600f9cf18e4a355eed06dd1e50a30e083b8034bf350c86c0bdb11e57","measurements":{"coverage":{"output_bits":23,"registers":1036,"async_pins":1036},"paths":{"overall_max":"p167","overall_min":"p198","data_max":"p167","data_min":"p168","data_rr_max":"p169","data_rr_min":"p168","data_ir_max":"p170","data_ir_min":"p171","data_ro_max":"p167","data_ro_min":"p172","data_io_max":null,"data_io_min":null,"reset_checks_max":"p199","reset_checks_min":"p200","reset_effects_max":"p201","reset_effects_min":"p202","selection_max":"p167","selection_min":"p177","availability_max":"p178","availability_min":"p179","count_max":"p180","count_min":"p172"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.2,2.0],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"FAIL","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"_12990_/ZN","limit":0.19853,"actual":0.15546,"slack":0.04308},"max capacitance":{"pin":"_12990_/ZN","limit":11.4822,"actual":14.55184,"slack":-3.06964}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-cell","scenario":"rise-historical-shape-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/drive","sdc_sha256":"efaf1912e89427d511ebbf2e86c1bd9d07234d818a006020fe0d326a27475529","manifest_sha256":"55927a443c8ac8936989aba3226684a96cbb9c8e3711d9ad87e1652b048eb283","measurements":{"coverage":{"output_bits":23,"registers":1036,"async_pins":1036},"paths":{"overall_max":"p167","overall_min":"p203","data_max":"p167","data_min":"p168","data_rr_max":"p169","data_rr_min":"p168","data_ir_max":"p181","data_ir_min":"p182","data_ro_max":"p167","data_ro_min":"p172","data_io_max":null,"data_io_min":null,"reset_checks_max":"p204","reset_checks_min":"p205","reset_effects_max":"p206","reset_effects_min":"p207","selection_max":"p167","selection_min":"p177","availability_max":"p178","availability_min":"p179","count_max":"p180","count_min":"p172"},"required_source_delay_window_ns_after_rise":[0.92827,5.78227],"modeled_port_release_ns_after_rise":[3.59682,5.39682],"required_port_release_window_ns_after_rise":[4.32509,9.17909],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"FAIL","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":3.2303,"slack":-3.03176},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":1414.35461,"slack":-1353.70093}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-descriptor","scenario":"fall-reference-r01","mode":"slew","result":"PASS","model":"allocator-r01/fall-reference-r01/slew","sdc_sha256":"8bb73f0d9f040af9bea151c2156741c86027719b2743dba52d69b5d60eed12c1","manifest_sha256":"18c369a7c199971e8081ea0233e73124b8279aec1f7e3e683f89b55ed8873ae5","measurements":{"coverage":{"output_bits":19,"registers":266,"async_pins":266},"paths":{"overall_max":"p208","overall_min":"p209","data_max":"p210","data_min":"p209","data_rr_max":"p211","data_rr_min":"p209","data_ir_max":"p212","data_ir_min":"p213","data_ro_max":"p210","data_ro_min":"p214","data_io_max":null,"data_io_min":null,"reset_checks_max":"p215","reset_checks_min":"p216","reset_effects_max":"p208","reset_effects_min":"p217","selection_max":"p210","selection_min":"p218","availability_max":"p208","availability_min":"p219","count_max":"p220","count_min":"p214"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[5.0,5.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"_5629_/ZN","limit":0.19853,"actual":0.14326,"slack":0.05527},"max capacitance":{"pin":"_5629_/ZN","limit":10.4713,"actual":12.31177,"slack":-1.84047}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-descriptor","scenario":"fall-reference-r01","mode":"drive","result":"PASS","model":"allocator-r01/fall-reference-r01/drive","sdc_sha256":"977c7459f438f3db80edc78d7792b6348ff1f427c5f1568c48a19fb93701d14b","manifest_sha256":"4ba69506cfc9a531d1824e2907773e5ef27b3cd065c6d665e810a24e87339c41","measurements":{"coverage":{"output_bits":19,"registers":266,"async_pins":266},"paths":{"overall_max":"p221","overall_min":"p209","data_max":"p210","data_min":"p209","data_rr_max":"p211","data_rr_min":"p209","data_ir_max":"p222","data_ir_min":"p223","data_ro_max":"p210","data_ro_min":"p214","data_io_max":null,"data_io_min":null,"reset_checks_max":"p224","reset_checks_min":"p225","reset_effects_max":"p221","reset_effects_min":"p226","selection_max":"p210","selection_min":"p218","availability_max":"p221","availability_min":"p219","count_max":"p220","count_min":"p214"},"required_source_delay_window_ns_after_rise":[0.44992,8.87991],"modeled_port_release_ns_after_rise":[5.87866,6.07866],"required_port_release_window_ns_after_rise":[1.32858,9.75857],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"PASS","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.83672,"slack":-0.63819},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":365.44641,"slack":-304.79269}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-descriptor","scenario":"rise-phase-sensitivity-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/slew","sdc_sha256":"a8d58c9e477b0d5ee390c51c418d5b27693858f7e6d8402293796c277544c5eb","manifest_sha256":"92e03d59c3359f133a6d586499478a31e712a6fa4b9cec04e8396a14fbd5abbd","measurements":{"coverage":{"output_bits":19,"registers":266,"async_pins":266},"paths":{"overall_max":"p210","overall_min":"p227","data_max":"p210","data_min":"p209","data_rr_max":"p211","data_rr_min":"p209","data_ir_max":"p212","data_ir_min":"p213","data_ro_max":"p210","data_ro_min":"p214","data_io_max":null,"data_io_min":null,"reset_checks_max":"p228","reset_checks_min":"p229","reset_effects_max":"p230","reset_effects_min":"p231","selection_max":"p210","selection_min":"p218","availability_max":"p232","availability_min":"p233","count_max":"p220","count_min":"p214"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.0,0.2],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"_5629_/ZN","limit":0.19853,"actual":0.14326,"slack":0.05527},"max capacitance":{"pin":"_5629_/ZN","limit":10.4713,"actual":12.31177,"slack":-1.84047}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-descriptor","scenario":"rise-phase-sensitivity-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-phase-sensitivity-r01/drive","sdc_sha256":"3161dd2b986c7a1a5cae1e6ca34edf6d83a1634d963616532bce57da574ed7bf","manifest_sha256":"e3745536fa1310e77eed49672e8c1a5990aba225c95c24fd77bbdf2b61b9b552","measurements":{"coverage":{"output_bits":19,"registers":266,"async_pins":266},"paths":{"overall_max":"p210","overall_min":"p234","data_max":"p210","data_min":"p209","data_rr_max":"p211","data_rr_min":"p209","data_ir_max":"p222","data_ir_min":"p223","data_ro_max":"p210","data_ro_min":"p214","data_io_max":null,"data_io_min":null,"reset_checks_max":"p235","reset_checks_min":"p236","reset_effects_max":"p237","reset_effects_min":"p238","selection_max":"p210","selection_min":"p218","availability_max":"p232","availability_min":"p219","count_max":"p220","count_min":"p214"},"required_source_delay_window_ns_after_rise":[0.44992,8.87991],"modeled_port_release_ns_after_rise":[0.87866,1.07866],"required_port_release_window_ns_after_rise":[1.32858,9.75857],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.83672,"slack":-0.63819},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":365.44641,"slack":-304.79269}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-descriptor","scenario":"rise-historical-shape-r01","mode":"slew","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/slew","sdc_sha256":"078dcde6b62d9bb53adb8dea5985fee14728affa13edc44062e5ca14a638458a","manifest_sha256":"fafeccc6b913d33819e9571a0f19fecc22869a11bc6eec81f8994e6ff7aadaad","measurements":{"coverage":{"output_bits":19,"registers":266,"async_pins":266},"paths":{"overall_max":"p210","overall_min":"p239","data_max":"p210","data_min":"p209","data_rr_max":"p211","data_rr_min":"p209","data_ir_max":"p212","data_ir_min":"p213","data_ro_max":"p210","data_ro_min":"p214","data_io_max":null,"data_io_min":null,"reset_checks_max":"p240","reset_checks_min":"p241","reset_effects_max":"p242","reset_effects_min":"p243","selection_max":"p210","selection_min":"p218","availability_max":"p232","availability_min":"p219","count_max":"p220","count_min":"p214"},"required_source_delay_window_ns_after_rise":[0.34368,9.93947],"modeled_port_release_ns_after_rise":[0.2,2.0],"required_port_release_window_ns_after_rise":[0.34368,9.93947],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"_5629_/ZN","limit":0.19853,"actual":0.14326,"slack":0.05527},"max capacitance":{"pin":"_5629_/ZN","limit":10.4713,"actual":12.31177,"slack":-1.84047}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}},
+    {"point":"F0-descriptor","scenario":"rise-historical-shape-r01","mode":"drive","result":"PASS","model":"allocator-r01/rise-historical-shape-r01/drive","sdc_sha256":"efaf1912e89427d511ebbf2e86c1bd9d07234d818a006020fe0d326a27475529","manifest_sha256":"99f7d93eb174b741ab67b1d5bbcfc610e1c3ebe6da96cda044fbda57ae5f6caa","measurements":{"coverage":{"output_bits":19,"registers":266,"async_pins":266},"paths":{"overall_max":"p210","overall_min":"p244","data_max":"p210","data_min":"p209","data_rr_max":"p211","data_rr_min":"p209","data_ir_max":"p222","data_ir_min":"p223","data_ro_max":"p210","data_ro_min":"p214","data_io_max":null,"data_io_min":null,"reset_checks_max":"p245","reset_checks_min":"p246","reset_effects_max":"p247","reset_effects_min":"p248","selection_max":"p210","selection_min":"p218","availability_max":"p232","availability_min":"p219","count_max":"p220","count_min":"p214"},"required_source_delay_window_ns_after_rise":[0.44992,8.87991],"modeled_port_release_ns_after_rise":[1.07866,2.87866],"required_port_release_window_ns_after_rise":[1.32858,9.75857],"release_window_nonempty":true,"category_closure":{"data_setup_hold":"PASS","reset_recovery_removal":"FAIL","reset_effects":"PASS","electrical":"FAIL"},"electrical":{"max slew":{"pin":"rst_n","limit":0.19853,"actual":0.83672,"slack":-0.63819},"max capacitance":{"pin":"rst_n","limit":60.65371,"actual":365.44641,"slack":-304.79269}},"model_closure":"FAIL","source_closure":"UNRESOLVED"}}
+  ],
+  "expected_negatives": [
+    {
+      "test": "r01-negative-E0-fifo2-missing-reset-min",
+      "result": "PASS",
+      "intended_detector": "R01_MISSING_RESET_min",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "97194c0a2027a2b02b0350caaf588b92564a679e58d885771800829b9839efbc"
+    },
+    {
+      "test": "r01-negative-E0-fifo2-missing-reset-max",
+      "result": "PASS",
+      "intended_detector": "R01_MISSING_RESET_max",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "1961d2157cafbe3f6341f1ca3f1977c8e02cf68bc177d55238b6b1e5e3b1d9e4"
+    },
+    {
+      "test": "r01-negative-E0-fifo2-reversed-envelope",
+      "result": "PASS",
+      "intended_detector": "Reversed constraint envelope",
+      "classifier": "configuration validation",
+      "manifest_sha256": "ce6bfa83c89db685c7c0a18e9f1d87827a82acc42a9855804600823b4eda7a84"
+    },
+    {
+      "test": "r01-negative-E0-fifo2-missing-reset-port",
+      "result": "PASS",
+      "intended_detector": "R01_RESET_PORT",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "8601e2fc72517fdb00b776f0a08d3eed1411ead3b6f328a176faff4fb5c3bd95"
+    },
+    {
+      "test": "r01-negative-E0-fifo2-false-path-reset",
+      "result": "PASS",
+      "intended_detector": "R01_TIMING_EXCEPTION",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "aab675e138c81a0812e963eae9590fd522cbcc8b61d9d38e3c68c379f657ae63"
+    },
+    {
+      "test": "r01-negative-E0-fifo2-drop-removal",
+      "result": "PASS",
+      "intended_detector": "R01_TIMING_EXCEPTION",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "a9cb22aabc60429021dd9c60316b358ae7394b22b73fb67e56fab574dd67fe25"
+    },
+    {
+      "test": "r01-negative-E0-fifo2-bad-command",
+      "result": "PASS",
+      "intended_detector": "r01_deliberate_bad_command",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "6171ef7777e0ce9db322f4f52f74d16a2edfeb46d9ffa5017f5d09bf289edb38"
+    },
+    {
+      "test": "r01-negative-I0-cell-missing-reset-min",
+      "result": "PASS",
+      "intended_detector": "R01_MISSING_RESET_min",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "055313c4a6ff284c4ad12f3cfbf20b52cfd8f7a3497404a9656dda2fb2c1efa2"
+    },
+    {
+      "test": "r01-negative-I0-cell-missing-reset-max",
+      "result": "PASS",
+      "intended_detector": "R01_MISSING_RESET_max",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "1017101231a1924e26c2dd1b79aa3dcd1337945d3b8c895edcfacc2a59ef3814"
+    },
+    {
+      "test": "r01-negative-I0-cell-reversed-envelope",
+      "result": "PASS",
+      "intended_detector": "Reversed constraint envelope",
+      "classifier": "configuration validation",
+      "manifest_sha256": "85e214f6015147244f28519f6fdd82f805072b03474d3fafd0a65535ce36321e"
+    },
+    {
+      "test": "r01-negative-I0-cell-missing-reset-port",
+      "result": "PASS",
+      "intended_detector": "R01_RESET_PORT",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "3ca382701ae3c7c64e42a8d3076ae9e999b6b0d1983385ef7a308bb8e345e08d"
+    },
+    {
+      "test": "r01-negative-I0-cell-false-path-reset",
+      "result": "PASS",
+      "intended_detector": "R01_TIMING_EXCEPTION",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "1862be39ef11278b5ca3e9f77e1490e911c2d0789bef203ad501fa113f15e5da"
+    },
+    {
+      "test": "r01-negative-I0-cell-drop-removal",
+      "result": "PASS",
+      "intended_detector": "R01_TIMING_EXCEPTION",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "69eb57bff88e16da4b0f7759ff40aa47e1c7a3bb7d394c99e300315f96c9b3af"
+    },
+    {
+      "test": "r01-negative-I0-cell-bad-command",
+      "result": "PASS",
+      "intended_detector": "r01_deliberate_bad_command",
+      "classifier": "executed SDC guard or OpenSTA diagnostic",
+      "manifest_sha256": "00b412a0fca4d0fdda4d747e2d6edfebc24155615dd224156d7601b7ca45385a"
+    }
+  ],
+  "constraint_models": {
+    "fifo-capability-r01/fall-reference-r01/slew": {"study":"fifo-capability-r01","scenario":"fall-reference-r01","mode":"slew","data_min_ns":0.2,"data_max_ns":1.0,"uncertainty_ns":0.05,"edge":"fall","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Reference model only: ideal falling-edge release plus 0..0.2 ns boundary transport; no characterized external source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "fifo-capability-r01/fall-reference-r01/drive": {"study":"fifo-capability-r01","scenario":"fall-reference-r01","mode":"drive","data_min_ns":0.2,"data_max_ns":1.0,"uncertainty_ns":0.05,"edge":"fall","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Reference model only: ideal falling-edge release plus 0..0.2 ns boundary transport; no characterized external source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "fifo-capability-r01/rise-phase-sensitivity-r01/slew": {"study":"fifo-capability-r01","scenario":"rise-phase-sensitivity-r01","mode":"slew","data_min_ns":0.2,"data_max_ns":1.0,"uncertainty_ns":0.05,"edge":"rise","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Phase-only sensitivity of reference model; not a physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "fifo-capability-r01/rise-phase-sensitivity-r01/drive": {"study":"fifo-capability-r01","scenario":"rise-phase-sensitivity-r01","mode":"drive","data_min_ns":0.2,"data_max_ns":1.0,"uncertainty_ns":0.05,"edge":"rise","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Phase-only sensitivity of reference model; not a physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "fifo-capability-r01/rise-historical-shape-r01/slew": {"study":"fifo-capability-r01","scenario":"rise-historical-shape-r01","mode":"slew","data_min_ns":0.2,"data_max_ns":1.0,"uncertainty_ns":0.05,"edge":"rise","reset_min_ns":0.2,"reset_max_ns":2.0,"source":"Historical allocator reset-delay shape, newly identified scenario; not a historical rerun or physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "fifo-capability-r01/rise-historical-shape-r01/drive": {"study":"fifo-capability-r01","scenario":"rise-historical-shape-r01","mode":"drive","data_min_ns":0.2,"data_max_ns":1.0,"uncertainty_ns":0.05,"edge":"rise","reset_min_ns":0.2,"reset_max_ns":2.0,"source":"Historical allocator reset-delay shape, newly identified scenario; not a historical rerun or physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "allocator-r01/fall-reference-r01/slew": {"study":"allocator-r01","scenario":"fall-reference-r01","mode":"slew","data_min_ns":0.2,"data_max_ns":2.0,"uncertainty_ns":0.1,"edge":"fall","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Reference model only: ideal falling-edge release plus 0..0.2 ns boundary transport; no characterized external source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "allocator-r01/fall-reference-r01/drive": {"study":"allocator-r01","scenario":"fall-reference-r01","mode":"drive","data_min_ns":0.2,"data_max_ns":2.0,"uncertainty_ns":0.1,"edge":"fall","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Reference model only: ideal falling-edge release plus 0..0.2 ns boundary transport; no characterized external source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "allocator-r01/rise-phase-sensitivity-r01/slew": {"study":"allocator-r01","scenario":"rise-phase-sensitivity-r01","mode":"slew","data_min_ns":0.2,"data_max_ns":2.0,"uncertainty_ns":0.1,"edge":"rise","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Phase-only sensitivity of reference model; not a physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "allocator-r01/rise-phase-sensitivity-r01/drive": {"study":"allocator-r01","scenario":"rise-phase-sensitivity-r01","mode":"drive","data_min_ns":0.2,"data_max_ns":2.0,"uncertainty_ns":0.1,"edge":"rise","reset_min_ns":0.0,"reset_max_ns":0.2,"source":"Phase-only sensitivity of reference model; not a physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "allocator-r01/rise-historical-shape-r01/slew": {"study":"allocator-r01","scenario":"rise-historical-shape-r01","mode":"slew","data_min_ns":0.2,"data_max_ns":2.0,"uncertainty_ns":0.1,"edge":"rise","reset_min_ns":0.2,"reset_max_ns":2.0,"source":"Historical allocator reset-delay shape, newly identified scenario; not a historical rerun or physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"},
+    "allocator-r01/rise-historical-shape-r01/drive": {"study":"allocator-r01","scenario":"rise-historical-shape-r01","mode":"drive","data_min_ns":0.2,"data_max_ns":2.0,"uncertainty_ns":0.1,"edge":"rise","reset_min_ns":0.2,"reset_max_ns":2.0,"source":"Historical allocator reset-delay shape, newly identified scenario; not a historical rerun or physical source","period_ns":10.0,"input_transition_ns":0.05,"output_load_ff":10.0,"driving_cell":"BUF_X1","driving_pin":"Z"}
+  }
+}

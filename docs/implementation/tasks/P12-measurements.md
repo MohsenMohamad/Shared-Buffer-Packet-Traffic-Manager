@@ -66,3 +66,16 @@ Consume the P09/P10 packet-rate measurements and pre-P11 baseline decision, then
 | P12C | Analysis | 7–9: mapped synthesis/STA and matched implementation comparison |
 
 [Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
+
+## Shared constraint entry
+
+Use [R01's configuration API](../../../experiments/reset-timing/README.md) with
+`--study p12-production-r01 --scenario fall-reference-r01 --mode slew` and repeat
+`--mode drive` on the same mapped variant; specify `--output` under `.build/`.
+The [R01 results](../../results/R01-reset-timing.md) cover standalone FIFO/pools,
+not full TM, payload variants or physical reset closure. Keep the production
+0.2/2 ns data budgets and 0.10 ns uncertainty. Report all intended integrated
+path groups, both reset checks, reset-to-data/output effects, electrical limits,
+fanout, required release windows and source provenance separately. An unavailable
+physical source leaves reset closure unresolved even if reference-model slack
+is positive. New boundaries/budgets need new identities frozen before execution.

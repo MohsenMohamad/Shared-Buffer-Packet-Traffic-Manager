@@ -64,3 +64,24 @@ The P02 scaling and P07 stimulus follow-ups are integrated. Before P08, complete
 - Analysis: the allocator consumer-path timing checks in the additional entry requirements.
 
 [Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
+
+## Timing recipe and remaining scope
+
+Consume [R01 results](../../results/R01-reset-timing.md) and generate constraints
+with the shared generator:
+
+```sh
+python3 tools/timing_constraints.py --study p08-production-r01 --scenario fall-reference-r01 --mode slew --output .build/p08-r01.sdc
+```
+Repeat with `--mode drive` on the identical netlist. Keep 0.2/2 ns ordinary data
+IO budgets, 0.10 ns uncertainty, explicit min/max reset bounds and both
+recovery/removal checks. Record generated SDC/config/tool/source identities and
+all consumer path classes; adapt the focused R01 reporting queries to the actual
+consumer ports rather than copying standalone allocator output names.
+
+R01 establishes a reusable convention and representative measurement validity;
+it supplies no characterized reset source or integrated consumer timing bound.
+Report required port/source release windows, reset gating effects, electrical
+limits and reset fanout separately. Physical-source closure remains unresolved
+until the environmental source is identified. Changed constraints need a new
+study/scenario identity and definition committed before those measurements.

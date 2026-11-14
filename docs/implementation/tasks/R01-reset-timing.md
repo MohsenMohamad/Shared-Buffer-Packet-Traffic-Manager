@@ -48,3 +48,12 @@ A01's measured comparison and P08; it does not block queue implementation.
 Analysis owns steps 1–5: reset constraints, matched timing checks and interpretation.
 
 [Root ownership policy](../../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
+
+## Executed analysis
+
+See the [frozen definition and reusable API](../../../experiments/reset-timing/README.md)
+and [qualification report](../../results/R01-reset-timing.md). The delivered
+scope is standalone mapped E0 FIFO depths 2/4 and I0/F0 cell/descriptor pools,
+with distinct data/reset/electrical results and deliberate invalid constraints.
+P08 consumer timing, P12 integration and physical-source closure remain outside
+this evidence; no reset synchronizer or functional RTL change is introduced.

@@ -133,3 +133,13 @@ Enumerate internal names before writing both JSON and Verilog so fanout driver
 names and STA endpoints identify the same mapped objects. This only changes
 identifiers. Add evidence-rejection unit cases for diagnostics, missing/empty
 paths and missing state/dead outputs. Push this correction before reexecution.
+
+## R01 follow-up for new studies
+
+Use the [shared reset configuration](../reset-timing/README.md) for new scenarios;
+[the R01 report](../../docs/results/R01-reset-timing.md) qualifies representative
+actual FIFO/allocator maps, source sensitivity and intended constraint rejections.
+This historical experiment's SDC, criteria and measurements remain unchanged.
+The R01 falling-edge reference is conditional analysis, not physical reset closure
+or a revision of the original architectural disposition. P08 must measure the
+actual consumer with the production data budget and named source model.
