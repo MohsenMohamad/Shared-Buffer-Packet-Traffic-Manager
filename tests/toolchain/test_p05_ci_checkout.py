@@ -1,0 +1,66 @@
+"""Exercise commit-pinned P05 staging without tools or production execution."""
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+import tempfile
+import unittest
+
+from runner_fixture import isolated_runner_repository
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+class P05CheckoutTests(unittest.TestCase):
+    def test_push_and_pr_use_detached_run_sha_without_weakening_branch_guard(self):
+        workflow = (ROOT / '.github/workflows/memory-tx.yml').read_text()
+        checkout = re.search(r'      - uses: actions/checkout@[^\n]+\n'
+                             r'        with:\n(.*?)(?=      -|\Z)', workflow, re.S).group(1)
+        ref = re.search(r'^          ref: (.+)$', checkout, re.M)
+        self.assertIsNotNone(ref, 'Default push checkout attaches main and prevents P05 staging')
+        self.assertEqual(ref.group(1), '${{ github.sha }}')
+
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            root = isolated_runner_repository(folder / 'checkout', ROOT)
+
+            def git(*args):
+                return subprocess.check_output(['git', *args], cwd=root, text=True,
+                                               stderr=subprocess.PIPE).strip()
+
+            git('branch', '-M', 'main')
+            candidate = git('rev-parse', 'HEAD')
+            (root / '.gitignore').write_text('.build/\n__pycache__/\n*.pyc\n')
+            (root / 'verification/candidates/p05.json').write_text(
+                json.dumps(dict(rtl_revision=candidate)))
+            git('add', '.')
+            git('commit', '-qm', 'Pin isolated staging input')
+            requested_sha = git('rev-parse', 'HEAD')
+            remote = folder / 'origin.git'
+            subprocess.run(['git', 'clone', '--bare', '-q', str(root), str(remote)], check=True)
+            git('remote', 'add', 'origin', str(remote))
+            git('fetch', '-q', 'origin')
+
+            # Reproduce main's default attached checkout. The safety guard must
+            # continue to reject it, rather than mutating a submitted branch.
+            command = [sys.executable, str(root / 'tools/p05_ci.py')]
+            attached = subprocess.run(command, cwd=root, capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(attached.returncode, 0)
+            self.assertIn('requires a detached disposable checkout', attached.stderr)
+
+            for event in ('push', 'pull_request'):
+                with self.subTest(event=event):
+                    # A full github.sha resolves to a commit for both events;
+                    # checkout's branch-dependent default is never selected.
+                    git('switch', '--detach', requested_sha)
+                    result = subprocess.run(command, cwd=root, capture_output=True,
+                                            text=True, timeout=30)
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                    record = json.loads((root / '.build/p05-ci-combination.json').read_text())
+                    self.assertEqual(record['dv_revision'], requested_sha)
+                    self.assertEqual(record['rtl_revision'], candidate)
+                    self.assertEqual(record['combined_revision'], requested_sha)
+                    self.assertEqual(record['combined_tree'], git('rev-parse', requested_sha+'^{tree}'))
+                    self.assertFalse(record['dirty'])
+                    self.assertEqual(record['resolutions'], [])

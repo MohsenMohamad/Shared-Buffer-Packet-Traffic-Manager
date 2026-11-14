@@ -5259,5 +5259,52 @@
       },
       "contract_violations": []
     }
+  },
+  "post_qualification_merge_ci": {
+    "main_revision": "a96121fe723ba1c84a5169f6507c629341762bef",
+    "main_tree": "a5f3b43885611b20edd9ece172b647094e4ebc21",
+    "failed_run_id": 43617402959,
+    "result": "CI_STAGING_FAILED",
+    "disposition": "verification-defect",
+    "profiles": [
+      "F0",
+      "F1",
+      "I0",
+      "I1",
+      "E0",
+      "E1"
+    ],
+    "dut_executed": false,
+    "cause": "Default actions/checkout ref is event-dependent: pull requests detach a merge ref, while main pushes attach main. The required detached-checkout guard rejected attached HEAD before DUT build/run. Public-artifact upload failures are secondary to absent staging output.",
+    "input_equality": "The PR #26 merge tree is identical to qualified delivery a649fa2de82374d6322de3c900d228dbd0095acb. No production, specification, checker, parameter or proof change is implicated. Previous exact-source execution retains its original identities and scope.",
+    "fix": {
+      "path": ".github/workflows/memory-tx.yml",
+      "checkout_ref": "${{ github.sha }}",
+      "guards": "Clean and detached checkout guards remain unchanged."
+    },
+    "preserved_job_records": [
+      "verification/failures/p05-postmerge-checkout-43617402959/F0.json",
+      "verification/failures/p05-postmerge-checkout-43617402959/F1.json",
+      "verification/failures/p05-postmerge-checkout-43617402959/I0.json",
+      "verification/failures/p05-postmerge-checkout-43617402959/I1.json",
+      "verification/failures/p05-postmerge-checkout-43617402959/E0.json",
+      "verification/failures/p05-postmerge-checkout-43617402959/E1.json"
+    ],
+    "fixture_failure": "verification/failures/20261114T170132848896Z-p05-checkout-repair-light-7fa47481c7af.json",
+    "local_validation": {
+      "repository_contracts": "PASS",
+      "light_tests": {
+        "result": "PASS",
+        "tests": 115
+      },
+      "capture_isolation": {
+        "result": "PASS",
+        "tests": 2
+      },
+      "event_route_regression": "PASS: actual isolated Git staging for push and pull_request run SHAs; attached main remains rejected.",
+      "prepared_main_doctor": "PASS",
+      "real_detached_main_staging": "PASS"
+    },
+    "final_ci": "Recorded on the focused fix/p05-main-checkout repair PR. Main push-route confirmation follows maintainer integration; the failed original run is not relabeled PASS."
   }
 }
