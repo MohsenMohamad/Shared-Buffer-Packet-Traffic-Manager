@@ -45,6 +45,7 @@ def formal_tx(run,args,configuration):
                     files.append(source.name+' '+str(source))
                 script=read_sources([Path(p).name for p in paths],'tx_formal',params=params,defines=['SYNTHESIS'],formal=True)
                 script+='prep -top tx_formal\nasync2sync\ndffunmap\nmemory_map -formal\nsetundef -anyseq\nopt_clean'
+                if task=='prove':script+='\ntechmap\nopt -fast\nsimplemap\naigmap\nsetundef -anyseq\nopt_clean'
                 config=case.path/'tx.sby'
                 config.write_text((ROOT/'formal/tx/tx.sby').read_text().replace('@SCRIPT@',script).replace('@FILES@','\n'.join(files)))
                 step=case.execute(['sby','-f','-d',case.path/'engine',config,task if task in ('prove','cover') else 'mutation'],timeout=args.timeout,cwd=case.path)
