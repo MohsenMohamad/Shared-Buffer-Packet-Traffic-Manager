@@ -1,5 +1,6 @@
 """Preparation boundaries and real capture behavior in explicitly isolated fixtures."""
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -12,6 +13,25 @@ sys.path.insert(0,str(ROOT/'tools'))
 import evidence
 import memory_tx
 import registry
+
+
+def public_ram_header(root):
+    """Read public ports in either layout, stopping before the RAM body."""
+    for name in ('rtl/include/tm_module_ports.sv', 'rtl/memory/tm_packet_ram.sv'):
+        path = root / name
+        if not path.is_file():
+            continue
+        header = []
+        with path.open() as source:
+            for line in source:
+                if not header and not re.match(r'\s*module\s+tm_packet_ram_api\b', line):
+                    continue
+                header.append(line)
+                if ');' in line:
+                    return ''.join(header).split(');', 1)[0] + ');'
+        if header:
+            raise AssertionError('Unterminated tm_packet_ram_api public header: ' + name)
+    raise AssertionError('Missing tm_packet_ram_api public header')
 
 
 class PreparationBoundaryTests(unittest.TestCase):
@@ -126,10 +146,51 @@ class PreparationBoundaryTests(unittest.TestCase):
                 validate_build_reuse(path,current,argv,new_dir,{'DEPTH':4})
 
     def test_public_response_has_no_backpressure(self):
-        ports=(ROOT/'rtl/include/tm_module_ports.sv').read_text()
-        ram=ports.split('module tm_packet_ram_api',1)[1].split('endmodule',1)[0]
+        ram=public_ram_header(ROOT)
         self.assertIn('output ram_response_t response',ram)
         self.assertNotIn('ready',ram)
+
+    def test_public_response_check_in_both_layouts(self):
+        header = ('module tm_packet_ram_api (\n'
+                  '    output ram_response_t response\n);\n')
+        for layout in ('rtl/include/tm_module_ports.sv', 'rtl/memory/tm_packet_ram.sv'):
+            for extra in ('', ', input logic response_ready'):
+                with self.subTest(layout=layout, backpressure=bool(extra)):
+                    with tempfile.TemporaryDirectory() as temp:
+                        root = Path(temp)
+                        declarations = root / 'rtl/include/tm_module_ports.sv'
+                        declarations.parent.mkdir(parents=True)
+                        declarations.write_text('// Other public declarations only.\n')
+                        target = root / layout
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_text(header.replace('response\n', 'response' + extra + '\n'))
+                        with patch.dict(globals(), ROOT=root):
+                            if extra:
+                                with self.assertRaisesRegex(AssertionError, 'ready'):
+                                    self.test_public_response_has_no_backpressure()
+                            else:
+                                self.test_public_response_has_no_backpressure()
+
+    def test_public_response_check_requires_header_and_ignores_body(self):
+        from io import StringIO
+
+        class HeaderOnly(StringIO):
+            def __next__(self):
+                line = super().__next__()
+                if 'BODY' in line:
+                    raise AssertionError('Implementation body must not be read')
+                return line
+
+        header = 'module tm_packet_ram_api (output ram_response_t response);\n'
+        with patch.object(Path, 'is_file', return_value=True):
+            with patch.object(Path, 'open', side_effect=lambda: HeaderOnly(header + 'BODY\n')):
+                self.assertEqual(public_ram_header(ROOT), header.rstrip())
+            for text, error in (('// No RAM declaration\n', 'Missing'),
+                                ('module tm_packet_ram_api (\n', 'Unterminated')):
+                with self.subTest(error=error):
+                    with patch.object(Path, 'open', side_effect=lambda: StringIO(text)):
+                        with self.assertRaisesRegex(AssertionError, error):
+                            public_ram_header(ROOT)
 
 
 if __name__=='__main__':unittest.main()
