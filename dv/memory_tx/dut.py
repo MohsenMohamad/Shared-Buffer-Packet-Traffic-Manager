@@ -33,6 +33,9 @@ class Live:
         self.free_edges, self.previous, self.last = {}, None, None
         self.dispatch_cycle, self.first_valid, self.last_transfer = None, False, None
         self.ready_run = True
+        self.seen_tags = set()
+        self.hold_run = 0
+        self.expected_public = {}
         self.performance = []
         self.started = time.monotonic()
 
@@ -86,6 +89,22 @@ class Live:
         self.observe(sample, B, O)
         if 'info' in observed: self.info[observed['info']['desc']] = observed['info'].copy()
         if 'link' in observed: self.links[observed['link']['cell']] = observed['link']['next']
+        self.expected_public = dict(response=dict(valid=bool(self.oracle.physical_reads and
+                                          self.oracle.physical_reads[0]['due']==self.cycle)))
+        if self.expected_public['response']['valid']:
+            self.expected_public['response']['data'] = self.oracle.physical_reads[0]['data']
+        if self.oracle.active is not None:
+            packet = self.oracle.packets[self.oracle.active]
+            chunk = packet.image[packet.output_index*8:packet.output_index*8+8]
+            meta = packet.info
+            self.expected_public['output_when_valid'] = dict(data=int.from_bytes(chunk,'little'),
+                keep=(1<<len(chunk))-1,last=packet.output_index*8+8>=len(packet.image),
+                user=meta['qid'] | meta['length']<<8 | meta['tag']<<24 | meta['source']<<40)
+            if packet.read_index*8>=len(packet.image) and 'query' in observed:
+                require(observed['query']['cell']==packet.cells[-1], 'tail_traversal')
+                self.bins['tail_not_traversed'] += 1
+        if self.was_reset and not reset:
+            require(not sample['out']['valid'], 'reset_release_output')
         self.oracle.step(sample)
         self.ledger.observe(sample, self.oracle)
         self.was_reset, self.previous = reset, sample
@@ -112,6 +131,18 @@ class Live:
             self.free_edges.clear()
             return
         if 'dispatch' in a:
+            meta = a['dispatch_info']
+            length = meta['length']
+            for name,value in [('word_minus',7),('word',8),('word_plus',9),
+                               ('cell_minus',self.p.cell_bytes-1),('cell',self.p.cell_bytes),
+                               ('cell_plus',self.p.cell_bytes+1),('max_minus',self.p.max_length-1),('max',self.p.max_length)]:
+                if length==value: self.bins['length_'+name] += 1
+            self.bins['multi_cell' if meta['ncell']>1 else 'single_cell'] += 1
+            packet = self.oracle.packets[a['dispatch']]
+            if any(right != left+1 for left,right in zip(packet.cells,packet.cells[1:])):
+                self.bins['fragmented_chain'] += 1
+            if meta['tag'] in self.seen_tags: self.bins['duplicate_tag'] += 1
+            self.seen_tags.add(meta['tag'])
             self.dispatch_cycle, self.first_valid, self.last_transfer = self.cycle, False, None
             self.ready_run = True
         if self.dispatch_cycle is not None:
@@ -130,6 +161,9 @@ class Live:
         if self.previous and 'read' in self.previous['actions'] and not out['ready']:
             self.bins['stall_after_issue'] += 1
         if 'response' in a and not out['ready']: self.bins['stalled_response'] += 1
+        if out['valid'] and out['keep'] != 255: self.bins['ignored_lanes'] += 1
+        self.hold_run = self.hold_run+1 if out['valid'] and not out['ready'] else 0
+        if self.hold_run>=5: self.bins['long_output_hold'] += 1
         if 'read' in a and 'write' in a:
             require(a['read'] != a['write']['addr'], 'environment_ram_collision')
             self.bins['simultaneous_1r1w'] += 1
@@ -264,7 +298,10 @@ class Live:
         report = self.oracle.finish(required)
         for name in ('stall_after_issue','stalled_response','earliest_cell_reuse',
                      'simultaneous_1r1w','rewritten_returned_payload','ready_contiguous',
-                     'metadata_abort_mux','metadata_queue_mux'):
+                     'metadata_abort_mux','metadata_queue_mux','altered_returned_link','tail_not_traversed',
+                     'single_cell','multi_cell','fragmented_chain','duplicate_tag','ignored_lanes','long_output_hold',
+                     'length_word_minus','length_word','length_word_plus','length_cell_minus','length_cell',
+                     'length_cell_plus','length_max_minus','length_max'):
             require(self.bins[name]>0, 'required_dut_bin', name)
         for q in range(self.p.queues): require(self.bins['metadata_head_'+str(q)]>0,'required_metadata_port',str(q))
         for phase in ('dispatch','pending','full','partial','cell-final','packet-final'):
@@ -297,7 +334,8 @@ def main():
     try: report = live.run()
     except (Violation, OSError, ValueError, BrokenPipeError) as failure:
         error = dict(detector=getattr(failure,'detector','adapter_error'), detail=str(failure),
-                     sample=live.last, seed=args.seed)
+                     sample=live.last, seed=args.seed, expected_interface=live.expected_public,
+                     public_stimulus=(live.path/'stimulus.txt').read_text().splitlines()[-1:])
         (args.output/'violation.json').write_text(json.dumps(error, indent=2)+'\n')
     code, tail = live.close()
     if error or code != 0 or 'TM_SERVER_DONE' not in tail:

@@ -20,6 +20,10 @@ def formal_rtl(run, args):
     specs, selected = selection(args)
     registered = sources('formal')
     for name in selected:
+        if name == 'memory-tx':
+            from formal_tx import formal_tx
+            formal_tx(run, args, specs[name])
+            continue
         if name == 'queues-independent':
             from formal_queue_independent import formal_queue_independent
             formal_queue_independent(run, args, specs[name])
