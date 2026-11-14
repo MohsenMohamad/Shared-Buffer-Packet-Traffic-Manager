@@ -18,10 +18,10 @@ logic [MEM_RD_LATENCY-1:0] physical_valid='0, live_valid='0;
 logic [63:0] physical_data[MEM_RD_LATENCY];
 // Finite event counters retain headroom for the first illegal credit/read edge.
 localparam integer SLOT_W=$clog2(TX_FIFO_DEPTH+2);
-localparam integer BEAT_W=$clog2((MAX_PACKET_BYTES+7)/8+2);
+localparam integer TX_MONITOR_BEAT_W=$clog2((MAX_PACKET_BYTES+7)/8+2);
 logic [SLOT_W-1:0] slots=0, arrived=0;
-logic [BEAT_W-1:0] issued=0, retired=0, total=0;
-logic [BEAT_W-1:0] response_index[MEM_RD_LATENCY];
+logic [TX_MONITOR_BEAT_W-1:0] issued=0, retired=0, total=0;
+logic [TX_MONITOR_BEAT_W-1:0] response_index[MEM_RD_LATENCY];
 logic [15:0] length, tag;
 desc_id_t descriptor;
 qid_t qid;
