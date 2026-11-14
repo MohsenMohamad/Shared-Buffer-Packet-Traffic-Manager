@@ -16,7 +16,7 @@ def profile(name):
 
 
 def sources(name, seen=()):
-    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation'):
+    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation', 'memory-tx'):
         raise ValueError('Unknown or cyclic source set: ' + name)
     data = read('sources/' + name + '.json')
     if name == 'memory-tx-preparation':
@@ -51,7 +51,7 @@ def selection(profile_name, tests):
     selected = ['contracts'] if tests is None else tests
     if not selected or len(set(selected)) != len(selected):
         raise ValueError('Empty or duplicate regression selection')
-    preparation={'memory-tx-oracle','memory-tx-bench','memory-tx'}
+    preparation={'memory-tx-oracle','memory-tx-bench'}
     if any(name in preparation for name in selected) and not all(name in preparation for name in selected):
         raise ValueError('Preparation modes cannot be mixed with production suites')
     for name in selected:

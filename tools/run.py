@@ -353,6 +353,9 @@ def main(argv=None):
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
+    parser.add_argument('--candidate-revision', help='Exact production source commit required by memory-tx')
+    parser.add_argument('--memory-latency', action='append', type=int, choices=(1,2))
+    parser.add_argument('--tx-depth', action='append', type=int, choices=(4,8))
     parser.add_argument('--preparation-build-manifest',type=Path,help='Explicit passing preparation replay build; validate source/config/tool identity before reuse')
     parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing component case manifest for coverage extraction')
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
@@ -376,7 +379,7 @@ def main(argv=None):
     if args.profile is None:
         args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
     preparation = action == 'regression' and args.test is not None and any(
-        name in ('memory-tx-oracle', 'memory-tx-bench', 'memory-tx') for name in args.test)
+        name in ('memory-tx-oracle', 'memory-tx-bench') for name in args.test)
     identity_paths = None
     if preparation:
         from memory_tx import identity_paths as preparation_identity_paths

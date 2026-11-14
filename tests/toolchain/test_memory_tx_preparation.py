@@ -115,7 +115,7 @@ class PreparationBoundaryTests(unittest.TestCase):
                 run=evidence.Run(root/'output',source_paths=['allowed'])
                 memory_tx.memory_tx_dut(run,None)
                 self.assertNotEqual(run.finish(),0)
-            self.assertEqual(run.cases[0].data['result'],'NOT_IMPLEMENTED')
+            self.assertEqual(run.cases[0].data['result'],'NOT_RUN')
             self.assertFalse(run.cases[0].data['steps'])
 
     def test_build_reuse_requires_matching_identity_and_binary(self):
