@@ -85,6 +85,8 @@ always_ff @(posedge clk) begin
         a_reset:assert(!valid && !read_req.valid && !cell_return.valid && !done.valid);
     end else begin
         initialized<=1;
+        a_inactive_empty:assert(live || slots==0);
+        a_initialized_history:assert(!initialized || history);
         a_credit:assert(slots+int'(read_req.valid)-int'(fire)<=TX_FIFO_DEPTH);
         a_nonnegative:assert(arrived<=slots);
         a_slot_delta:assert(int'(slots)+int'(read_req.valid)-int'(fire)>=0);

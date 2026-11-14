@@ -29,7 +29,7 @@ def formal_tx(run,args,configuration):
                 case = Case(run,f'rtl-tx-L{latency}-D{depth}-{task}')
                 params = {k:configuration[k] for k in ('N_RX','N_Q','N_CELL','N_DESC','CELL_BYTES','MAX_PACKET_BYTES')}
                 params.update(MEM_RD_LATENCY=latency,TX_FIFO_DEPTH=depth)
-                induction_depth=2 if (latency,depth)==(2,8) else 8
+                induction_depth=2
                 case.data.update(configuration=params,candidate=identity,source_set='formal',
                     engine='smtbmc z3',method=f'unbounded k-induction, maximum depth {induction_depth}' if task=='prove' else 'cover depth 64' if task=='cover' else 'intended BMC counterexample depth 32',
                     assumptions='Two startup reset samples; arbitrary later resets and sink stalls. Legal idle-only dispatch, 1..128 byte packets. Eight distinct arbitrary fixed cell IDs stable across every reset by F01 history; arbitrary input word captured on each read with exact unreset physical response latency. Returned links may change immediately. No fairness assumption.')
