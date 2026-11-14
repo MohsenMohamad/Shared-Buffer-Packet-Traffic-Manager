@@ -24487,5 +24487,14 @@
       "result": "PASS",
       "count": 2
     }
-  }
+  },
+  "expected_negative_capture_artifacts": [
+    "verification/failures/20261114T094621607029Z-selection-bc54b5db1de7.json",
+    "verification/failures/20261114T094621685492Z-selection-or-suite-error-f4a10899d943.json",
+    "verification/failures/20261114T094621748500Z-selection-or-suite-error-44628fad16f6.json",
+    "verification/failures/20261114T094621813143Z-selection-or-suite-error-510c08e556b8.json",
+    "verification/failures/20261114T094621872407Z-selection-or-suite-error-b290000e0ee7.json",
+    "verification/failures/20261114T094621942360Z-selection-or-suite-error-08ac6bf7165c.json",
+    "verification/failures/20261114T094622010837Z-selection-or-suite-error-6b730168ea66.json"
+  ]
 }

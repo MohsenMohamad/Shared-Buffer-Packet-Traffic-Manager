@@ -433,7 +433,7 @@
   },
   "schema_version": 1,
   "captured_utc": "20261114T094622010837Z",
-  "disposition": "unclassified",
+  "disposition": "verification-defect",
   "run_source_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
   "run_dirty": true,
   "run_directory": "/tmp/tmptqki4esq/regression-2026-11-14T094621.975861+0000-c68006bc/selection-or-suite-error",
@@ -444,5 +444,14 @@
   "source_patch": "20261114T094622010837Z-selection-or-suite-error-6b730168ea66.patch",
   "source_patch_sha256": "c69ad21b4f4cfcc58001cefbf07a374bceb68cca436271dde0e499f437a08208",
   "changed_since_run_start": [],
-  "log_tails": []
+  "log_tails": [],
+  "expected": "EXPECTED_INVALID_SELECTION",
+  "diagnosis": "Direct contracts-unit execution exercises expected invalid CLI requests in the real repository. Their nonzero statuses were intended; the unexpected defect is capture isolation. The existing isolated runner fixture now contains these negatives, with real failure capture active. These seven records are retained as expected-negative capture artifacts, not unexpected functional failures.",
+  "reproduction_sources": {
+    "dv_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
+    "source_patch": "20261114T094622010837Z-selection-or-suite-error-6b730168ea66.patch",
+    "source_patch_sha256": "c69ad21b4f4cfcc58001cefbf07a374bceb68cca436271dde0e499f437a08208",
+    "command": "python3 -m unittest discover -s tests/contracts -p test_*.py -v",
+    "scope": "Pre-fix CLI-negative test at captured published base plus preserved patch; candidate RTL not needed."
+  }
 }

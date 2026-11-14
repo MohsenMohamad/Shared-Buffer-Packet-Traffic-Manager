@@ -113,6 +113,10 @@ They cover binding/stimulus/CI defects, a stale exact-set suite registration ass
 induction history, secondary-worktree tool paths, frontend lowering limits and
 solver budgets. Source/input/command/output evidence was captured before repair.
 The index links each disposition and exact source reconstruction.
+Seven additional records preserve intended CLI-negative statuses whose direct
+unit invocation exposed a capture-isolation defect. Those negatives now execute
+in the existing isolated runner fixture with real capture enabled. They remain
+separate from unexpected functional failures and seeded RTL faults.
 
 Earlier SMT timeouts/UNKNOWN and ABC preprocessing failures remain non-success.
 They are not silently replaced by a proof claim on their old source. Current
