@@ -24407,11 +24407,22 @@
         "canonical_tree_matches": true
       },
       "changed_since_run_start": []
+    },
+    {
+      "record": "verification/failures/20261114T094500536528Z-independent-event-batching.json",
+      "disposition": "verification-defect",
+      "diagnosis": "The exact-set routing unit assertion omitted newly registered memory-tx. Add that suite to the expected set; retain exact equality, all negative routing cases and nonempty requirements. No production expectation changes.",
+      "reproduction_sources": {
+        "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+        "dv_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
+        "rtl_revision": null,
+        "reconstruction": "Execute tests/contracts at the published DV revision; no candidate production RTL is needed."
+      }
     }
   ],
   "failure_dispositions": {
     "tool-environment": 12,
-    "verification-defect": 20
+    "verification-defect": 21
   },
   "historical_preparation_provenance": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
   "hosted_ci": "Recorded separately on PR #26; local evidence does not substitute for hosted required checks.",

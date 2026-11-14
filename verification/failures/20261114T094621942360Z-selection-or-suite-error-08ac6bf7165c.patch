@@ -1,0 +1,59 @@
+diff --git a/docs/results/P05-candidate-qualification.json b/docs/results/P05-candidate-qualification.json
+index c317c5c..97b5e3c 100644
+--- a/docs/results/P05-candidate-qualification.json
++++ b/docs/results/P05-candidate-qualification.json
+@@ -24407,11 +24407,22 @@
+         "canonical_tree_matches": true
+       },
+       "changed_since_run_start": []
++    },
++    {
++      "record": "verification/failures/20261114T094500536528Z-independent-event-batching.json",
++      "disposition": "verification-defect",
++      "diagnosis": "The exact-set routing unit assertion omitted newly registered memory-tx. Add that suite to the expected set; retain exact equality, all negative routing cases and nonempty requirements. No production expectation changes.",
++      "reproduction_sources": {
++        "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
++        "dv_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
++        "rtl_revision": null,
++        "reconstruction": "Execute tests/contracts at the published DV revision; no candidate production RTL is needed."
++      }
+     }
+   ],
+   "failure_dispositions": {
+     "tool-environment": 12,
+-    "verification-defect": 20
++    "verification-defect": 21
+   },
+   "historical_preparation_provenance": "Preserved without retroactive independence acceptance; see P05-fresh-dv-preparation.md and P05-source-exposure.json.",
+   "hosted_ci": "Recorded separately on PR #26; local evidence does not substitute for hosted required checks.",
+diff --git a/docs/results/P05-candidate-qualification.md b/docs/results/P05-candidate-qualification.md
+index 0863aca..705b75f 100644
+--- a/docs/results/P05-candidate-qualification.md
++++ b/docs/results/P05-candidate-qualification.md
+@@ -106,10 +106,10 @@ Caller/pool composition and physical RAM structure are not proved by FP-TX.
+ 
+ ## Findings and retained limits
+ 
+-All 32 unexpected records are retained:
+-20 verification defects and
++All 33 unexpected records are retained:
++21 verification defects and
+ 12 tool/environment outcomes.
+-They cover binding/stimulus/CI defects, missing mandatory stimulus, incomplete
++They cover binding/stimulus/CI defects, a stale exact-set suite registration assertion, missing mandatory stimulus, incomplete
+ induction history, secondary-worktree tool paths, frontend lowering limits and
+ solver budgets. Source/input/command/output evidence was captured before repair.
+ The index links each disposition and exact source reconstruction.
+diff --git a/tests/contracts/test_contracts.py b/tests/contracts/test_contracts.py
+index a4ad39d..b315f78 100644
+--- a/tests/contracts/test_contracts.py
++++ b/tests/contracts/test_contracts.py
+@@ -174,7 +174,7 @@ class StorageRoutingTests(unittest.TestCase):
+         from argparse import Namespace
+         from formal_storage import selection as formal_selection
+         specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
+-        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues','scheduler','queues-independent'})
++        self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues','scheduler','queues-independent','memory-tx'})
+         for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
+                 ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
+             with self.assertRaises(ValueError):

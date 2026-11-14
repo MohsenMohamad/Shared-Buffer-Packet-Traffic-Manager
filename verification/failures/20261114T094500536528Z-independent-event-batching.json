@@ -1,0 +1,36 @@
+{
+  "record": "verification/failures/20261114T094500536528Z-independent-event-batching.json",
+  "test": "independent-event-batching",
+  "result": "TOOL_ERROR",
+  "disposition": "verification-defect",
+  "diagnosis": "The exact-set routing unit assertion omitted newly registered memory-tx. Add that suite to the expected set; retain exact equality, all negative routing cases and nonempty requirements. No production expectation changes.",
+  "source_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
+  "reproduction_sources": {
+    "main_revision": "a4df0dd61802355e91b4c0c96e57b79241c86851",
+    "dv_revision": "90363c81c814ee8a35b97128acb2eb1b1dfb62f3",
+    "rtl_revision": null,
+    "reconstruction": "Execute tests/contracts at the published DV revision; no candidate production RTL is needed."
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/contracts",
+    "-p",
+    "test_*.py",
+    "-v"
+  ],
+  "seed": 17,
+  "run_id": 43581916024,
+  "job_id": 132408406590,
+  "run_url": "https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43581916024",
+  "artifact_id": 14108034753,
+  "archive": "verification/failures/p05-ci-contracts-43581916024.tar.gz",
+  "archive_sha256": "279fc2db20c8807714ae7a686894923c4de650e3a1a0f57760f7a8f8b17bd224",
+  "job_log": "verification/failures/p05-ci-contracts-43581916024.log",
+  "capture_note": "Hosted workflow uploads run manifests and logs but omits verification/failures. This equivalent manual capture preserves the failing manifest, full command stdout/stderr and job log before repair; exact source is a published commit.",
+  "hosted_merge_revision": "bec8f462ed8ae1dd4f2162b9e4696b3b5dbb6146",
+  "source_tree": "c60dbf318f7bb7a5c2da9fcadbd00c381a35c627"
+}
