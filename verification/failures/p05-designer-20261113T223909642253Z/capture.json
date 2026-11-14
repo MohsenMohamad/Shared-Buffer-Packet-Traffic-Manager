@@ -1,0 +1,63 @@
+{
+  "scope": "RTL-owned designer check",
+  "arguments": {
+    "profile": "I0",
+    "latency": 1,
+    "depth": 4,
+    "seed": 17,
+    "lint": false
+  },
+  "parameters": {
+    "N_RX": 2,
+    "N_Q": 4,
+    "CELL_BYTES": 16,
+    "N_CELL": 32,
+    "N_DESC": 16,
+    "MAX_PACKET_BYTES": 256,
+    "MEM_RD_LATENCY": 1,
+    "TX_FIFO_DEPTH": 4
+  },
+  "commands": [
+    [
+      "verilator",
+      "--assert",
+      "-Irtl/include",
+      "--binary",
+      "--timing",
+      "-j",
+      "2",
+      "--top-module",
+      "tm_memory_tx_smoke",
+      "--Mdir",
+      "/workspace/Shared-Buffer-Packet-Traffic-Manager/work/p05/20261113T223909642253Z-I0-l1-d4-s17/obj",
+      "-GN_RX=2",
+      "-GN_Q=4",
+      "-GCELL_BYTES=16",
+      "-GN_CELL=32",
+      "-GN_DESC=16",
+      "-GMAX_PACKET_BYTES=256",
+      "-GMEM_RD_LATENCY=1",
+      "-GTX_FIFO_DEPTH=4",
+      "rtl/include/tm_fixed.sv",
+      "rtl/queue/tm_desc_links.sv",
+      "rtl/memory/tm_metadata.sv",
+      "rtl/memory/tm_packet_ram.sv",
+      "rtl/tx/tm_tx.sv",
+      "dv/designer/tm_memory_tx_smoke.sv"
+    ],
+    [
+      "/workspace/Shared-Buffer-Packet-Traffic-Manager/work/p05/20261113T223909642253Z-I0-l1-d4-s17/obj/Vtm_memory_tx_smoke",
+      "+seed=17"
+    ]
+  ],
+  "result": "FAIL",
+  "returncode": 1,
+  "disposition": "verification-defect",
+  "diagnosis": "Designer smoke evaluated issued-received after adding current issue but before current external retirement. Include current retire in the same-edge public credit check. Production merged credit arithmetic is unchanged.",
+  "source_snapshot": "source.tar.gz",
+  "rtl_base_revision": "f54fedebd1cfa94d44fee1c759bc9d5e7aa44b52",
+  "snapshot_scope": "Explicit production registration, RTL headers and RTL-owned designer sources only; no independent DV.",
+  "tools": {
+    "verilator": "5.054 2026-11-01 rev vUNKNOWN-built20261112"
+  }
+}
