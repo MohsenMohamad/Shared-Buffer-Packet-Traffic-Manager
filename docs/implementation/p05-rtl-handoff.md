@@ -40,3 +40,30 @@ the resulting tree plus any resolution/dirty diff. Keep unmerged RTL repairs on
 its RTL PR; merged-source defects use a fix PR. Candidate qualification precedes
 RTL merge, followed by merged-source confirmation. Only independently qualified
 scope can satisfy an acceptance gate; preparation tests cannot substitute.
+
+## Exact candidate qualification handoff
+
+The current pre-merge candidate verdict is PASS for
+`479b5c1ceee2eee8db58d863bd5de5e20305cc8c`, combined with main
+`a4df0dd61802355e91b4c0c96e57b79241c86851` and the independent DV inputs
+recorded in [the public result](../results/P05-candidate-public.json).
+All six named profiles cross latency 1/2, FIFO depth 4/8 and seeds 17/31/53
+plus seed-17 replay. No production RTL defect is confirmed. The historical
+preparation independence qualification above remains unchanged.
+
+At the prepared installation path, combine the named RTL with the DV branch
+in a disposable detached checkout, leaving both submitted branches separate.
+The opaque public entry preserves child failure status and emits interface-level
+stimulus and expected/observed results separately from private DV diagnostics:
+
+```sh
+python3 tools/p05_candidate.py --rtl-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --profile I1 --seed 17
+python3 tools/p05_candidate.py --rtl-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --profile E0 --formal --timeout 600
+```
+
+[RTL PR #24](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24)
+must include the merged interface-test repair and pass its own required CI.
+Record any new RTL identity and run affected qualification before applying this
+verdict to it. [DV PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26)
+remains available for exact merged-source confirmation after maintainer-controlled
+RTL integration. Neither PR is merged by this qualification task.

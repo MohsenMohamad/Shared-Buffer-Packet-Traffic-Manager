@@ -1,47 +1,59 @@
-# Independent memory/TX preparation
+# Memory/TX verification
 
-This suite qualifies a new observed-write oracle and a P07/UVM passive-edge
-replay bench. It executes no target or dependency RTL implementation. The
-[contract](contract.md) defines frozen expectations and the risk/check/cover
-matrix; [FP-TX preparation](../../formal/tx/README.md) defines proof boundaries.
+`memory-tx` executes exact candidate RAM, finite-port metadata and TX through a
+clocked public-interface adapter and the frozen observed-write oracle/resource
+ledger. `memory-tx-oracle` and `memory-tx-bench` remain separate preparation
+self-tests; their PASS cannot satisfy production execution.
+
+In a detached combination of current main, the named RTL revision and the
+DV-only qualification revision:
 
 ```sh
-make regression RUN_ARGS='--profile E0 --test memory-tx-oracle --seed 17 --timeout 120'
-make regression RUN_ARGS='--profile I1 --test memory-tx-bench --seed 17 --timeout 120 --build-timeout 600'
-make regression RUN_ARGS='--profile I1 --test memory-tx --seed 17 --timeout 120'
+python3 tools/run.py regression --profile I1 --test memory-tx --candidate-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --seed 17 --jobs 2 --timeout 180 --build-timeout 600
 ```
 
-The first command executes model/trace qualification, 192 bounded sink patterns
-across latency 1/2, FIFO depth 4/8 and cell size 16/32/64, literal fragmented-chain
-witnesses, reset, metadata, held-field, conservation and detector tests. At E0
-seed 17 it also qualifies eight detector removals, two wrong model deltas,
-public parameter rejection through both frontends and preparation boundaries.
-Run seeds 17,31,53 plus replay at each production profile for saved diversity.
+The command checks candidate source identities before executing, then crosses
+latencies 1/2 and FIFO depths 4/8 with seeds 17/31/53 and seed-17 replay. Repeat
+for F0, F1, I0, I1, E0 and E1 geometries. `--memory-latency` and `--tx-depth`
+select a smaller diagnostic scope; they do not establish the complete matrix.
+Missing candidate identity/source, missing mandatory observed bins, nonempty
+shutdown, build/runtime failures and changed seed replay are non-success.
 
-The second compiles the explicit preparation source set and runs a UVM sequence,
-sequencer and driver, P07 passive stream monitor, passive action monitor, sealed
-collector, assertions and an independent checker over exported sampled actions.
-It executes three generator/simulator seeds plus the original-seed replay,
-all reset boundaries, atomic overlap and labeled corrupt signals/collector
-callbacks. `observed.jsonl`, `coverage.dat`, functional counters, replay input,
-logs and expected-negative waveforms are per-case artifacts. Covergroup/code
-collection here is bench qualification, never DUT coverage closure.
+`candidate-public.json`, semantic `public-inputs.jsonl`,
+`public-output-checks.jsonl` and `public-interface-result.json` contain source
+identity, configuration, seed, public stimulus and expected/observed interfaces
+without verification implementation excerpts. Expected data masks exclude unused
+lanes. Full samples, raw transport, separate stdout/stderr, generated configuration,
+coverage, binary digests and failure captures remain available for DV diagnosis.
+The server's independently advancing edge timestamp rejects missing/duplicate/
+mixed samples, and every server exit status is checked.
 
-The third is the future DUT invocation. During preparation it returns
-NOT_IMPLEMENTED and nonzero, even if other modes passed. It never searches for
-an implementation. A later DV task must register exact named candidate sources
-and a passive binding before enabling this mode; empty selection cannot PASS.
+The standalone physical RAM phase checks 64-bit 1R1W, exact response latency,
+reset-persistent readback and simultaneous distinct-word accesses. Packet tests
+check all kept bytes, metadata including return/completion tuples, order,
+exactly-once completion, full credit, stalls, fragmented chains, earliest/random
+legal reuse, stale links, reset/reused IDs and shutdown conservation. Atomic
+first-allocation/write/commit carries the RX handoff metadata directly; metadata
+read muxes are independently compared with pre-edge array contents.
 
-All modes use `tools/run.py` and existing evidence/capture, with an explicit
-source identity restricted to public declarations and preparation inputs.
-No production source-list inheritance is permitted. Failure capture is still
-mandatory, including outputs outside the repository. The fixtures contain no
-traffic manager or behavioral TX implementation; the replay environment's
-persistent RAM image is not evidence of production memory/TX correctness.
+```sh
+python3 tools/run.py formal-rtl --profile E0 --test memory-tx --candidate-revision 479b5c1ceee2eee8db58d863bd5de5e20305cc8c --timeout 600
+python3 tools/run.py coverage --profile I1 --test memory-tx --coverage-manifest PATH_TO_PASSING_UNMUTATED_CASE_MANIFEST
+```
 
-An explicit `--preparation-build-manifest PATH` can reuse this task's passing
-SV/UVM compilation when registered HDL/headers, generated configuration,
-dependencies, tool identities and compiler arguments match exactly. It records
-the original compile revision and binary hash and reruns stimulus, monitors and
-current Python checking. It never discovers a build or an RTL implementation.
-The normal invocation still compiles. Mismatched or incomplete identities fail.
+See [FP-TX scope](../../formal/tx/README.md). Saved coverage is checked against
+source, adapter/checker, binary, sample and artifact identities per elaboration;
+mutations never contribute production coverage. Functional bins are mandatory.
+Measured code counters do not claim code-coverage or P12B structural closure.
+
+Preparation remains independently runnable:
+
+```sh
+python3 tools/run.py regression --profile E0 --test memory-tx-oracle --seed 17 --timeout 120
+python3 tools/run.py regression --profile I1 --test memory-tx-bench --seed 17 --timeout 120 --build-timeout 600
+```
+
+Its explicit `memory-tx-preparation` source list still has no production
+inheritance. Exact `--preparation-build-manifest` reuse retains the original
+compile identity and reruns current checking. Historical results and provenance
+qualifications remain in [the preparation report](../../docs/results/P05-fresh-dv-preparation.md).

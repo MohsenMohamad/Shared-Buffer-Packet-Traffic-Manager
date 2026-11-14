@@ -1,0 +1,5 @@
+{
+  "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
+  "rtl_pr": 24,
+  "scope": "Exact pre-merge P05 RAM/metadata/TX candidate; changing this identity requires recorded affected retesting."
+}

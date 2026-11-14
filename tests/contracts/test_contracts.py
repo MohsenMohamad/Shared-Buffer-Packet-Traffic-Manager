@@ -161,12 +161,21 @@ class RegistrationTests(unittest.TestCase):
                 self.assertEqual(main(['regression','--profile','E0','--test','contracts',
                                        '--seed','23','--output',folder]),0)
                 suite.assert_called_once()
+            # Expected CLI errors must keep real capture enabled in an isolated
+            # repository, even when this unit file is invoked directly.
+            sys.path.insert(0, str(ROOT / 'tests/toolchain'))
+            from runner_fixture import isolated_runner_repository
+            checkout = isolated_runner_repository(Path(folder) / 'checkout', ROOT)
             for args in [('uvm','--seed','23'),('regression','--test',''),
                          ('regression','--profile','missing'),('regression','--profile',''),
                          ('regression','--test','contracts','--test','contracts'),
                          ('regression','--seed','0'),
                          ('regression','--seed','17','--seed','19')]:
-                self.assertNotEqual(main([*args,'--output',folder]),0)
+                result = subprocess.run([sys.executable, str(checkout / 'tools/run.py'),
+                                         *args, '--output', str(Path(folder) / 'negative-output')],
+                                        cwd=checkout, capture_output=True, text=True, timeout=30)
+                self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(len(list((checkout / 'verification/failures').glob('*.json'))), 7)
 
 
 class StorageRoutingTests(unittest.TestCase):
@@ -175,6 +184,8 @@ class StorageRoutingTests(unittest.TestCase):
         from formal_storage import selection as formal_selection
         specs, selected = formal_selection(Namespace(profile='E0', test=None, seed=None))
         self.assertEqual(set(selected), {'cell','descriptor','fifo2','fifo4','csr','queues','scheduler','queues-independent'})
+        self.assertIn('memory-tx', specs)
+        self.assertEqual(formal_selection(Namespace(profile='E0', test=['memory-tx'], seed=None))[1], ['memory-tx'])
         for profile_name, tests, seed in [('toolchain',None,None), ('E0',[],None),
                 ('E0',['counter'],None), ('E0',['cell','cell'],None), ('E0',['cell'],[17])]:
             with self.assertRaises(ValueError):
