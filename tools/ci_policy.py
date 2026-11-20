@@ -12,16 +12,19 @@ REQUIRED = ('repository', 'policy', 'prepare', 'capability', 'contracts', 'stora
             'csr', 'foundation', 'scheduler', 'memory_tx')
 
 
-def complete_paths(event, root):
+def complete_paths(event, root, *, include_deletions=True):
     """Local Git has no API pagination cap; any missing history fails closed."""
     pr = event['pull_request']
     base, head = pr['base']['sha'], pr['head']['sha']
     if not all(re.fullmatch(r'[0-9a-f]{40}', sha) for sha in (base, head)):
         raise ValueError('Missing immutable PR base/head SHA')
+    options = [] if include_deletions else ['--diff-filter=ACMRT']
     data = subprocess.check_output(
-        ['git', 'diff', '--name-only', '--no-renames', '-z', base + '...' + head],
+        ['git', 'diff', '--name-only', '--no-renames', '-z', *options, base + '...' + head],
         cwd=root, timeout=60)
-    if not data or not data.endswith(b'\0'):
+    if not data and not include_deletions:
+        return []
+    if not data.endswith(b'\0'):
         raise ValueError('Empty or incomplete PR diff')
     return data[:-1].decode('utf-8').split('\0')
 

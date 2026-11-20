@@ -16,4 +16,4 @@ Characterize the actual integrated P02 allocator now, completing this follow-up 
 
 ## Required checks and completion
 
-Deliver a durable experiment definition and subsequent results report with compact measurements, reproduction commands and artifact references. Review constraint coverage, area, selection and worst-path timing, fanout, limitations and proposed investigations. Complete the standalone study before P08; P08 owns the consumer-path recheck. No post-layout or full-TM timing claim follows from this study.
+Deliver a durable experiment definition and subsequent measurement record under the [durable evidence policy](../../documentation.md#durable-evidence-for-new-work). Review constraint coverage, area, selection and worst-path timing, fanout, limitations and proposed investigations. Complete the standalone study before P08, which owns the consumer-path recheck. Report timing at standalone scope.

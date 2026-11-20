@@ -1,3 +1,0 @@
-[4915] %Fatal: tm_memory_tx_smoke.sv:82: Assertion failed in tm_memory_tx_smoke: public read credits exceeded
-%Error: dv/designer/tm_memory_tx_smoke.sv:82: Verilog $stop
-Aborting...

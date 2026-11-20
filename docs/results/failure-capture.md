@@ -50,12 +50,10 @@ git diff --check
 
 ## Operation and limits
 
-See [capture contents](../../verification/failures/README.md) and the
-[root rule](../../AGENTS.md#failure-capture). Captures must be reviewed and
-committed; the runner does not commit them automatically. Bounded log tails do
-not replace every possible stimulus, generated source or trace. Source drift and
-capture failures are explicitly recorded; ad-hoc/interrupted runs need manual
-preservation of equivalent evidence before repair.
+This report records PR #19's original capture behavior. For current storage,
+review and interrupted-run recovery, see the
+[capture instructions](../../verification/failures/README.md) and
+[durable evidence policy](../documentation.md#durable-evidence-for-new-work).
 
 `tools/evidence.py` is one of `toolchain_cache.INPUTS`, so hosted CI uses a new
 cache key and may need a cold producer build. Doctor's setup recipe fingerprints

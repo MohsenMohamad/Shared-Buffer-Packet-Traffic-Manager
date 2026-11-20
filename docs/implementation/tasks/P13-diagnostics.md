@@ -23,7 +23,7 @@ Also read the relevant APIs in `docs/spec/module-contracts.md`, created by P01, 
 
 3. Define report fields for suspected cause/location, cited evidence, next checks, uncertainty and model/prompt identifiers. Support interactive report ingestion; an optional provider adapter must not be required for ordinary operation.
 
-4. Attach collection to actual deterministic regression failures and preserve their original status, return code and artifacts even when collection/provider/report validation fails.
+4. Attach collection to actual deterministic regression failures and preserve their original status, return code and artifacts even when collection/provider/report validation fails. Follow the [durable evidence policy](../../documentation.md#durable-evidence-for-new-work) for the diagnostic record and artifact references.
 
 5. Test extraction, bounds, path/reference validity, malformed/missing reports and absent credentials with fixed response fixtures. Label those as fixture tests rather than live diagnostic evidence.
 

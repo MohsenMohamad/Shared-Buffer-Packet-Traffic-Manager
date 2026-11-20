@@ -3,14 +3,15 @@
 ## Objective and prerequisites
 
 Current stage: **MERGED-SOURCE PASS** for the scoped RAM/metadata/TX component
-at PR #24 merge/current main `3ede1a5e40791ff00d98a0faa8389154d632e0c5`.
+at PR #24 merge `3ede1a5e40791ff00d98a0faa8389154d632e0c5`.
 Production confirmation uses tested DV/combined revision
 `fd129b1e0d7566c460962b6869aa2274f7a24fa9`, tree
 `c1c3033decc4fc1b16aab4702ac9da4714ef2353`. See
 [qualification and merged-source evidence](../../results/P05-candidate-qualification.md)
 and [public interface results](../../results/P05-candidate-public.json).
-Final full hosted CI and relevant main CI remain explicit merge gates, recorded
-on [DV PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26).
+The required full DV and main runs passed as recorded on
+[DV PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26).
+See [integration status](../../status.md) for the post-merge checkout repair.
 
 Dependencies: [P03](P03-queues.md)
 
@@ -72,10 +73,10 @@ integrated RTL; original candidate/proof executions retain their identities.
 | Current P05 evidence | Status and boundary |
 | --- | --- |
 | Production data/metadata/credit/ownership/reset checks | PASS across the retained six-profile matrix; fresh sixteen-run integrated I1 confirmation also passes. |
-| Exact merged source | PASS at the merge/current-main SHA above; all sixteen fresh trace hashes match the original corresponding runs. |
+| Exact merged source | PASS at the RTL merge above. All sixteen fresh trace hashes match the original corresponding runs. |
 | Reduced FP-TX | Four unbounded safety proofs and all required covers/mutation detections retain applicability through verified input equality; arbitrary sink stalls remain permitted. |
 | Transaction/resource shutdown and saved coverage | PASS; no live resource or response obligation remains. Numeric code counters do not establish coverage closure. |
-| Final hosted integration gate | Required full DV and main run conclusions are recorded on PR #26; light-only success is insufficient. |
+| Final hosted integration gate | Required full DV and main runs passed. The full main run after the PR #27 checkout repair also passed. |
 | Remaining scope | Historical preparation provenance review, caller/pool composition and P12B structural comparison remain separate; no retroactive independence or structural signoff is claimed. |
 
 The memory/TX portion of G2 has real byte/latency/ownership checks for both response latencies and scoped safety evidence. Any missed specified timing/performance bound is identified before dependent integration.

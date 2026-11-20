@@ -16,4 +16,4 @@ Verilator RTL lint is required. Do not blanket-disable warning classes to close 
 
 Use the shared [reset timing convention](reset-timing.md). [R01](../implementation/tasks/R01-reset-timing.md) owns its executable recipe before new allocator/P08 measurements. Separate data setup/hold from reset recovery/removal and fanout; retain conditional or unresolved reset closure when the external release envelope is not established. Preserve original study constraints/results rather than relabeling them after a scenario change.
 
-Generated netlists, timing scripts, logs and waves belong in ignored build/output directories and CI artifacts. Commit concise curated results with the source revision and commands needed to regenerate them. Never equate positive setup slack at one reference corner with physical signoff.
+Follow the [durable evidence policy](../documentation.md#durable-evidence-for-new-work) for generated netlists, timing scripts, logs, waves and measured results. Report positive setup slack within the measured reference corner and constraints.

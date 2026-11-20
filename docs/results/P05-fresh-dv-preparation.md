@@ -96,6 +96,11 @@ commands and first diagnostics were preserved before repair. No capture opt-out
 was added. Intentional faults remain isolated and separately labeled; none is
 reported as a natural RTL discovery.
 
+The wrong-response and missing-response records retain their separate case IDs
+and share the byte-identical patch from the wrong-response capture. The original
+`verification/failures/20261113T174803003600Z-memory-tx-bench-missing-response-2361b00f5fbf.patch`
+is retrievable at [preparation commit `901c026`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/901c02680d2c5c42a1edf82251fa8208a888ca87/verification/failures/20261113T174803003600Z-memory-tx-bench-missing-response-2361b00f5fbf.patch).
+
 The verification fixes cover three detector-fixture interactions, two compile
 scaffolding errors, two expected-response classification errors, stale
 link-capture state across descriptor/cell reuse, and missing source/qid baseline

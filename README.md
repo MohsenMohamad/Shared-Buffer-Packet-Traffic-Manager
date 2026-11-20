@@ -24,13 +24,12 @@ flowchart TD
   CSR --> DRR
 ```
 
-This is the target architecture. FIFOs, bitmap pools, CSR/statistics and the UVM
-foundation, descriptor queues and the DRR/packet-RR scheduler are implemented
-and locally verified at their documented component scopes. Memory/TX,
-receive/admission and production top integration remain hardware work.
-Declaration elaboration and bench fixtures do not establish an integrated TM.
-[Current status](docs/status.md) and the [implementation plan](docs/implementation/plan.md)
-identify the exact completed scope and next prerequisites.
+The diagram shows the target architecture. The repository contains FIFOs,
+bitmap pools, CSR/statistics, descriptor queues, the DRR/packet-RR scheduler and
+the UVM foundation. The packet RAM, finite-port metadata store and credited TX
+are merged and qualified at component scope. Receive/admission and production
+top integration are pending. [Current status](docs/status.md) and the
+[implementation plan](docs/implementation/plan.md) record the evidence and gates.
 
 ## Engineering decisions
 
@@ -77,8 +76,9 @@ SV/UVM drivers, passive monitors, RAL, independently batched policy/resource
 models, constrained packet generation, SVA and selected production formal proofs
 are exercised at their recorded component/fixture scope. The black-box scoreboard
 uses monitored handshakes, not driver intentions. Four-state simulation remains
-outside the qualified two-state flow. New fixed formal witnesses require
-[F01](docs/implementation/tasks/F01-formal-symbols.md) before queue proof work.
+outside the qualified two-state flow. The
+[F01 symbolic-input recipe](docs/implementation/tasks/F01-formal-symbols.md)
+applies to new fixed formal witnesses.
 
 ## Results and navigation
 

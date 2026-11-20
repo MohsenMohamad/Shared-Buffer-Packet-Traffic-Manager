@@ -40,7 +40,7 @@ Use the repository PR template as a default, adapting it to the size of the chan
 
 Use a small validation table when it improves comparison. A single check may be clearer in a sentence. Keep a result's essential qualification beside it even if the limitations section adds detail.
 
-Full hashes, seed lists, digests, command transcripts, long artifact paths and detailed measurements belong in the results report. Include a number or short command in the PR when it materially helps assess the change. Do not compress all evidence into a long bullet. Give unrelated constraints separate short bullets or sentences; do not mix them with hashes, commands and artifact paths. Keep the complete scope/assumptions in the linked report. Do not fill a limitations section with every project exclusion, an inventory of untouched files, routine task boundaries or already resolved issues. A real failure or unexecuted required check must remain visible; moving detail to a report does not justify hiding its consequence.
+Put full hashes, seed lists, digests, long artifact paths and detailed measurements in the authoritative evidence when they are needed. Include a number or short command in the PR when it materially helps assess the change. Keep the complete scope and assumptions in the linked evidence. A material failure or unexecuted required check must remain visible in the PR.
 
 An expected seeded-defect detection is a successful negative check only if the intended violation was detected. A generic crash, unrelated assertion or missing executable does not establish that result. Label the expected detection explicitly.
 
@@ -67,7 +67,36 @@ Check Markdown structure, tables, code fences and relative links, including file
 
 ## Durable evidence for new work
 
-Commit compact durable revision/configuration/tool/result/measurement and reproduction records to Git. Keep bulky per-process detail, raw logs, waves, databases and generated outputs in build/CI artifacts. Preserve enough numeric measurements, assumptions, expected-negative identities and limitations in the durable report to explain the result after artifacts expire. This policy applies to new work; existing results JSON, including P01/P02, remain unchanged and are not retrospectively compacted, relocated or deleted.
+Keep routine raw captures and passing run output in ignored run storage such as
+`.build/runs/` or `work/`. Use the existing CI artifact uploads for hosted runs.
+Commit a compact record when a result, failure or qualification needs to survive
+the run. Include the diagnosis or first meaningful symptom, replay command,
+case/configuration/seed, expected and observed outcome, fix and retest when
+available, proof assumptions and bounds, and an artifact reference when one
+exists. The record must remain useful after the artifact expires.
+
+Capture unexpected tool and verification failures before repair. See the
+[runner and manual capture instructions](../verification/failures/README.md).
+Group repeats under one diagnosis and retain exact case identifiers when needed
+for attribution or replay. Retain an explicitly reviewed, byte-exact source
+patch, stimulus or trace in Git when a material finding cannot be reconstructed
+from permanent source and the replay recipe. Record why the input is necessary
+and how to use it. Assignment cards should ask for compact evidence and artifact
+references. A small change can use the PR and an existing authoritative record
+when they already cover the result.
+
+Protect existing historical results JSON, including P01/P02, as published. For
+removed raw files or redundant copies, record a reachable immutable commit and
+the original path in the authoritative report after verifying byte-exact
+retrieval. Preserve current consumers and unique replay inputs.
+
+The light PR check screens the complete merge-base-to-head diff. It flags added
+or changed paths in `.build/`, `.work/` and `work/`, plus recognizable raw output
+under `docs/results/` and `verification/failures/` (logs, stdout/stderr, waves,
+archives, CI annotations, runner manifests/summaries and coverage databases).
+Durable JSON, patches and fixtures remain valid. If an essential byte-exact input
+matches the check, document a reviewed exception for its exact path and purpose.
+Local `make repo-check` screens staged and tracked working-tree changes.
 
 Record the actual tested SHA and dirty state, configuration/dependency/constraint digests, exact commands and tool identities. Associate the PR and workflow/run references when available. An integration SHA on merged main may be added as metadata; it must not replace the tested SHA or imply execution on that untested revision. For historical dirty runs, retain the recorded base SHA and behavioral hashes; do not invent a clean tested commit.
 

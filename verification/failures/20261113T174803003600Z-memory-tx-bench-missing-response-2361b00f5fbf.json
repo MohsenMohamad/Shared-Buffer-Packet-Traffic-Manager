@@ -161,7 +161,7 @@
   },
   "source_revision": "db8bbec00d87de4b632fd92781f773ba0c464ee6",
   "dirty": true,
-  "source_patch": "20261113T174803003600Z-memory-tx-bench-missing-response-2361b00f5fbf.patch",
+  "source_patch": "20261113T174802601044Z-memory-tx-bench-wrong-response-aa9f861b69a4.patch",
   "source_patch_sha256": "9f3845677d6d12735f24998ae8ef4b5cdbc4c7d7f10039def7240e5cec61667f",
   "changed_since_run_start": [],
   "log_tails": [

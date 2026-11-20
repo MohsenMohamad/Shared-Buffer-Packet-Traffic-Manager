@@ -1,9 +1,49 @@
 #!/usr/bin/env python3
 """Validate repository contracts; this is not a hardware verification run."""
-import json,re,sys,subprocess
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-failures=[]
+
+from ci_policy import complete_paths
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def raw_artifact(path):
+    if path.startswith(('.build/', '.work/', 'work/')):
+        return True
+    if not path.startswith(('verification/failures/', 'docs/results/')):
+        return False
+    name = path.rsplit('/', 1)[-1].lower()
+    return (name.endswith(('.log', '.stdout', '.stderr', '.vcd', '.fst', '.tar.gz',
+                           '.tar.zst', '.zip', '-annotations.txt'))
+            or name in {'manifest.json', 'summary.json', 'coverage.dat'})
+
+
+def changed_paths(pr_diff):
+    if pr_diff:
+        event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+        return complete_paths(event, ROOT, include_deletions=False)
+    # Check the index and tracked edits locally, including anything force-added.
+    diff = ['git', 'diff', '--name-only', '--no-renames', '--diff-filter=ACMRT', '-z']
+    paths = subprocess.check_output(diff, cwd=ROOT, timeout=60)
+    staged = subprocess.check_output([*diff, '--cached', 'HEAD'], cwd=ROOT, timeout=60)
+    return os.fsdecode(paths + staged).split('\0')
+
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--pr-diff', action='store_true', help='Check the full PR merge-base diff')
+args = parser.parse_args()
+try:
+    failures = [f'{path!r}: raw run artifact belongs in ignored storage or CI artifacts'
+                for path in sorted(set(changed_paths(args.pr_diff))) if raw_artifact(path)]
+except (KeyError, OSError, ValueError, subprocess.SubprocessError) as error:
+    sys.exit(f'Unable to check raw artifacts: {error}')
+
 # Limit checks to repository inputs, excluding ignored dependency/scratch trees.
 paths=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','--','*.md'],cwd=ROOT,text=True).splitlines()
 for path in paths:

@@ -91,6 +91,9 @@ class FailureCaptureTests(unittest.TestCase):
 
     def test_previous_captures_never_reenter_source_patches(self):
         (self.root / 'rtl.sv').write_text('broken\n')
+        historical = self.root / 'verification/failures/prior.json'
+        historical.parent.mkdir(parents=True)
+        historical.write_text('{}\n')
         patches = []
         for name in ('first', 'second'):
             case = self.case(name)
@@ -99,6 +102,7 @@ class FailureCaptureTests(unittest.TestCase):
             patches.append((path.parent / record['source_patch']).read_bytes())
         self.assertEqual(patches[0], patches[1])
         self.assertNotIn(b'verification/failures', patches[1])
+        self.assertNotIn(b'.build/runs/failures', patches[1])
 
     def test_clean_source_records_revision_without_patch(self):
         case = self.case()

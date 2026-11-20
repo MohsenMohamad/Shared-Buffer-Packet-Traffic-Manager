@@ -10,12 +10,13 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tests/toolchain'))
 from runner_fixture import isolated_runner_repository
+from failure_capture import CAPTURE_PATH
 
 
 def capture_inventory():
-    folder = ROOT / 'verification/failures'
-    return {str(p.relative_to(folder)): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in folder.rglob('*') if p.is_file()}
+    return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for name in ('verification/failures', CAPTURE_PATH)
+            for p in (ROOT / name).rglob('*') if p.is_file()}
 
 
 class CaptureIsolationTests(unittest.TestCase):
@@ -43,14 +44,21 @@ class CaptureIsolationTests(unittest.TestCase):
                                      'repo', '--output', str(output)], cwd=checkout,
                                     capture_output=True, text=True, timeout=30)
             self.assertNotEqual(result.returncode, 0)
-            record, = (checkout / 'verification/failures').glob('*.json')
+            record, = (checkout / CAPTURE_PATH).glob('*.json')
             saved = json.loads(record.read_text())
+            self.assertFalse((checkout / 'verification/failures').exists())
+            subprocess.run(['git', 'check-ignore', str(record)], cwd=checkout,
+                           check=True, capture_output=True)
             self.assertEqual(saved['test'], 'repository-contracts')
             self.assertEqual(saved['result'], 'TOOL_ERROR')
             self.assertTrue(Path(saved['run_directory']).is_relative_to(output))
             self.assertIn('invalid requirement status', saved['log_tails'][0]['stderr']['text'])
-            self.assertIn('INVALID-FIXTURE-STATUS',
-                          (record.parent / saved['source_patch']).read_text())
+            source_patch = record.parent / saved['source_patch']
+            replay = directory / 'replay'
+            subprocess.run(['git', 'clone', '-q', str(checkout), str(replay)], check=True)
+            subprocess.run(['git', 'apply', '--binary', str(source_patch)], cwd=replay, check=True)
+            replayed = json.loads((replay / 'verification/requirements.json').read_text())
+            self.assertEqual(replayed['requirements'][0]['status'], 'INVALID-FIXTURE-STATUS')
         self.assertEqual(capture_inventory(), before)
 
 
