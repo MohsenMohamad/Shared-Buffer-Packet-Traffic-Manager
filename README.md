@@ -6,7 +6,11 @@ four independently backpressured 64-bit inputs share sixteen logical queues,
 The design combines whole-packet reservation, store-and-forward publication,
 byte-based deficit round robin and an AXI4-Lite control/statistics plane.
 
-## Data path
+The [v2 4×4 target](docs/spec/tm-v2-4x4.md) defines the next design. The
+[current status](docs/status.md) records the feasibility result and the
+implementation gates.
+
+## v1 data path
 
 ```mermaid
 flowchart TD
@@ -24,14 +28,14 @@ flowchart TD
   CSR --> DRR
 ```
 
-The diagram shows the target architecture. The repository contains FIFOs,
+The diagram shows the v1 one-egress architecture. The repository contains FIFOs,
 bitmap pools, CSR/statistics, descriptor queues, the DRR/packet-RR scheduler and
 the UVM foundation. The packet RAM, finite-port metadata store and credited TX
 are merged and qualified at component scope. Receive/admission and production
 top integration are pending. [Current status](docs/status.md) and the
 [implementation plan](docs/implementation/plan.md) record the evidence and gates.
 
-## Engineering decisions
+## v1 engineering decisions
 
 | Decision | Consequence |
 | --- | --- |
