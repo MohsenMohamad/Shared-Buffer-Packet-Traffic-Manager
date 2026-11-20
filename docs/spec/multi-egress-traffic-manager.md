@@ -1,13 +1,14 @@
-# v2 target contract for the 4×4 traffic manager
+# Multi-egress traffic manager
 
-The traffic manager (TM) is single-clock, store-and-forward and unicast. Four
-independent 64-bit ingress streams feed four independent 64-bit egress streams
-through shared cell and descriptor pools. Classification, FCS removal and
-insertion, and applying ECN to packet bytes are external. PFC requests,
-probabilistic marking/WRED, multicast and cut-through are outside v2.
+The traffic manager (TM) is single-clock, store-and-forward and unicast. In
+the primary 4×4 profile, four independent 64-bit ingress streams feed four
+independent 64-bit egress streams through shared cell and descriptor pools.
+Classification, FCS removal and insertion, and applying ECN to packet bytes
+are external. PFC requests,
+probabilistic marking/WRED, multicast and cut-through are outside this contract.
 
-This is the v2 behavior contract. The [specification index](README.md) identifies
-the version of the component contracts. The [implementation plan](../implementation/plan.md#v2-migration-and-gates)
+The [specification index](README.md) identifies which design each contract
+applies to. The [implementation plan](../implementation/plan.md#multi-egress-migration-and-gates)
 defines the implementation entry and acceptance gates.
 
 ## Profiles and target
@@ -35,7 +36,7 @@ sources offer dense streams with successive packets starting on the next beat,
 each sink is always ready, shaping is disabled, admission has adequate capacity
 and packet RR supplies work-conserving selection. All frames in the test must
 commit and deliver exactly once across warm-up, measurement and drain. The
-[acceptance runs and accounting](../results/tm-v2-feasibility.md#workloads-and-reproduction)
+[acceptance runs and accounting](../results/multi-egress-datapath-feasibility.md#workloads-and-reproduction)
 define the input sequences and reporting. Mixed destinations, shaping, downstream
 stalls and incast have separate checks.
 
@@ -315,7 +316,7 @@ blocked headers, drain contexts, statuses or internal work. A malformed stream
 stuck in drain can be recovered by reset. Validate merged byte strobes and
 cross-field ranges atomically. Misaligned mapped accesses and invalid or
 read-only writes return SLVERR. Unmapped addresses return DECERR. A zero-strobe
-mapped write succeeds without changes. The v2 public-interface assignment
+mapped write succeeds without changes. The multi-egress public-interface assignment
 defines packed bit positions and CSR addresses against this behavior.
 
 Counters are 64-bit unsigned and saturating. Per ingress port and class,

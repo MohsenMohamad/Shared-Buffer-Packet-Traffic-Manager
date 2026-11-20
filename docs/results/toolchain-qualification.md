@@ -1,4 +1,4 @@
-# Modern toolchain qualification
+# Toolchain qualification
 
 The selected source stack passes toolchain qualification and applicable merged
 component/fixture checks. `read_slang` is selected in the real synthesis/formal
@@ -20,7 +20,7 @@ Inventory/failure criteria were committed first at `e09e28a`.
 contains this refresh; integration remains with the maintainer. Historical
 P00/P01/P02/P06/P07 reports and production `rtl/`, `formal/` and `dv/` are unchanged.
 
-[The durable JSON](modern-toolchain.json) records actual tested SHAs/dirty flags,
+[The durable JSON](toolchain-qualification.json) records actual tested SHAs/dirty flags,
 commands, profiles/seeds, dependency/constraint hashes, source fingerprints, tool
 identities, configurations, outcomes, negative identities, coverage/replay data,
 property inventories and timing measurements. Apply each run's source overrides
@@ -40,9 +40,9 @@ in the PR checks and description.
 The supplied audit at
 [`a48286d`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/tree/a48286d51b9dd195b18388e9ee3c70c8403ccc0b/tests/investigations/rtl-frontend-probes)
 is supplemented by independent memory, signed-width, heterogeneous, interface,
-symbolic-input, assumption-inclusion, timing-error and DPI cases. The old-control
-rerun preserves original source/input hashes. Its unchanged `named_widths`
-fixture passes unbounded proof/cover and detects its intended mutation; ten old
+symbolic-input, assumption-inclusion, timing-error and DPI cases. The Yosys 0.52
+native-frontend control rerun preserves original source/input hashes. Its unchanged `named_widths`
+fixture passes unbounded proof/cover and detects its intended mutation; ten audit
 synthesis outcomes match, five accepted and five rejected.
 
 ## Selected installation
@@ -58,8 +58,8 @@ synthesis outcomes match, five accepted and five rejected.
 | Build/runtime inputs | CMake 4.4.5, SWIG 4.5.1, CUDD 3.0.0, Eigen 5.0.1, Click 8.5.1; selected Tcl 8.6.16/zlib and reduced build-package set |
 | Host | Linux x86-64, glibc ≥2.39; executed C++20 concepts/`std::format`; GCC 14.2.0 observed, exact compiler patch not required |
 
-The [inventory](../implementation/modern-toolchain-plan.md) records reasons,
-transitive gitlinks/download SHA256s and every old package's disposition. The
+The [inventory](../implementation/toolchain-inventory.md) records reasons,
+transitive gitlinks/download SHA256s and whether each packaged dependency is still required. The
 [dependency](../../tools/dependencies.json) and
 [package](../../tools/packages.lock.json) locks define normal setup inputs.
 The published Yosys release's integrated combination is selected; newer standalone
@@ -73,7 +73,7 @@ modes, symlinks, deletion, incomplete installation and compiler/path/Python/libc
 identity mismatches; restoration passes. Forty runner/cache tests additionally
 cover recipe/flag/runtime invalidation, interrupted builds, current-validator
 execution, transfer permissions and stale CMake objects. Cache generation is v3.
-The old `/workspace/toolchain` installation is preserved.
+The packaged-tool installation at `/workspace/toolchain` is preserved.
 
 ## Frontend comparison
 
@@ -82,7 +82,7 @@ parsing is deferred AST parsing; Slang's AST-only phase also performs semantic
 compilation. A parse success is not equivalent between them and does not establish
 synthesis or correct behavior.
 
-| Representation/case | Old native 0.52 | Current native 0.70 | Selected Slang |
+| Representation/case | Yosys 0.52 native | Yosys 0.70 native | Yosys 0.70 with Slang |
 | --- | --- | --- | --- |
 | Baseline non-ANSI, ANSI vectors, explicit package scope, minimal/named widths | P/E/S accepted | P/E/S accepted | P/E/S accepted |
 | Wildcard package import, inline parameter-dependent records, type parameters, `$bits(type)` | Rejected | Rejected | P/E/S accepted |
@@ -94,7 +94,7 @@ synthesis or correct behavior.
 Native diagnostic commands deliberately return nonzero; their `TOOL_ERROR`/`FAIL`
 statuses remain in the JSON. Native forward-reference cases do not receive credit
 for Slang's precise diagnostic: an earlier unsupported construct can block it.
-The frozen old audit supplies its complete synthesis comparison; the separate
+The pinned frontend audit supplies its complete synthesis comparison; the separate
 native replay adds parse/elaboration and independent minimized synthesis cases.
 
 Both accepted recipes (`type_parameter`, `named_widths`) elaborate all six
@@ -162,7 +162,7 @@ Fixed Nangate45 typical Liberty SHA256 is
 `8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1`:
 1.10 V, 25 °C, ns/fF. Constraints: 10 ns ideal clock, 0.05 ns uncertainty,
 min/max IO delays 0.2/1 ns, input slew 0.05 ns, load 10 fF; separate `BUF_X1`
-driving-cell case passes. P00 max/min slack is 8.84/0.17 ns. Old STA 2.0.17 gives
+driving-cell case passes. P00 max/min slack is 8.84/0.17 ns. OpenSTA 2.0.17 gives
 the same numbers on identical new netlist/Liberty/SDC; only its unsupported
 `report_units` command is omitted.
 
@@ -205,7 +205,10 @@ Consumers receive the sealed installation and run integrity/current doctor;
 they never build tools. Identity includes checkout path and ABI/compiler/recipe:
 the install is not advertised as relocatable. Diagnostics retain 14 days; the
 handoff is deleted after consumers, with a one-day fallback. Regenerate expired
-artifacts using recorded fingerprints and commands:
+artifacts using the recorded fingerprints and commands. Run these commands
+in a PR #7 checkout. The clean hosted replay used
+`6e694a5439272fb49183697b41178ac077530f6e`; local runs use the tested revisions
+and dirty inputs recorded in the qualification JSON.
 
 ```sh
 make setup JOBS=2
@@ -241,10 +244,10 @@ python3 tests/frontends/compare_native.py --reference "$NATIVE_RUN" \
 
 Set paths to a completed native run, the historical executable/runtime and a
 fresh output directory. Replay adds parse/elaboration and minimized synthesis
-without overwriting modern results. Frozen-audit old synthesis/formal commands
-and input-preservation hashes are recorded separately in JSON.
+without overwriting the selected-stack results. The JSON separately records
+the pinned audit's synthesis and formal commands and input-preservation hashes.
 
-The [decision table](../implementation/modern-toolchain-decisions.md) and
+The [decision table](../implementation/toolchain-capabilities.md) and
 [P01 recipe](../implementation/tasks/P01-followup-representation.md) give executable
 accepted alternatives. Whitespace in source paths remains unqualified. DPI
 force/release/polling, additional concurrent formal SVA, physical timing closure

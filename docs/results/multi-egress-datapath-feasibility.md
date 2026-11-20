@@ -1,9 +1,10 @@
-# 4×4 cell datapath feasibility
+# Multi-egress datapath feasibility
 
-The deterministic cycle study meets the balanced beat-rate target with one
-512-bit cell read and one 512-bit cell write per cycle at read latencies of one
-and two. The candidate uses four staging cells per ingress and six prefetch
-cells per egress. The [v2 contract](../spec/tm-v2-4x4.md) specifies its edge
+The primary 4×4 cycle model met the balanced fixed-permutation beat-rate
+target at read latencies of one and two for repeated 60-, 65-, and 1,536-byte
+frames and the specified repeating length mixture. The candidate uses one
+512-bit cell read and one 512-bit cell write per cycle, four staging cells per
+ingress and six prefetch cells per egress. The [multi-egress contract](../spec/multi-egress-traffic-manager.md) specifies its edge
 behavior. The [queue/control prerequisite](../implementation/plan.md#next-assignment-and-queuecontrol-prerequisite)
 covers physical metadata realization and timing before freezing dependent RTL.
 
@@ -29,7 +30,7 @@ staging, request overlap, or cell availability at the next beat deadline.
 
 ## Workloads and reproduction
 
-The [Python model](../../tools/tm_v2_feasibility.py) uses static per-queue
+The [Python model](../../tools/multi_egress_feasibility.py) uses static per-queue
 limits of 1,024 cells, a shared pool of 1,024 cells and 256 descriptors,
 packet RR, and the candidate's finite ports and edge ordering. It charges
 whole-frame credit at ordered header service, services up to four ingress
@@ -69,14 +70,14 @@ different frame boundaries at the two interfaces.
 All runs use deterministic inputs, with no random seed. From the repository root:
 
 ```sh
-python3 tools/tm_v2_feasibility.py --expect-gate
+python3 tools/multi_egress_feasibility.py --expect-gate
 for depth in 1 2 3; do
-  python3 tools/tm_v2_feasibility.py --case balanced --assembly "$depth"
+  python3 tools/multi_egress_feasibility.py --case balanced --assembly "$depth"
 done
 for depth in 1 2 3 4 5; do
-  python3 tools/tm_v2_feasibility.py --case balanced --prefetch "$depth"
+  python3 tools/multi_egress_feasibility.py --case balanced --prefetch "$depth"
 done
-python3 tools/tm_v2_feasibility.py --case balanced --assembly 2 --prefetch 3 --expect-gate
+python3 tools/multi_egress_feasibility.py --case balanced --assembly 2 --prefetch 3 --expect-gate
 make repo-check
 python3 tools/check_light.py
 PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v
@@ -166,17 +167,18 @@ never resumes.
 
 The branch baseline is Step 1 merge
 `cf08ec7ee9b742540786376d2052987f08ca42a5` (PR #28).
-The model uses Python 3.12.14 with no external dependencies. The exact study
-input implementation has SHA-256
-`4388baacd0aa1b54b4494bdf50ea71c9ac9b493a6ffb2b7e5ab88e88802e95f7`.
-The recorded resource sizes, workload, latencies and switches above are its
-complete configuration. Synthesis, STA, production throughput measurement,
-independent DV and formal qualification remain NOT_RUN for v2.
+The study uses Python 3.12.14 with no external dependencies. Resource sizes,
+workloads, latencies and command switches above define the measured scope.
+Synthesis, STA, production throughput, independent DV and formal qualification
+for the multi-egress design remain NOT_RUN.
+
+### Original execution
 
 The model, depth sweep and repository checks ran on clean commit
-`a2690790b91f9ad1c15cdad912636a536673d36b`. The candidate and minimum-pair
-commands passed. The deliberately reduced configurations have the expected
-gate misses documented above. `make repo-check` passed repository contracts.
-`python3 tools/check_light.py` passed syntax checks and 117 Python tests. The
-runner isolation suite passed its two tests, and both whitespace checks
-passed.
+`a2690790b91f9ad1c15cdad912636a536673d36b`. In that checkout the model and
+its Python commands use `tools/tm_v2_feasibility.py` (SHA-256
+`4388baacd0aa1b54b4494bdf50ea71c9ac9b493a6ffb2b7e5ab88e88802e95f7`).
+The candidate and minimum-pair commands passed. The deliberately reduced
+configurations produced the recorded gate misses. Repository contracts,
+117 Python tests and syntax checks, two runner isolation tests, and whitespace
+checks passed.

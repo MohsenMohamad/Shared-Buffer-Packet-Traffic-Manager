@@ -12,7 +12,7 @@ All required build and verification workflows use command-line open-source tools
 | Static timing | OpenSTA, Liberty/netlist/SDC inputs, max/min reports |
 | Orchestration | Python 3.11+, Bash, Make; C++20-capable compiler for generated simulation code |
 
-`tools/dependencies.json` records exact source/archive pins. The [toolchain qualification report](../results/modern-toolchain.md) records executed qualification, and the [operational guide](../implementation/toolchain.md) defines setup/doctor/cache commands. Qualify the toolchain as a combination, not a list of installed executables. Use source builds or compatible pinned distributions; do not copy a binary built for a newer libc into an older base image.
+`tools/dependencies.json` records exact source/archive pins. The [toolchain qualification report](../results/toolchain-qualification.md) records executed qualification, and the [operational guide](../implementation/toolchain.md) defines setup/doctor/cache commands. Qualify the toolchain as a combination, not a list of installed executables. Use source builds or compatible pinned distributions; do not copy a binary built for a newer libc into an older base image.
 
 ## Capability tests
 

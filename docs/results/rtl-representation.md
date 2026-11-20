@@ -2,7 +2,7 @@
 
 Representation-only scope, recorded before RTL edits. Baseline is clean
 `fb3cd3fd7e2c73379617f11a82c8418e1a590d24` (fetched `origin/main`).
-The [capability table](../implementation/modern-toolchain-decisions.md) and
+The [capability table](../implementation/toolchain-capabilities.md) and
 [P01 card](../implementation/tasks/P01-followup-representation.md) govern this
 migration. P03+ production implementation and allocator/scheduler optimization
 remain paused.

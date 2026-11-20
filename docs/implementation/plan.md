@@ -4,7 +4,7 @@ Task cards define assignments; [specifications](../spec/README.md) define behavi
 Use the committed working/documentation rules and the actual current source tree.
 Completion of a fixture or local proof does not close an integrated gate.
 
-## Integrated v1 baseline
+## Integrated single-egress baseline
 
 At `c32b3f1b79ac3412532e0564e038983aa2862112`, PRs #1-#10 integrate P00/P01/P02/
 P06/P07, shared CI/evidence work, toolchain qualification, RTL
@@ -21,46 +21,50 @@ reports retain their author scope. P03/P04 independent DV is integrated in PRs
 PRs #24/#26. PR #27 repaired the main-push checkout and the subsequent full main
 run passed. See [status](../status.md) for the remaining qualifications and gates.
 [F01](tasks/F01-formal-symbols.md) is integrated; [R01](tasks/R01-reset-timing.md)
-and [A01](tasks/A01-allocator-selection.md) remain analysis inputs for the v2 path.
+and [A01](tasks/A01-allocator-selection.md) remain analysis inputs for the
+multi-egress design.
 [C01](tasks/C01-ci-economy.md) is integrated.
 
-## v2 migration and gates
+## Multi-egress migration and gates
 
-The 4×4 work starts at the Step 1 merge
+The multi-egress work starts at the Step 1 merge
 `cf08ec7ee9b742540786376d2052987f08ca42a5` (PR #28). The
-[v2 target contract](../spec/tm-v2-4x4.md) selects one shared 512-bit read and
-one shared 512-bit write per cycle with independent ingress staging and egress
-prefetch. Its [cycle study](../results/tm-v2-feasibility.md) passes the balanced
-target at modeled latencies of one and two cycles. Queue/control realization
-and independent hardware acceptance are open.
+[multi-egress contract](../spec/multi-egress-traffic-manager.md) selects one
+shared 512-bit read and one shared 512-bit write per cycle, with independent
+ingress staging and egress prefetch. The
+[cycle model](../results/multi-egress-datapath-feasibility.md) met
+the primary 4×4 balanced fixed-permutation target at both modeled read latencies
+for repeated 60-, 65-, and 1,536-byte frames and the specified repeating length
+mixture. Queue/control realization and independent hardware acceptance are open.
 
-| Baseline component or work | v2 disposition and required evidence |
+| Baseline component or work | Multi-egress disposition and required evidence |
 | --- | --- |
-| P01 / P02 / P07 | Reuse qualified frontend idioms, eligible elastic FIFOs and scalar ownership kernels, plus UVM agents, passive sampling and runner infrastructure after the relevant ownership/provenance review. Publish new versioned v2 types and declarations. Independently requalify integration and any widened resource updates. |
+| P01 / P02 / P07 | Reuse qualified frontend idioms, eligible elastic FIFOs and scalar ownership kernels, plus UVM agents, passive sampling and runner infrastructure after the relevant ownership/provenance review. Publish multi-egress types and declarations. Independently requalify integration and any widened resource updates. |
 | P03 queues | Preserve FIFO-by-publication and the sole-entry replacement rule. Change to one global publish plus concurrent egress pops, merged active bitmaps, and pre-edge successor visibility. Qualify same/different-queue collisions and four-way dispatch independently. |
 | P04 scheduler | Reuse byte-DRR arithmetic and packet-RR policy where applicable. Per-egress lookahead, strict priority, parked shaping visits, dual token buckets and new binding semantics require separate RTL and independent qualification. |
-| P05 memory/TX | Reuse fixed-latency response tagging and acceptance-based retirement principles. Replace word service and single TX context with 512-bit cells, four readers sharing one issue lane, per-egress credits and successors, and new metadata port budgets. Qualify both latencies, stall/reset epochs, late handoff and simultaneous returns. Keep the tested v1 [P05 scope](../results/P05-candidate-qualification.md). |
-| P06 registers | Reuse the qualified AW/W hold and response logic where compatible. New v2 routing, controls, snapshots and concurrent counter updates need versioned CSR declarations, independent bus/policy checks, and real datapath composition. The [v1 CSR report](../results/P06-registers.md) retains its original scope. |
-| P08 ingress/admission/cleanup | The pending v1 one-beat arbiter and its admission/reclaim implementation are superseded for the active path. Prepare v2 tests from the new framing, prefix-ordered atomic reservations, α arithmetic, independent drain and dedicated cleanup service. Qualify capacity and concurrent return behavior with the actual v2 consumer. |
-| R01 reset timing | Carry forward the constraints method and evidence history. Establish v2 clock, I/O, reset assertion/release and recovery/removal path treatment with setup and hold before comparing new structures. Retain the v1 negative removal observations. |
-| A01 allocator | Keep the v1 1,024-cell selection-risk characterization. Compare any-valid-free-ID structures against v2's four-vector descriptor reserve, one cell allocation and up to five returns without same-edge returned-ID reuse. Measure representative small and primary-size logic through the real reservation/reclaim consumer after R01. |
-| P09–P14 one-egress work | Superseded on the active v2 path. Carry forward the vertical integration, concurrency, proof, coverage, mapped timing, diagnostics and audit objectives through the v2 gates below. Historical cards and results retain their version and provenance. |
+| P05 memory/TX | Reuse fixed-latency response tagging and acceptance-based retirement principles. Replace word service and single TX context with 512-bit cells, four readers sharing one issue lane, per-egress credits and successors, and new metadata port budgets. Qualify both latencies, stall/reset epochs, late handoff and simultaneous returns. Keep the tested single-egress [P05 scope](../results/P05-candidate-qualification.md). |
+| P06 registers | Reuse the qualified AW/W hold and response logic where compatible. Multi-egress routing, controls, snapshots and concurrent counter updates need versioned CSR declarations, independent bus/policy checks, and real datapath composition. The [single-egress CSR report](../results/P06-registers.md) retains its original scope. |
+| P08 ingress/admission/cleanup | The pending single-egress one-beat arbiter and its admission/reclaim implementation are superseded for the active path. Prepare multi-egress tests from the new framing, prefix-ordered atomic reservations, α arithmetic, independent drain and dedicated cleanup service. Qualify capacity and concurrent return behavior with the actual multi-egress consumer. |
+| R01 reset timing | Carry forward the constraints method and evidence history. Establish clock, I/O, reset assertion/release and recovery/removal path treatment with setup and hold before comparing new structures. Retain the single-egress negative removal observations. |
+| A01 allocator | Keep the single-egress 1,024-cell selection-risk characterization. Compare any-valid-free-ID structures against four simultaneous descriptor reservations, one cell allocation and up to five returns without same-edge returned-ID reuse. Measure representative small and primary-size logic through the real reservation/reclaim consumer after R01. |
+| P09–P14 single-egress work | Superseded on the multi-egress implementation path. Carry forward the vertical integration, concurrency, proof, coverage, mapped timing, diagnostics and audit objectives through the multi-egress gates below. Historical cards and results retain their scope and provenance. |
 
 ### Next assignment and queue/control prerequisite
 
-The next scoped assignment publishes versioned stream, event-batch, memory,
-profile and CSR declarations, including the status and snapshot interfaces.
-It checks elaboration and layout at both profiles without producing datapath
-RTL. Independent DV then prepares and freezes expectations from those
-declarations and the v2 contract under the
+The next scoped assignment publishes stream, event-batch, memory, profile
+and CSR declarations, including status and snapshot interfaces. Name the
+declarations by function and use the architecture name where disambiguation
+is needed. The assignment covers declarations and elaboration/layout checks
+at both profiles. Independent DV then prepares and freezes expectations from those
+declarations and the multi-egress contract under the
 [root role policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
 Queue/control analysis may use those declarations and the feasibility study.
 Production RTL and independent DV retain separate owners, branches and PRs.
 
-**Queue/control feasibility is a prerequisite for freezing the dependent v2
-queue, allocator and datapath microarchitecture.** Demonstrate a finite
-organization for one publication per edge, four pre-edge scheduler selections
-and dispatches, simultaneous enqueue/pop with active-bitmap maintenance, and
+**Queue/control feasibility is a prerequisite for freezing the dependent
+multi-egress queue, allocator and datapath microarchitecture.** Demonstrate
+a finite organization for one publication per edge, four pre-edge scheduler
+selections and dispatches, simultaneous enqueue/pop with active-bitmap maintenance, and
 the specified descriptor and cell return vectors including cleanup. Include
 actual link/head read muxes or equivalent head caching, concurrent counter
 deltas, and four prefix-ordered admission decisions with distinct pre-state
@@ -74,7 +78,17 @@ extra stages, re-run the balanced target with those stages and document an
 accepted change to buffering, scheduling or memory organization before
 committing dependent RTL. Keep the primary capacity and throughput workload.
 
-### v2 integration and release acceptance
+Also replay independent legal frame-length streams on all four inputs under
+the same fixed one-to-one routing. The supplemental review probe used default
+buffers, `random.Random(104729 + ingress_id)` per ingress, and uniform choices
+from `(60, 64, 65, 72, 129, 1536)`. In the same 9,216-cycle window it had one
+ready-but-idle egress cycle at read latency one and two at latency two, with
+zero input stalls and zero frame loss after drain. The next frame's first
+cell was still pending at each missed boundary. Diagnose and replay those
+boundaries in the concrete timing study. The balanced fixed-permutation
+workloads above remain the acceptance gate.
+
+### Multi-egress integration and release acceptance
 
 - **SV/UVM.** Independently score bytes, framing, metadata, order and
   dispositions from passive ingress/egress/control monitors. Cross-check
@@ -96,8 +110,8 @@ committing dependent RTL. Keep the primary capacity and throughput workload.
   port/class, every legal final keep, partial cells, length bounds, full pools,
   same-edge publish/pop/return, contested abort, late strict arrival, bucket
   comparison at threshold, all ECN codepoints and resets with pending work.
-  Review critical crosses and justified exclusions against the v2 requirement
-  matrix. Record checker and intended-fault detection evidence.
+  Review critical crosses and justified exclusions against the multi-egress
+  requirement matrix. Record checker and intended-fault detection evidence.
 - **Selected formal.** Prove conservation including reserved versus assigned
   credit, unique cell/descriptor ownership and reclaim, bounded occupancy and
   outstanding responses, and per-queue FIFO order through concurrent
@@ -109,18 +123,18 @@ committing dependent RTL. Keep the primary capacity and throughput workload.
 - **Mapped synthesis and pre-layout STA.** Map the small profile with actual
   memory and control, or characterize a real macro. Give primary-profile
   control timing, payload bits, defined RAM latency/ports and separate memory
-  assumptions. Start with the v1 study's 10 ns clock, 2 ns I/O and 0.10 ns
-  uncertainty using explicit min/max delays, slew/load and reset checks.
+  assumptions. Start with the single-egress study's 10 ns clock, 2 ns I/O and
+  0.10 ns uncertainty using explicit min/max delays, slew/load and reset checks.
   Record library identity, PVT, constraints, setup/hold slack and constrained
   path groups. Match function and capacity for variants where possible, and
   keep memory accounting comparable.
 - **Gate closure.** Establish separately qualified component scopes first,
-  then independently run the integrated v2 gates at named combined RTL and
-  DV sources and confirm exact merged sources. Register suites and coverage
+  then independently run the integrated multi-egress gates at named combined
+  RTL and DV sources and confirm exact merged sources. Register suites and coverage
   through the existing tooling. Retain compact replay inputs, source, commands
-  and results, and preserve named v1 evidence at its recorded SHA.
+  and results, and preserve named single-egress evidence at its recorded SHA.
 
-## v1 dependencies and owners
+## Single-egress dependencies and owners
 
 | Work | Assignment | Entry / current state |
 | --- | --- | --- |
@@ -143,7 +157,7 @@ committing dependent RTL. Keep the primary capacity and throughput workload.
 | P13 | [Checked failure diagnostics](tasks/P13-diagnostics.md) | P10; secondary to core RTL/DV |
 | P14 | [Independent release audit](tasks/P14-release.md) | P12/P13 and current integrated evidence |
 
-The historical one-egress serial route was R01, A01, P08, P09, P10,
+The historical single-egress serial route was R01, A01, P08, P09, P10,
 P11A, P11B, P11C, P12, P13, P14. C01 and independent analysis can run alongside
 hardware work when shared file ownership is explicit. P11A/P11B and P12/P13
 remain possible independent waves; serial work is simpler by default.
@@ -153,7 +167,7 @@ remain possible independent waves; serial work is simpler by default.
 Use the selected source identities in `tools/dependencies.json`, not a floating
 latest release. The integrated stack is Yosys 0.70+post/Slang, Verilator 5.054,
 official UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative OpenSTA 3.2.0 with
-pinned transitive inputs. [Decision 0006](../decisions/0006-modern-toolchain.md)
+pinned transitive inputs. [Decision 0006](../decisions/0006-toolchain-and-frontend-selection.md)
 and [0007](../decisions/0007-rtl-representation.md) explain qualified choices.
 
 Use ANSI ports, `tm_fixed`, the shared dependent `localparam type` declarations,
@@ -169,7 +183,7 @@ objects and RAL already exist; extend them onto real RTL without another bench
 or runner. Frontdoor/no-DPI remains a valid tested choice; use qualified DPI
 only for a concrete need, not to replace external checking.
 
-## v1 implementation and decision checkpoints
+## Single-egress implementation and decision checkpoints
 
 P08 follows the [root preparation and qualification workflow](../../AGENTS.md#preparation-implementation-and-independent-qualification).
 P03/P04/P05 RTL and component DV landed in separate PRs. P09 wires the real top
@@ -233,7 +247,7 @@ decision without a concrete reason.
 
 The [root ownership policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership)
 defines file boundaries and the shared RTL/DV workflow. This table captures
-the one-egress assignments and evidence dependencies.
+the single-egress assignments and evidence dependencies.
 
 | Task | RTL PR | Independent DV / other PR |
 | --- | --- | --- |

@@ -21,8 +21,9 @@ make ci JOBS=2
 The selected locks are Yosys 0.70 with its integrated slang frontend and
 ABC gitlinks, Verilator 5.054, UVM 2020.3.2, SBY 0.71, Z3 5.4.1 and authoritative
 OpenSTA 3.2.0 source. CMake 4.4.5, SWIG 4.5.1, Eigen 5.0.1, CUDD 3.0.0 and Click
-8.5.1 are explicit dependencies. See the [inventory and source identities](toolchain-qualification-plan.md)
-and [current qualification status](../results/modern-toolchain.md); the selected combination has completed its documented qualification.
+8.5.1 are explicit dependencies. See the [inventory and source identities](toolchain-inventory.md)
+and the [qualification results](../results/toolchain-qualification.md). The
+selected combination completed its documented qualification.
 Capability results retain the scope stated in each report.
 
 `setup` verifies every cached/downloaded archive, extracts the audited build and
@@ -42,8 +43,8 @@ and CMake build trees, preventing an ABI/lock miss from reusing stale objects.
 Autoconf/Automake/Bison/Flex/M4 and the Flex C++ header come from exact package
 locks. CMake uses its checksum-locked official distribution; SWIG is source-built.
 Local alternatives and Autotools metadata/executables are relocated explicitly.
-Help2man, old packaged tools, Boost Python/filesystem/system, readline and ffi are
-not required by the chosen recipes. Eigen is header-only here; optional BLAS,
+The source-build recipes omit Help2man, the packaged synthesis/solver/STA
+binaries, Boost Python/filesystem/system, readline and ffi. Eigen is header-only here; optional BLAS,
 LAPACK, demos, tests and documentation are disabled. Tcl 8.6 matches the selected
 OpenSTA finder/runtime ABI. No implicit fmt fetch occurs because the compiler's
 `std::format` probe must succeed.
@@ -94,7 +95,7 @@ bins. Unhit bins stay visible. Tool percentages are not substituted for raw
 counts. Positive failures are rerun with tracing using the same executable,
 seed and profile. The negative assertion run always saves `wave.vcd`.
 
-Verilator is two-state: X/Z propagation is unsupported. The separate current-stack reproducer retains its actual execution status in the refresh report. UVM DPI/backdoor
+Verilator is two-state: X/Z propagation is unsupported. The [qualification report](../results/toolchain-qualification.md) records the four-state reproducer's execution status. UVM DPI/backdoor
 services are available for separately qualified uses; the default frontdoor path retains `UVM_NO_DPI`. No
 production RTL, full-system proof, physical timing signoff or silicon result
 is implied. See [the decision record](../decisions/0001-native-toolchain.md)
@@ -137,7 +138,7 @@ fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
 This route is separate from production TM requirements and the P00 tool fixture.
 See [P07 results](../results/P07-verification-foundation.md).
 
-## Current frontend checks
+## Slang frontend checks
 
 The formal and synthesis source registries select `slang`, built into the pinned
 Yosys executable. The runner accepts only that selected frontend.
@@ -149,7 +150,7 @@ python3 tools/run.py formal-rtl
 python3 tools/run.py uvm-dpi
 ```
 
-`frontends` checks independent current-stack packed-record memory, unpacked-port,
+`frontends` checks independent packed-record memory, unpacked-port,
 interface and heterogeneous-instance fixtures through parsing, elaboration,
 synthesis and simulation. Record-memory prove/cover tasks check complete-word
 semantics. `formal-symbols` checks the explicit-input recipe and its deliberate
@@ -224,13 +225,13 @@ The first command on an empty installation must report `cold`, the second `cache
 
 The supporting [review-preparation results](../results/review-preparation.md) distinguish executed local checks from observed hosted runs.
 
-The synthesis gate also checks current OpenSTA API availability (`define_scene`,
+The synthesis gate also checks OpenSTA 3.2.0 API availability (`define_scene`,
 `read_spef`, `set_timing_derate`, `annotate_noise_delays`) and default POCV mode.
 This does not run multi-scene, statistical variation or coupled-noise analysis.
 Those studies need characterized corner/variation libraries and annotated routed
 parasitics, including coupling data for noise. `define_corners` is deprecated
 upstream in favor of `define_scene`. FIFO mapping records path groups and
-`timing_closure` independently of successful analysis; see the refresh report
+`timing_closure` independently of successful analysis; see the [qualification report](../results/toolchain-qualification.md)
 for the retained reset-removal violation.
 
 The executed DPI service probe passes positive/negative regex matching and

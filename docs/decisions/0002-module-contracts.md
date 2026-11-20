@@ -1,6 +1,6 @@
 # Packed portable contracts and atomic ownership
 
-Historical representation decision, superseded by [0006](0006-modern-toolchain.md)
+Historical representation decision, superseded by [0006](0006-toolchain-and-frontend-selection.md)
 and [0007](0007-rtl-representation.md). At original G1, the native frontend used
 module-local typedefs, non-ANSI ports and explicit width sums. Its wildcard-import,
 `$bits(type)` and unpacked-port restrictions explained those choices at that

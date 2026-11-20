@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic cycle/credit study for the v2 cell datapath, using packet RR."""
+"""Deterministic cycle and credit study for the multi-egress datapath using packet RR."""
 
 from argparse import ArgumentParser
 from collections import Counter, deque

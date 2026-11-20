@@ -1,6 +1,6 @@
 # Pre-state storage and local proof boundary
 
-Historical frontend observations are superseded by [0006](0006-modern-toolchain.md)
+Historical frontend observations are superseded by [0006](0006-toolchain-and-frontend-selection.md)
 and [0007](0007-rtl-representation.md). Original storage behavior and results
 remain historical records; those frontend limits are not active restrictions.
 

@@ -84,7 +84,7 @@ permissive grant-following mode; optimized scheduler timing remains unqualified.
 `tm_packet` uses SV `rand` fields, weighted length classes, inline constraints,
 `solve before` and checked `randomize()` results. Packet constraints relate length
 to beat/cell counts and final keep; conversion constructs payload/last/metadata
-and supplies raw items to the existing agents. The qualified modern stack
+and supplies raw items to the existing agents. The qualified Verilator and UVM stack
 supports these features directly. Raw items remain unrestricted for malformed
 traffic. The sufficient no-DPI frontdoor configuration is retained; no new
 framework, backdoor or optional service dependency is introduced.
