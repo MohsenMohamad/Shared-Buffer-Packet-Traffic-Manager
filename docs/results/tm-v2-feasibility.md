@@ -81,6 +81,7 @@ make repo-check
 python3 tools/check_light.py
 PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v
 git diff --check
+git diff --check origin/main...HEAD
 ```
 
 ## Balanced model results
@@ -171,3 +172,11 @@ input implementation has SHA-256
 The recorded resource sizes, workload, latencies and switches above are its
 complete configuration. Synthesis, STA, production throughput measurement,
 independent DV and formal qualification remain NOT_RUN for v2.
+
+The model, depth sweep and repository checks ran on clean commit
+`a2690790b91f9ad1c15cdad912636a536673d36b`. The candidate and minimum-pair
+commands passed. The deliberately reduced configurations have the expected
+gate misses documented above. `make repo-check` passed repository contracts.
+`python3 tools/check_light.py` passed syntax checks and 117 Python tests. The
+runner isolation suite passed its two tests, and both whitespace checks
+passed.
