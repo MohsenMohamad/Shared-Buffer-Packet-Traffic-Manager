@@ -11,7 +11,7 @@ Implement the traffic-manager contracts in `docs/spec/`. Use `docs/spec/README.m
 
 ## Verification and delivery
 
-Run checks appropriate to the changed behavior. Record exact commands, profiles/seeds and results in the supporting results report; summarize outcomes and essential qualifications in the PR. `make repo-check` checks the repository contract only; it does not validate hardware. A missing executable, empty test selection, ignored construct, timeout or unavailable capability is not PASS. Keep production RTL, testbench, formal and synthesis source lists separate.
+Run checks appropriate to the changed behavior. Record exact commands, profiles/seeds and outcomes under the [durable evidence policy](docs/documentation.md#durable-evidence-for-new-work) and summarize material qualifications in the PR. `make repo-check` checks the repository contract only. A missing executable, empty test selection, ignored construct, timeout or unavailable capability cannot produce PASS. Keep production RTL, testbench, formal and synthesis source lists separate.
 
 Keep build outputs in ignored directories. Preserve important decisions in a short topic-specific decision record; record failures and bugs as described in "Failure capture" below. Add a compact task handoff only when work actually remains, naming the current revision, known facts, blockers and next command. Do not accumulate conversation transcripts or per-agent diaries.
 
@@ -24,16 +24,17 @@ Do not push directly to the default branch, merge PRs, rewrite shared history or
 Before repairing an unexpected failed check, including designer smoke,
 simulation, assertions, formal counterexamples and ad-hoc runs, preserve the
 failing source (commit or base plus patch), command/configuration/seed, stimulus
-and failure output. Capture first; classify afterward. Finished runner cases save
-records under `verification/failures/`; preserve equivalent evidence manually
-for ad-hoc/interrupted runs and any inputs the automatic capture cannot retain.
-Review and commit the records before session cleanup.
+and failure output. Capture before classifying. Finished runner cases save raw
+captures in ignored run storage. Preserve equivalent evidence manually for ad-hoc
+or interrupted runs and save any inputs the automatic capture misses. Before
+cleanup, apply the [durable evidence policy](docs/documentation.md#durable-evidence-for-new-work).
 
 Give every capture a disposition: `rtl-defect`, `verification-defect`,
 `specification-ambiguity`, `tool-environment` or `unresolved`. Capture tool/build
 errors too; classification must not decide whether evidence is retained.
 Confirmed RTL defects also get a short `docs/bugs.md` entry with root cause,
-fix and detecting before/after regression. Repeated failures may share a diagnosis.
+fix and detecting before/after regression. Group repeated failures by diagnosis
+and preserve the case identities needed to distinguish and replay them.
 Expected detections from deliberate faults remain separately labeled. Do not
 count syntax/compile errors or mutations as discovered RTL bugs, and do not discard
 an unexpected failure because it was easy to fix or found by the RTL author.
@@ -62,7 +63,7 @@ remain integration gates; see [hosted CI policy](docs/spec/automation.md#hosted-
 
 Follow [documentation conventions](docs/documentation.md) for repository documents, PR bodies and delivery summaries. Lead with the behavior or result; give each paragraph, bullet or table row one purpose. Keep summaries, contracts, reproduction instructions and raw evidence separate.
 
-Use the PR template as a default. Keep validation concise, link to a focused report for full commands, revisions, seeds, digests and measurements, and keep material qualifications beside the result. Label expected seeded-defect detections explicitly. Preserve precise requirements and proof boundaries; never shorten by omitting necessary behavior or limitations. Check Markdown structure and links before delivery. Do not accumulate debugging chronology or duplicate evidence across documents.
+Use the PR template as a default. Keep validation concise and link to existing authoritative evidence for details. Keep material qualifications beside the result and label expected seeded-defect detections explicitly. Preserve precise requirements and proof boundaries. Follow the [README review rule](CONTRIBUTING.md#front-page-review) and check Markdown structure and links before delivery.
 
 ## Separate RTL and independent DV ownership
 

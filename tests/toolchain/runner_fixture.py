@@ -7,9 +7,10 @@ import subprocess
 def isolated_runner_repository(destination, source):
     destination, source = Path(destination), Path(source)
     destination.mkdir(parents=True)
+    shutil.copyfile(source / '.gitignore', destination / '.gitignore')
     for name in ('tools', 'verification'):
         shutil.copytree(source / name, destination / name,
-                        ignore=shutil.ignore_patterns('__pycache__', 'failures'))
+                        ignore=shutil.ignore_patterns('__pycache__', 'failures', 'AGENTS.md'))
     def git(*args):
         subprocess.run(['git', *args], cwd=destination, check=True, capture_output=True)
     git('init', '-q')

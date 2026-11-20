@@ -25,20 +25,29 @@ The merge tree `a5f3b43885611b20edd9ece172b647094e4ebc21` exactly matches the
 qualified DV delivery, so the failure does not demonstrate an RTL contract
 violation or change earlier qualification inputs/results.
 
-All six complete job logs and per-job dispositions were captured before repair
-under `verification/failures/p05-postmerge-checkout-43617402959/`. A regression
-exercises the actual staging helper against isolated Git push/PR commit checkouts,
-and confirms attached main is still rejected. Its initial fixture omitted Python
-cache ignores; that separate light-check failure was preserved before aligning
-the fixture with the real repository. No staging check was relaxed.
+The six profile dispositions and original log hashes are under
+[`verification/failures/p05-postmerge-checkout-43617402959/`](../../verification/failures/p05-postmerge-checkout-43617402959/).
+The six hosted logs and `light-before-repair.log` are retrievable from the same
+path at [PR #27's delivery commit](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/tree/0c0d887aee96a6627a6ba4c688867f7f8d29a5ec/verification/failures/p05-postmerge-checkout-43617402959).
+For example, from a checkout with main's history:
+
+```sh
+mkdir -p .build/runs
+git show 0c0d887aee96a6627a6ba4c688867f7f8d29a5ec:verification/failures/p05-postmerge-checkout-43617402959/E0.log > .build/runs/p05-checkout-E0.log
+```
+
+The regression exercises the staging helper against isolated Git push/PR
+checkouts and confirms attached main is still rejected. The initial regression
+fixture omitted Python cache ignores. Its
+[failure record](../../verification/failures/20261114T170132848896Z-p05-checkout-repair-light-7fa47481c7af.json)
+and source patch preserve that failure before the fixture was aligned with the repository.
 
 Local checks pass: repository contracts, 115 light tests, two capture-isolation
 tests, doctor on actual merged main, and real staging of that detached main
-checkout. The production RTL, checkers, parameters, formal properties, timeouts
-and prepared toolchain are unchanged. The focused CI checkout repair PR records
-its final hosted validation. Main remains blocked by this configuration defect
-until maintainer integration of that repair and a successful subsequent main run;
-the original failed attempt is not relabeled PASS.
+checkout. The repair merged in PR #27.
+[Main run 43622745467](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43622745467)
+at merge `61d4c4c2b751642e6b79a995b710f186a8ce0281` passed all 34 jobs, including
+all six memory/TX jobs. The earlier staging failure retains its original outcome.
 
 ## Actual integrated-source confirmation
 
@@ -110,17 +119,17 @@ final run conclusions and exact delivery identities are recorded on PR #26.
 Fresh local merged-source checks had no failures or RTL defect. The first final
 hosted attempt (`43609541413`, delivery `1b22a7d66c494efed9ebe05b93ef954f49ab62b7`)
 was interrupted in F0 scheduler by a GitHub worker shutdown, exit 143. All
-completed cases in its log passed; unfinished work remains non-success. The full
-available job log, annotations and exact-source manual capture are committed
-under `verification/failures/p05-merged-ci-scheduler-F0-43609541413.*`. The worker
-stopped before even always-upload steps, so private in-flight process artifacts
-were unavailable; that evidence limit is explicit. Disposition is tool/environment.
-No RTL, expectation, timeout or setup change is made. A fresh required full run
-must complete, with the final result recorded on PR #26. The historical preparation-independence caveat remains unresolved;
-this result does not establish retroactive provenance acceptance. Safety retains
-its reduced FP-TX assumptions and caller/pool composition limits. P12B structural
-comparison is separate, and code-coverage closure is not claimed. The maintainer
-controls PR #26 integration; this task does not merge it.
+completed cases in its log passed. The [manual capture](../../verification/failures/p05-merged-ci-scheduler-F0-43609541413.json)
+records the exact source, seed, last completed case and tool/environment
+disposition. The raw log and annotation are retrievable at the original paths
+`verification/failures/p05-merged-ci-scheduler-F0-43609541413.log` and
+`verification/failures/p05-merged-ci-scheduler-F0-43609541413-annotations.txt` in
+[delivery `a649fa2`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/tree/a649fa2de82374d6322de3c900d228dbd0095acb/verification/failures).
+The worker stopped before artifact upload, leaving in-flight outputs unavailable.
+[Full retry 43611937617](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43611937617)
+passed on that delivery as recorded on PR #26. Historical preparation independence,
+caller/pool composition, P12B structural comparison and code-coverage closure
+remain open.
 
 ## Historical pre-merge verdicts
 
@@ -138,8 +147,12 @@ All six candidate jobs also pass on hosted run
 [43581916024](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43581916024)
 at delivery input `90363c81c814ee8a35b97128acb2eb1b1dfb62f3`, including E0 proofs, covers
 and mutation qualification. That run exposed the separate exact-set contracts
-test defect retained below. The final full gate after its DV-only repair is
-recorded on PR #26 without relabeling these executed sources.
+test defect. The [F0, seed 17 failure record](../../verification/failures/20261114T094500536528Z-independent-event-batching.json)
+retains the exact checkout, command, failure and later routing correction. The
+whole job log and the archive containing the runner manifest and stdout/stderr
+are retrievable at `verification/failures/p05-ci-contracts-43581916024.{log,tar.gz}`
+in [capture commit `906cd2b`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/tree/906cd2b8b4fcd05d3aeec888780e061596fc1ef3/verification/failures).
+The final full gate after its DV-only repair is recorded on PR #26.
 The qualification PR remains available for exact merged-source confirmation.
 Neither this PR nor [RTL PR #24](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24) is merged by this task.
 
@@ -340,6 +353,10 @@ Seven additional records preserve intended CLI-negative statuses whose direct
 unit invocation exposed a capture-isolation defect. Those negatives now execute
 in the existing isolated runner fixture with real capture enabled. They remain
 separate from unexpected functional failures and seeded RTL faults.
+Each retains its case ID and references the same byte-identical replay patch
+`verification/failures/20261114T094621607029Z-selection-bc54b5db1de7.patch`.
+The six original `20261114T09462*-selection-or-suite-error-*.patch` copies are
+retrievable at [capture commit `906cd2b`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/tree/906cd2b8b4fcd05d3aeec888780e061596fc1ef3/verification/failures).
 
 Earlier SMT timeouts/UNKNOWN and ABC preprocessing failures remain non-success.
 They are not silently replaced by a proof claim on their old source. Current

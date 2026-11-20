@@ -159,6 +159,11 @@ was also preserved before triage; no repair was attempted.
 - [Compile capture](../../verification/failures/p05-designer-20261113T223902499406Z/capture.json): `cell` was a reserved SV keyword in the new tag records. Renamed it `cell_id`; compilation and subsequent smoke pass. The capture labels the build failure `tool-environment` and retains the precise syntax diagnosis.
 - [Designer-smoke capture](../../verification/failures/p05-designer-20261113T223909642253Z/capture.json): the smoke counted current issue before current retirement, falsely reporting excess credit. Classified `verification-defect`; corrected the RTL-owned smoke to evaluate the merged edge. Production credit arithmetic was unchanged.
 
+The corresponding `*.log` files are retrievable under the same capture
+directories in [RTL commit `fa91a3f`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/tree/fa91a3fe3e675a1b42dd684359758acfbcdb0b94/verification/failures).
+Both `source.tar.gz` snapshots remain with the records because they contain the
+exact failing sources.
+
 An initial whitespace review flagged an unchanged trailing blank line in the
 archived P04 source snapshot. The original bytes remain in `source.tar.gz`;
 archiving the snapshot avoids presenting unchanged historical RTL as new source.
@@ -168,9 +173,9 @@ No production code was changed for that archival warning.
 
 [Failure capture](../../verification/failures/p05-standard-light-20261114T042319106270Z/capture.json)
 records the exact candidate, prepared environment, command, exit status and
-source-free summary. Raw stdout/stderr are retained in an opaque archive and
-were not opened for test source, checker expressions or traceback inspection.
-The sanitized summary contains only test identity, test totals and error class.
+source-free summary. The opaque stdout/stderr archive is retrievable at
+[delivery `479b5c1`](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/479b5c1ceee2eee8db58d863bd5de5e20305cc8c/verification/failures/p05-standard-light-20261114T042319106270Z/uninspected-output.tar.gz).
+The sanitized summary contains the test identity, test totals and error class.
 
 The check reported 109 tests and one `IndexError` in
 `test_memory_tx_preparation.PreparationBoundaryTests.test_public_response_has_no_backpressure`.

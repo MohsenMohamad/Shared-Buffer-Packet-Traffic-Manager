@@ -135,7 +135,8 @@ class PolicyTests(unittest.TestCase):
         self.assertIn('needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation, scheduler, memory_tx]', workflow)
         self.assertIn('CI_SUMMARY_NEEDS: ${{ toJSON(needs) }}', workflow)
         light = (ROOT / '.github/workflows/repository.yml').read_text()
-        self.assertIn('python3 tools/check_repository.py', light)
+        self.assertIn('fetch-depth: 0', light.split('  python-unit-syntax:')[0])
+        self.assertIn('python3 tools/check_repository.py --pr-diff', light)
         self.assertIn('python3 tools/check_light.py', light)
         for forbidden in ('doctor', 'make lint', 'prepare', 'native-prerequisites', 'verilator'):
             self.assertNotIn(forbidden, light)

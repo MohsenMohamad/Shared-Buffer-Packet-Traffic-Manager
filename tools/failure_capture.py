@@ -1,4 +1,4 @@
-"""Durable source patches and bounded diagnostics for unexpected case failures."""
+"""Raw source snapshots and bounded diagnostics for unexpected case failures."""
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -8,8 +8,10 @@ import re
 import subprocess
 from uuid import uuid4
 
-CAPTURE_PATH = 'verification/failures'
-SOURCE_PATHS = ['.', ':(exclude)' + CAPTURE_PATH]
+CAPTURE_PATH = '.build/runs/failures'
+CAPTURE_EXCLUSIONS = (CAPTURE_PATH, 'verification/failures')
+CAPTURE_PREFIXES = tuple(path + '/' for path in CAPTURE_EXCLUSIONS)
+SOURCE_PATHS = ['.', *(':(exclude)' + path for path in CAPTURE_EXCLUSIONS)]
 
 
 def git(root, *args, diff=False):
@@ -72,7 +74,7 @@ def capture_failure(data, path, root):
         # later source snapshot is the same if files changed during the run.
         mismatches = []
         for filename, expected in data.get('source_digests', {}).items():
-            if filename.startswith(CAPTURE_PATH + '/'):
+            if filename.startswith(CAPTURE_PREFIXES):
                 continue
             source = root / filename
             actual = hashlib.sha256(source.read_bytes()).hexdigest() if source.is_file() else None
@@ -81,10 +83,11 @@ def capture_failure(data, path, root):
         if 'source_digests' in data:
             current = git(root, 'ls-files', '--cached', '--others', '--exclude-standard',
                           '-z', '--', *data.get('source_identity_paths', SOURCE_PATHS)).split(b'\0')
-            mismatches += [os.fsdecode(p) for p in filter(None, current)
-                           if os.fsdecode(p) not in data['source_digests']
-                           and not os.fsdecode(p).startswith('work/')
-                           and (root / os.fsdecode(p)).is_file()]
+            for filename in map(os.fsdecode, filter(None, current)):
+                if (filename not in data['source_digests']
+                        and not filename.startswith((*CAPTURE_PREFIXES, 'work/'))
+                        and (root / filename).is_file()):
+                    mismatches.append(filename)
         record['changed_since_run_start'] = mismatches
     except (OSError, RuntimeError, subprocess.SubprocessError) as error:
         record['source_capture_error'] = str(error)

@@ -23,13 +23,15 @@ Waveforms should be generated on a failing rerun with the identical revision/see
 
 P00 establishes `make doctor`, `make repo-check`, `make lint`, `make test-unit`, `make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke` and `make ci`. P01 adds functional `make regression` selection. P02 adds `make formal-rtl` for production-module proofs; `make formal-smoke` retains its capability-fixture meaning. Later tasks add `make coverage`, `make benchmark`, `make synthesis` and `make sta`. Commands take explicit configuration/test/seed options through the common Python runner. Until implemented, a command fails with NOT_IMPLEMENTED; it never reports an empty PASS.
 
-The bootstrap `make repo-check` validates repository documents and requirement data only. It is not a hardware check. The bootstrap workflow is named accordingly. P00 adds real tool-capability jobs; subsystem jobs are added as their implementations land. Final CI must exercise the implemented RTL and UVM environment.
+`make repo-check` validates repository documents, requirement data and the raw
+artifact rule for tracked worktree changes. Hardware is checked by the separate
+tool-capability and subsystem jobs.
 
 Each case writes a JSON manifest containing schema version, UTC times, test/seed/profile, source revision and dirty state, source/dependency/constraint digests, tool versions, argv, result, first failure and artifact paths. Result categories are PASS, FAIL, TIMEOUT, INCONCLUSIVE, UNSUPPORTED, TOOL_ERROR, NOT_RUN and NOT_IMPLEMENTED. Only executed checks can produce PASS. A nonzero tool status, UVM_ERROR/UVM_FATAL or missing completion marker cannot be silently reclassified as PASS.
 
 Use a separate build directory per tool/profile/feature-set. A passing cache from another source revision or feature set is not evidence. Bound subprocess timeouts and parallel compilation. Retain stdout/stderr and transaction traces; collect FST/VCD on failing reruns with the same revision, seed and profile.
 
-GitHub Actions may run the same open-source commands on hosted Linux runners. Core commands must also run in the cloud development workspace. CI does not require an LLM key, a hardware server, a GUI or a container daemon. Retain routine raw artifacts for a finite configured period, and curate the evidence needed for release results. Build outputs are not committed to source control.
+GitHub Actions may run the same open-source commands on hosted Linux runners. Core commands must also run in the cloud development workspace. CI does not require an LLM key, a hardware server, a GUI or a container daemon.
 
 G1 implements `regression --profile F0 --test contracts --seed 17`, with
 F0/F1/I0/I1/E0/E1 registered separately. This suite compiles declarations and
@@ -40,7 +42,11 @@ separate from regression suite selectors.
 
 ## Durable versus execution evidence
 
-For new work, follow [the durable evidence policy](../documentation.md#durable-evidence-for-new-work): Git stores compact tested-revision/configuration/tool/result/measurement and reproduction records; artifacts store bulky execution details, logs, waves and databases. Existing result JSON files are preserved unchanged. Record the actual tested SHA with PR/workflow references where available; integrated-main metadata never substitutes for tested-source provenance.
+Follow the [durable evidence policy](../documentation.md#durable-evidence-for-new-work)
+for run output and published evidence. Runner failure records and patches live
+under `.build/runs/failures/`, covered by the existing CI run-artifact uploads
+after both success and failure. For incomplete or ad-hoc work, follow the
+[manual capture instructions](../../verification/failures/README.md#interrupted-or-ad-hoc-runs).
 
 Frontend selection is explicit in the formal/synthesis registries; only the
 selected Slang frontend is executable. `make formal-symbols` qualifies explicit
@@ -53,7 +59,8 @@ Consumers validate the shared installation and never invoke setup. See the
 ## Hosted iteration policy
 
 The CI workflow implements [C01](../implementation/tasks/C01-ci-economy.md).
-`repository-contracts` checks repository documents/requirements;
+`repository-contracts` checks documents/requirements and screens the complete
+PR merge-base-to-head diff for raw artifacts.
 `python-unit-syntax` runs Python unit tests and Python/JSON/shell syntax checks
 without setup, doctor or HDL tools. Empty/missing selections and import failures
 fail. `make lint` remains the separate Verilator capability check.

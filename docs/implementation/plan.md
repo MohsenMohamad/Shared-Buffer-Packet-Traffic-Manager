@@ -7,8 +7,8 @@ Completion of a fixture or local proof does not close an integrated gate.
 ## Integrated baseline and remaining work
 
 At `c32b3f1b79ac3412532e0564e038983aa2862112`, PRs #1-#10 integrate P00/P01/P02/
-P06/P07, shared CI/evidence work, toolchain qualification, the RTL
-RTL representation, allocator characterization and the P07 stimulus/checker
+P06/P07, shared CI/evidence work, toolchain qualification, RTL
+representation, allocator characterization and the P07 stimulus/checker
 follow-up. These stabilization implementation steps are complete. Their original
 tested revisions and scopes remain in the linked reports. The main run
 [43264681095](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/43264681095)
@@ -16,9 +16,10 @@ completed successfully. This statement records that hosted result, not a new loc
 
 P03 RTL is merged in PR #14 and P04 RTL in PR #16. Their
 [queue](../results/P03-queues.md) and [scheduler](../results/P04-scheduler.md)
-reports retain their author scope; [status](../status.md) records independent
-qualification progress. P03/P04 independent DV is integrated in PRs #17/#18. P05 starts with fresh
-independent verification preparation under the root policy; RTL is a later task.
+reports retain their author scope. P03/P04 independent DV is integrated in PRs
+#17/#18. P05 RAM/metadata/TX RTL and component qualification are integrated in
+PRs #24/#26. PR #27 repaired the main-push checkout and the subsequent full main
+run passed. See [status](../status.md) for the remaining qualifications and gates.
 [F01](tasks/F01-formal-symbols.md) is integrated; [R01](tasks/R01-reset-timing.md)
 and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 [C01](tasks/C01-ci-economy.md) is integrated.
@@ -33,7 +34,7 @@ and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 | F01 | [Formal symbolic inputs](tasks/F01-formal-symbols.md) | Integrated; applies to every harness |
 | P03 | [Descriptor queues](tasks/P03-queues.md) | RTL #14 and independent DV #17 integrated |
 | P04 | [DRR and packet RR](tasks/P04-scheduler.md) | RTL #16 and independent DV #18 integrated; P09/P11B own composition |
-| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | Fresh independent DV preparation in PR #23; [results/exposure](../results/P05-fresh-dv-preparation.md); independence unresolved; P03 integrated |
+| P05 | [Finite-port memory and TX](tasks/P05-memory-tx.md) | RTL and scoped component qualification integrated. Historical preparation independence, composition and coverage closure remain open. |
 | R01 | [Reset timing convention](tasks/R01-reset-timing.md) | Before A01 measurements / P08 |
 | A01 | [Allocator evaluation/disposition](tasks/A01-allocator-selection.md) | Existing characterization + R01; before P08 |
 | P08 | [Receive/admission/reclaim](tasks/P08-receive-admission.md) | P02/P03/P05/P07 + A01/R01; earlier follow-ups integrated |
@@ -46,7 +47,7 @@ and [A01](tasks/A01-allocator-selection.md) remain prerequisites for P08.
 | P13 | [Checked failure diagnostics](tasks/P13-diagnostics.md) | P10; secondary to core RTL/DV |
 | P14 | [Independent release audit](tasks/P14-release.md) | P12/P13 and current integrated evidence |
 
-The remaining serial route is P05, R01, A01, P08, P09, P10,
+The remaining serial route is R01, A01, P08, P09, P10,
 P11A, P11B, P11C, P12, P13, P14. C01 and independent analysis can run alongside
 hardware work when shared file ownership is explicit. P11A/P11B and P12/P13
 remain possible independent waves; serial work is simpler by default.
@@ -74,10 +75,10 @@ only for a concrete need, not to replace external checking.
 
 ## Implementation and decision checkpoints
 
-P05/P08 follow the [root preparation and qualification workflow](../../AGENTS.md#preparation-implementation-and-independent-qualification).
-P03/P04 RTL and independent component DV are integrated in separate PRs. P09 wires the real top and bench;
-P10 establishes concurrency across F0/F1/I0/I1/E0/E1. P11 closes composition and
-coverage rather than deferring all verification until the end.
+P08 follows the [root preparation and qualification workflow](../../AGENTS.md#preparation-implementation-and-independent-qualification).
+P03/P04/P05 RTL and component DV landed in separate PRs. P09 wires the real top
+and bench. P10 establishes concurrency across F0/F1/I0/I1/E0/E1. P11 closes
+composition and coverage.
 
 R01 preserves old reset-violation evidence and establishes comparable new
 constraints. A01 reviews whether lowest-pre-state-ID ordering has any functional
@@ -101,9 +102,9 @@ changes refresh affected G5 evidence before P14.
 
 ## Commands and evidence ownership
 
-The current runner/registries are authoritative for commands that exist. Future
-cards register their own named suite (`queues`, `scheduler`, `memory-tx`, `receive`,
-`vertical`, `concurrency`) and production-proof families. Keep capability fixture
+The current runner and registries are authoritative for existing commands,
+including `queues`, `scheduler` and `memory-tx`. Future cards register their
+named suites (`receive`, `vertical`, `concurrency`) and proof families. Keep capability fixture
 commands and functional single-seed replay semantics distinct. Empty, unknown,
 duplicate or missing required selections fail rather than silently passing.
 
@@ -115,8 +116,8 @@ must not be promoted to full-subsystem PASS.
 
 Review exact base/head revisions and integrate prerequisites before dependent
 tasks. Retain criteria-before-results and cleanup-before-new-functionality commits
-through merge commits where their order is evidence. Keep bulk logs/waves/netlists
-in artifacts and compact durable results/commands in Git. Reuse valid unchanged
+through merge commits where their order is evidence. Follow the
+[durable evidence policy](../documentation.md#durable-evidence-for-new-work). Reuse valid
 evidence; refresh checks affected by executable changes. The maintainer controls
 merges and any release tag.
 
@@ -140,7 +141,7 @@ defines file boundaries and the shared RTL/DV workflow.
 | Task | RTL PR | Independent DV / other PR |
 | --- | --- | --- |
 | P03 / P04 | Already merged #14 / #16 | Independent queue / scheduler DV integrated #17 / #18 |
-| P05 | Store, metadata and TX implementation + designer smoke | API byte/port/credit/retirement/reset/performance tests, FP-TX, covers and negatives |
+| P05 | Store, metadata, TX and designer smoke integrated #24 | Component tests, FP-TX, covers and negatives integrated #26. See [status](../status.md) for remaining gates. |
 | A01 | Adopted allocator candidate after coordinated policy decision | Independent safety/policy qualification; analysis owns frozen comparison and disposition |
 | P08 | RX/admission/reclaim implementation + designer smoke | Framing/admission/accounting/concurrency tests and local composition proofs |
 | P09 | Real top/config/event/ownership wiring | Real UVM path, binds, scoreboard qualification, coverage and subsystem CI |

@@ -16,6 +16,7 @@ sys.path[:0] = [str(ROOT / 'dv/model'), str(ROOT / 'tools')]
 from events import (PacketKey, Packet, Admission, CellRelease, AbortDone, PolicyEvents,
                     StreamSample, BusSample, Collector, CycleBatch, PolicyState)
 from registry import profile, sources, selection
+from failure_capture import CAPTURE_PATH
 
 IDLE = StreamSample(False, False, None)
 
@@ -175,7 +176,7 @@ class RegistrationTests(unittest.TestCase):
                                          *args, '--output', str(Path(folder) / 'negative-output')],
                                         cwd=checkout, capture_output=True, text=True, timeout=30)
                 self.assertNotEqual(result.returncode, 0)
-            self.assertEqual(len(list((checkout / 'verification/failures').glob('*.json'))), 7)
+            self.assertEqual(len(list((checkout / CAPTURE_PATH).glob('*.json'))), 7)
 
 
 class StorageRoutingTests(unittest.TestCase):

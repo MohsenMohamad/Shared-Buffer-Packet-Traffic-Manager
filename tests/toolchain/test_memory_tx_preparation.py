@@ -13,6 +13,7 @@ sys.path.insert(0,str(ROOT/'tools'))
 import evidence
 import memory_tx
 import registry
+from failure_capture import CAPTURE_PATH
 
 
 def public_ram_header(root):
@@ -100,7 +101,7 @@ class PreparationBoundaryTests(unittest.TestCase):
                 case=evidence.Case(run,'isolated-unexpected-tool-error')
                 step=case.execute([sys.executable,'-c','raise RuntimeError("isolated error")'])
                 case.finish(step['result'],step['first_failure'])
-            captures=list((root/'verification/failures').glob('*.json'))
+            captures=list((root/CAPTURE_PATH).glob('*.json'))
             self.assertEqual(len(captures),1)
             capture=json.loads(captures[0].read_text())
             self.assertEqual(capture['result'],'TOOL_ERROR')
