@@ -182,3 +182,15 @@ The candidate and minimum-pair commands passed. The deliberately reduced
 configurations produced the recorded gate misses. Repository contracts,
 117 Python tests and syntax checks, two runner isolation tests, and whitespace
 checks passed.
+
+### Naming amendment rerun
+
+On clean commit `96508d4d05f38ee73430d811b166fe93800dc371`,
+`python3 tools/multi_egress_feasibility.py --expect-gate` passed the
+named balanced workloads at both read latencies. The renamed model's SHA-256
+is `590272f6e6c3a7b28f1258d1032add13daa61e1a8ab8fb55484ef17dc15d2b61`.
+The [supplemental independent-length probe](../implementation/plan.md#next-assignment-and-queuecontrol-prerequisite)
+also reproduced the pending first-cell misses. Repository contracts, 117
+Python tests and syntax checks, two runner isolation tests, link and anchor
+checks, and whitespace checks passed. The moved [toolchain qualification
+JSON](toolchain-qualification.json) is byte-identical to the original.
