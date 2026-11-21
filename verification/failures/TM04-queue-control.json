@@ -5,7 +5,11 @@
       "id": "small-independent-lossless-assertion",
       "revision": "075e821e75ec95fcb7be0baffae7e971a1533755",
       "command": "python3 tools/queue_control.py --profile small --variant direct --json .build/queue-control/small-direct.json",
-      "variants": ["direct", "cached", "registered-request"],
+      "variants": [
+        "direct",
+        "cached",
+        "registered-request"
+      ],
       "first_symptom": "All four L=1 balanced windows passed, then the supplemental small DROP replay failed the lossless assertion at queue_control.py:739.",
       "disposition": "verification-defect",
       "repair": "Apply conservation to all stress replays, and retain real capacity rejections and idle edges in the diagnostic rows.",
@@ -36,7 +40,11 @@
       "first_symptom": "The mapper and STA reports completed, but the collector rejected valid paths because OpenSTA printed the asynchronous summary by path group without the word recovery.",
       "disposition": "verification-defect",
       "repair": "Validate the exact release path startpoint and explicit recovery/removal endpoint type in the detailed path sections.",
-      "artifacts": [".build/queue-control/small-map", ".build/queue-control/mapped-first", ".build/queue-control/admission-map"]
+      "artifacts": [
+        ".build/queue-control/small-map",
+        ".build/queue-control/mapped-first",
+        ".build/queue-control/admission-map"
+      ]
     },
     {
       "id": "reset-write-gate-setup",
@@ -64,6 +72,15 @@
       "disposition": "verification-defect",
       "repair": "Separate the option checks. Python compilation passed and the sensitivity run used the repaired runner.",
       "artifact": ".build/queue-control/first-fast-start"
+    },
+    {
+      "id": "removed-yosys-fast-option",
+      "revision": "e6a279abb3d032a4bda82e1c1d64f084975b722c",
+      "command": "python3 tools/queue_control_sta.py --output .build/queue-control/fast-map --fast-abc --jobs 1",
+      "first_symptom": "Pinned Yosys rejected abc -fast as an unknown option after head-direct elaboration. Other points using the same option share the diagnosis.",
+      "disposition": "verification-defect",
+      "repair": "Provide an explicit short script to the same pinned ABC with the same Liberty, drive and load conditions.",
+      "artifact": ".build/queue-control/fast-map"
     }
   ]
 }

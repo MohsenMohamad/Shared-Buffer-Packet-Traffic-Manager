@@ -94,6 +94,21 @@ def timing(text):
         "earliest": round(0.2 - release_slack["min"], 5),
         "latest": round(2.0 + release_slack["max"], 5),
     }
+    reports = text.split("TM_CHECK_TYPES_BEGIN", 1)[1].split("TM_CHECK_TYPES_END", 1)[0]
+    checks = {}
+    for heading in ("max slew", "max capacitance", "max fanout"):
+        match = re.search(r"(?m)^" + heading + r"\s*$", reports)
+        if match is None:
+            checks[heading] = None
+            continue
+        row = next((line for line in reports[match.end():].splitlines()
+                    if line.endswith(("(MET)", "(VIOLATED)"))), "")
+        if not row:
+            raise ValueError(f"Missing values for {heading}")
+        pin, limit, observed, slack, verdict = row.split()
+        checks[heading] = dict(pin=pin, limit=float(limit), observed=float(observed),
+                               slack=float(slack), met=verdict == "(MET)")
+    measurements["electrical"] = checks
     measurements["registers"] = int(re.search(r"TM_REGISTERS (\d+)", text)[1])
     measurements["outputs"] = int(re.search(r"TM_OUTPUTS (\d+)", text)[1])
     return measurements
