@@ -510,6 +510,93 @@ def detector(w, name, fixture):
     return dict(detector=name, expected=message, legal=event, planted=planted)
 
 
+def same_queue_feedback(w):
+    tm = w.tm
+    old = w.seed(0, 0, state="tx")
+    w.prefetch(old, 1)
+    old.tx = 7
+    tm.dynamic = True
+    tm.minimum[0] = 2
+    first = w.frame(0, 0)
+    w.offer_heads(first)
+    event = w.step()
+    w.expect("grant and old release coincide", [lanes(event, "admission", "desc"),
+                                               lanes(event, "desc_return", "desc")], [[1], [0]])
+    w.expect("first edge protected and shared credit", [tm.h[0], tm.credit], [1, tm.profile.cells - 1])
+    second = w.frame(1, 0)
+    w.offer_heads(second)
+    event = w.step()
+    w.expect("next edge reuses old ID and finds restored protection",
+             lanes(event, "admission", "desc"), [0])
+    w.expect("second edge protected and shared credit", [tm.h[0], tm.credit], [2, tm.profile.cells - 2])
+    crossing = w.frame(2 if tm.ports == 4 else 0, 0, size=65)
+    if tm.ports == 2:
+        for beat in range(2, first.beats + 1):
+            tm.capture[0].append((first, beat))
+            w.step(ready=[False] * tm.ports)
+    w.offer_heads(crossing)
+    event = w.step(ready=[False] * tm.ports)
+    w.expect("alpha zero denies shared spill from the minimum", lanes(event, "admission", "reason"),
+             ["QUEUE_LIMIT"])
+    return {}
+
+
+def staged_scarcity(w, wait):
+    tm = w.tm
+    old = w.seed(0, 0, state="tx")
+    w.prefetch(old, 1)
+    old.tx = 7
+    for _ in range(tm.profile.descriptors - 2):
+        w.seed(0, 0, cls=1)
+    tm.wait = wait
+    tm.cursors["admit"] = 1
+    offers = [w.frame(p, p, cls=2) for p in range(tm.ports)]
+    w.offer_heads(*offers)
+    event = w.step(ready=[False] * tm.ports)
+    w.expect("sample the rotated batch without consuming it", lanes(event, "header_sample", "frame"),
+             [f.identity for f in offers[1:] + offers[:1]])
+    w.expect("sample-only edge", [lanes(event, "service", "beat"), tm.desc.free],
+             [[], 1 << (tm.profile.descriptors - 1)])
+    event = w.step()
+    w.expect("commit against sampled descriptors while returning the old owner",
+             [lanes(event, "admission", "desc"), lanes(event, "desc_return", "desc")],
+             [[tm.profile.descriptors - 1] + [None] * (tm.ports - 1), [0]])
+    w.expect("later lanes retain their sampled reason", lanes(event, "admission", "result"),
+             ["GRANT"] + ["WAIT" if wait else "DROP"] * (tm.ports - 1))
+    if wait:
+        w.expect("pending heads sampled using newly visible free ID",
+                 len(lanes(w.step(), "header_sample", "frame")), tm.ports - 1)
+        w.expect("next batch can commit returned ID", lanes(w.step(), "admission", "desc"),
+                 [0] + [None] * (tm.ports - 2))
+    return {}
+
+
+def staged_reset_and_abort(w):
+    tm = w.tm
+    old = w.frame(0, 0, size=65)
+    w.offer_heads(old)
+    w.expect("before reset, pending sample", lanes(w.step(), "header_sample", "frame"), [old.identity])
+    tm.reset()
+    fresh = w.frame(0, 0, size=65, malformed_at=1)
+    w.offer_heads(fresh)
+    w.expect("only new epoch samples", lanes(w.step(), "header_sample", "frame"), [fresh.identity])
+    event = w.step()
+    w.expect("new epoch grants and aborts on commit", [lanes(event, "admission", "desc"),
+                                                     lanes(event, "abort_mark", "frame")],
+             [[0], [fresh.identity]])
+    w.expect("cleanup releases only new reservation", lanes(w.step(), "cleanup", "released"), [2])
+    w.expect("registered disposition follows cleanup", lanes(w.step(), "disposition", "code"),
+             ["FRAME_ERROR"])
+    return {}
+
+
+STAGED_CASES = {
+    "staged-descriptor-drop": lambda w: staged_scarcity(w, False),
+    "staged-descriptor-wait": lambda w: staged_scarcity(w, True),
+    "staged-reset-and-abort": staged_reset_and_abort,
+}
+
+
 CASES = {
     "publish-singleton": lambda w: publication(w, 1),
     "publish-longer": lambda w: publication(w, 2),
@@ -519,6 +606,7 @@ CASES = {
     "descriptor-wait": lambda w: descriptor_prefix(w, True),
     "returns": all_returns,
     "full-prefix": four_grants,
+    "same-queue-feedback": same_queue_feedback,
     "dynamic-pass": lambda w: arithmetic(w, 10, False),
     "dynamic-drop": lambda w: arithmetic(w, 9, False),
     "dynamic-wait": lambda w: arithmetic(w, 9, True),
@@ -545,13 +633,14 @@ CASES = {
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--json", type=Path, required=True)
-    parser.add_argument("--case", choices=CASES)
+    parser.add_argument("--case", choices=(*CASES, *STAGED_CASES))
     args = parser.parse_args()
     rows = []
     for profile_name, profile in PROFILES.items():
-        for variant in VARIANTS:
+        for variant in (*VARIANTS, "staged-admission"):
             for latency in (1, 2):
-                for name, case in CASES.items():
+                cases = STAGED_CASES if variant == "staged-admission" else CASES
+                for name, case in cases.items():
                     if args.case and name != args.case:
                         continue
                     w = Witness(profile, latency, variant)
@@ -565,6 +654,8 @@ def main():
                         print(f"{profile_name}/{variant}/L{latency}/{name}: {type(error).__name__}: {error}")
                     row["trace"] = w.tm.trace
                     rows.append(row)
+    if not rows:
+        parser.error("no directed case selected")
     args.json.write_text(json.dumps(rows, indent=2) + "\n")
     failed = sum(row["result"] != "PASS" for row in rows)
     negatives = sum(len(row.get("negatives", ())) for row in rows)

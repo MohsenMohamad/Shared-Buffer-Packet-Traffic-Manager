@@ -1,5 +1,5 @@
 module queue_head #(
-    parameter int P = 4, N_DESC = 256, N_CELL = 1024, CACHED = 0,
+    parameter int P = 4, N_DESC = 256, N_CELL = 1024, CACHED = 0, TOKEN_FEEDBACK = 0,
     localparam int Q = P * 4, QB = $clog2(Q), D = $clog2(N_DESC),
     localparam int C = $clog2(N_CELL), B = $clog2(P),
     // First cell, cell count, ingress, sequence, tag, ECN and mark.
@@ -15,6 +15,8 @@ module queue_head #(
     input logic [P-1:0] bind_window,
     input logic [Q-1:0][15:0] queue_credit_bytes,
     input logic [P-1:0][15:0] port_credit_bytes,
+    input logic token_start,
+    input logic [19:0] token_rate,
     output logic [Q-1:0] active,
     output logic [P-1:0] bound,
     output logic [P-1:0][1:0] bound_class,
@@ -31,14 +33,58 @@ module queue_head #(
     logic [P-1:0][1:0] cls;
     logic [P-1:0][D-1:0] old_head, successor;
     logic [P-1:0][W-1:0] selected_info;
+    logic [Q-1:0][15:0] queue_available;
+    logic [P-1:0][15:0] port_available;
+
+    // The composed point treats the byte inputs as configured capacities.
+    // Every bucket is enabled and shares the supplied Q16.16 refill rate.
+    function automatic logic [31:0] update_tokens(
+        input logic [31:0] old_balance,
+        input logic [15:0] capacity_bytes, charged_bytes
+    );
+        logic [32:0] balance, capacity;
+        capacity = {1'b0, capacity_bytes, 16'b0};
+        balance = {1'b0, old_balance} - {1'b0, charged_bytes, 16'b0} + 33'(token_rate);
+        return token_start || balance >= capacity ? capacity[31:0] : balance[31:0];
+    endfunction
+
+    if (TOKEN_FEEDBACK == 0) begin : external_tokens
+        assign queue_available = queue_credit_bytes;
+        assign port_available = port_credit_bytes;
+    end else begin : registered_tokens
+        for (genvar e = 0; e < P; e++) begin : port_state
+            logic [31:0] balance;
+            assign port_available[e] = balance[31:16];
+            always_ff @(posedge clk or negedge rst_n) begin
+                if (!rst_n)
+                    balance <= '0;
+                else
+                    balance <= update_tokens(balance, port_credit_bytes[e],
+                                             pop[e] ? selected_info[e][15:0] : 16'b0);
+            end
+        end
+        for (genvar q = 0; q < Q; q++) begin : queue_state
+            localparam int E = q / 4;
+            logic [31:0] balance;
+            wire debit = pop[E] && cls[E] == 2'(q % 4);
+            assign queue_available[q] = balance[31:16];
+            always_ff @(posedge clk or negedge rst_n) begin
+                if (!rst_n)
+                    balance <= '0;
+                else
+                    balance <= update_tokens(balance, queue_credit_bytes[q],
+                                             debit ? selected_info[E][15:0] : 16'b0);
+            end
+        end
+    end
 
     for (genvar e = 0; e < P; e++) begin : choose
         logic [3:0] eligible;
         for (genvar c = 0; c < 4; c++) begin : class_head
             localparam int QID = e * 4 + c;
             wire [15:0] length = CACHED != 0 ? cached[QID][15:0] : metadata[head[QID]][15:0];
-            assign eligible[c] = active[QID] && length <= queue_credit_bytes[QID]
-                                && length <= port_credit_bytes[e];
+            assign eligible[c] = active[QID] && length <= queue_available[QID]
+                                && length <= port_available[e] && !(TOKEN_FEEDBACK != 0 && token_start);
         end
         wire [3:0] rotated = (eligible >> cursor[e]) | (eligible << (4 - cursor[e]));
         wire [1:0] offset = rotated[0] ? 2'd0 : rotated[1] ? 2'd1 : rotated[2] ? 2'd2 : 2'd3;

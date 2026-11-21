@@ -26,7 +26,7 @@ module metadata_tb #(
     for (genvar version = 0; version < 2; version++) begin : head_variant
         queue_head #(.P(P), .N_CELL(N_CELL), .N_DESC(N_DESC), .CACHED(version)) dut (
             .clk, .rst_n, .publish, .publish_q, .publish_desc, .publish_info,
-            .bind_window, .queue_credit_bytes, .port_credit_bytes,
+            .bind_window, .queue_credit_bytes, .port_credit_bytes, .token_start(1'b0), .token_rate(20'b0),
             .active(queue_result[version].active), .bound(queue_result[version].bound),
             .bound_class(queue_result[version].bound_class),
             .bound_desc(queue_result[version].bound_desc),
@@ -56,7 +56,7 @@ module metadata_tb #(
     cell_control #(.P(P), .N_CELL(N_CELL), .N_DESC(N_DESC)) cell_dut (
         .clk, .rst_n, .staged_valid, .staged_final, .previous_valid, .previous_cell, .staged_desc,
         .read_eligible, .read_more, .read_cell, .read_desc,
-        .abort_valid, .abort_has_cell, .abort_more, .abort_cell, .abort_desc,
+        .abort_valid, .abort_has_cell, .abort_more, .abort_cells('0), .abort_cell, .abort_desc,
         .tx_return, .tx_return_cell, .tx_return_desc,
         .write_valid, .final_write, .issue_valid, .cleanup_valid, .cleanup_done,
         .write_port, .issue_port, .cleanup_port, .write_addr, .payload_read_addr,

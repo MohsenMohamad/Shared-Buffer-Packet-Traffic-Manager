@@ -1,5 +1,5 @@
 module cell_control #(
-    parameter int P = 4, N_CELL = 1024, N_DESC = 256,
+    parameter int P = 4, N_CELL = 1024, N_DESC = 256, ABORT_FEEDBACK = 0,
     localparam int B = $clog2(P), C = $clog2(N_CELL), D = $clog2(N_DESC)
 ) (
     input logic clk, rst_n,
@@ -10,6 +10,7 @@ module cell_control #(
     input logic [P-1:0][C-1:0] read_cell,
     input logic [P-1:0][D-1:0] read_desc,
     input logic [P-1:0] abort_valid, abort_has_cell, abort_more,
+    input logic [P-1:0][4:0] abort_cells,
     input logic [P-1:0][C-1:0] abort_cell,
     input logic [P-1:0][D-1:0] abort_desc,
     input logic [P-1:0] tx_return,
@@ -59,12 +60,52 @@ module cell_control #(
         return C'(block_id * GROUP) | offset;
     endfunction
 
+    logic [P-1:0] reclaim_valid, reclaim_has_cell, reclaim_more;
+    logic [P-1:0][C-1:0] reclaim_cell;
+    logic [P-1:0][D-1:0] reclaim_desc;
+    if (ABORT_FEEDBACK == 0) begin : external_cursor
+        assign reclaim_valid = abort_valid;
+        assign reclaim_has_cell = abort_has_cell;
+        assign reclaim_more = abort_more;
+        assign reclaim_cell = abort_cell;
+        assign reclaim_desc = abort_desc;
+    end else begin : registered_cursor
+        for (genvar p = 0; p < P; p++) begin : ingress
+            logic [4:0] remaining;
+            assign reclaim_has_cell[p] = remaining != 0;
+            assign reclaim_more[p] = remaining > 1;
+            always_ff @(posedge clk or negedge rst_n) begin
+                if (!rst_n) begin
+                    reclaim_valid[p] <= 1'b0;
+                    remaining <= '0;
+                    reclaim_cell[p] <= '0;
+                    reclaim_desc[p] <= '0;
+                end else if (abort_grant && reclaim == B'(p)) begin
+                    if (reclaim_more[p]) begin
+                        reclaim_cell[p] <= links[reclaim_cell[p]];
+                        remaining <= remaining - 5'd1;
+                    end else begin
+                        reclaim_valid[p] <= 1'b0;
+                        remaining <= '0;
+                    end
+                end else if (abort_valid[p] && !reclaim_valid[p]) begin
+                    // Abort mark supplies the old first cell and assigned count.
+                    // The caller includes any coincident materialization.
+                    reclaim_valid[p] <= 1'b1;
+                    remaining <= abort_cells[p];
+                    reclaim_cell[p] <= abort_cell[p];
+                    reclaim_desc[p] <= abort_desc[p];
+                end
+            end
+        end
+    end
+
     assign wr = rotate(staged_valid, wr_cursor);
     assign tx = rotate(read_eligible, tx_cursor);
-    assign reclaim = rotate(abort_valid, reclaim_cursor);
+    assign reclaim = rotate(reclaim_valid, reclaim_cursor);
     assign wr_grant = (|staged_valid) && (|free_cell);
     assign tx_grant = |read_eligible;
-    assign abort_grant = |abort_valid;
+    assign abort_grant = |reclaim_valid;
     assign addr = first_free(free_cell);
 
     always_comb begin
@@ -80,11 +121,11 @@ module cell_control #(
                 returned[tx_return_cell[i]] = 1'b1;
             end
         end
-        if (abort_grant && abort_has_cell[reclaim]) begin
-            if (free_cell[abort_cell[reclaim]] || returned[abort_cell[reclaim]]
-                || owners[abort_cell[reclaim]] != abort_desc[reclaim])
+        if (abort_grant && reclaim_has_cell[reclaim]) begin
+            if (free_cell[reclaim_cell[reclaim]] || returned[reclaim_cell[reclaim]]
+                || owners[reclaim_cell[reclaim]] != reclaim_desc[reclaim])
                 bad_action = 1'b1;
-            returned[abort_cell[reclaim]] = 1'b1;
+            returned[reclaim_cell[reclaim]] = 1'b1;
         end
         if (tx_grant && (free_cell[read_cell[tx]] || owners[read_cell[tx]] != read_desc[tx]))
             bad_action = 1'b1;
@@ -127,7 +168,7 @@ module cell_control #(
             final_write <= wr_grant && staged_final[wr];
             issue_valid <= tx_grant;
             cleanup_valid <= abort_grant;
-            cleanup_done <= abort_grant && (!abort_has_cell[reclaim] || !abort_more[reclaim]);
+            cleanup_done <= abort_grant && (!reclaim_has_cell[reclaim] || !reclaim_more[reclaim]);
             if (wr_grant) begin
                 wr_cursor <= wr + B'(1);
                 write_port <= wr;
@@ -144,8 +185,8 @@ module cell_control #(
             if (abort_grant) begin
                 reclaim_cursor <= reclaim + B'(1);
                 cleanup_port <= reclaim;
-                if (abort_has_cell[reclaim] && abort_more[reclaim])
-                    abort_successor <= links[abort_cell[reclaim]];
+                if (reclaim_has_cell[reclaim] && reclaim_more[reclaim])
+                    abort_successor <= links[reclaim_cell[reclaim]];
             end
             invariant_error <= invariant_error || bad_action;
         end

@@ -32,6 +32,7 @@ module admission_tb #(
         admission #(.P(P), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_BYTES(MAX_BYTES),
                     .LOOKAHEAD(version)) dut (
             .clk, .rst_n, .dynamic_mode, .wait_mode, .header_valid, .bad_first_beat,
+            .first_keep('0), .first_last('0), .receive_space('0),
             .route, .raw_class, .length, .minimum, .limit, .alpha,
             .desc_return, .credit_release, .return_id, .release_qid, .release_count,
             .rx_grant(result[version].grant), .rx_reject(result[version].reject),

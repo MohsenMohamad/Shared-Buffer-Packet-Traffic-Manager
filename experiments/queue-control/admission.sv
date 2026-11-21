@@ -1,5 +1,5 @@
 module admission #(
-    parameter int P = 4, N_CELL = 1024, N_DESC = 256, MAX_BYTES = 1536, LOOKAHEAD = 0,
+    parameter int P = 4, N_CELL = 1024, N_DESC = 256, MAX_BYTES = 1536, LOOKAHEAD = 0, RX_FRAMING = 0,
     localparam int Q = P * 4, B = $clog2(P), QB = $clog2(Q),
     localparam int K = $clog2(N_CELL+1), D = $clog2(N_DESC),
     localparam int LANES = P+1
@@ -7,6 +7,8 @@ module admission #(
     input logic clk, rst_n,
     input logic dynamic_mode, wait_mode,
     input logic [P-1:0] header_valid, bad_first_beat,
+    input logic [P-1:0][7:0] first_keep,
+    input logic [P-1:0] first_last, receive_space,
     input logic [P-1:0][7:0] route, raw_class,
     input logic [P-1:0][15:0] length,
     input logic [Q-1:0][K-1:0] minimum, limit,
@@ -87,6 +89,13 @@ module admission #(
     logic [P-1:0][QB-1:0] decision_q;
     logic [P-1:0][K:0] decision_n;
     logic [P-1:0] decision_valid, decision_bad_beat, decision_id_valid;
+    wire [P-1:0] service_headers = RX_FRAMING != 0 ? header_valid & receive_space : header_valid;
+    wire [P-1:0] malformed_first;
+    for (genvar p = 0; p < P; p++) begin : framing
+        // No legal profile finishes a frame in its first eight-byte beat.
+        assign malformed_first[p] = RX_FRAMING != 0 ? first_last[p] || first_keep[p] != 8'hff
+                                                    : bad_first_beat[p];
+    end
     logic [P-1:0][2:0] header_error, decision_error;
     logic [P-1:0][D-1:0] decision_id;
     logic [P-1:0][K:0] lane_deficit, lane_excess;
@@ -137,15 +146,15 @@ module admission #(
                 pending_batch <= 1'b0;
                 valid <= '0;
             end else begin
-                pending_batch <= !pending_batch && (|header_valid);
-                if (!pending_batch) valid <= header_valid;
+                pending_batch <= !pending_batch && (|service_headers);
+                if (!pending_batch) valid <= service_headers;
             end
         end
         always_ff @(posedge clk) begin
             if (!pending_batch) begin
                 decision_q <= lane_q;
                 decision_n <= lane_n;
-                decision_bad_beat <= bad_first_beat;
+                decision_bad_beat <= malformed_first;
                 decision_error <= header_error;
                 decision_id_valid <= ranked_valid;
                 decision_id <= ranked_id;
@@ -155,8 +164,8 @@ module admission #(
     end else begin : direct_batch
         assign decision_q = lane_q;
         assign decision_n = lane_n;
-        assign decision_valid = header_valid;
-        assign decision_bad_beat = bad_first_beat;
+        assign decision_valid = service_headers;
+        assign decision_bad_beat = malformed_first;
         assign decision_error = header_error;
         assign decision_id_valid = ranked_valid;
         assign decision_id = ranked_id;

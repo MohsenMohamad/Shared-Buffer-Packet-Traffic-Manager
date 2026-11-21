@@ -20,11 +20,14 @@ ALLOC = ROOT / "experiments/allocator-scaling"
 LIBERTY = ROOT / ".deps/liberty.lib"
 POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "head-cached": ("queue_head", {"CACHED": 1}),
+          "head-token-feedback": ("queue_head", {"CACHED": 1, "TOKEN_FEEDBACK": 1}),
           "admission": ("admission", {"LOOKAHEAD": 0}),
           "admission-lookahead": ("admission", {"LOOKAHEAD": 1}),
           "admission-factored": ("admission", {"LOOKAHEAD": 2}),
           "admission-staged": ("admission", {"LOOKAHEAD": 3}),
-          "cell": ("cell_control", {})}
+          "admission-rx": ("admission", {"LOOKAHEAD": 2, "RX_FRAMING": 1}),
+          "cell": ("cell_control", {}),
+          "cell-cleanup-feedback": ("cell_control", {"ABORT_FEEDBACK": 1})}
 DIAGNOSTIC = re.compile(r"(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:")
 
 
@@ -178,9 +181,11 @@ def expected_flops(top, params):
         queue_state = queues * (1 + 2 * d)
         binding = ports * (1 + 2 + 2 + d + metadata)
         head_cache = queues * metadata if params["CACHED"] else 0
-        return desc * (metadata + d) + queue_state + binding + head_cache + 1
+        token_state = 32 * (queues + ports) if params.get("TOKEN_FEEDBACK") else 0
+        return desc * (metadata + d) + queue_state + binding + head_cache + token_state + 1
     if top == "cell_control":
-        return cells * (1 + c + d) + 6 * b + 4 * c + d + 5 + 1
+        cleanup_state = ports * (1 + 5 + c + d) if params.get("ABORT_FEEDBACK") else 0
+        return cells * (1 + c + d) + 6 * b + 4 * c + d + 5 + 1 + cleanup_state
     if params["LOOKAHEAD"] == 3:
         return None  # The retained sample fields vary with constant folding.
     return desc + k * (queues + 1) + b + ports * (4 + 3 + d + q + k) + 1
