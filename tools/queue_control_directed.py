@@ -299,19 +299,26 @@ def concurrent_mark(w):
     return {}
 
 
-def fairness(w):
+def fairness(w, tx_returns=False):
     tm = w.tm
     tx = [w.seed(p, p, size=192, state="tx") for p in range(tm.ports)]
     abort = [w.seed(p, p, cls=1, size=192, state="abort", assigned=3)
              for p in range(tm.ports)]
     tm.cursors["abort"] = tm.cursors["read"] = 1
+    if tx_returns:
+        for f in tx:
+            w.prefetch(f, 1)
+            f.tx = 7
     for offset in range(3 * tm.ports):
-        event = w.step([False] * tm.ports)
+        event = w.step([tx_returns and offset == 0] * tm.ports)
         expected = (offset + 1) % tm.ports
+        if tx_returns and offset == 0:
+            w.expect("all cell-final TX returns coexist with a contested abort grant",
+                     lanes(event, "cell_return", "lane"), list(range(tm.ports + 1)))
         w.expect("dedicated abort RR under continuous contention", lanes(event, "cleanup", "frame"),
                  [abort[expected].identity])
-        w.expect("parallel read RR under continuous contention", lanes(event, "issue", "frame"),
-                 [tx[expected].identity])
+        expected_read = [] if tx_returns and offset >= 2 * tm.ports else [tx[expected].identity]
+        w.expect("parallel read RR under continuous contention", lanes(event, "issue", "frame"), expected_read)
         if offset >= 2 * tm.ports:
             w.expect("final cleanup bound", lanes(event, "cleanup", "done"), [True])
     w.expect("all aborts complete after ports*k edges", [f is None for f in tm.abort], [True] * tm.ports)
@@ -392,7 +399,7 @@ def full_prefetch(w, retire):
     w.prefetch(successor, 2)
     active.tx = 7
     landing = successor.read_next
-    tm.responses.append((7, successor, 2, landing))
+    tm.responses.append((7, tm.epoch, successor, 2, landing))
     successor.unread -= 1
     successor.read_next = tm.cell_next[landing]
     tm.prefetch[0] += 1
@@ -449,15 +456,21 @@ def reset_inflight(w):
         w.step([False] * tm.ports)
     w.expect("reset with request outstanding", len(tm.responses), 1)
     saved_trace = tm.trace
+    due, old_epoch, _, _, _ = tm.responses[0]
     tm.reset()
     tm.trace = saved_trace
     w.expect("restart restores owned and reserved credit", [len(tm.desc.owner), tm.credit, tm.bitmap],
              [0, tm.profile.cells, 0])
     g = w.seed(0, 0)
     w.expect("same physical IDs are legal in new epoch", [g.desc, g.first], [f.desc, f.first])
-    event = w.step()
-    w.expect("stale issue has no response or transfer after reset",
-             [lanes(event, "response", "frame"), lanes(event, "transfer", "frame")], [[], []])
+    while tm.cycle <= due:
+        event = w.step()
+    w.expect("stale response is observed in its old epoch",
+             [lanes(event, "response", "epoch"), lanes(event, "response", "accepted")],
+             [[old_epoch], [False]])
+    w.expect("stale response cannot transfer to reused owner", lanes(event, "transfer", "frame"), [])
+    w.expect("new epoch's prefetch credit comes only from its own issue",
+             tm.prefetch[0], int("issue" in g.times))
     return {}
 
 
@@ -514,6 +527,7 @@ CASES = {
     "bad-headers": bad_headers,
     "marked-with-write": concurrent_mark,
     "arbitration-and-cleanup-bound": fairness,
+    "contended-cleanup-with-returns": lambda w: fairness(w, True),
     "strict-before-bind": lambda w: strict_binding(w, False),
     "strict-on-bind": lambda w: strict_binding(w, True),
     "old-queue-credit": lambda w: shaping(w, "queue", False),

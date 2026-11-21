@@ -145,11 +145,14 @@ class Control:
         self.latency = latency
         self.variant = variant
         self.record = trace
+        self.cycle = 0
+        self.epoch = -1
+        self.responses = deque()
         self.reset()
 
     def reset(self):
-        # The model cancels response validity on reset. Stale array data is unreachable.
-        self.cycle = 0
+        # External responses retain their due edge and old epoch across the flush.
+        self.epoch += 1
         self.desc = Pool(self.profile.descriptors)
         self.cell = Pool(self.profile.cells)
         self.credit = self.profile.cells
@@ -174,7 +177,6 @@ class Control:
         self.publish_slot = None
         self.slots = [deque() for _ in range(self.ports)]
         self.prefetch = [0] * self.ports
-        self.responses = deque()
         self.cursors = dict.fromkeys(("read", "write", "abort", "admit"), 0)
         self.q_cursor = [0] * self.ports
         self.mode = ["rr"] * self.ports
@@ -314,7 +316,7 @@ class Control:
             f.read_next = successor
             f.unread -= 1
             self.prefetch[port] += 1
-            self.responses.append((self.cycle + self.latency, f, index, address))
+            self.responses.append((self.cycle + self.latency, self.epoch, f, index, address))
             if index == 0:
                 f.times["issue"] = self.cycle
             self.emit("issue", f, cell=address, index=index, next=successor)
@@ -555,13 +557,16 @@ class Control:
 
     def response(self):
         if self.responses and self.responses[0][0] == self.cycle:
-            _, f, index, address = self.responses.popleft()
+            _, epoch, f, index, address = self.responses.popleft()
+            if epoch != self.epoch:
+                self.emit("response", f, cell=address, index=index, epoch=epoch, accepted=False)
+                return
             assert self.cell.owner[address] is f and f.state == "tx"
             f.ready.append((index, address))
             if index == 0:
                 f.times.update(response=self.cycle, eligible=self.cycle + 1)
                 assert f.times["issue"] + self.latency == self.cycle
-            self.emit("response", f, cell=address, index=index, visible=self.cycle + 1)
+            self.emit("response", f, cell=address, index=index, epoch=epoch, accepted=True, visible=self.cycle + 1)
 
     def audit(self):
         assigned = len(self.cell.owner)
@@ -572,7 +577,8 @@ class Control:
         assert all(0 <= f.assigned <= f.credit for f in self.desc.owner.values())
         assert sum(f.assigned for f in self.desc.owner.values()) == assigned
         assert 0 <= self.credit <= self.profile.cells and min(self.h) >= 0
-        assert sum(self.prefetch) == len(self.responses) + sum(
+        valid_responses = sum(epoch == self.epoch for _, epoch, *_ in self.responses)
+        assert sum(self.prefetch) == valid_responses + sum(
             len(f.ready) for slots in self.slots for f in slots)
         assert max(self.prefetch) <= 6 and min(self.prefetch) >= 0
         assert self.bitmap == sum(1 << qid for qid, head in enumerate(self.head) if head is not None)
@@ -653,7 +659,7 @@ class Control:
         for key, value in peaks.items():
             self.peaks[key] = max(self.peaks[key], value)
         if self.record:
-            self.trace.append(dict(edge=self.cycle, events=self.events, head=self.head.copy(),
+            self.trace.append(dict(edge=self.cycle, epoch=self.epoch, events=self.events, head=self.head.copy(),
                                    tail=self.tail.copy(), bitmap=self.bitmap, U=self.credit,
                                    H=self.h.copy(), D=self.desc.free.bit_count(),
                                    physical=assigned, prefetch=self.prefetch.copy()))
