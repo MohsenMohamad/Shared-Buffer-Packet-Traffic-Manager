@@ -63,7 +63,7 @@ Several events may occur in one cycle. Compute a combined next state using widen
 
 ### Physical pool allocator
 
-The preferred version-1 implementation is a registered free bitmap with priority selection and a free-count register. It accepts at most one cell allocation and one cell return per cycle. Allocation chooses a cell free in the pre-cycle bitmap. An invalid return is detected; it must not create extra capacity. Lower-level allocator proofs may allow arbitrary invalid return requests and establish that state remains consistent.
+The preferred single-egress implementation is a registered free bitmap with priority selection and a free-count register. It accepts at most one cell allocation and one cell return per cycle. Allocation chooses a cell free in the pre-cycle bitmap. An invalid return is detected; it must not create extra capacity. Lower-level allocator proofs may allow arbitrary invalid return requests and establish that state remains consistent.
 
 The normal output-cell return takes precedence over abort-cell reclamation. Abort work advances when no output return occupies the port. With supported CELL_WORDS at least two, an active output cannot require a new cell return every clock indefinitely. The abort controller rotates fairly among pending input contexts. It MUST return no more than one physical cell per cycle.
 
@@ -81,6 +81,6 @@ For the default 64-KiB store, simulation may use an abstract 1R1W memory with th
 
 ### Metadata storage
 
-Cell-next links, descriptor-next links and descriptor information are separate from payload data. Version 1 permits register-based metadata arrays with explicitly documented read multiplexers. An implementation MUST state each array's read/write ports rather than assuming an unlimited-port SRAM.
+Cell-next links, descriptor-next links and descriptor information are separate from payload data. The single-egress design permits register-based metadata arrays with explicitly documented read multiplexers. An implementation MUST state each array's read/write ports rather than assuming an unlimited-port SRAM.
 
 Baseline bounds are one cell-link write per accepted new-cell extension; one descriptor-information write per new reservation; and one descriptor-next write per enqueue. Queue head/tail/count arrays use merged enqueue/dequeue updates. TX and abort-reclaimer link reads require two independent register-array read muxes or an explicit one-port arbiter; either is allowed if latency/progress constraints hold. These implementation choices MUST be included in area reporting.

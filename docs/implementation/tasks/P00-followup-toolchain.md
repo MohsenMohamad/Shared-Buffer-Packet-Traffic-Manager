@@ -1,9 +1,9 @@
 # P00 follow-up: Toolchain qualification
 
 Completed. The selected toolchain and its executed qualification are described
-in the [inventory](../toolchain-qualification-plan.md),
+in the [inventory](../toolchain-inventory.md),
 [capability table](../toolchain-capabilities.md) and
-[qualification report](../../results/modern-toolchain.md).
+[qualification report](../../results/toolchain-qualification.md).
 
 Consume the committed dependency locks, setup/doctor/cache validation and current
 source registries. Do not repeat this task for a component implementation.

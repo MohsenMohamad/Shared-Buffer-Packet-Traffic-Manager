@@ -1,7 +1,7 @@
 # Native toolchain qualification
 
 Historical decision: current tool/frontend restrictions and their dispositions
-are covered by [decision 0006](0006-modern-toolchain.md). The original evidence
+are covered by [decision 0006](0006-toolchain-and-frontend-selection.md). The original evidence
 and behavioral choices below remain historical records.
 
 P00 uses checksum-locked Debian trixie packages for Yosys 0.52-2, ABC, Z3

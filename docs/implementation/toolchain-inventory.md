@@ -32,7 +32,7 @@ formal inputs, assertion/cover/negative results, memory inference, library
 mapping and max/min timing with focused executable checks.
 
 The [capability table](toolchain-capabilities.md) defines the accepted design
-recipes. The [qualification report](../results/modern-toolchain.md) retains
+recipes. The [qualification report](../results/toolchain-qualification.md) retains
 executed commands, identities and results. Its fixed reference-library timing
 is pre-layout evidence: no routed parasitics, multi-corner closure, variation or
 noise claim follows from the presence of a timing API.

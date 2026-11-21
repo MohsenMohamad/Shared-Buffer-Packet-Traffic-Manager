@@ -31,7 +31,7 @@ These exclusions do not excuse missing shared allocation, finite-port memories, 
 
 | Parameter | Default functional profile | Supported supported elaborations |
 |---|---:|---|
-| `DATA_W` | 64 bits | 64 only in version 1.0 |
+| `DATA_W` | 64 bits | 64 only |
 | `N_RX` | 4 | 1, 2, 4 |
 | `N_Q` | 16 | 2, 4, 8, 16 |
 | `CELL_BYTES` | 64 | 16, 32, 64 |
@@ -107,7 +107,7 @@ Measure input capture-to-output completion latency and commit-to-first-output la
 
 ### Targets and reporting limits
 
-The version-1 traffic target for F0/F1 is at least 0.85 output beats/cycle for saturated 1536-byte packets, default quanta, no sink stalls, after warm-up. Minimum-packet performance MUST be measured and its control/scheduling overhead explained; version 1 does not promise one completed packet per cycle. Failure to meet a target triggers a bottleneck investigation and an explicit specification revision if necessary, not concealed changes to workload or accounting.
+The single-egress traffic target for F0/F1 is at least 0.85 output beats/cycle for saturated 1536-byte packets, default quanta, no sink stalls, after warm-up. Minimum-packet performance MUST be measured and its control/scheduling overhead explained; the single-egress design does not promise one completed packet per cycle. Failure to meet a target triggers a bottleneck investigation and an explicit specification revision if necessary, not concealed changes to workload or accounting.
 
 For I0/I1, start with a 10-ns pre-layout timing target, 2-ns external input/output delays, 0.10-ns clock uncertainty and explicit slew/load assumptions. State both min/max external delay assumptions and inspect setup/max and hold/min reports; a one-corner ideal-clock hold check is not post-CTS hold closure. These are analysis conditions, not silicon guarantees. Use a cell library with recorded source, hash, PVT and units. Report worst slack and all intended constrained path groups. No routed parasitics, placement area, clock-tree closure, signoff or measured power is claimed by this project.
 

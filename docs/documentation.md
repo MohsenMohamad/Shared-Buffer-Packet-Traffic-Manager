@@ -20,6 +20,10 @@ Keep one authoritative location for each fact and link to it from summaries. A s
 ## Writing and layout
 
 - Give each paragraph, bullet and table row one primary purpose. Separate behavior, results and reproduction instructions.
+- Name files, modules, commands and headings for their role or supported
+  behavior. When designs coexist, use the property that distinguishes them.
+  Use version labels for versioned interfaces and external releases when the
+  number conveys information.
 - Use short paragraphs, descriptive headings and shallow lists. Add headings when they help navigation, rather than for every sentence.
 - Use tables for comparable checks, parameters or mappings. Keep cells concise; move procedural detail into ordinary text or code blocks.
 - Use inline code for identifiers, paths and short command names. Put executable sequences in fenced blocks. Use bold sparingly.

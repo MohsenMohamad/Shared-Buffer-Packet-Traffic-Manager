@@ -1,12 +1,17 @@
 # Shared-Buffer Packet Traffic Manager
 
-A single-clock SystemVerilog traffic-manager slice for variable-length packets:
-four independently backpressured 64-bit inputs share sixteen logical queues,
-64 KiB of payload cells and 256 packet descriptors, with one packet output.
+The single-egress traffic manager is a single-clock SystemVerilog design for
+variable-length packets. Four independently backpressured 64-bit inputs share
+sixteen logical queues, 64 KiB of payload cells and 256 packet descriptors,
+with one packet output.
 The design combines whole-packet reservation, store-and-forward publication,
 byte-based deficit round robin and an AXI4-Lite control/statistics plane.
 
-## Data path
+The [multi-egress traffic manager](docs/spec/multi-egress-traffic-manager.md)
+defines a primary 4×4 profile and a smaller implementation and proof profile.
+See the [status](docs/status.md) for the feasibility result and implementation gates.
+
+## Single-egress data path
 
 ```mermaid
 flowchart TD
@@ -24,14 +29,14 @@ flowchart TD
   CSR --> DRR
 ```
 
-The diagram shows the target architecture. The repository contains FIFOs,
+The single-egress components in the repository include FIFOs,
 bitmap pools, CSR/statistics, descriptor queues, the DRR/packet-RR scheduler and
 the UVM foundation. The packet RAM, finite-port metadata store and credited TX
 are merged and qualified at component scope. Receive/admission and production
 top integration are pending. [Current status](docs/status.md) and the
 [implementation plan](docs/implementation/plan.md) record the evidence and gates.
 
-## Engineering decisions
+## Single-egress engineering decisions
 
 | Decision | Consequence |
 | --- | --- |
@@ -83,7 +88,7 @@ applies to new fixed formal witnesses.
 ## Results and navigation
 
 - [Normative specifications](docs/spec/README.md) and [module contracts](docs/spec/module-contracts.md)
-- [Toolchain qualification](docs/results/modern-toolchain.md) and [RTL representation](docs/results/rtl-representation.md)
+- [Toolchain qualification](docs/results/toolchain-qualification.md) and [RTL representation](docs/results/rtl-representation.md)
 - [Allocator scaling](docs/results/allocator-scaling.md): established F0 selection-depth risk; alternatives and real-consumer timing are assigned work
 - [P07 stimulus/checker qualification](docs/results/P07-followup-stimulus.md)
 - [Verification requirements](verification/requirements.json), [acceptance gates](docs/spec/acceptance.md) and [contribution workflow](CONTRIBUTING.md)

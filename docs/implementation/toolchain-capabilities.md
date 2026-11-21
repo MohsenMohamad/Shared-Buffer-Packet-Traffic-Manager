@@ -1,7 +1,7 @@
 # Toolchain capabilities and design use
 
 Use the selected stack's qualified capabilities where they simplify the actual
-design. Exact executed scope is in the [qualification report](../results/modern-toolchain.md)
+design. Exact executed scope is in the [qualification report](../results/toolchain-qualification.md)
 and [RTL representation report](../results/rtl-representation.md).
 
 | Area | Current recipe | Acceptance boundary |

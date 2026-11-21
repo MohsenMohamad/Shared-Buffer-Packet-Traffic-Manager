@@ -5,9 +5,10 @@ RTL results, models, tool fixtures and unexecuted checks. Raw logs, waves,
 coverage databases and generated netlists remain ignored build/CI artifacts.
 
 - [Production allocator scaling](allocator-scaling.md)
+- [Multi-egress datapath feasibility](multi-egress-datapath-feasibility.md)
 - [F01 symbolic-input recipe](F01-formal-symbols.md)
 - [RTL representation migration](rtl-representation.md)
-- [Modern toolchain refresh](modern-toolchain.md)
+- [Toolchain qualification](toolchain-qualification.md)
 - [P00 toolchain fixtures](P00-toolchain.md)
 - [P01 contracts and batching](P01-contracts.md)
 - [P02 FIFO and pool components](P02-storage-primitives.md)

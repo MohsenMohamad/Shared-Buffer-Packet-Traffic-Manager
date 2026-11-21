@@ -1,5 +1,19 @@
 # Integration status
 
+## Multi-egress traffic manager
+
+The [multi-egress contract](spec/multi-egress-traffic-manager.md) defines the
+primary 4×4 profile and a smaller implementation and proof profile. The
+[cycle model](results/multi-egress-datapath-feasibility.md) sustained one beat
+per active port per cycle in each direction at both read latencies for the
+balanced fixed-permutation runs with repeated 60-, 65-, and 1,536-byte frames
+and the specified repeating length mixture. Multi-egress RTL, independent
+DV, proofs and mapped timing are pending.
+The [plan](implementation/plan.md#multi-egress-migration-and-gates) assigns public
+declarations next and gates the dependent datapath on queue/control feasibility.
+
+## Single-egress traffic manager evidence
+
 P05 packet RAM, finite-port metadata and credited TX merged in
 [PR #24](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/24).
 [PR #26](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/26)
@@ -14,7 +28,7 @@ independence remains unestablished.
 
 | Gate | Current scope | Evidence / owner |
 | --- | --- | --- |
-| G0 | Qualified toolchain fixtures and selected frontend | [Toolchain qualification](results/modern-toolchain.md) |
+| G0 | Qualified toolchain fixtures and selected frontend | [Toolchain qualification](results/toolchain-qualification.md) |
 | G1 | Qualified declarations/configurations; qualified types and declarations | [P01](results/P01-contracts.md), [RTL representation](results/rtl-representation.md) |
 | G2 | Scoped FIFO/pool, queue, scheduler, RAM/metadata/TX, CSR and bench-fixture evidence. P08 and composition remain pending. | [P02](results/P02-storage-primitives.md), [P03](results/P03-queues.md), [P04](results/P04-scheduler.md), [P05](results/P05-candidate-qualification.md), [P06](results/P06-registers.md), [P07 follow-up](results/P07-followup-stimulus.md) |
 | G3 | Pending real vertical path | P09 |
@@ -29,30 +43,14 @@ at `61d4c4c2b751642e6b79a995b710f186a8ce0281`. The
 passed all six P05 jobs. The qualification report retains the prior staging
 failure, its exact source and the fixed checkout behavior.
 
-## Remaining decisions and work
+## Evidence and ownership
 
-- [F01](implementation/tasks/F01-formal-symbols.md) qualifies fixed symbolic
-  witnesses and fail-closed source guards. [Local results](results/F01-formal-symbols.md)
-  close this prerequisite; local queue RTL/proofs are delivered in P03.
-- [R01](implementation/tasks/R01-reset-timing.md) establishes shared reset timing
-  interpretation; original negative removal measurements remain recorded.
-- [A01](implementation/tasks/A01-allocator-selection.md) evaluates the demonstrated
-  1024-cell selection bottleneck and records a disposition before P08.
-- P08 measures the real allocator/admission consumer path. Standalone timing is
-  not an integrated bound; existing statistics area remains separately identified.
-- [C01](implementation/tasks/C01-ci-economy.md) owns cheaper hosted iteration and
-  minor validator/run housekeeping; it does not establish hardware correctness.
-
-Each results report identifies its tested revisions, assumptions, profiles and
-scope. Later prose/merge commits do not replace those identities or create PASS.
-See the [current plan](implementation/plan.md) for the remaining dependency order.
-
-## Ownership and verified gates
-
-See the [role split and dependency inventory](implementation/plan.md#ownership-and-verification-gates).
-P02/P06 implementation tasks remain complete; retain their valid local evidence.
-Separate-owner qualification not established by those reports and their pending
-integration/composition checks remain explicit DV gaps, not implementation rework.
-The plan retains the verified P09/P11 gates; the
-[root ownership policy](../AGENTS.md#separate-rtl-and-independent-dv-ownership)
-defines the shared workflow.
+G3–G7 remain open for the single-egress design. The active route follows the
+[multi-egress migration and gates](implementation/plan.md#multi-egress-migration-and-gates),
+including R01/A01 analysis for the multi-egress design and a new
+ingress/admission assignment.
+Existing reports retain their exact tested revisions, assumptions, profiles and
+scope. The [dependency inventory](implementation/plan.md#dependency-evidence-inventory)
+records the P02/P06 component evidence and remaining independent composition
+needs. The [root ownership policy](../AGENTS.md#separate-rtl-and-independent-dv-ownership)
+defines separate RTL and independent DV assignments.

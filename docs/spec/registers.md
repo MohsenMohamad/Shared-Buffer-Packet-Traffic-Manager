@@ -8,7 +8,7 @@ RUN may be cleared only when IDLE=1; otherwise the write returns SLVERR. To reco
 
 IDLE means ingress FIFOs empty, no RX/drain/abort contexts, no committed queues, no TX packet/FIFO/outstanding reads, and all cells/descriptors unowned. It must not merely mean all queue counts are zero.
 
-The internal-invariant error bit is diagnostic: it sets on a detected invalid pool return or accounting/ownership violation and clears only on reset. Verification treats any such event as a failure. Version 1 does not promise transparent recovery from an internal RTL defect or corrupted ownership state.
+The internal-invariant error bit is diagnostic: it sets on a detected invalid pool return or accounting/ownership violation and clears only on reset. Verification treats any such event as a failure. The single-egress design does not promise transparent recovery from an internal RTL defect or corrupted ownership state.
 
 ### Register map
 

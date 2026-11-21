@@ -2,7 +2,7 @@
 
 Freeze this definition in a pushed commit before executing synthesis or timing.
 This is the standalone [P02 scaling card](../../docs/implementation/tasks/P02-followup-scaling.md),
-using integrated main `410a174` and the accepted [toolchain](../../docs/decisions/0006-modern-toolchain.md)
+using integrated main `410a174` and the accepted [toolchain](../../docs/decisions/0006-toolchain-and-frontend-selection.md)
 and [representation](../../docs/decisions/0007-rtl-representation.md). No allocator
 algorithm, API, allocation latency or functional/formal contract is changed.
 
