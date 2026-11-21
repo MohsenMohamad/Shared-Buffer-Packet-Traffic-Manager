@@ -87,7 +87,7 @@ class Witness:
 
 
 def lanes(events, name, field):
-    return [item[field] for item in events.get(name, ())]
+    return [item.get(field) for item in events.get(name, ())]
 
 
 def publication(w, depth):
@@ -382,7 +382,7 @@ def shaping(w, limiting, threshold, park=False):
     return {}
 
 
-def full_prefetch(w):
+def full_prefetch(w, retire):
     tm = w.tm
     tm.cycle = 7
     active = w.seed(0, 0, size=192, state="tx")
@@ -398,28 +398,19 @@ def full_prefetch(w):
     tm.prefetch[0] += 1
     writing = w.seed(1, 1, state="rx", assigned=0)
     tm.stage[1].append((writing, 6))
-    event = w.step([False] * tm.ports)
-    w.expect("held cell-final stays unaccepted", active.tx, 7)
-    w.expect("full old-state port cannot issue during the hold", lanes(event, "issue", "frame"), [other.identity])
-    w.expect("response consumes no extra slot", tm.prefetch[0], 6)
-
-    # Construct the adjacent legal response/retire/issue overlap independently of the hold.
-    tm.cycle = 8
-    _, returned = successor.ready.pop()
-    w.expect("old outstanding response moved its own cell", returned, landing)
-    tm.responses.appendleft((8, successor, 2, landing))
-    tm.stage[1].clear()
-    event = w.step()
-    w.expect("full pre-edge port cannot borrow same-edge retirement credit",
-             lanes(event, "issue", "frame"), [other.identity])
-    w.expect("cell-final returns one credit", lanes(event, "cell_return", "lane"), [0])
-    w.expect("response and retirement coexist", lanes(event, "response", "cell"), [landing])
-    w.expect("next edge sees released slot", tm.prefetch[0], 5)
-    if tm.ports == 4:
+    event = w.step([retire] * tm.ports)
+    w.expect("cell-final waits for acceptance", active.tx, 8 if retire else 7)
+    w.expect("full pre-edge port never borrows the retiring slot", lanes(event, "issue", "frame"), [other.identity])
+    w.expect("coincident write uses a distinct free cell", lanes(event, "write", "cell"),
+             [active.cells + successor.cells + other.cells])
+    w.expect("response belongs to existing outstanding slot", lanes(event, "response", "cell"), [landing])
+    w.expect("credit changes only for the accepted cell-final", tm.prefetch[0], 5 if retire else 6)
+    w.expect("actual retirement lane", lanes(event, "cell_return", "lane"), [0] if retire else [])
+    if retire and tm.ports == 4:
         event = w.step()
         w.expect("formerly full port can now issue its unread next cell",
                  lanes(event, "issue", "frame"), [successor.identity])
-    else:
+    elif tm.ports == 2:
         w.expect("small two-frame maximum is six cells, hence no seventh request", successor.unread, 0)
     return {}
 
@@ -530,7 +521,8 @@ CASES = {
     "old-dual-credit": lambda w: shaping(w, "both", False),
     "exact-dual-credit": lambda w: shaping(w, "both", True),
     "parked-visit": lambda w: shaping(w, "queue", False, True),
-    "full-prefetch": full_prefetch,
+    "full-prefetch-hold": lambda w: full_prefetch(w, False),
+    "full-prefetch-exchange": lambda w: full_prefetch(w, True),
     "handoff": handoff,
     "reset-inflight": reset_inflight,
 }

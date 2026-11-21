@@ -66,10 +66,13 @@ def timing(text):
             if not paths:
                 raise ValueError(f"No constrained paths in {token}")
             measurements[kind.lower() + "_" + delay] = min(paths, key=lambda p: p["slack_ns"])
-    reports = text.split("TM_CHECK_TYPES_BEGIN", 1)[1].split("TM_CHECK_TYPES_END", 1)[0]
-    for check in ("recovery", "removal"):
-        if not re.search(r"\b" + check + r"\b", reports, re.I):
-            raise ValueError(f"Missing explicit {check} check")
+    for delay, check in (("max", "recovery"), ("min", "removal")):
+        path = measurements["reset_" + delay]
+        if not path["start"].startswith("rst_n ") or f"({check} check" not in path["end"]:
+            raise ValueError(f"Missing explicit {check} path")
+    if ("(recovery check" in measurements["data_max"]["end"] or
+            "(removal check" in measurements["data_min"]["end"]):
+        raise ValueError("Reset path included in data timing")
     measurements["reset_release_required_ns"] = {
         "earliest": round(0.2 - measurements["reset_min"]["slack_ns"], 5),
         "latest": round(2.0 + measurements["reset_max"]["slack_ns"], 5),
@@ -182,17 +185,16 @@ def main():
     destination = args.output.resolve()
     scope = [(name, profile) for profile in PROFILES for name in POINTS
              if args.profile in ("all", profile) and args.point in ("all", name)]
-    with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        results = list(pool.map(lambda item: point(*item, destination, args.sta_only), scope))
     files = [*EXP.glob("*"), ALLOC / "mapping.ys.in", ALLOC / "abc.constr", lock,
              ROOT / "tools/packages.lock.json", Path(__file__).resolve()]
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True))
     manifest = dict(source_revision=revision, dirty=dirty, liberty_sha256=sha(LIBERTY),
-                    definition_sha256={str(p.relative_to(ROOT)): sha(p) for p in files if p.is_file()},
-                    results=results)
+                    definition_sha256={str(p.relative_to(ROOT)): sha(p) for p in files if p.is_file()})
+    with ThreadPoolExecutor(max_workers=args.jobs) as pool:
+        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only), scope))
     (destination / "summary.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    if any(p["result"] != "MEASURED" for p in results):
+    if any(p["result"] != "MEASURED" for p in manifest["results"]):
         raise SystemExit(1)
 
 
