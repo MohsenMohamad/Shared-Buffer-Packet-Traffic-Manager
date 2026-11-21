@@ -24,3 +24,19 @@ next-edge policy feedback. A staged alternative also needs exact-latency
 replay with the current pools, including the small mixed workload and the
 supplemental primary handoffs. Time composed scheduler, token, receive and
 TX/cleanup paths and characterize the reset release source and distribution.
+
+## Timing follow-up
+
+Carry the balanced, same-edge prefix and cached heads into the next
+composition review. The [follow-up](../results/TM04-control-timing.md)
+meets the reference 10 ns data target in the isolated primary admission
+fixture with both modes enabled. The balanced reductions preserve grant,
+reservation, service and return visibility. A serialized two-edge admission
+batch improves setup, but loses balanced throughput with the published
+capture and staging depths. Retain it as a diagnostic.
+
+Keep the dependent RTL gate open. The maintainer's next decision is whether
+to carry the balanced same-edge control forward for integrated timing after
+identifying the reset release boundary. Compare that boundary with the
+required release window and check the remaining scheduler and datapath
+composition before freezing the design.

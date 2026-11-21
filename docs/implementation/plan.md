@@ -76,12 +76,16 @@ extra stages, re-run the balanced target with those stages and document an
 accepted change to buffering, scheduling or memory organization before
 committing dependent RTL. Keep the primary capacity and throughput workload.
 
-The [queue/control experiment](../results/TM04-queue-control.md) reproduced the
-balanced beat target with finite physical IDs and direct or cached heads. The
-[control decision](../decisions/0010-multi-egress-queue-control.md) leaves the
-freeze gate open for primary admission timing, reset release and composition
-of the measured controls. Use the evidence requirements above for the next
-matched measurement.
+The [control timing follow-up](../results/TM04-control-timing.md) updates the
+[queue/control experiment](../results/TM04-queue-control.md). The balanced
+same-edge admission map meets setup and hold in the primary profile with
+runtime-selectable modes. Buffer splits clear capacitance in the isolated
+primary admission, cached-head and cell-control fixtures. Composed maps
+still need load repair. Physical reset remains conditional on the source
+and distribution. The cached-head organization meets the
+balanced beat target at both latencies. The staged admission organization
+misses that target with the published buffering. Keep the freeze gate open
+pending the remaining reset and integration characterization.
 
 Also replay independent legal frame-length streams on all four inputs under
 the same fixed one-to-one routing. The supplemental review probe used default
