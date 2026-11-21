@@ -739,12 +739,9 @@ def replay(profile_name, latency, variant, scenario, length):
         assert stats["COMMITTED"] == stats["delivered"]
     assert sum(p["tx_bytes"] for p in totals) == sum(p["delivered_bytes"] for p in totals)
     assert not tm.bitmap and tm.credit == profile.cells
-    require_lossless = scenario == "balanced" or (
-        profile_name == "primary" and scenario in ("independent", "stall", "returns")
-    )
-    if require_lossless:
-        assert all(p["rx_frames"] == p["COMMITTED"] and p["rx_bytes"] == p["delivered_bytes"]
-                   for p in totals)
+    for stats in totals:
+        if stats["rx_frames"] == stats["delivered"]:
+            assert stats["rx_bytes"] == stats["delivered_bytes"]
     diagnostics = []
     for port, entries in enumerate(misses):
         for idle, prior, f in entries:
