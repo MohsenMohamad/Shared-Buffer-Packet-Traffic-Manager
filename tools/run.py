@@ -448,7 +448,8 @@ def main(argv=None):
     from symbolic_qualification import qualify as symbolic_qualify
     from frontend_qualification import audit as frontend_audit
     from allocator_scaling import characterize
-    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit,  **{'formal-symbols': symbolic_qualify, 'allocator-scaling': characterize})
+    from multi_egress_declarations import declarations
+    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit,  **{'formal-symbols': symbolic_qualify, 'allocator-scaling': characterize, 'multi-egress-declarations': declarations})
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
     gates['uvm-dpi'] = uvm_dpi
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
@@ -471,7 +472,7 @@ def main(argv=None):
     else:
         # Version records accompany direct capability runs as well as CI. Independent
         # gates continue after failures; compilation remains prerequisite to execution.
-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'formal-symbols', 'allocator-scaling', 'uvm-dpi')):
+        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'formal-symbols', 'allocator-scaling', 'uvm-dpi', 'multi-egress-declarations')):
             qualify(run)
         for name in selected:
             try:

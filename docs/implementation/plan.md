@@ -49,17 +49,15 @@ mixture. Queue/control realization and independent hardware acceptance are open.
 | A01 allocator | Keep the single-egress 1,024-cell selection-risk characterization. Compare any-valid-free-ID structures against four simultaneous descriptor reservations, one cell allocation and up to five returns without same-edge returned-ID reuse. Measure representative small and primary-size logic through the real reservation/reclaim consumer after R01. |
 | P09–P14 single-egress work | Superseded on the multi-egress implementation path. Carry forward the vertical integration, concurrency, proof, coverage, mapped timing, diagnostics and audit objectives through the multi-egress gates below. Historical cards and results retain their scope and provenance. |
 
-### Next assignment and queue/control prerequisite
+### Public declarations and queue/control prerequisite
 
-The next scoped assignment publishes stream, event-batch, memory, profile
-and CSR declarations, including status and snapshot interfaces. Name the
-declarations by function and use the architecture name where disambiguation
-is needed. The assignment covers declarations and elaboration/layout checks
-at both profiles. Independent DV then prepares and freezes expectations from those
-declarations and the multi-egress contract under the
-[root role policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
-Queue/control analysis may use those declarations and the feasibility study.
-Production RTL and independent DV retain separate owners, branches and PRs.
+The [public declarations](../spec/multi-egress-interfaces.md) define the stream,
+event-batch, memory, profile and CSR boundaries. Run the separately registered
+`make multi-egress-declarations` fixture gate before consuming a declaration change.
+Independent DV prepares and freezes expectations from the public declarations
+and behavior contract. Queue/control analysis can use the declarations and the
+feasibility study. Production RTL and independent DV retain separate owners,
+branches and PRs under the [root role policy](../../AGENTS.md#separate-rtl-and-independent-dv-ownership).
 
 **Queue/control feasibility is a prerequisite for freezing the dependent
 multi-egress queue, allocator and datapath microarchitecture.** Demonstrate
@@ -133,6 +131,57 @@ workloads above remain the acceptance gate.
   RTL and DV sources and confirm exact merged sources. Register suites and coverage
   through the existing tooling. Retain compact replay inputs, source, commands
   and results, and preserve named single-egress evidence at its recorded SHA.
+
+### Directed multi-egress qualification obligations
+
+Each applicable launch assignment carries forward the trigger, expected
+observation and targeted detector from this table. Independent DV owns
+executable scenarios and the frozen policy oracle.
+
+| Risk | Directed trigger and expected observation | Targeted detector |
+| --- | --- | --- |
+| Publish while dispatching | Dispatch old singleton A on the publication target queue and old heads on other egresses while publishing B to A's queue. B becomes head and tail, with merged nonempty asserted. Repeat with a longer queue (follow old successor) and an empty target (first selectable on the next edge). | Dropped append, stale head, bad active bitmap or same-edge selection of B. |
+| Prefix grants vs returns | Start with one free descriptor, enough cells and multiple eligible heads. Overlap a TX/abort return. Only the first prefix candidate may receive the old free ID. Check individual DROP outcomes, WAIT pending and next-edge reuse. Separately align four accepted TX finals with final abort reclaim and account for five distinct cell and descriptor returns and their merged deltas. | Return bypass, duplicate allocation, lost high/cleanup lane or wrong merged credit. |
+| Admission arithmetic and first-beat validation | Small profile with zero minima, zero target occupancy, `A[q]=64`, a free descriptor and a 65-byte header requesting two cells. `U=10` grants (shared remainder 8, threshold 2); `U=9` gives temporary QUEUE_LIMIT (threshold 1), rejecting in DROP and holding in WAIT. Invalid route plus invalid length gives BAD_ROUTE without reservation. Valid header with a malformed first serviced beat reserves and aborts on one edge, writes/publishes nothing, then cleans up once and emits FRAME_ERROR. | Pre-reservation threshold, precedence swap, malformed write or double cleanup. |
+| Late strict priority | Prepare a tentative low choice while the active frame goes from 17 to 16 unaccepted beats. A token-eligible high head published before binding wins. If published on the low binding edge it becomes visible next edge and the bound low successor survives stalls. Check no pop, debit or speculative read for tentative work. | Early ownership/charge, missed strict priority or changed binding under stall. |
+| Dual shaping and parked DRR | Compare a 65-byte head at pre-edge balance 64.75 with 0.5 refill, then at 65. Test queue-only and port-only limiting balances and both enabled. Debit once at binding before refill. Park an open visit while token-blocked and resume its saved deficit without a second quantum. Name eligibility and service assumptions for fairness. | Post-refill eligibility, repeat debit, lost deficit or double quantum. |
+| Exact credits and reset | Occupy six prefetch slots including a pending response and a stalled cell-final beat. At `issue+L` the response moves existing credit. The full pre-edge egress cannot issue on that edge even if it retires a cell. Align response and retirement with issue to another egress and a simultaneous payload write to a distinct owned cell, at L=1 and L=2. Reset with pending/held work then reuse IDs and tags with distinctive bytes after restart. | Early/surplus issue, late response, payload collision or stale data, credit, return or status. |
+| ECN and snapshot coherence | Publish below and at the threshold with a coincident reservation or return. ECT(0) and ECT(1) mark at threshold using pre-edge H, unlike Not-ECT and CE. Snapshot during live increments, read in both half orders and check the same pre-edge sample. Use a scoped near-low-word-boundary harness for carry and saturation. Use independent AW/W and held responses with real RTL, including merged increments. | Post-edge ECN sample, wrong marking, torn words, bad carry or dropped increments. |
+| Full rate and head-of-line isolation | Run the balanced primary permutations and supplemental pending-first-cell replay at both latencies. Stall one egress with shared capacity available while other eligible flows continue. Reconcile packet, byte and ownership totals and attribute shared-capacity pressure and local scheduling/prefetch stalls separately. | Missed eligible beat, flow coupling, accounting error or misattributed pressure. |
+
+Use [P05 qualification](../results/P05-candidate-qualification.md) as the model
+for exact stimulus, independent expectations, mandatory observed bins,
+legal neighbors and named detector outcomes. P05 preparation PR #23,
+RTL PR #24, interface-check repair PR #25 and qualification PR #26 establish
+that workflow at their recorded scopes. Preserve the documented P05
+preparation exposure. Follow [P04 evidence](../results/P04-scheduler.md)
+for byte-DRR visit accounting, finite fairness and conditional progress.
+P03/P04 single-egress evidence retains its original scope.
+
+- **Independent DV preparation.** Set the allowed-source boundary before the
+  first command. Audit provenance, doctor, source policy, test discovery and
+  repository-wide checks for transitive reads. Use a scoped alternative or
+  record the blocked check and continue permitted work. Commit the
+  specification-derived model, literal witnesses and mandatory coverage
+  before reviewing retained checkers.
+- **RTL implementation.** Start fresh under the root ownership policy.
+  Consume only published commands and bounded public results from the
+  trusted black-box runner. Keep DV bodies out of searches, diffs and
+  traces. Report candidate checks unavailable if the adapter is missing
+  and run the applicable designer checks.
+- **Independent production qualification.** Use the frozen model against
+  named RTL. After freeze, bind observation, coverage, formal and disposable
+  mutations to the actual RTL. Require real SV/UVM passive observation,
+  directed triggers, at least three deterministic seeds per applicable
+  profile plus exact replay, complete shutdown accounting and applicable
+  proofs with reachable covers. Preserve failures before repair.
+- **Candidate and merged-source confirmation.** Record named RTL and DV
+  commits and the tested pre-merge tree in isolation. On refresh compare
+  production sources, transitive headers, contracts, registrations,
+  parameters and build/proof settings, then rerun affected checks without
+  replacing original execution identities. Select actual merged RTL
+  after integration and finish required hosted CI. Keep queue/control
+  timing open until the dependent microarchitecture prerequisite closes.
 
 ## Single-egress dependencies and owners
 

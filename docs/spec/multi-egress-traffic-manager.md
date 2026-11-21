@@ -9,7 +9,8 @@ probabilistic marking/WRED, multicast and cut-through are outside this contract.
 
 The [specification index](README.md) identifies which design each contract
 applies to. The [implementation plan](../implementation/plan.md#multi-egress-migration-and-gates)
-defines the implementation entry and acceptance gates.
+defines the implementation entry and acceptance gates. The [public interface](multi-egress-interfaces.md)
+defines packed declarations, observation lanes and the CSR address map.
 
 ## Profiles and target
 
@@ -316,8 +317,8 @@ blocked headers, drain contexts, statuses or internal work. A malformed stream
 stuck in drain can be recovered by reset. Validate merged byte strobes and
 cross-field ranges atomically. Misaligned mapped accesses and invalid or
 read-only writes return SLVERR. Unmapped addresses return DECERR. A zero-strobe
-mapped write succeeds without changes. The multi-egress public-interface assignment
-defines packed bit positions and CSR addresses against this behavior.
+mapped write succeeds without changes. The [CSR map](multi-egress-interfaces.md#axi4-lite-register-map)
+defines addresses, field encodings and error precedence.
 
 Counters are 64-bit unsigned and saturating. Per ingress port and class,
 count captured beats/valid bytes, captured TLASTs, admissions, publications,

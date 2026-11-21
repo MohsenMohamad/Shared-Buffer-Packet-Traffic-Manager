@@ -1,0 +1,11 @@
+// Geometry overrides are guarded. Use PROFILE and MEM_RD_LATENCY to select a configuration.
+parameter int PROFILE = tm_multi_fixed::PRIMARY,
+parameter int MEM_RD_LATENCY = 1,
+parameter int N_RX = PROFILE == tm_multi_fixed::SMALL ? 2 : 4,
+parameter int N_TX = PROFILE == tm_multi_fixed::SMALL ? 2 : 4,
+parameter int N_CLASS = tm_multi_fixed::CLASS_COUNT,
+parameter int DATA_W = 64,
+parameter int CELL_W = 512,
+parameter int N_CELL = PROFILE == tm_multi_fixed::SMALL ? 16 : 1024,
+parameter int N_DESC = PROFILE == tm_multi_fixed::SMALL ? 8 : 256,
+parameter int MAX_FRAME_BYTES = PROFILE == tm_multi_fixed::SMALL ? 192 : 1536,

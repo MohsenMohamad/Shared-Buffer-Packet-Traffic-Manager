@@ -122,7 +122,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gate: [uvm, uvm-dpi, formal, synth, frontends, formal-symbols, allocator-scaling]
+        gate: [uvm, uvm-dpi, formal, synth, frontends, formal-symbols, allocator-scaling, multi-egress-declarations]
     env:
       CXX: g++-14
     steps:

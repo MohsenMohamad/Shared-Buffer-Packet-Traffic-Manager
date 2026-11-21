@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "include_dirs": ["rtl/include/multi_egress", "tests/multi_egress"],
+  "sources": [
+    "rtl/include/multi_egress/tm_multi_fixed.sv",
+    "rtl/include/multi_egress/tm_multi_csr.sv",
+    "rtl/include/multi_egress/tm_multi_ports.sv",
+    "tests/multi_egress/tm_multi_pair.sv",
+    "tests/multi_egress/tm_multi_layout.sv",
+    "tests/multi_egress/tm_multi_csr_test.sv"
+  ],
+  "headers": [
+    "rtl/include/multi_egress/tm_multi_parameters.svh",
+    "rtl/include/multi_egress/tm_multi_types.svh",
+    "rtl/include/multi_egress/tm_multi_ports.svh",
+    "rtl/include/multi_egress/tm_multi_validate.svh",
+    "tests/multi_egress/tm_multi_batch_test.svh"
+  ],
+  "scope": "Public declarations and declaration-only fixtures. No production implementations or inherited source lists."
+}

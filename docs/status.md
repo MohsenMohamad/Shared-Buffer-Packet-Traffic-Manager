@@ -9,8 +9,10 @@ per active port per cycle in each direction at both read latencies for the
 balanced fixed-permutation runs with repeated 60-, 65-, and 1,536-byte frames
 and the specified repeating length mixture. Multi-egress RTL, independent
 DV, proofs and mapped timing are pending.
-The [plan](implementation/plan.md#multi-egress-migration-and-gates) assigns public
-declarations next and gates the dependent datapath on queue/control feasibility.
+The [public declarations](spec/multi-egress-interfaces.md) publish the packet,
+cell memory, observation and control interfaces. The
+[implementation plan](implementation/plan.md#multi-egress-migration-and-gates)
+gates the dependent datapath on queue/control feasibility.
 
 ## Single-egress traffic manager evidence
 
