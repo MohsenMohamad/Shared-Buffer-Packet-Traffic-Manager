@@ -69,7 +69,7 @@ module admission #(
         shared_next = available >= protected_free + spill ? available - protected_free - spill : '0;
         product = a * shared_next;
         return dynamic_mode
-            ? (spill == 0 || (available >= protected_free + spill && excess_next <= (product >> 8)))
+            ? (spill == 0 || (available >= protected_free + spill && (K+14)'(excess_next) <= (product >> 8)))
             : (occupancy + count <= static_limit);
     endfunction
 
@@ -124,14 +124,14 @@ module admission #(
                         used_protection = '0;
                         enough = 1'b1;
                         for (int j = 0; j < lane; j++) begin
-                            if ((mask >> j) & 1) begin
+                            if (((mask >> j) & 1) != 0) begin
                                 enough = enough && u >= lane_n[j];
                                 u -= lane_n[j];
                                 old_h = (K+1)'(held[lane_q[j]]);
                                 for (int prior = 0; prior < j; prior++)
-                                    if (((mask >> prior) & 1) && lane_q[prior] == lane_q[j])
+                                    if ((((mask >> prior) & 1) != 0) && lane_q[prior] == lane_q[j])
                                         old_h += lane_n[prior];
-                                used_protection = minimum[lane_q[j]] > old_h
+                                used_protection = (K+1)'(minimum[lane_q[j]]) > old_h
                                     ? (K+1)'(minimum[lane_q[j]]) - old_h : '0;
                                 prot -= used_protection < lane_n[j] ? used_protection : lane_n[j];
                                 if (lane_q[j] == lane_q[lane]) h += lane_n[j];

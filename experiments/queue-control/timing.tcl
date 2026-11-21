@@ -17,10 +17,12 @@ puts "TM_REGISTERS [llength $registers]"
 puts "TM_OUTPUTS [llength $outputs]"
 foreach delay {max min} {
     puts "TM_DATA_${delay}_BEGIN"
-    report_checks -from $data_start -to $data_end -path_delay $delay         -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
+    report_checks -from $data_start -to $data_end -path_delay $delay \
+        -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
     puts "TM_DATA_${delay}_END"
     puts "TM_RESET_${delay}_BEGIN"
-    report_checks -rise_from $reset -path_delay $delay         -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
+    report_checks -rise_from $reset -path_group asynchronous -path_delay $delay \
+        -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
     puts "TM_RESET_${delay}_END"
     puts "TM_RESET_CONTROL_${delay}_BEGIN"
     report_checks -rise_from $reset -path_group clk -to $data_end -path_delay $delay \

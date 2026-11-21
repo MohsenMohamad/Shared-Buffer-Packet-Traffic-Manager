@@ -147,10 +147,10 @@ module admission_tb #(
             alpha[q] = 13'(64 + q * 197);
         end
         for (int edge_no = 0; edge_no < 384; edge_no++) begin
-            header_valid = '0;
             desc_return = '0;
             credit_release = '0;
             for (int p = 0; p < P; p++) begin
+                if (result[0].pending[p]) continue;
                 header_valid[p] = $urandom_range(0, 3) != 0;
                 route[p] = 8'($urandom_range(0, P));
                 raw_class[p] = 8'($urandom_range(0, 4));
