@@ -522,13 +522,19 @@ def same_queue_feedback(w):
     event = w.step()
     w.expect("grant and old release coincide", [lanes(event, "admission", "desc"),
                                                lanes(event, "desc_return", "desc")], [[1], [0]])
-    w.expect("first edge protected and shared credit", [tm.h[0], tm.credit], [1, tm.profile.cells - 1])
+    protected = sum(max(0, m - h) for m, h in zip(tm.minimum, tm.h))
+    w.expect("first edge H, U, protected and shared credit",
+             [tm.h[0], tm.credit, protected, tm.credit - protected],
+             [1, tm.profile.cells - 1, 1, tm.profile.cells - 2])
     second = w.frame(1, 0)
     w.offer_heads(second)
     event = w.step()
     w.expect("next edge reuses old ID and finds restored protection",
              lanes(event, "admission", "desc"), [0])
-    w.expect("second edge protected and shared credit", [tm.h[0], tm.credit], [2, tm.profile.cells - 2])
+    protected = sum(max(0, m - h) for m, h in zip(tm.minimum, tm.h))
+    w.expect("second edge H, U, protected and shared credit",
+             [tm.h[0], tm.credit, protected, tm.credit - protected],
+             [2, tm.profile.cells - 2, 0, tm.profile.cells - 2])
     crossing = w.frame(2 if tm.ports == 4 else 0, 0, size=65)
     if tm.ports == 2:
         for beat in range(2, first.beats + 1):

@@ -15,7 +15,7 @@ def measure(path, top, stem):
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top,
                TM_SDC=str(EXP / "reference.sdc"), TM_NETLIST=str(path / "mapped.v"),
                TM_DETAIL="1")
-    raw = run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, stem, 300, env)
+    raw = run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, stem, 900, env)
     details = raw.split("TM_CAP_VIOLATIONS_BEGIN", 1)[1].split("TM_CAP_VIOLATIONS_END", 1)[0]
     violations = []
     for line in details.splitlines():

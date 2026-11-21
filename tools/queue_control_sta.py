@@ -197,7 +197,7 @@ def expected_flops(top, params):
     return admission
 
 
-def point(name, profile_name, output, sta_only, short_abc):
+def point(name, profile_name, output, sta_only, short_abc, sta_timeout):
     profile = PROFILES[profile_name]
     top, extra = POINTS[name]
     path = output / f"{profile_name}-{name}"
@@ -214,6 +214,8 @@ def point(name, profile_name, output, sta_only, short_abc):
     for key, value in substitutions.items():
         script = script.replace("@" + key + "@", str(value))
     script_path = path / "mapping.ys"
+    if sta_only and (not script_path.is_file() or script_path.read_text() != script):
+        raise ValueError(f"Existing map was produced with a different recipe: {script_path}")
     script_path.write_text(script)
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top, TM_SDC=str(EXP / "reference.sdc"),
                TM_NETLIST=str(substitutions["NETLIST"]))
@@ -227,7 +229,7 @@ def point(name, profile_name, output, sta_only, short_abc):
         if expected is not None and result["mapping"]["flops"] != expected:
             raise ValueError("Mapped storage or consumer state count differs from design")
         result["netlist_sha256"] = sha(substitutions["NETLIST"])
-        data = timing(run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, "sta", 300, env))
+        data = timing(run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, "sta", sta_timeout, env))
         if data["registers"] != result["mapping"]["flops"] or data["outputs"] != sum(result["mapping"]["outputs"].values()):
             raise ValueError("OpenSTA and mapping endpoint counts differ")
         result.update(timing=data, result="MEASURED")
@@ -249,11 +251,12 @@ def main():
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--sta-only", action="store_true")
     parser.add_argument("--short-abc", action="store_true")
+    parser.add_argument("--sta-timeout", type=int, default=300)
     args = parser.parse_args()
     if args.jobs < 1:
         parser.error("--jobs must be positive")
-    if args.sta_only and args.short_abc:
-        parser.error("run short mapping in its own output directory")
+    if not 1 <= args.sta_timeout <= 1800:
+        parser.error("--sta-timeout must be between 1 and 1800 seconds")
     if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
         parser.error("activate the validated repository toolchain")
     lock = ROOT / "tools/dependencies.json"
@@ -269,7 +272,7 @@ def main():
     manifest = dict(source_revision=revision, dirty=dirty, liberty_sha256=sha(LIBERTY),
                     definition_sha256={str(p.relative_to(ROOT)): sha(p) for p in files if p.is_file()})
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.short_abc), scope))
+        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.short_abc, args.sta_timeout), scope))
     (destination / "summary.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if any(p["result"] != "MEASURED" for p in manifest["results"]):
         raise SystemExit(1)

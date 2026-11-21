@@ -40,5 +40,14 @@ if {[info exists ::env(TM_DETAIL)]} {
     report_check_types -max_capacitance -violators -digits 5
     puts TM_CAP_VIOLATIONS_END
 }
+if {[info exists ::env(TM_FOCUS_TO)]} {
+    set focus_start [concat [get_ports -quiet $::env(TM_FOCUS_PORTS)] \
+                           [get_pins -quiet $::env(TM_FOCUS_FLOPS)]]
+    set focus_end [get_pins $::env(TM_FOCUS_TO)]
+    puts TM_FOCUS_BEGIN
+    report_checks -from $focus_start -to $focus_end -path_delay max \
+        -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
+    puts TM_FOCUS_END
+}
 puts TM_STA_DONE
 exit
