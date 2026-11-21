@@ -27,6 +27,7 @@ POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "admission-staged": ("admission", {"LOOKAHEAD": 3}),
           "admission-balanced": ("admission", {"LOOKAHEAD": 4}),
           "admission-rx": ("admission", {"LOOKAHEAD": 2, "RX_FRAMING": 1}),
+          "admission-balanced-rx": ("admission", {"LOOKAHEAD": 4, "RX_FRAMING": 1}),
           "cell": ("cell_control", {}),
           "cell-cleanup-feedback": ("cell_control", {"ABORT_FEEDBACK": 1})}
 DIAGNOSTIC = re.compile(r"(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:")
