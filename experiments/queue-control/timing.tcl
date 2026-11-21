@@ -2,6 +2,9 @@ read_liberty $::env(TM_LIBERTY)
 read_verilog $::env(TM_NETLIST)
 link_design $::env(TM_TOP)
 read_sdc $::env(TM_SDC)
+if {[info exists ::env(TM_ADMISSION_MODE)]} {
+    set_case_analysis $::env(TM_ADMISSION_MODE) [get_ports dynamic_mode]
+}
 report_units
 if {![check_setup -verbose]} {error "Incomplete constraint coverage"}
 set outputs [all_outputs]
@@ -32,5 +35,19 @@ foreach delay {max min} {
 puts TM_CHECK_TYPES_BEGIN
 report_check_types -max_delay -min_delay -recovery -removal -max_slew -max_capacitance -max_fanout -digits 5
 puts TM_CHECK_TYPES_END
+if {[info exists ::env(TM_DETAIL)]} {
+    puts TM_CAP_VIOLATIONS_BEGIN
+    report_check_types -max_capacitance -max_count 256 -digits 5
+    puts TM_CAP_VIOLATIONS_END
+}
+if {[info exists ::env(TM_FOCUS_TO)]} {
+    set focus_start [concat [get_ports -quiet $::env(TM_FOCUS_PORTS)] \
+                           [get_pins -quiet $::env(TM_FOCUS_FLOPS)]]
+    set focus_end [get_pins $::env(TM_FOCUS_TO)]
+    puts TM_FOCUS_BEGIN
+    report_checks -from $focus_start -to $focus_end -path_delay max \
+        -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
+    puts TM_FOCUS_END
+}
 puts TM_STA_DONE
 exit

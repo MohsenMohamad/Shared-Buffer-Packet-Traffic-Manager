@@ -20,9 +20,16 @@ ALLOC = ROOT / "experiments/allocator-scaling"
 LIBERTY = ROOT / ".deps/liberty.lib"
 POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "head-cached": ("queue_head", {"CACHED": 1}),
+          "head-token-feedback": ("queue_head", {"CACHED": 1, "TOKEN_FEEDBACK": 1}),
           "admission": ("admission", {"LOOKAHEAD": 0}),
           "admission-lookahead": ("admission", {"LOOKAHEAD": 1}),
-          "cell": ("cell_control", {})}
+          "admission-factored": ("admission", {"LOOKAHEAD": 2}),
+          "admission-staged": ("admission", {"LOOKAHEAD": 3}),
+          "admission-balanced": ("admission", {"LOOKAHEAD": 4}),
+          "admission-rx": ("admission", {"LOOKAHEAD": 2, "RX_FRAMING": 1}),
+          "admission-balanced-rx": ("admission", {"LOOKAHEAD": 4, "RX_FRAMING": 1}),
+          "cell": ("cell_control", {}),
+          "cell-cleanup-feedback": ("cell_control", {"ABORT_FEEDBACK": 1})}
 DIAGNOSTIC = re.compile(r"(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:")
 
 
@@ -176,13 +183,22 @@ def expected_flops(top, params):
         queue_state = queues * (1 + 2 * d)
         binding = ports * (1 + 2 + 2 + d + metadata)
         head_cache = queues * metadata if params["CACHED"] else 0
-        return desc * (metadata + d) + queue_state + binding + head_cache + 1
+        token_state = 32 * (queues + ports) if params.get("TOKEN_FEEDBACK") else 0
+        return desc * (metadata + d) + queue_state + binding + head_cache + token_state + 1
     if top == "cell_control":
-        return cells * (1 + c + d) + 6 * b + 4 * c + d + 5 + 1
-    return desc + k * (queues + 1) + b + ports * (4 + 3 + d + q + k) + 1
+        cleanup_state = ports * (1 + 5 + c + d) if params.get("ABORT_FEEDBACK") else 0
+        return cells * (1 + c + d) + 6 * b + 4 * c + d + 5 + 1 + cleanup_state
+    admission = desc + k * (queues + 1) + b + ports * (4 + 3 + d + q + k) + 1
+    if params["LOOKAHEAD"] == 3:
+        # Sampled header count is at most ceil(65535/64) truncated to the
+        # fixture width. Header errors occupy two bits and alpha is per lane.
+        sample_fields = ports * (q + min(k + 1, 11) + 1 + 2 + d + 1 + 1 + 13)
+        sample_subsets = ((1 << ports) - 1) * (4 + 2 * (k + 1))
+        return admission + 1 + sample_fields + sample_subsets
+    return admission
 
 
-def point(name, profile_name, output, sta_only, short_abc):
+def point(name, profile_name, output, sta_only, short_abc, sta_timeout):
     profile = PROFILES[profile_name]
     top, extra = POINTS[name]
     path = output / f"{profile_name}-{name}"
@@ -199,6 +215,8 @@ def point(name, profile_name, output, sta_only, short_abc):
     for key, value in substitutions.items():
         script = script.replace("@" + key + "@", str(value))
     script_path = path / "mapping.ys"
+    if sta_only and (not script_path.is_file() or script_path.read_text() != script):
+        raise ValueError(f"Existing map was produced with a different recipe: {script_path}")
     script_path.write_text(script)
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top, TM_SDC=str(EXP / "reference.sdc"),
                TM_NETLIST=str(substitutions["NETLIST"]))
@@ -208,10 +226,11 @@ def point(name, profile_name, output, sta_only, short_abc):
         if not sta_only:
             run(["yosys", "-Q", "-T", "-s", str(script_path)], path, "yosys", 1800)
         result["mapping"] = mapped_measurements(path, top)
-        if result["mapping"]["flops"] != expected_flops(top, params):
+        expected = expected_flops(top, params)
+        if expected is not None and result["mapping"]["flops"] != expected:
             raise ValueError("Mapped storage or consumer state count differs from design")
         result["netlist_sha256"] = sha(substitutions["NETLIST"])
-        data = timing(run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, "sta", 300, env))
+        data = timing(run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, "sta", sta_timeout, env))
         if data["registers"] != result["mapping"]["flops"] or data["outputs"] != sum(result["mapping"]["outputs"].values()):
             raise ValueError("OpenSTA and mapping endpoint counts differ")
         result.update(timing=data, result="MEASURED")
@@ -233,11 +252,12 @@ def main():
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--sta-only", action="store_true")
     parser.add_argument("--short-abc", action="store_true")
+    parser.add_argument("--sta-timeout", type=int, default=300)
     args = parser.parse_args()
     if args.jobs < 1:
         parser.error("--jobs must be positive")
-    if args.sta_only and args.short_abc:
-        parser.error("run short mapping in its own output directory")
+    if not 1 <= args.sta_timeout <= 1800:
+        parser.error("--sta-timeout must be between 1 and 1800 seconds")
     if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
         parser.error("activate the validated repository toolchain")
     lock = ROOT / "tools/dependencies.json"
@@ -253,7 +273,7 @@ def main():
     manifest = dict(source_revision=revision, dirty=dirty, liberty_sha256=sha(LIBERTY),
                     definition_sha256={str(p.relative_to(ROOT)): sha(p) for p in files if p.is_file()})
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.short_abc), scope))
+        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.short_abc, args.sta_timeout), scope))
     (destination / "summary.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if any(p["result"] != "MEASURED" for p in manifest["results"]):
         raise SystemExit(1)

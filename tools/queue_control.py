@@ -169,6 +169,7 @@ class Control:
         self.info = [None] * self.profile.descriptors
         self.queue_next = [None] * self.profile.descriptors
         self.cell_next = [None] * self.profile.cells
+        self.sampled_admission = None
         self.capture = [deque() for _ in range(self.ports)]
         self.stage = [deque() for _ in range(self.ports)]
         self.assembly = [0] * self.ports
@@ -216,18 +217,18 @@ class Control:
         return (spill == 0 or shared >= 0 and next_excess <= threshold,
                 dict(shared=shared, threshold=threshold, excess=next_excess))
 
-    def decide(self, f, protected):
+    def decide(self, f, protected, credit, held, free_desc):
         if not (0 <= f.egress < self.ports and 0 <= f.cls < 4):
             return "BAD_ROUTE", {}
         if not 60 <= f.length <= self.profile.maximum:
             return "BAD_LENGTH", {}
         if not self.queue_test(f.qid, f.cells, self.profile.cells, 0, sum(self.minimum))[0]:
             return "QUEUE_LIMIT", {"permanent": True}
-        if not self.desc.free:
+        if not free_desc:
             return "NO_DESCRIPTOR", {}
-        if f.cells > self.credit:
+        if f.cells > credit:
             return "NO_CELLS", {}
-        fits, detail = self.queue_test(f.qid, f.cells, self.credit, self.h[f.qid], protected)
+        fits, detail = self.queue_test(f.qid, f.cells, credit, held[f.qid], protected)
         return ("" if fits else "QUEUE_LIMIT"), detail
 
     def reserve(self, f, address=None):
@@ -328,22 +329,58 @@ class Control:
             return address
         return None
 
+    def admission_batch(self, eligible):
+        credit, held, free = self.credit, self.h.copy(), self.desc.free
+        protected = sum(max(0, minimum - owned) for minimum, owned in zip(self.minimum, held))
+        decisions = {}
+        for port, f in eligible.items():
+            reason, detail = self.decide(f, protected, credit, held, free)
+            address = None
+            if not reason:
+                bit = free & -free
+                address = bit.bit_length() - 1
+                free ^= bit
+                credit -= f.cells
+                protected -= min(f.cells, max(0, self.minimum[f.qid] - held[f.qid]))
+                held[f.qid] += f.cells
+            decisions[port] = (f, reason, detail, address)
+        return decisions
+
     def service_ingress(self, write_port, statistics):
-        protected = sum(max(0, minimum - held) for minimum, held in zip(self.minimum, self.h))
-        first = None
-        admits = 0
-        for port in self.rotating("admit"):
+        order = tuple(self.rotating("admit"))
+        space = [len(self.stage[p]) < 4 or self.assembly[p] or write_port == p
+                 for p in range(self.ports)]
+        eligible = {}
+        for port in order:
             if self.status[port] and self.status[port][0].outcome:
                 f = self.status[port].popleft()
                 self.emit("disposition", f, code=f.outcome)
+            if self.capture[port] and self.capture[port][0][1] == 1:
+                if not self.abort[port] and len(self.status[port]) < 8 and space[port]:
+                    eligible[port] = self.capture[port][0][0]
+        if self.variant == "staged-admission":
+            decisions = self.sampled_admission or {}
+            if self.sampled_admission is not None:
+                self.sampled_admission = None
+            elif eligible:
+                self.sampled_admission = self.admission_batch(eligible)
+                for f in eligible.values():
+                    f.times.setdefault("header_sample", self.cycle)
+                    self.emit("header_sample", f)
+        else:
+            decisions = self.admission_batch(eligible)
+
+        first = None
+        admits = 0
+        for port in order:
             if not self.capture[port]:
                 continue
             f, beat = self.capture[port][0]
-            space = (len(self.stage[port]) < 4 or self.assembly[port] or write_port == port)
             if beat == 1:
-                if self.abort[port] or len(self.status[port]) >= 8 or not space:
+                if port not in decisions:
                     continue
-                reason, detail = self.decide(f, protected)
+                sampled, reason, detail, address = decisions[port]
+                assert f is sampled and eligible.get(port) is f
                 pending = reason in ("NO_CELLS", "NO_DESCRIPTOR", "QUEUE_LIMIT") and not detail.get("permanent")
                 if self.wait and pending:
                     statistics[port]["wait_" + reason] += 1
@@ -352,17 +389,17 @@ class Control:
                 if first is None:
                     first = port
                 self.status[port].append(f)
+                if self.variant == "staged-admission":
+                    f.times["header_service"] = self.cycle
                 if reason:
                     f.state = "discard"
                     self.outcome(f, reason, statistics)
                 else:
-                    consumed = min(f.cells, max(0, self.minimum[f.qid] - self.h[f.qid]))
-                    protected -= consumed
-                    self.reserve(f)
+                    self.reserve(f, address)
                     admits += 1
                 self.emit("admission", f, result="DROP" if reason else "GRANT", reason=reason,
                           desc=f.desc, **detail)
-            if f.state == "rx" and not space:
+            if f.state == "rx" and not space[port]:
                 continue
             self.capture[port].popleft()
             f.rx += 1
@@ -684,6 +721,7 @@ def replay(profile_name, latency, variant, scenario, length):
     outside = [Counter() for _ in range(ports)]
     misses = [[] for _ in range(ports)]
     next_frames = [[] for _ in range(ports)]
+    trace_gaps = scenario == "independent" or (variant == "staged-admission" and scenario == "balanced")
     barrier = scenario == "returns"
     for edge in range(WARMUP + WINDOW + 16 * profile.cells + 256):
         measuring = WARMUP <= edge < WARMUP + WINDOW
@@ -707,7 +745,7 @@ def replay(profile_name, latency, variant, scenario, length):
                 malformed = 130 if profile_name == "primary" else 18
             f = Frame(port, index, dest, cls, size, malformed)
             source[port] = f
-            if scenario == "independent":
+            if trace_gaps:
                 next_frames[dest].append(f)
         ready = [True] * ports
         if scenario == "stall":
@@ -719,7 +757,7 @@ def replay(profile_name, latency, variant, scenario, length):
                 barrier = False
             else:
                 ready = [not final for final in at_final]
-        if measuring and scenario == "independent":
+        if measuring and trace_gaps:
             for port, slots in enumerate(tm.slots):
                 if ready[port] and not (slots and slots[0].ready):
                     f = slots[0] if slots else None
@@ -776,7 +814,7 @@ def replay(profile_name, latency, variant, scenario, length):
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--profile", choices=PROFILES, default="primary")
-    parser.add_argument("--variant", choices=VARIANTS, default="direct")
+    parser.add_argument("--variant", choices=(*VARIANTS, "staged-admission"), default="direct")
     parser.add_argument("--case", choices=("all", *CASES), default="all")
     parser.add_argument("--latency", type=int, choices=(1, 2))
     parser.add_argument("--json", type=Path)

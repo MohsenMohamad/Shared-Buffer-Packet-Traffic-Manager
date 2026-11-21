@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "scope": "TM04 follow-up experiment",
+  "captures": [
+    {
+      "capture": ".build/runs/manual-failure-x03u3V",
+      "base": "0b4e850e964cccfc800fee270c68507cf81ca678",
+      "capture_patch_sha256": "30b0407b40803c66ceaacc90ce4c8f15dafa32a6e739ba8267a41d4e6aaba2b5",
+      "cases": ["primary/admission-factored", "small/admission-factored", "primary/admission-staged", "small/admission-staged"],
+      "disposition": "verification-defect",
+      "command": "python3 tools/queue_control_sta.py --output .build/control-timing/admission-factored --point admission-factored --short-abc --jobs 2 (and corresponding admission-staged run)",
+      "expected": "The changed fixture retains the matched RX/resource boundary, including reservation-width consumer state.",
+      "observed": "The candidate narrowed the reservation output itself to the legal header cell-count width. The mapped check rejected constant upper output bits.",
+      "fix": "Retain the reference-width RX and resource outputs and narrow only the internal hypothetical subset calculation. Legal header validation masks results for out-of-range lengths.",
+      "retest": "factored-fixed and staged-fixed measured at both sizes on 05c1dbb90e787ab1d62a71d1323245355018f8a7"
+    },
+    {
+      "capture": ".build/runs/manual-failure-x03u3V",
+      "base": "0b4e850e964cccfc800fee270c68507cf81ca678",
+      "capture_patch_sha256": "30b0407b40803c66ceaacc90ce4c8f15dafa32a6e739ba8267a41d4e6aaba2b5",
+      "cases": ["40 rows of staged-admission under the original same-edge witness expectations"],
+      "disposition": "verification-defect",
+      "command": "python3 tools/queue_control_directed.py --json .build/control-timing/directed-after.json",
+      "expected": "The original directed witnesses use the original admission edge. Staged admission has its own edge expectations.",
+      "observed": "The staged profile entered the original variant matrix and the checker observed no admission on the sampling edge in cases expecting an immediate decision.",
+      "fix": "Keep all original variant rows and add separate sampled-batch cases with their own commit, old-free and reset expectations.",
+      "retest": "360/360 rows and 48 expected detections, including 12 staged rows"
+    },
+    {
+      "capture": ".build/runs/manual-failure-0XUWoh",
+      "cases": ["primary/admission-lookahead rebuffer round 1"],
+      "disposition": "tool-environment",
+      "command": "python3 tools/queue_control_electrical.py .build/control-timing/baseline-short-lookahead/primary-admission-lookahead .build/control-timing/electrical-lookahead",
+      "expected": "The repair selector recognizes every reported negative capacitance slack.",
+      "observed": "OpenSTA 3.2.0's -violators list was empty while the worst check explicitly reported -0.39969 fF after the first buffer pass.",
+      "fix": "Reconcile the ranked rows with the worst check. Request the largest violations by count and filter the reported verdicts.",
+      "retest": "The selector found near-limit pins in later rounds. The result retains every remaining violation after the specified bound."
+    },
+    {
+      "capture": ".build/runs/manual-failure-wfJ4xn",
+      "cases": ["primary/head-cached default map, initial STA"],
+      "disposition": "tool-environment",
+      "command": "python3 tools/queue_control_sta.py --output .build/control-timing/baseline-default-head-cached --point head-cached",
+      "expected": "OpenSTA completes constrained setup, hold, reset and electrical analysis of the mapped netlist.",
+      "observed": "The initial STA process hit the 300-second wall timeout under concurrent jobs. Yosys mapping completed and its artifacts remained available.",
+      "fix": "Reuse the identical map recipe and allow 900 seconds for STA.",
+      "retest": "MEASURED on the original netlist. The reference capacitance overage of 0.03693 fF reappeared and the targeted buffer split cleared it."
+    }
+  ]
+}

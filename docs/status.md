@@ -16,8 +16,14 @@ covers both profiles and read latencies. The
 gates the dependent datapath on queue/control feasibility. The
 [finite queue/control experiments](results/TM04-queue-control.md) met the
 primary balanced workload at both latencies. The
-[decision](decisions/0010-multi-egress-queue-control.md) keeps the freeze gate
-open for primary admission timing and physical reset release.
+[control timing follow-up](results/TM04-control-timing.md) meets scoped
+primary setup and hold with balanced same-edge admission. Buffer splits
+clear the isolated primary fixtures' pin capacitance violations. Composed
+maps still need load repair. The reset reference violates removal and needs
+a characterized upstream release. Cached heads preserve balanced
+throughput at both latencies. The measured admission stage misses it.
+The [control decision](decisions/0010-multi-egress-queue-control.md) leaves
+the dependent RTL freeze gate open.
 
 ## Single-egress traffic manager evidence
 

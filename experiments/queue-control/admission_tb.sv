@@ -24,12 +24,15 @@ module admission_tb #(
         logic [Q-1:0][K-1:0] held;
         logic error_flag;
     } result_t;
-    result_t result [2];
+    result_t result [5];
+    bit [N_DESC-1:0] live;
+    int owner_queue [N_DESC], owner_credit [N_DESC];
 
-    for (genvar version = 0; version < 2; version++) begin : implementation
+    for (genvar version = 0; version < 5; version++) begin : implementation
         admission #(.P(P), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_BYTES(MAX_BYTES),
                     .LOOKAHEAD(version)) dut (
             .clk, .rst_n, .dynamic_mode, .wait_mode, .header_valid, .bad_first_beat,
+            .first_keep('0), .first_last('0), .receive_space('0),
             .route, .raw_class, .length, .minimum, .limit, .alpha,
             .desc_return, .credit_release, .return_id, .release_qid, .release_count,
             .rx_grant(result[version].grant), .rx_reject(result[version].reject),
@@ -41,20 +44,99 @@ module admission_tb #(
         );
     end
 
-    task automatic tick;
+    task automatic clock_edge;
         #5;
         clk = 1;
         #1;
-        if (result[0] !== result[1])
-            $fatal(1, "Matched prefix divergence at %0t: serial=%h lookahead=%h", $time, result[0], result[1]);
-        if (result[0].error_flag)
-            $fatal(1, "Legal stimulus raised accounting error at %0t", $time);
         #4;
         clk = 0;
     endtask
 
+    task automatic reconcile;
+        int expected_held [Q], expected_credit;
+        // Validate new owners before removing old ones. A coincident return
+        // can neither legitimize a duplicate nor be used by this batch.
+        for (int p = 0; p < P; p++) begin
+            if (result[2].grant[p]) begin
+                if (live[result[2].desc[p]])
+                    $fatal(1, "grant used a live ID");
+                live[result[2].desc[p]] = 1;
+                owner_queue[result[2].desc[p]] = 4 * int'(route[p]) + int'(raw_class[p]);
+                if (int'(result[2].qid[p]) != owner_queue[result[2].desc[p]])
+                    $fatal(1, "grant routes to the wrong queue");
+                owner_credit[result[2].desc[p]] = (int'(length[p]) + 63) / 64;
+            end
+        end
+        for (int lane = 0; lane <= P; lane++) begin
+            if (credit_release[lane]) begin
+                if (!live[return_id[lane]] || owner_queue[return_id[lane]] != int'(release_qid[lane]))
+                    $fatal(1, "release fixture does not match an owner");
+                owner_credit[return_id[lane]] -= int'(release_count[lane]);
+            end
+            if (desc_return[lane]) begin
+                if (!live[return_id[lane]] || owner_credit[return_id[lane]] != 0)
+                    $fatal(1, "return fixture did not release its entire owner");
+                live[return_id[lane]] = 0;
+            end
+        end
+        expected_credit = N_CELL;
+        foreach (expected_held[q]) expected_held[q] = 0;
+        for (int id = 0; id < N_DESC; id++) begin
+            if (live[id]) begin
+                expected_held[owner_queue[id]] += owner_credit[id];
+                expected_credit -= owner_credit[id];
+            end
+        end
+        if (result[2].credit != K'(expected_credit))
+            $fatal(1, "merged credit differs from ownership recount");
+        for (int q = 0; q < Q; q++)
+            if (result[2].held[q] != K'(expected_held[q]))
+                $fatal(1, "merged queue credit differs from ownership recount for queue %0d", q);
+    endtask
+
+    task automatic tick;
+        result_t sampled;
+        logic [P-1:0] old_valid;
+        logic [P:0] old_return, old_release;
+        clock_edge();
+        if (result[0] !== result[1] || result[0] !== result[2] || result[0] !== result[4])
+            $fatal(1, "Prefix divergence at %0t: serial=%h lookahead=%h factored=%h balanced=%h",
+                   $time, result[0], result[1], result[2], result[4]);
+        if (result[0].error_flag)
+            $fatal(1, "Legal stimulus raised accounting error at %0t", $time);
+        if (rst_n) reconcile();
+        if (rst_n && |header_valid) begin
+            if (|(result[3].grant | result[3].reject | result[3].pending | result[3].abort_frame))
+                $fatal(1, "Staged result visible on sampling edge");
+            sampled = result[0];
+            old_valid = header_valid;
+            old_return = desc_return;
+            old_release = credit_release;
+            header_valid = '0;
+            desc_return = '0;
+            credit_release = '0;
+            clock_edge();
+            if (result[3] !== sampled)
+                $fatal(1, "Staged commit differs from sampled prefix at %0t: got=%h expected=%h",
+                       $time, result[3], sampled);
+            header_valid = old_valid;
+            desc_return = old_return;
+            credit_release = old_release;
+            // The same-edge outputs would otherwise be overwritten by the
+            // intervening idle edge. Directed checks use the sampled result.
+            last = sampled;
+        end else begin
+            last = result[0];
+            if (rst_n && (result[3].credit != last.credit || result[3].held != last.held))
+                $fatal(1, "Staged resources diverged on an unsampled edge");
+        end
+    endtask
+
+    result_t last;
+
     task automatic reset;
         rst_n = 0;
+        live = '0;
         header_valid = '0;
         bad_first_beat = '0;
         route = '0;
@@ -72,14 +154,14 @@ module admission_tb #(
         rst_n = 1;
     endtask
 
-    task automatic old_credit;
+    task automatic old_credit(input logic hold_head);
         reset();
         dynamic_mode = 0;
-        wait_mode = 1;
+        wait_mode = hold_head;
         for (int i = 0; i < N_DESC-1; i++) begin
             header_valid = 1;
             tick();
-            if (result[0].grant != 1 || result[0].desc[0] != D'(i))
+            if (last.grant != 1 || last.desc[0] != D'(i))
                 $fatal(1, "Initial pool allocation differs at %0d", i);
         end
         header_valid = '1;
@@ -87,14 +169,15 @@ module admission_tb #(
         credit_release[P-1] = 1;
         release_count[P-1] = 1;
         tick();
-        if (result[0].grant != P'(2) || result[0].pending != ~P'(2)
-                || result[0].desc[1] != D'(N_DESC-1))
+        if (last.grant != P'(2) || last.pending != (hold_head ? ~P'(2) : '0)
+                || last.reject != (hold_head ? '0 : ~P'(2))
+                || last.desc[1] != D'(N_DESC-1))
             $fatal(1, "Only the rotated first header may receive the old last ID");
         header_valid = ~P'(2);
         desc_return = '0;
         credit_release = '0;
         tick();
-        if (result[0].grant != (P'(1) << (2 % P)) || result[0].desc[2 % P] != 0)
+        if (last.grant != (P'(1) << (2 % P)) || last.desc[2 % P] != 0)
             $fatal(1, "Returned ID was not reusable on the following edge");
     endtask
 
@@ -114,22 +197,92 @@ module admission_tb #(
             raw_class[0] = 1;
             length[0] = 16'(cells * 64);
             tick();
-            if (result[0].grant != 1) $fatal(1, "Filler would not fit its minimum");
+            if (last.grant != 1) $fatal(1, "Filler would not fit its minimum");
             occupied += cells;
         end
-        if (result[0].credit != K'(target)) $fatal(1, "Unexpected pre-edge U");
+        if (last.credit != K'(target)) $fatal(1, "Unexpected pre-edge U");
         header_valid = '1;
         raw_class = '0;
         for (int p = 0; p < P; p++) length[p] = 16'd65;
         tick();
         if (target == 10) begin
-            if (result[0].grant != P'(2) || result[0].held[0] != 2 || result[0].credit != 8)
+            if (last.grant != P'(2) || last.held[0] != 2 || last.credit != 8)
                 $fatal(1, "Threshold 2 allows only one same-queue prefix reservation");
-        end else if (result[0].grant != 0 || result[0].held[0] != 0
-                     || result[0].reject != (hold_head ? '0 : '1)
-                     || result[0].pending != (hold_head ? '1 : '0)) begin
+        end else if (last.grant != 0 || last.held[0] != 0
+                     || last.reject != (hold_head ? '0 : '1)
+                     || last.pending != (hold_head ? '1 : '0)) begin
             $fatal(1, "Threshold 1 must reject or hold two-cell requests");
         end
+    endtask
+
+    task automatic minimum_and_feedback;
+        reset();
+        dynamic_mode = 1;
+        wait_mode = 0;
+        minimum[0] = K'(P + 1);
+        header_valid = '1;
+        tick();
+        if (last.grant != '1 || last.held[0] != K'(P))
+            $fatal(1, "All initial one-cell requests fit protection");
+
+        // All TX lanes release old one-cell frames. Admission sees P old
+        // cells still held, so only one new request can use the last minimum.
+        desc_return = {1'b0, {P{1'b1}}};
+        credit_release = desc_return;
+        for (int i = 0; i < P; i++) begin
+            return_id[i] = D'(i);
+            release_count[i] = 1;
+        end
+        tick();
+        if (last.grant != P'(2) || last.reject != ~P'(2) || last.held[0] != 1
+                || last.credit != K'(N_CELL-1))
+            $fatal(1, "Alpha-zero crossing or merged all-TX release differs");
+
+        desc_return = '0;
+        credit_release = '0;
+        header_valid = '1;
+        bad_first_beat = '1;
+        tick();
+        if (last.grant != '1 || last.abort_frame != '1 || last.held[0] != K'(P+1))
+            $fatal(1, "Visible release must restore exactly P protected grants before abort");
+    endtask
+
+    task automatic maximum_alpha;
+        int occupied, count;
+        reset();
+        dynamic_mode = 1;
+        wait_mode = 0;
+        minimum[1] = K'(N_CELL-3);
+        alpha[0] = 13'd4096;
+        alpha[1] = 13'd4096;
+        occupied = 0;
+        raw_class[0] = 1;
+        header_valid = 1;
+        while (occupied < N_CELL - 3) begin
+            count = N_CELL - 3 - occupied;
+            if (count > MAX_BYTES / 64) count = MAX_BYTES / 64;
+            length[0] = 16'(count * 64);
+            tick();
+            if (last.grant != 1) $fatal(1, "Maximum alpha filler must fit");
+            occupied += count;
+        end
+        raw_class = '0;
+        header_valid = P'(2);
+        length[1] = 65;
+        bad_first_beat[1] = 1;
+        tick();
+        if (last.grant != P'(2) || last.abort_frame != P'(2) || last.credit != 1)
+            $fatal(1, "4096 * 1 >> 8 is 16 and grants the malformed 65-byte head");
+
+        header_valid = 1;
+        length[0] = 65;
+        tick();
+        if (last.reason[0] != 5 || last.grant != 0)
+            $fatal(1, "Total credit shortage precedes the alpha limit");
+        length[0] = 60;
+        tick();
+        if (last.reason[0] != 3 || last.grant != 0)
+            $fatal(1, "4096 * 0 >> 8 is zero and denies remaining shared credit");
     endtask
 
     task automatic mixed_edges(input logic use_dynamic, input logic hold_head);
@@ -150,7 +303,7 @@ module admission_tb #(
             desc_return = '0;
             credit_release = '0;
             for (int p = 0; p < P; p++) begin
-                if (result[0].pending[p]) continue;
+                if (last.pending[p]) continue;
                 header_valid[p] = $urandom_range(0, 3) != 0;
                 route[p] = 8'($urandom_range(0, P));
                 raw_class[p] = 8'($urandom_range(0, 4));
@@ -169,12 +322,12 @@ module admission_tb #(
             end
             tick();
             for (int p = 0; p < P; p++) begin
-                if (result[0].grant[p]) begin
-                    if (live[result[0].desc[p]])
+                if (last.grant[p]) begin
+                    if (live[last.desc[p]])
                         $fatal(1, "duplicate or same-edge return reuse");
-                    live[result[0].desc[p]] = 1;
-                    qid[result[0].desc[p]] = result[0].qid[p];
-                    remaining[result[0].desc[p]] = result[0].reserved[p];
+                    live[last.desc[p]] = 1;
+                    qid[last.desc[p]] = last.qid[p];
+                    remaining[last.desc[p]] = last.reserved[p];
                 end
             end
             if (desc_return[P]) live[id] = 0;
@@ -182,15 +335,18 @@ module admission_tb #(
     endtask
 
     initial begin
-        old_credit();
+        old_credit(0);
+        old_credit(1);
         alpha_boundary(10, 0);
         alpha_boundary(9, 0);
         alpha_boundary(9, 1);
+        minimum_and_feedback();
+        maximum_alpha();
         mixed_edges(0, 0);
         mixed_edges(0, 1);
         mixed_edges(1, 0);
         mixed_edges(1, 1);
-        $display("PASS %0dx%0d serial/lookahead prefix, old IDs, alpha boundary and mixed edges", P, P);
+        $display("PASS %0dx%0d serial/lookahead/factored, balanced and staged prefix, ownership, alpha and mixed edges", P, P);
         $finish;
     end
 endmodule
