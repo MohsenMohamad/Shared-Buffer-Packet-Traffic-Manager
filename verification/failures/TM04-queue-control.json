@@ -81,6 +81,15 @@
       "disposition": "verification-defect",
       "repair": "Provide an explicit short script to the same pinned ABC with the same Liberty, drive and load conditions.",
       "artifact": ".build/queue-control/fast-map"
+    },
+    {
+      "id": "default-abc-primary-lookahead-run-interrupted",
+      "revision": "0ba8ed399196cc204f60f0c4fc230eb21f099f2e",
+      "command": "python3 tools/queue_control_sta.py --output .build/queue-control/lookahead-map --point admission-lookahead --jobs 1",
+      "first_symptom": "Default ABC remained active after more than 20 minutes and had produced no primary lookahead netlist.",
+      "disposition": "unresolved",
+      "repair": "Preserved the stopped point and measured both admission variants with the matched short ABC script, same Liberty and STA.",
+      "artifact": ".build/queue-control/lookahead-map/primary-admission-lookahead"
     }
   ]
 }

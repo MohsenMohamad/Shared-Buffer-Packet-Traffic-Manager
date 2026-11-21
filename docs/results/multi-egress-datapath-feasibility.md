@@ -5,7 +5,7 @@ target at read latencies of one and two for repeated 60-, 65-, and 1,536-byte
 frames and the specified repeating length mixture. The candidate uses one
 512-bit cell read and one 512-bit cell write per cycle, four staging cells per
 ingress and six prefetch cells per egress. The [multi-egress contract](../spec/multi-egress-traffic-manager.md) specifies its edge
-behavior. The [queue/control prerequisite](../implementation/plan.md#next-assignment-and-queuecontrol-prerequisite)
+behavior. The [queue/control prerequisite](../implementation/plan.md#public-declarations-and-queuecontrol-prerequisite)
 covers physical metadata realization and timing before freezing dependent RTL.
 
 ## Sustained demand
@@ -189,7 +189,7 @@ On clean commit `96508d4d05f38ee73430d811b166fe93800dc371`,
 `python3 tools/multi_egress_feasibility.py --expect-gate` passed the
 named balanced workloads at both read latencies. The renamed model's SHA-256
 is `590272f6e6c3a7b28f1258d1032add13daa61e1a8ab8fb55484ef17dc15d2b61`.
-The [supplemental independent-length probe](../implementation/plan.md#next-assignment-and-queuecontrol-prerequisite)
+The [supplemental independent-length probe](../implementation/plan.md#public-declarations-and-queuecontrol-prerequisite)
 also reproduced the pending first-cell misses. Repository contracts, 117
 Python tests and syntax checks, two runner isolation tests, link and anchor
 checks, and whitespace checks passed. The moved [toolchain qualification

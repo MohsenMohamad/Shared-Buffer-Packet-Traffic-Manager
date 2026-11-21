@@ -76,6 +76,13 @@ extra stages, re-run the balanced target with those stages and document an
 accepted change to buffering, scheduling or memory organization before
 committing dependent RTL. Keep the primary capacity and throughput workload.
 
+The [queue/control experiment](../results/TM04-queue-control.md) reproduced the
+balanced beat target with finite physical IDs and direct or cached heads. The
+[control decision](../decisions/0010-multi-egress-queue-control.md) leaves the
+freeze gate open for primary admission timing, reset release and composition
+of the measured controls. Use the evidence requirements above for the next
+matched measurement.
+
 Also replay independent legal frame-length streams on all four inputs under
 the same fixed one-to-one routing. The supplemental review probe used default
 buffers, `random.Random(104729 + ingress_id)` per ingress, and uniform choices
