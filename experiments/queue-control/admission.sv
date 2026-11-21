@@ -24,6 +24,9 @@ module admission #(
     output logic [Q-1:0][K-1:0] held,
     output logic invariant_error
 );
+    localparam bit FACTORED = LOOKAHEAD >= 2;
+    localparam bit STAGED = LOOKAHEAD == 3;
+    localparam int COUNT = $clog2((MAX_BYTES + 63) / 64 + 1);
     localparam int SUM = K + $clog2(Q+LANES+1);
     localparam int GROUP = N_DESC >= 16 ? 16 : N_DESC;
     localparam int GROUPS = N_DESC / GROUP;
@@ -81,6 +84,83 @@ module admission #(
     logic [P-1:0] ranked_valid;
     logic [P-1:0][D-1:0] ranked_id;
     logic [K:0] old_protected, full_minimum;
+    logic [P-1:0][QB-1:0] decision_q;
+    logic [P-1:0][K:0] decision_n;
+    logic [P-1:0] decision_valid, decision_bad_beat, decision_id_valid;
+    logic [P-1:0][2:0] header_error, decision_error;
+    logic [P-1:0][D-1:0] decision_id;
+    logic [P-1:0][K:0] lane_deficit, lane_excess;
+    logic [P-1:0][12:0] lane_alpha;
+
+    typedef struct packed {
+        logic enough, within_shared, within_minimum, within_limit;
+        logic [K:0] shared_next, excess;
+    } fit_terms_t;
+
+    function automatic logic [1:0] evaluate_fit(input fit_terms_t terms, input logic [12:0] a);
+        logic [K+13:0] product;
+        product = a * terms.shared_next;
+        if (!terms.enough)
+            return 2'd1;
+        if (dynamic_mode)
+            return terms.within_minimum ||
+                   (terms.within_shared && (K+14)'(terms.excess) <= (product >> 8))
+                   ? 2'd0 : 2'd2;
+        return terms.within_limit ? 2'd0 : 2'd2;
+    endfunction
+
+    for (genvar lane = 0; lane < P; lane++) begin : header_check
+        wire [B-1:0] port = cursor + B'(lane);
+        wire [QB-1:0] q = lane_q[lane];
+        assign lane_deficit[lane] = minimum[q] > held[q] ? (K+1)'(minimum[q] - held[q]) : '0;
+        assign lane_excess[lane] = held[q] > minimum[q] ? (K+1)'(held[q] - minimum[q]) : '0;
+        assign lane_alpha[lane] = alpha[q];
+        always_comb begin
+            header_error[lane] = '0;
+            if (route[port] >= 8'(P) || raw_class[port] >= 8'd4)
+                header_error[lane] = 3'd1;
+            else if (length[port] < 16'd60 || length[port] > 16'(MAX_BYTES))
+                header_error[lane] = 3'd2;
+            else if (!policy((K+1)'(N_CELL), '0, full_minimum, lane_n[lane],
+                             (K+1)'(minimum[q]), (K+1)'(limit[q]), lane_alpha[lane]))
+                header_error[lane] = 3'd3;
+        end
+    end
+
+    if (STAGED) begin : sampled_batch
+        logic pending_batch;
+        logic [P-1:0] valid;
+        // Header inputs may change after sampling. Returned IDs only enter the
+        // live pool; the in-flight batch uses the sampled ranks and fit terms.
+        always_ff @(posedge clk or negedge rst_n) begin
+            if (!rst_n) begin
+                pending_batch <= 1'b0;
+                valid <= '0;
+            end else begin
+                pending_batch <= !pending_batch && (|header_valid);
+                if (!pending_batch) valid <= header_valid;
+            end
+        end
+        always_ff @(posedge clk) begin
+            if (!pending_batch) begin
+                decision_q <= lane_q;
+                decision_n <= lane_n;
+                decision_bad_beat <= bad_first_beat;
+                decision_error <= header_error;
+                decision_id_valid <= ranked_valid;
+                decision_id <= ranked_id;
+            end
+        end
+        assign decision_valid = pending_batch ? valid : '0;
+    end else begin : direct_batch
+        assign decision_q = lane_q;
+        assign decision_n = lane_n;
+        assign decision_valid = header_valid;
+        assign decision_bad_beat = bad_first_beat;
+        assign decision_error = header_error;
+        assign decision_id_valid = ranked_valid;
+        assign decision_id = ranked_id;
+    end
 
     always_comb begin : inputs_and_minima
         logic [SUM-1:0] min_sum, protected_sum;
@@ -113,7 +193,61 @@ module admission #(
 
         for (genvar lane = 0; lane < P; lane++) begin : positions
             for (genvar mask = 0; mask < (1 << (P-1)); mask++) begin : subsets
-                if (mask < (1 << lane)) begin : reachable_subset
+                if (FACTORED && mask < (1 << lane)) begin : factored_subset
+                    localparam int INCLUDED = mask | (1 << lane);
+                    fit_terms_t terms, decision_terms;
+                    logic [12:0] decision_alpha;
+
+                    always_comb begin
+                        logic [K:0] total, spill_total, lane_total, shared_cost;
+                        logic last_of_queue;
+                        total = '0;
+                        spill_total = '0;
+                        terms = '0;
+                        for (int j = 0; j <= lane; j++) begin
+                            if (((INCLUDED >> j) & 1) != 0) begin
+                                total += (K+1)'(lane_n[j][COUNT-1:0]);
+                                lane_total = '0;
+                                last_of_queue = 1'b1;
+                                for (int i = 0; i <= lane; i++) begin
+                                    if (((INCLUDED >> i) & 1) != 0 && lane_q[i] == lane_q[j]) begin
+                                        if (i > j) last_of_queue = 1'b0;
+                                        else lane_total += (K+1)'(lane_n[i][COUNT-1:0]);
+                                    end
+                                end
+                                // Count each queue's contribution once, at its
+                                // last member in this hypothetical prefix.
+                                if (last_of_queue && lane_total > lane_deficit[j])
+                                    spill_total += lane_total - lane_deficit[j];
+                                if (j == lane) begin
+                                    terms.within_minimum = lane_total <= lane_deficit[j];
+                                    terms.excess = lane_excess[j] +
+                                        (lane_total > lane_deficit[j] ? lane_total - lane_deficit[j] : '0);
+                                    terms.within_limit =
+                                        (K+1)'(held[lane_q[j]]) + lane_total <= (K+1)'(limit[lane_q[j]]);
+                                end
+                            end
+                        end
+                        shared_cost = old_protected + spill_total;
+                        terms.enough = total <= (K+1)'(credit);
+                        terms.within_shared = shared_cost <= (K+1)'(credit);
+                        // The comparison masks underflow in unreachable or
+                        // insufficient-share subsets.
+                        terms.shared_next = (K+1)'(credit) - shared_cost;
+                    end
+                    if (STAGED) begin : sample_terms
+                        always_ff @(posedge clk) begin
+                            if (!sampled_batch.pending_batch) begin
+                                decision_terms <= terms;
+                                decision_alpha <= lane_alpha[lane];
+                            end
+                        end
+                    end else begin : same_edge_terms
+                        assign decision_terms = terms;
+                        assign decision_alpha = lane_alpha[lane];
+                    end
+                    assign look_result[lane][mask] = evaluate_fit(decision_terms, decision_alpha);
+                end else if (mask < (1 << lane)) begin : reachable_subset
                     always_comb begin
                         logic [K:0] u, prot, h, old_h, used_protection;
                         logic enough;
@@ -163,11 +297,13 @@ module admission #(
         logic [D-1:0] d;
         logic [N_DESC-1:0] remaining;
         logic [P-2:0] earlier;
+        logic [P-1:0] accepted_lanes;
         logic serviced, any_descriptor;
         logic [1:0] fit;
         protected_free = old_protected;
         u = (K+1)'(credit);
         earlier = '0;
+        accepted_lanes = '0;
         earlier_count = '0;
         remaining = free_desc;
         grant = '0;
@@ -184,16 +320,16 @@ module admission #(
         consumed = '0;
         for (int lane = 0; lane < P; lane++) begin
             p = cursor + B'(lane);
-            q = lane_q[lane];
+            q = decision_q[lane];
             qid[p] = q;
-            n = lane_n[lane];
+            n = decision_n[lane];
             h = (K+1)'(held[q]);
             for (int j = 0; j < P; j++)
                 if (grant[j] && qid[j] == q) h += (K+1)'(reserved[j]);
             min_at_q = (K+1)'(minimum[q]);
             if (LOOKAHEAD != 0) begin
-                d = ranked_id[earlier_count];
-                any_descriptor = ranked_valid[earlier_count];
+                d = decision_id[earlier_count];
+                any_descriptor = decision_id_valid[earlier_count];
                 fit = look_result[lane][earlier];
             end else begin
                 d = first_free(remaining);
@@ -205,10 +341,11 @@ module admission #(
                 else
                     fit = 2'd0;
             end
-            if (header_valid[p]) begin
-                if (route[p] >= 8'(P) || raw_class[p] >= 8'd4) reason[p] = 3'd1;
-                else if (length[p] < 16'd60 || length[p] > 16'(MAX_BYTES)) reason[p] = 3'd2;
-                else if (!policy((K+1)'(N_CELL), '0, full_minimum, n, min_at_q, (K+1)'(limit[q]), alpha[q]))
+            if (decision_valid[p]) begin
+                if (FACTORED && decision_error[lane] != 0) reason[p] = decision_error[lane];
+                else if (!FACTORED && (route[p] >= 8'(P) || raw_class[p] >= 8'd4)) reason[p] = 3'd1;
+                else if (!FACTORED && (length[p] < 16'd60 || length[p] > 16'(MAX_BYTES))) reason[p] = 3'd2;
+                else if (!FACTORED && !policy((K+1)'(N_CELL), '0, full_minimum, n, min_at_q, (K+1)'(limit[q]), alpha[q]))
                     reason[p] = 3'd3;
                 else if (!any_descriptor) begin
                     reason[p] = 3'd4;
@@ -221,7 +358,8 @@ module admission #(
                     pending[p] = wait_mode;
                 end else begin
                     grant[p] = 1'b1;
-                    malformed[p] = bad_first_beat[p];
+                    accepted_lanes[lane] = 1'b1;
+                    malformed[p] = decision_bad_beat[p];
                     selected[p] = d;
                     reserved[p] = K'(n);
                     remaining[d] = 1'b0;
@@ -239,7 +377,13 @@ module admission #(
                 end
             end
         end
-        credit_wide = SUM'(u);
+        if (FACTORED) begin
+            credit_wide = SUM'(credit);
+            for (int lane = 0; lane < P; lane++)
+                credit_wide -= accepted_lanes[lane] ? SUM'(decision_n[lane]) : '0;
+        end else begin
+            credit_wide = SUM'(u);
+        end
         for (int j = 0; j < Q; j++) begin
             held_wide[j] = SUM'(held[j]);
             for (int i = 0; i < P; i++)

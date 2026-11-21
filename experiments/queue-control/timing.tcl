@@ -2,6 +2,9 @@ read_liberty $::env(TM_LIBERTY)
 read_verilog $::env(TM_NETLIST)
 link_design $::env(TM_TOP)
 read_sdc $::env(TM_SDC)
+if {[info exists ::env(TM_ADMISSION_MODE)]} {
+    set_case_analysis $::env(TM_ADMISSION_MODE) [get_ports dynamic_mode]
+}
 report_units
 if {![check_setup -verbose]} {error "Incomplete constraint coverage"}
 set outputs [all_outputs]
@@ -32,5 +35,10 @@ foreach delay {max min} {
 puts TM_CHECK_TYPES_BEGIN
 report_check_types -max_delay -min_delay -recovery -removal -max_slew -max_capacitance -max_fanout -digits 5
 puts TM_CHECK_TYPES_END
+if {[info exists ::env(TM_DETAIL)]} {
+    puts TM_CAP_VIOLATIONS_BEGIN
+    report_check_types -max_capacitance -violators -digits 5
+    puts TM_CAP_VIOLATIONS_END
+}
 puts TM_STA_DONE
 exit
