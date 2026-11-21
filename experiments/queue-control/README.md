@@ -82,3 +82,16 @@ cone at both sizes. Require mapped state/consumer coverage, no unintended
 unmapped cells, and supported timing checks. Keep timing-ceiling misses
 and any omitted logic explicit. A visibility or ownership contract change
 requires maintainer review. A scoped open gate is a valid outcome.
+
+## Admission lookahead after the serial-prefix measurement
+
+Measure a second admission implementation after the serial prefix shows a
+primary setup violation. For each lane, compute the static or dynamic fit for
+each possible earlier-grant subset in parallel. The actual earlier results
+select the matching subset. Precompute up to four ranked IDs from the old
+descriptor bitmap and select by the number of earlier grants. The accepted
+prefix and same-edge return merge still update the existing registered RX
+consumer and resource state. This transformation adds combinational
+replication but no clock cycle or ownership boundary. Use the same SDC, reset
+reference, area and endpoint criteria. Compare variants with matched
+edge-level RTL checks before interpreting timing.
