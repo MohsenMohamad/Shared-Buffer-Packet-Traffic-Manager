@@ -9,7 +9,9 @@ byte-based deficit round robin and an AXI4-Lite control/statistics plane.
 
 The [multi-egress traffic manager](docs/spec/multi-egress-traffic-manager.md)
 defines a primary 4×4 profile and a smaller implementation and proof profile.
-See the [status](docs/status.md) for the feasibility result and implementation gates.
+The [public interfaces](docs/spec/multi-egress-interfaces.md) cover packet,
+cell memory, observation and control wiring. See the [status](docs/status.md)
+for the feasibility result and implementation gates.
 
 ## Single-egress data path
 
@@ -61,6 +63,7 @@ Use the qualified Linux x86-64 cloud toolchain and repository setup recipe:
 ```sh
 make setup
 make doctor
+make multi-egress-declarations
 make regression RUN_ARGS='--profile E0 --test pools --seed 17'
 make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'
 make regression RUN_ARGS='--profile E0 --test csr --seed 17'

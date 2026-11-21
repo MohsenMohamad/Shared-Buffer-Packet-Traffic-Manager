@@ -16,9 +16,17 @@ def profile(name):
 
 
 def sources(name, seen=()):
-    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation', 'memory-tx', 'memory-tx-formal'):
+    if name in seen or name not in ('production', 'simulation', 'formal', 'synthesis', 'uvm-foundation', 'csr', 'queues', 'scheduler', 'queues-independent', 'queues-dispatch-guard', 'memory-tx-preparation', 'memory-tx', 'memory-tx-formal', 'multi-egress-declarations'):
         raise ValueError('Unknown or cyclic source set: ' + name)
     data = read('sources/' + name + '.json')
+    if name == 'multi-egress-declarations':
+        if 'extends' in data:
+            raise ValueError('Multi-egress declarations must have an isolated source list')
+        for filename in data['sources'] + data['headers'] + data['include_dirs']:
+            target = (ROOT / filename).resolve()
+            allowed = (ROOT / 'rtl/include/multi_egress', ROOT / 'tests/multi_egress')
+            if not any(target.is_relative_to(directory) for directory in allowed):
+                raise ValueError('Unexpected multi-egress declaration input: ' + filename)
     if name == 'memory-tx-preparation':
         if 'extends' in data:
             raise ValueError('Preparation source set cannot inherit production or another list')
