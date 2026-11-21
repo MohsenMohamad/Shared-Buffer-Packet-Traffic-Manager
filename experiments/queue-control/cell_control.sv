@@ -29,7 +29,7 @@ module cell_control #(
     logic [D-1:0] owners [N_CELL];
     logic [B-1:0] wr_cursor, tx_cursor, reclaim_cursor;
     logic [B-1:0] wr, tx, reclaim;
-    logic [C-1:0] addr;
+    logic [C-1:0] addr, abort_link;
     logic wr_grant, tx_grant, abort_grant, bad_action;
 
     function automatic logic [B-1:0] rotate(
@@ -82,7 +82,7 @@ module cell_control #(
                     reclaim_desc[p] <= '0;
                 end else if (abort_grant && reclaim == B'(p)) begin
                     if (reclaim_more[p]) begin
-                        reclaim_cell[p] <= links[reclaim_cell[p]];
+                        reclaim_cell[p] <= abort_link;
                         remaining <= remaining - 5'd1;
                     end else begin
                         reclaim_valid[p] <= 1'b0;
@@ -107,6 +107,7 @@ module cell_control #(
     assign tx_grant = |read_eligible;
     assign abort_grant = |reclaim_valid;
     assign addr = first_free(free_cell);
+    assign abort_link = links[reclaim_cell[reclaim]];
 
     always_comb begin
         allocated = '0;
@@ -186,7 +187,7 @@ module cell_control #(
                 reclaim_cursor <= reclaim + B'(1);
                 cleanup_port <= reclaim;
                 if (reclaim_has_cell[reclaim] && reclaim_more[reclaim])
-                    abort_successor <= links[reclaim_cell[reclaim]];
+                    abort_successor <= abort_link;
             end
             invariant_error <= invariant_error || bad_action;
         end
