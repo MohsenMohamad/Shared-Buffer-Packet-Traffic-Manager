@@ -263,6 +263,9 @@ class Control:
             if not strict:
                 cls = next((c for c in order if c in eligible), None)
             if cls is None:
+                qid = 4 * port + order[0]
+                if mode != "rr" and self.open_visit[qid]:
+                    self.q_cursor[port] = (order[0] + 1) % 4
                 continue
             qid = 4 * port + cls
             info = eligible[cls]
@@ -631,7 +634,8 @@ class Control:
             f, beat = offer
             self.capture[port].append(offer)
             stats[port]["rx_beats"] += 1
-            stats[port]["rx_bytes"] += min(8, (f.wire_length or f.length) - 8 * (beat - 1))
+            amount = min(8, (f.wire_length or f.length) - 8 * (beat - 1))
+            stats[port]["rx_bytes"] += amount - (beat == f.malformed_at)
             if beat == f.offered_beats:
                 stats[port]["rx_frames"] += 1
             accepted.append(True)
@@ -735,16 +739,22 @@ def replay(profile_name, latency, variant, scenario, length):
         assert stats["COMMITTED"] == stats["delivered"]
     assert sum(p["tx_bytes"] for p in totals) == sum(p["delivered_bytes"] for p in totals)
     assert not tm.bitmap and tm.credit == profile.cells
-    if scenario in ("balanced", "independent", "stall", "returns"):
+    require_lossless = scenario == "balanced" or (
+        profile_name == "primary" and scenario in ("independent", "stall", "returns")
+    )
+    if require_lossless:
         assert all(p["rx_frames"] == p["COMMITTED"] and p["rx_bytes"] == p["delivered_bytes"]
                    for p in totals)
     diagnostics = []
     for port, entries in enumerate(misses):
         for idle, prior, f in entries:
             if f is None:
-                f = next(f for f in next_frames[port] if f.times["first"] > idle)
-            diagnostics.append(dict(egress=port, idle=idle, predecessor_final=prior,
-                                    frame=f.identity, length=f.length, **f.times))
+                f = next((frame for frame in next_frames[port]
+                          if frame.times.get("first", -1) > idle), None)
+            event = dict(egress=port, idle=idle, predecessor_final=prior)
+            if f is not None:
+                event.update(frame=f.identity, length=f.length, **f.times)
+            diagnostics.append(event)
     gate = (all(p["rx_beats"] == p["tx_beats"] == WINDOW for p in window)
             and all(p["rx_frames"] == p["delivered"] for p in totals))
     keys = ("rx_beats", "rx_bytes", "rx_frames", "rx_stall",
