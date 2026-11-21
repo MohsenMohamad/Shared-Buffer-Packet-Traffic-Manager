@@ -19,7 +19,8 @@ ALLOC = ROOT / "experiments/allocator-scaling"
 LIBERTY = ROOT / ".deps/liberty.lib"
 POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "head-cached": ("queue_head", {"CACHED": 1}),
-          "admission": ("admission", {}),
+          "admission": ("admission", {"LOOKAHEAD": 0}),
+          "admission-lookahead": ("admission", {"LOOKAHEAD": 1}),
           "cell": ("cell_control", {})}
 DIAGNOSTIC = re.compile(r"(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:")
 
