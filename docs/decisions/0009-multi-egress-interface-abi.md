@@ -20,8 +20,8 @@ counter read can straddle a live increment.
   impose read ordering and could create hidden state across bus clients.
   A shared snapshot generation allows either word order. Software must
   avoid retriggering between the halves it wants to compare.
-- Use fixed region and coordinate strides across profiles. Class 4 is a
-  separate ingress statistics bucket and has no queue address. The small
+- Use fixed region and coordinate strides across profiles. Ingress bucket 4
+  groups invalid classes and has no queue address. The small
   profile leaves primary-only coordinates unmapped, while software can
   use the same stride math for either profile.
 
