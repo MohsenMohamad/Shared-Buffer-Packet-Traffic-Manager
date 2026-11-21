@@ -21,6 +21,13 @@ module cell_control #(
     output logic [C-1:0] write_addr, payload_read_addr, tx_successor, abort_successor,
     output logic [D-1:0] write_owner,
     output logic invariant_error
+`ifdef QUEUE_CONTROL_CONNECTED
+    , output logic write_now, read_now, cleanup_now, cleanup_final_now
+    , output logic [B-1:0] write_lane, read_lane, cleanup_lane
+    , output logic [C-1:0] allocation, read_link_now, cleanup_addr_now
+    , output logic [D-1:0] cleanup_owner_now
+    , output logic cleanup_cell_now
+`endif
 );
     localparam int GROUP = N_CELL >= 32 ? 32 : N_CELL;
     localparam int GROUPS = N_CELL / GROUP;
@@ -108,6 +115,21 @@ module cell_control #(
     assign abort_grant = |reclaim_valid;
     assign addr = first_free(free_cell);
     assign abort_link = links[reclaim_cell[reclaim]];
+
+`ifdef QUEUE_CONTROL_CONNECTED
+    assign write_now = wr_grant;
+    assign read_now = tx_grant;
+    assign cleanup_now = abort_grant;
+    assign cleanup_final_now = abort_grant && !reclaim_more[reclaim];
+    assign write_lane = wr;
+    assign read_lane = tx;
+    assign cleanup_lane = reclaim;
+    assign allocation = addr;
+    assign read_link_now = links[read_cell[tx]];
+    assign cleanup_addr_now = reclaim_cell[reclaim];
+    assign cleanup_owner_now = reclaim_desc[reclaim];
+    assign cleanup_cell_now = abort_grant && reclaim_has_cell[reclaim];
+`endif
 
     always_comb begin
         allocated = '0;
