@@ -61,7 +61,9 @@ module admission_tb #(
                 if (live[result[2].desc[p]])
                     $fatal(1, "grant used a live ID");
                 live[result[2].desc[p]] = 1;
-                owner_queue[result[2].desc[p]] = int'(result[2].qid[p]);
+                owner_queue[result[2].desc[p]] = 4 * int'(route[p]) + int'(raw_class[p]);
+                if (int'(result[2].qid[p]) != owner_queue[result[2].desc[p]])
+                    $fatal(1, "grant routes to the wrong queue");
                 owner_credit[result[2].desc[p]] = (int'(length[p]) + 63) / 64;
             end
         end
@@ -213,6 +215,76 @@ module admission_tb #(
         end
     endtask
 
+    task automatic minimum_and_feedback;
+        reset();
+        dynamic_mode = 1;
+        wait_mode = 0;
+        minimum[0] = K'(P + 1);
+        header_valid = '1;
+        tick();
+        if (last.grant != '1 || last.held[0] != K'(P))
+            $fatal(1, "All initial one-cell requests fit protection");
+
+        // All TX lanes release old one-cell frames. Admission sees P old
+        // cells still held, so only one new request can use the last minimum.
+        desc_return = {1'b0, {P{1'b1}}};
+        credit_release = desc_return;
+        for (int i = 0; i < P; i++) begin
+            return_id[i] = D'(i);
+            release_count[i] = 1;
+        end
+        tick();
+        if (last.grant != P'(2) || last.reject != ~P'(2) || last.held[0] != 1
+                || last.credit != K'(N_CELL-1))
+            $fatal(1, "Alpha-zero crossing or merged all-TX release differs");
+
+        desc_return = '0;
+        credit_release = '0;
+        header_valid = '1;
+        bad_first_beat = '1;
+        tick();
+        if (last.grant != '1 || last.abort_frame != '1 || last.held[0] != K'(P+1))
+            $fatal(1, "Visible release must restore exactly P protected grants before abort");
+    endtask
+
+    task automatic maximum_alpha;
+        int occupied, count;
+        reset();
+        dynamic_mode = 1;
+        wait_mode = 0;
+        minimum[1] = K'(N_CELL-3);
+        alpha[0] = 13'd4096;
+        alpha[1] = 13'd4096;
+        occupied = 0;
+        raw_class[0] = 1;
+        header_valid = 1;
+        while (occupied < N_CELL - 3) begin
+            count = N_CELL - 3 - occupied;
+            if (count > MAX_BYTES / 64) count = MAX_BYTES / 64;
+            length[0] = 16'(count * 64);
+            tick();
+            if (last.grant != 1) $fatal(1, "Maximum alpha filler must fit");
+            occupied += count;
+        end
+        raw_class = '0;
+        header_valid = P'(2);
+        length[1] = 65;
+        bad_first_beat[1] = 1;
+        tick();
+        if (last.grant != P'(2) || last.abort_frame != P'(2) || last.credit != 1)
+            $fatal(1, "4096 * 1 >> 8 is 16 and grants the malformed 65-byte head");
+
+        header_valid = 1;
+        length[0] = 65;
+        tick();
+        if (last.reason[0] != 5 || last.grant != 0)
+            $fatal(1, "Total credit shortage precedes the alpha limit");
+        length[0] = 60;
+        tick();
+        if (last.reason[0] != 3 || last.grant != 0)
+            $fatal(1, "4096 * 0 >> 8 is zero and denies remaining shared credit");
+    endtask
+
     task automatic mixed_edges(input logic use_dynamic, input logic hold_head);
         bit [N_DESC-1:0] live;
         logic [QB-1:0] qid [N_DESC];
@@ -268,6 +340,8 @@ module admission_tb #(
         alpha_boundary(10, 0);
         alpha_boundary(9, 0);
         alpha_boundary(9, 1);
+        minimum_and_feedback();
+        maximum_alpha();
         mixed_edges(0, 0);
         mixed_edges(0, 1);
         mixed_edges(1, 0);
