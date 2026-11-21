@@ -183,7 +183,7 @@ def sta(path, top, stem, sdc, extra=None):
     return raw, observed
 
 
-def focused(path, top, groups, design, mapping):
+def focused(path, top, groups, design, mapping, sample=False, require_write=False):
     counts = {}
     pin_lists = []
     for name, (starts, inputs, ends) in groups.items():
@@ -194,6 +194,12 @@ def focused(path, top, groups, design, mapping):
     pin_file = path / "composed-endpoints.txt"
     pin_file.write_text("\n".join(pin_lists) + "\n")
     extra = {"TM_COMPOSED_GROUPS": str(pin_file)}
+    if sample:
+        extra["TM_RESET_SAMPLES"] = " ".join(f"{arrival:.2f}" for arrival in RESET_ARRIVALS)
+        if require_write:
+            write_file = path / "reset-write-endpoints.txt"
+            write_file.write_text(" ".join(register_pins(design, ("links", "owners"), "D")) + "\n")
+            extra["TM_RESET_WRITE_PINS"] = str(write_file)
     raw, result = sta(path, top, "composed", EXP / "reference.sdc", extra)
     focused_paths = group_paths(raw, groups)
     if result["registers"] != mapping["flops"] or result["outputs"] != sum(mapping["outputs"].values()):
@@ -213,19 +219,39 @@ def qualify_endpoint_checker(raw, groups):
     raise ValueError("Expected missing-endpoint detector did not fire")
 
 
-def reset_samples(path, top, require_write):
+def reset_record(raw, arrival, check, delay, required=True):
+    token = f"TM_SAMPLE_{arrival}_{check}_{delay}"
+    if raw.count(token + "_BEGIN") != 1 or raw.count(token + "_END") != 1:
+        raise ValueError(f"Missing or duplicate {token}")
+    report = raw.split(token + "_BEGIN", 1)[1].split(token + "_END", 1)[0]
+    if not required and report.count("Startpoint: ") == 0:
+        return None
+    if report.count("Startpoint: ") != 1:
+        raise ValueError(f"Expected one constrained path at {token}")
+    record = path_record(report)
+    if not record["start"].startswith("rst_n "):
+        raise ValueError(f"Unexpected reset startpoint at {token}")
+    if check == "reset":
+        check_type = "recovery" if delay == "max" else "removal"
+        if f"({check_type} check" not in record["end"]:
+            raise ValueError(f"Missing {check_type} endpoint at {token}")
+    return record
+
+
+def reset_samples(raw, require_write):
     samples = []
+    reference_write = {
+        f"reset_write_{delay}": reset_record(raw, "reference", "reset_write", delay)
+        for delay in ("min", "max")
+    } if require_write else {}
     for arrival in RESET_ARRIVALS:
-        stem = f"reset-{arrival:.2f}"
-        sdc = path / (stem + ".sdc")
-        overrides = "".join(f"set_input_delay -rise -{bound} -clock clk {arrival} [get_ports rst_n]\n"
-                            for bound in ("min", "max"))
-        sdc.write_text((EXP / "reference.sdc").read_text() + overrides)
-        _, result = sta(path, top, stem, sdc)
-        checks = {name: result[name] for name in ("reset_min", "reset_max",
-                                                  "reset_control_min", "reset_control_max")}
-        if require_write and any(checks[name] is None for name in ("reset_control_min", "reset_control_max")):
-            raise ValueError("Missing required reset-to-write path")
+        checks = {
+            f"{check}_{delay}": reset_record(raw, f"{arrival:.2f}", check, delay, check == "reset")
+            for check in ("reset", "reset_control") for delay in ("min", "max")
+        }
+        if require_write:
+            checks.update({f"reset_write_{delay}": reset_record(raw, f"{arrival:.2f}", "reset_write", delay)
+                           for delay in ("min", "max")})
         failed = [name for name, record in checks.items() if record and record["slack_ns"] < 0]
         if arrival == 0.20:
             valid = "reset_min" in failed
@@ -233,9 +259,9 @@ def reset_samples(path, top, require_write):
             valid = not failed
         else:
             valid = bool(set(failed) & {"reset_max", "reset_control_max"})
-        samples.append(dict(arrival_ns=arrival, sdc_sha256=sha(sdc), checks=checks,
+        samples.append(dict(arrival_ns=arrival, checks=checks,
                             negative_slack=failed, result="EXPECTED" if valid else "UNEXPECTED"))
-    return samples
+    return reference_write, samples
 
 
 def compare(source, repair, output, qualify=False):
@@ -250,7 +276,9 @@ def compare(source, repair, output, qualify=False):
     top, = (name for name, module in json.loads((source / "mapped.json").read_text())["modules"].items()
             if module["attributes"].get("top", "").endswith("1"))
     before = read_map(source, top)
-    before_raw, before_timing, before_paths = focused(source, top, groups, before, original["mapping"])
+    require_write = point in RESET_REQUIRES_WRITE
+    before_raw, before_timing, before_paths = focused(source, top, groups, before, original["mapping"],
+                                                     sample=not rounds, require_write=require_write)
     candidate_result = json.loads((candidate / "result.json").read_text())
     after = read_map(candidate, top) if rounds else before
     identity_types = buffer_types()
@@ -262,10 +290,11 @@ def compare(source, repair, output, qualify=False):
         detectors["wrong_buffer_input"] = qualify_buffer_checker(before, after, identity_types)
         detectors["missing_endpoint"] = qualify_endpoint_checker(before_raw, groups)
     if rounds:
-        _, after_timing, after_paths = focused(candidate, top, groups, after, candidate_result["mapping"])
+        after_raw, after_timing, after_paths = focused(candidate, top, groups, after, candidate_result["mapping"],
+                                                       sample=True, require_write=require_write)
     else:
-        after_timing, after_paths = before_timing, before_paths
-    samples = reset_samples(candidate, top, point in RESET_REQUIRES_WRITE)
+        after_raw, after_timing, after_paths = before_raw, before_timing, before_paths
+    reset_write, samples = reset_samples(after_raw, require_write)
     calculated = after_timing["reset_release_required_ns"]
     for sample in samples:
         start = sample["arrival_ns"]
@@ -284,6 +313,7 @@ def compare(source, repair, output, qualify=False):
                   supported_electrical_result=("PASS" if all(checks.get(key) and checks[key]["met"]
                                            for key in ("max slew", "max capacitance")) else "FAIL"),
                   proof=proof, intended_detections=detectors, reset_samples=samples,
+                  reset_write_reference=reset_write, reference_sdc_sha256=sha(EXP / "reference.sdc"),
                   baseline=dict(path=str(source.relative_to(Path.cwd())), timing=before_timing,
                                 mapping=original["mapping"], focused=before_paths,
                                 netlist_sha256=sha(source / "mapped.v")),
