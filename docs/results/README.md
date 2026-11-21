@@ -6,6 +6,7 @@ coverage databases and generated netlists remain ignored build/CI artifacts.
 
 - [Production allocator scaling](allocator-scaling.md)
 - [Multi-egress datapath feasibility](multi-egress-datapath-feasibility.md)
+- [Multi-egress queue and control feasibility](TM04-queue-control.md)
 - [F01 symbolic-input recipe](F01-formal-symbols.md)
 - [RTL representation migration](rtl-representation.md)
 - [Toolchain qualification](toolchain-qualification.md)

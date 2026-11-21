@@ -7,13 +7,17 @@ primary 4×4 profile and a smaller implementation and proof profile. The
 [cycle model](results/multi-egress-datapath-feasibility.md) sustained one beat
 per active port per cycle in each direction at both read latencies for the
 balanced fixed-permutation runs with repeated 60-, 65-, and 1,536-byte frames
-and the specified repeating length mixture. Multi-egress RTL, independent
-DV, proofs and mapped timing are pending.
+and the specified repeating length mixture. Multi-egress RTL,
+independent DV and integrated qualification are pending.
 The [public declarations](spec/multi-egress-interfaces.md) publish the packet,
 cell memory, observation and control interfaces. The [declaration validation](results/TM03-multi-egress-declarations.md)
 covers both profiles and read latencies. The
 [implementation plan](implementation/plan.md#multi-egress-migration-and-gates)
-gates the dependent datapath on queue/control feasibility.
+gates the dependent datapath on queue/control feasibility. The
+[finite queue/control experiments](results/TM04-queue-control.md) met the
+primary balanced workload at both latencies. The
+[decision](decisions/0010-multi-egress-queue-control.md) keeps the freeze gate
+open for primary admission timing and physical reset release.
 
 ## Single-egress traffic manager evidence
 

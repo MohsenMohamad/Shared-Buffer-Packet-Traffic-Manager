@@ -7,3 +7,5 @@ Add a short numbered record when a material design, interface, verification or t
 - [0008: Retire completed migration scaffolding](0008-retire-migration-scaffolding.md)
 
 - [0009: Multi-egress observation and CSR ABI](0009-multi-egress-interface-abi.md)
+
+- [0010: Multi-egress queue/control feasibility](0010-multi-egress-queue-control.md)
