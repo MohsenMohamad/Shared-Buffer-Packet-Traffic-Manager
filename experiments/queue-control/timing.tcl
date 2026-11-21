@@ -37,7 +37,7 @@ report_check_types -max_delay -min_delay -recovery -removal -max_slew -max_capac
 puts TM_CHECK_TYPES_END
 if {[info exists ::env(TM_DETAIL)]} {
     puts TM_CAP_VIOLATIONS_BEGIN
-    report_check_types -max_capacitance -violators -digits 5
+    report_check_types -max_capacitance -max_count 256 -digits 5
     puts TM_CAP_VIOLATIONS_END
 }
 if {[info exists ::env(TM_FOCUS_TO)]} {
