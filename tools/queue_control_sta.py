@@ -156,7 +156,7 @@ def point(name, profile_name, output, sta_only, fast_abc):
         params["MAX_BYTES"] = profile.maximum
     script = (ALLOC / "mapping.ys.in").read_text()
     if fast_abc:
-        script = script.replace("abc -liberty", "abc -fast -liberty")
+        script = script.replace("abc -liberty", f"abc -script {EXP / 'abc-short.script'} -liberty")
     substitutions = dict(READ=read_sources([EXP / (top + ".sv")], top, params=params),
                          TOP=top, LIBERTY=LIBERTY, ABC_CONSTR=ALLOC / "abc.constr",
                          NETLIST=path / "mapped.v", JSON=path / "mapped.json", STATS=path / "stats.json")
@@ -167,7 +167,7 @@ def point(name, profile_name, output, sta_only, fast_abc):
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top, TM_SDC=str(EXP / "reference.sdc"),
                TM_NETLIST=str(substitutions["NETLIST"]))
     result = dict(profile=profile_name, point=name, parameters=params,
-                  abc="fast" if fast_abc else "default", mapping_script_sha256=sha(script_path))
+                  abc="short" if fast_abc else "default", mapping_script_sha256=sha(script_path))
     try:
         if not sta_only:
             run(["yosys", "-Q", "-T", "-s", str(script_path)], path, "yosys", 1800)
@@ -194,12 +194,12 @@ def main():
     parser.add_argument("--point", choices=("all", *POINTS), default="all")
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--sta-only", action="store_true")
-    parser.add_argument("--fast-abc", action="store_true")
+    parser.add_argument("--short-abc", action="store_true")
     args = parser.parse_args()
     if args.jobs < 1:
         parser.error("--jobs must be positive")
-    if args.sta_only and args.fast_abc:
-        parser.error("run fast mapping in its own output directory")
+    if args.sta_only and args.short_abc:
+        parser.error("run short mapping in its own output directory")
     if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
         parser.error("activate the validated repository toolchain")
     lock = ROOT / "tools/dependencies.json"
@@ -215,7 +215,7 @@ def main():
     manifest = dict(source_revision=revision, dirty=dirty, liberty_sha256=sha(LIBERTY),
                     definition_sha256={str(p.relative_to(ROOT)): sha(p) for p in files if p.is_file()})
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.fast_abc), scope))
+        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.short_abc), scope))
     (destination / "summary.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if any(p["result"] != "MEASURED" for p in manifest["results"]):
         raise SystemExit(1)

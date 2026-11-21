@@ -1,0 +1,8 @@
+strash
+&get -n
+&nf
+&put
+buffer
+upsize
+dnsize
+stime -p
