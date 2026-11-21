@@ -22,6 +22,10 @@ foreach delay {max min} {
     puts "TM_RESET_${delay}_BEGIN"
     report_checks -rise_from $reset -path_delay $delay         -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
     puts "TM_RESET_${delay}_END"
+    puts "TM_RESET_CONTROL_${delay}_BEGIN"
+    report_checks -rise_from $reset -path_group clk -to $data_end -path_delay $delay \
+        -group_path_count 1 -sort_by_slack -digits 5 -fields {slew capacitance fanout} -format full_clock_expanded
+    puts "TM_RESET_CONTROL_${delay}_END"
 }
 puts TM_CHECK_TYPES_BEGIN
 report_check_types -max_delay -min_delay -recovery -removal -max_slew -max_capacitance -max_fanout -digits 5

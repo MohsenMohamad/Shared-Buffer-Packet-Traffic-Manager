@@ -57,16 +57,17 @@ def timing(text):
     if text.count("TM_STA_DONE") != 1 or DIAGNOSTIC.search(text):
         raise ValueError("STA diagnostics or missing completion")
     measurements = {}
-    for kind in ("DATA", "RESET"):
+    for kind in ("DATA", "RESET", "RESET_CONTROL"):
         for delay in ("max", "min"):
             token = f"TM_{kind}_{delay}"
             if text.count(token + "_BEGIN") != 1 or text.count(token + "_END") != 1:
                 raise ValueError(f"Missing or duplicate {token}")
             report = text.split(token + "_BEGIN", 1)[1].split(token + "_END", 1)[0]
             paths = [path_record("Startpoint: " + p) for p in report.split("Startpoint: ")[1:]]
-            if not paths:
+            if not paths and kind != "RESET_CONTROL":
                 raise ValueError(f"No constrained paths in {token}")
-            measurements[kind.lower() + "_" + delay] = min(paths, key=lambda p: p["slack_ns"])
+            measurements[kind.lower() + "_" + delay] = min(
+                paths, key=lambda p: p["slack_ns"], default=None)
     for delay, check in (("max", "recovery"), ("min", "removal")):
         path = measurements["reset_" + delay]
         if not path["start"].startswith("rst_n ") or f"({check} check" not in path["end"]:
@@ -74,9 +75,14 @@ def timing(text):
     if ("(recovery check" in measurements["data_max"]["end"] or
             "(removal check" in measurements["data_min"]["end"]):
         raise ValueError("Reset path included in data timing")
+    release_slack = {
+        delay: min(measurements[name]["slack_ns"]
+                   for name in ("reset_" + delay, "reset_control_" + delay) if measurements[name])
+        for delay in ("min", "max")
+    }
     measurements["reset_release_required_ns"] = {
-        "earliest": round(0.2 - measurements["reset_min"]["slack_ns"], 5),
-        "latest": round(2.0 + measurements["reset_max"]["slack_ns"], 5),
+        "earliest": round(0.2 - release_slack["min"], 5),
+        "latest": round(2.0 + release_slack["max"], 5),
     }
     measurements["registers"] = int(re.search(r"TM_REGISTERS (\d+)", text)[1])
     measurements["outputs"] = int(re.search(r"TM_OUTPUTS (\d+)", text)[1])
