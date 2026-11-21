@@ -130,3 +130,41 @@ commands, two runner-isolation tests and both diff checks passed.
 Queue/control feasibility, datapath implementation, independent DV,
 production UVM, proofs, throughput, synthesis and mapped timing are open
 under the [acceptance plan](../implementation/plan.md#multi-egress-integration-and-release-acceptance).
+
+## PR #30 named packet-field checks
+
+Clean tested commit `8c3de9b8ee3c545b660916dcfefc9b3deb94b6fe`, tree
+`1fbe24f7719c15efc4cdf46fb512e9fe9a9c9cc2`. The tool and lock
+identities above also apply. The fixture drives named egress and
+disposition fields and compares the packed output port lanes against
+independent slices from the interface table. In both profiles, valid
+records drive different values in each of the swapped positions.
+
+`make multi-egress-declarations` passed its full matrix. All four
+primary/small and L1/L2 legal runs reached the physical port marker and
+the combined legal executable exited 0. The runner made two separate
+disposable copies of the registered sources. Each copy swapped one
+equal-width declaration pair, compiled with exit status 0, and was
+executed separately with `+layout-profile=0` and `+layout-profile=1`.
+
+| Planted declaration swap | Primary observed detector | Small observed detector |
+| --- | --- | --- |
+| Egress source and destination | `egress-source-destination-layout`, L2, exit 1 | `egress-source-destination-layout`, L2, exit 1 |
+| Disposition destination and class | `disposition-destination-class-layout`, L2, exit 1 | `disposition-destination-class-layout`, L2, exit 1 |
+
+Exact compiler and executable commands, mutant file digests and detector
+output are recorded in
+`.build/runs/multi-egress-declarations-2026-11-21T052214.564416+0000-af44932b/`.
+The unmodified gate command reproduces both disposable swaps. The local
+repository, light syntax and Python units, runner-isolation and diff
+checks also passed.
+
+```sh
+make multi-egress-declarations
+make repo-check
+python3 tools/check_light.py
+make test-unit
+PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v
+git diff --check
+git diff --check origin/main...HEAD
+```
