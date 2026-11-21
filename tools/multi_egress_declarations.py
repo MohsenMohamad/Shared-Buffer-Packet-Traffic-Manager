@@ -2,8 +2,9 @@
 from collections import Counter
 import json
 import re
+from shutil import copyfile
 
-from evidence import Case, completed, output
+from evidence import Case, ROOT, completed, output, sha
 from frontend import read_sources
 from registry import sources
 
@@ -50,6 +51,18 @@ DETECTORS = {
     'suppress-cleanup': 'cleanup-return',
     'alias-csr': 'csr-address-alias',
     'swap-halves': 'snapshot-word-order',
+}
+DECLARATION_SWAPS = {
+    'egress-source-destination': (
+        'rtl/include/multi_egress/tm_multi_types.svh',
+        '    tm_multi_fixed::stream_beat_t beat;\n',
+        '    rx_id_t source;', '    tx_id_t destination;'
+    ),
+    'disposition-destination-class': (
+        'rtl/include/multi_egress/tm_multi_fixed.sv',
+        '        disposition_code_t code;\n        logic [15:0] length;\n',
+        '        logic [7:0] destination;', '        logic [7:0] traffic_class;'
+    ),
 }
 GROUPS = ('profile', 'bytes-keeps', 'raw-and-status', 'physical-ports', 'memory',
           'all-return-masks', 'allocation-return-overlap', 'batch-and-correlation')
@@ -187,17 +200,67 @@ def elaborate(case, args, tool, registered, parameters=None, guard=None):
     case.finish(result, reason, port_report=str(report))
 
 
-def simulate(run, args, registered):
-    build = Case(run, 'layout-build')
-    binary = build.path / 'obj' / ('V' + LAYOUT)
+def build_layout(case, args, registered, cwd=None):
+    binary = case.path / 'obj' / ('V' + LAYOUT)
     files = [path for path in registered['sources'] if not path.endswith('/tm_multi_pair.sv')]
     command = ['verilator', '--binary', '--timing', '--assert', '--timescale', '1ns/1ps',
                '--build-jobs', str(args.jobs), '--top-module', LAYOUT, '--Mdir', str(binary.parent)]
     command += ['-I' + path for path in registered['include_dirs']] + files
-    step = build.execute(command, timeout=args.build_timeout)
+    step = case.execute(command, cwd=cwd, timeout=args.build_timeout)
     result, reason = completed(step, 'Verilator: Walltime')
     if result == 'PASS' and not binary.is_file():
         result, reason = 'TOOL_ERROR', 'Missing compiled layout executable'
+    return binary, result, reason
+
+
+def qualify_declaration_swap(case, args, registered, name, legal_result):
+    filename, prefix, first, second = DECLARATION_SWAPS[name]
+    detector = name + '-layout'
+    case.data.update(expected='PLANTED_DECLARATION_SWAP', detector=detector,
+                     legal_neighbor=legal_result, mutated_file=filename,
+                     swapped=[first.strip(), second.strip()])
+    if legal_result != 'PASS':
+        case.finish('NOT_RUN', 'Legal layout fixture did not pass')
+        return
+
+    fixture = case.path / 'sources'
+    # Compile exclusively from this copy so include lookup cannot pick the unchanged header.
+    for path in registered['sources'] + registered['headers']:
+        destination = fixture / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        copyfile(ROOT / path, destination)
+    declaration = fixture / filename
+    source = declaration.read_text()
+    before = f'{prefix}{first}\n{second}\n'
+    if source.count(before) != 1:
+        case.finish('FAIL', 'Expected exactly one adjacent field pair to swap')
+        return
+    declaration.write_text(source.replace(before, f'{prefix}{second}\n{first}\n', 1))
+    case.data['mutated_sha256'] = sha(declaration)
+
+    binary, result, reason = build_layout(case, args, registered, cwd=fixture)
+    if result != 'PASS':
+        case.finish(result, reason)
+        return
+
+    observed = {}
+    for profile in (0, 1):
+        step = case.execute([binary, f'+layout-profile={profile}'], cwd=case.path,
+                            timeout=args.timeout, stem=f'profile{profile}')
+        text = output(step)
+        detected = re.findall(r'TM03_DETECT ([^\s]+) profile=(\d+) latency=([12])\b', text)
+        ok = (step['result'] == 'TOOL_ERROR' and step['returncode'] not in (None, 0)
+              and text.count('TM03_DETECT') == 1 and len(detected) == 1
+              and detected[0][:2] == (detector, str(profile)) and 'TM03_LAYOUT_PASS' not in text)
+        observed[profile] = dict(detected=detected, returncode=step['returncode'], passed=ok)
+    ok = all(record['passed'] for record in observed.values())
+    case.finish('PASS' if ok else 'FAIL', None if ok else 'Expected named detector in both profiles',
+                observed=observed)
+
+
+def simulate(run, args, registered):
+    build = Case(run, 'layout-build')
+    binary, result, reason = build_layout(build, args, registered)
     build.finish(result, reason)
 
     positive = Case(run, 'layout-legal-neighbors')
@@ -205,6 +268,8 @@ def simulate(run, args, registered):
         positive.finish('NOT_RUN', 'Layout compilation failed')
         for mutation in DETECTORS:
             Case(run, 'planted-' + mutation).finish('NOT_RUN', 'Layout compilation failed')
+        for name in DECLARATION_SWAPS:
+            Case(run, 'planted-swap-' + name).finish('NOT_RUN', 'Layout compilation failed')
         return
 
     step = positive.execute([binary], cwd=positive.path, timeout=args.timeout)
@@ -228,6 +293,10 @@ def simulate(run, args, registered):
         case.finish('PASS' if ok else 'FAIL', None if ok else 'Missing designated detection or passing neighbor',
                     expected='PLANTED_FIXTURE_DEFECT', detector=detector, observed_detectors=detected,
                     legal_neighbor=positive.data['result'])
+
+    for name in DECLARATION_SWAPS:
+        qualify_declaration_swap(Case(run, 'planted-swap-' + name), args, registered,
+                                 name, positive.data['result'])
 
 
 def declarations(run, args):

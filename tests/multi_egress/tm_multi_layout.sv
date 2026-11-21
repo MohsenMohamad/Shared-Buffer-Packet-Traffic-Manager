@@ -18,6 +18,10 @@ module tm_multi_layout #(
     localparam int TAG = IS_SMALL ? 157 : 171;
     localparam int READ = IS_SMALL ? 162 : 182;
     localparam int OUT = IS_SMALL ? 113 : 115;
+    localparam int EGRESS_DATA_LSB = IS_SMALL ? 48 : 50;
+    localparam int EGRESS_KEEP_LSB = IS_SMALL ? 40 : 42;
+    localparam int EGRESS_LAST_BIT = IS_SMALL ? 39 : 41;
+    localparam int EGRESS_SOURCE_LSB = IS_SMALL ? 38 : 39;
     localparam int BATCH = IS_SMALL ? 3589 : 6360;
     localparam int FRAME_MAX = IS_SMALL ? 192 : 1536;
 
@@ -121,6 +125,20 @@ module tm_multi_layout #(
         mark("bytes-keeps");
     endtask
 
+    task automatic check_disposition_layout(
+        input logic [51:0] word_bits, input bit valid, input logic [2:0] code,
+        input logic [15:0] length, input logic [7:0] destination, traffic_class,
+        input logic [15:0] opaque_tag
+    );
+        check(word_bits[51] == valid && word_bits[50:48] == code, "disposition-code-presence");
+        if (valid) begin
+            check(word_bits[31:24] == destination && word_bits[23:16] == traffic_class,
+                  "disposition-destination-class-layout");
+            check(word_bits[47:32] == length && word_bits[15:0] == opaque_tag,
+                  "disposition-length-tag-layout");
+        end
+    endtask
+
     task automatic check_headers();
         logic [7:0] routes [0:6] = '{8'h00, 8'h01, 8'h02, 8'h03, 8'h04, 8'h80, 8'hff};
         logic [7:0] classes [0:4] = '{8'h00, 8'h03, 8'h04, 8'h80, 8'hff};
@@ -141,8 +159,10 @@ module tm_multi_layout #(
                                     classes[sample%5], opaque_tag, 2'(sample)};
             if (truncate_route)
                 ingress[0].metadata.destination[7] = 0;
-            disposition_stim[0] = '{sample < 7, codes[sample%7], lengths[sample%5],
-                                     routes[sample%7], classes[sample%5], opaque_tag};
+            disposition_stim[0] = '{valid: sample < 7, code: codes[sample%7],
+                length: lengths[sample%5], destination: routes[sample%7],
+                traffic_class: classes[sample%5], tag_value: opaque_tag};
+            egress_stim[0].valid = 1;
             egress_stim[0].original_ecn = 2'(sample);
             egress_stim[0].mark_request = sample[2];
             #1;
@@ -152,8 +172,8 @@ module tm_multi_layout #(
             check(raw_word[33:26] == routes[sample%7], "raw-route");
             check(raw_word[49:34] == lengths[sample%5] && raw_word[25:18] == classes[sample%5] &&
                   raw_word[17:2] == opaque_tag && raw_word[1:0] == 2'(sample), "raw-metadata");
-            check(status_word == {sample < 7, 3'(sample%7), lengths[sample%5], routes[sample%7],
-                                  classes[sample%5], opaque_tag}, "disposition-code-presence");
+            check_disposition_layout(status_word, sample < 7, 3'(sample%7), lengths[sample%5],
+                                     routes[sample%7], classes[sample%5], opaque_tag);
             check(output_word[2:0] == {2'(sample), sample[2]}, "ecn-and-mark");
         end
         mark("raw-and-status");
@@ -162,8 +182,7 @@ module tm_multi_layout #(
     task automatic check_ports();
         logic [PORTS-1:0] active;
         logic [123:0] expected_ingress;
-        logic [OUT-1:0] expected_egress;
-        logic [51:0] expected_disposition;
+        logic [OUT-1:0] output_word;
 
         for (int pattern = 0; pattern < (1 << PORTS); pattern++) begin
             active = PORTS'(pattern);
@@ -172,25 +191,35 @@ module tm_multi_layout #(
             for (int lane = 0; lane < PORTS; lane++) begin
                 ingress[lane] = '{active[lane], '{64'h1122_3344_5566_7780+64'(lane), 8'(16+lane), lane[0]},
                                   '{16'(60+lane), 8'(lane), 8'(3-lane), 16'hca00+16'(lane), 2'(lane)}};
-                egress_stim[lane] = '{active[lane], '{64'h7766_5544_3322_1100+64'(lane), 8'(32+lane), !lane[0]},
-                                       P'(PORTS-1-lane), P'(lane), 2'(lane), 16'(72+lane),
-                                       16'hbe00+16'(lane), 2'(3-lane), lane[0]};
-                disposition_stim[lane] = '{active[lane], COMMITTED, 16'(60+lane),
-                                            8'(lane), 8'(3-lane), 16'hca00+16'(lane)};
+                egress_stim[lane] = '{valid: active[lane],
+                    beat: '{data: 64'h7766_5544_3322_1100+64'(lane), keep: 8'(32+lane), last: !lane[0]},
+                    source: P'(PORTS-1-lane), destination: P'(lane), traffic_class: 2'(lane),
+                    length: 16'(72+lane), tag_value: 16'hbe00+16'(lane),
+                    original_ecn: 2'(3-lane), mark_request: lane[0]};
+                disposition_stim[lane] = '{valid: active[lane], code: COMMITTED, length: 16'(60+lane),
+                    destination: 8'(lane), traffic_class: 8'(3-lane), tag_value: 16'hca00+16'(lane)};
             end
             #1;
             check(ingress_ready == ~active && boundary.egress_ready == active, "ready-lanes");
             for (int lane = 0; lane < PORTS; lane++) begin
                 expected_ingress = {active[lane], 64'h1122_3344_5566_7780+64'(lane), 8'(16+lane),
                     lane[0], 16'(60+lane), 8'(lane), 8'(3-lane), 16'hca00+16'(lane), 2'(lane)};
-                expected_egress = {active[lane], 64'h7766_5544_3322_1100+64'(lane), 8'(32+lane),
-                    !lane[0], P'(PORTS-1-lane), P'(lane), 2'(lane), 16'(72+lane),
-                    16'hbe00+16'(lane), 2'(3-lane), lane[0]};
-                expected_disposition = {active[lane], 3'd0, 16'(60+lane),
-                    8'(lane), 8'(3-lane), 16'hca00+16'(lane)};
+                output_word = egress_bits[OUT*lane+:OUT];
                 check(ingress_bits[124*lane+:124] == expected_ingress &&
-                      egress_bits[OUT*lane+:OUT] == expected_egress &&
-                      disposition_bits[52*lane+:52] == expected_disposition, "physical-port-order");
+                      output_word[OUT-1] == active[lane], "physical-port-order");
+                if (active[lane]) begin
+                    check(output_word[EGRESS_SOURCE_LSB+:P] == P'(PORTS-1-lane) &&
+                          output_word[37+:P] == P'(lane), "egress-source-destination-layout");
+                    check(output_word[EGRESS_DATA_LSB+:64] == 64'h7766_5544_3322_1100+64'(lane) &&
+                          output_word[EGRESS_KEEP_LSB+:8] == 8'(32+lane) &&
+                          output_word[EGRESS_LAST_BIT] == !lane[0] &&
+                          output_word[36:35] == 2'(lane) && output_word[34:19] == 16'(72+lane) &&
+                          output_word[18:3] == 16'hbe00+16'(lane) &&
+                          output_word[2:1] == 2'(3-lane) && output_word[0] == lane[0],
+                          "egress-packet-layout");
+                end
+                check_disposition_layout(disposition_bits[52*lane+:52], active[lane], 3'd0,
+                                         16'(60+lane), 8'(lane), 8'(3-lane), 16'hca00+16'(lane));
             end
         end
         mark("physical-ports");
@@ -240,23 +269,27 @@ module tm_multi_layout #(
 `include "tm_multi_batch_test.svh"
 
     initial begin
+        int selected_profile;
         done = 0;
-        reverse_bytes = !IS_SMALL && MEM_RD_LATENCY == 2 && $test$plusargs("reverse-bytes");
-        truncate_route = !IS_SMALL && MEM_RD_LATENCY == 2 && $test$plusargs("truncate-route");
-        suppress_cleanup = !IS_SMALL && MEM_RD_LATENCY == 2 && $test$plusargs("suppress-cleanup");
-        // Drive the otherwise unimplemented declaration outputs through the real ports.
-        force boundary.ingress_ready = ingress_ready_stim;
-        force boundary.egress = egress_stim;
-        force boundary.disposition = disposition_stim;
-        force boundary.cell_read = read_stim;
-        force boundary.cell_write = write_stim;
-        force boundary.observation = observation_stim;
-        check_profile();
-        check_bytes();
-        check_headers();
-        check_ports();
-        check_memory();
-        check_batch();
+        // Isolate one profile at a time when a declaration swap is expected to stop simulation.
+        if (!$value$plusargs("layout-profile=%d", selected_profile) || PROFILE == selected_profile) begin
+            reverse_bytes = !IS_SMALL && MEM_RD_LATENCY == 2 && $test$plusargs("reverse-bytes");
+            truncate_route = !IS_SMALL && MEM_RD_LATENCY == 2 && $test$plusargs("truncate-route");
+            suppress_cleanup = !IS_SMALL && MEM_RD_LATENCY == 2 && $test$plusargs("suppress-cleanup");
+            // Drive the otherwise unimplemented declaration outputs through the real ports.
+            force boundary.ingress_ready = ingress_ready_stim;
+            force boundary.egress = egress_stim;
+            force boundary.disposition = disposition_stim;
+            force boundary.cell_read = read_stim;
+            force boundary.cell_write = write_stim;
+            force boundary.observation = observation_stim;
+            check_profile();
+            check_bytes();
+            check_headers();
+            check_ports();
+            check_memory();
+            check_batch();
+        end
         done = 1;
     end
 endmodule
