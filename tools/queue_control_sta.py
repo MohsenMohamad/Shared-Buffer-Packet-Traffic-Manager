@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import subprocess
 
 from evidence import ROOT, sha
@@ -27,10 +28,15 @@ DIAGNOSTIC = re.compile(r"(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:")
 
 def run(argv, path, stem, timeout, env=None):
     with (path / (stem + ".stdout")).open("w") as stdout, (path / (stem + ".stderr")).open("w") as stderr:
-        process = subprocess.run(argv, cwd=ROOT, env=env, stdout=stdout, stderr=stderr,
-                                 timeout=timeout, check=False)
-    if process.returncode != 0:
-        raise ValueError(f"{stem} exited {process.returncode}")
+        with subprocess.Popen(argv, cwd=ROOT, env=env, stdout=stdout, stderr=stderr,
+                              start_new_session=True) as process:
+            try:
+                status = process.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                os.killpg(process.pid, signal.SIGKILL)
+                raise
+    if status != 0:
+        raise ValueError(f"{stem} exited {status}")
     return (path / (stem + ".stdout")).read_text() + (path / (stem + ".stderr")).read_text()
 
 
@@ -140,7 +146,7 @@ def mapped_measurements(path, top):
                 outputs=outputs, fanout=fanout, histogram=histogram)
 
 
-def point(name, profile_name, output, sta_only):
+def point(name, profile_name, output, sta_only, fast_abc):
     profile = PROFILES[profile_name]
     top, extra = POINTS[name]
     path = output / f"{profile_name}-{name}"
@@ -149,6 +155,8 @@ def point(name, profile_name, output, sta_only):
     if top == "admission":
         params["MAX_BYTES"] = profile.maximum
     script = (ALLOC / "mapping.ys.in").read_text()
+    if fast_abc:
+        script = script.replace("abc -liberty", "abc -fast -liberty")
     substitutions = dict(READ=read_sources([EXP / (top + ".sv")], top, params=params),
                          TOP=top, LIBERTY=LIBERTY, ABC_CONSTR=ALLOC / "abc.constr",
                          NETLIST=path / "mapped.v", JSON=path / "mapped.json", STATS=path / "stats.json")
@@ -158,7 +166,8 @@ def point(name, profile_name, output, sta_only):
     script_path.write_text(script)
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top, TM_SDC=str(EXP / "reference.sdc"),
                TM_NETLIST=str(substitutions["NETLIST"]))
-    result = dict(profile=profile_name, point=name, parameters=params)
+    result = dict(profile=profile_name, point=name, parameters=params,
+                  abc="fast" if fast_abc else "default", mapping_script_sha256=sha(script_path))
     try:
         if not sta_only:
             run(["yosys", "-Q", "-T", "-s", str(script_path)], path, "yosys", 1800)
@@ -169,7 +178,9 @@ def point(name, profile_name, output, sta_only):
             raise ValueError("OpenSTA and mapping endpoint counts differ")
         result.update(timing=data, result="MEASURED")
         result["data_closure"] = all(data["data_" + d]["slack_ns"] >= 0 for d in ("max", "min"))
-    except (OSError, ValueError, KeyError, subprocess.TimeoutExpired) as exc:
+    except subprocess.TimeoutExpired as exc:
+        result.update(result="TIMEOUT", error=str(exc))
+    except (OSError, ValueError, KeyError) as exc:
         result.update(result="ERROR", error=str(exc))
     (path / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     print(f"{profile_name}/{name}: {result['result']} {result.get('error', '')}", flush=True)
@@ -183,8 +194,12 @@ def main():
     parser.add_argument("--point", choices=("all", *POINTS), default="all")
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--sta-only", action="store_true")
+    parser.add_argument("--fast-abc", action="store_true")
     args = parser.parse_args()
-    if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
+    if args.jobs < 1:
+        parser.error("--jobs must be positive")
+    if args.sta_only and args.fast_abc:
+        parser.error("run fast mapping in its own output directory")    if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
         parser.error("activate the validated repository toolchain")
     lock = ROOT / "tools/dependencies.json"
     if sha(LIBERTY) != json.loads(lock.read_text())["liberty"]["sha256"]:
@@ -199,7 +214,7 @@ def main():
     manifest = dict(source_revision=revision, dirty=dirty, liberty_sha256=sha(LIBERTY),
                     definition_sha256={str(p.relative_to(ROOT)): sha(p) for p in files if p.is_file()})
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only), scope))
+        manifest["results"] = list(pool.map(lambda item: point(*item, destination, args.sta_only, args.fast_abc), scope))
     (destination / "summary.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if any(p["result"] != "MEASURED" for p in manifest["results"]):
         raise SystemExit(1)

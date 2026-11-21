@@ -95,3 +95,12 @@ consumer and resource state. This transformation adds combinational
 replication but no clock cycle or ownership boundary. Use the same SDC, reset
 reference, area and endpoint criteria. Compare variants with matched
 edge-level RTL checks before interpreting timing.
+
+## ABC runtime sensitivity
+
+The reference measurement uses the default allocator mapping recipe. On
+large register-array cones, also compare the bundled ABC fast Liberty
+mapping script with the same frontend, Liberty, external drive/load
+constraints and STA. Identify the mapping script for every number. Fast
+and default results can establish sensitivity to synthesis, and matched
+architecture comparisons use the same mapping script.
