@@ -53,9 +53,13 @@ def path_record(section):
         if match is None:
             raise ValueError(f"Missing {name} in constrained timing path")
         values[name] = float(match[1]) if name.endswith("_ns") else match[1]
-    pins = re.findall(r"(?m)^\s*[\d. -]+[\^v]?\s+([\\\w.\[\]/]+) \((?:[A-Z][A-Z0-9]+_X\d+|in|out)\)", section)
+    data = section.split("data arrival time", 1)[0]
+    pins = re.findall(r"(?m)^\s*[\d. -]+[\^v]?\s+([\\\w.\[\]/]+) \((?:[A-Z][A-Z0-9]+_X\d+|in|out)\)", data)
     if pins:
-        values["path_pins"] = [pins[0], pins[-1]]
+        # Register paths often list the clock pin immediately before the Q arc.
+        start_pin = pins[1] if len(pins) > 1 and pins[0].endswith("/CK") else pins[0]
+        values["path_pins"] = [start_pin, pins[-1]]
+
     return values
 
 
@@ -146,7 +150,24 @@ def mapped_measurements(path, top):
                 outputs=outputs, fanout=fanout, histogram=histogram)
 
 
-def point(name, profile_name, output, sta_only, fast_abc):
+def expected_flops(top, params):
+    ports, cells, desc = (params[key] for key in ("P", "N_CELL", "N_DESC"))
+    queues = 4 * ports
+    b, c, d = ((size - 1).bit_length() for size in (ports, cells, desc))
+    q = b + 2
+    k = cells.bit_length()
+    if top == "queue_head":
+        metadata = c + 5 + b + 64 + 16 + 2 + 1 + 16
+        queue_state = queues * (1 + 2 * d)
+        binding = ports * (1 + 2 + 2 + d + metadata)
+        head_cache = queues * metadata if params["CACHED"] else 0
+        return desc * (metadata + d) + queue_state + binding + head_cache + 1
+    if top == "cell_control":
+        return cells * (1 + c + d) + 6 * b + 4 * c + d + 5 + 1
+    return desc + k * (queues + 1) + b + ports * (4 + 3 + d + q + k) + 1
+
+
+def point(name, profile_name, output, sta_only, short_abc):
     profile = PROFILES[profile_name]
     top, extra = POINTS[name]
     path = output / f"{profile_name}-{name}"
@@ -155,7 +176,7 @@ def point(name, profile_name, output, sta_only, fast_abc):
     if top == "admission":
         params["MAX_BYTES"] = profile.maximum
     script = (ALLOC / "mapping.ys.in").read_text()
-    if fast_abc:
+    if short_abc:
         script = script.replace("abc -liberty", f"abc -script {EXP / 'abc-short.script'} -liberty")
     substitutions = dict(READ=read_sources([EXP / (top + ".sv")], top, params=params),
                          TOP=top, LIBERTY=LIBERTY, ABC_CONSTR=ALLOC / "abc.constr",
@@ -167,11 +188,13 @@ def point(name, profile_name, output, sta_only, fast_abc):
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top, TM_SDC=str(EXP / "reference.sdc"),
                TM_NETLIST=str(substitutions["NETLIST"]))
     result = dict(profile=profile_name, point=name, parameters=params,
-                  abc="short" if fast_abc else "default", mapping_script_sha256=sha(script_path))
+                  abc="short" if short_abc else "default", mapping_script_sha256=sha(script_path))
     try:
         if not sta_only:
             run(["yosys", "-Q", "-T", "-s", str(script_path)], path, "yosys", 1800)
         result["mapping"] = mapped_measurements(path, top)
+        if result["mapping"]["flops"] != expected_flops(top, params):
+            raise ValueError("Mapped storage or consumer state count differs from design")
         result["netlist_sha256"] = sha(substitutions["NETLIST"])
         data = timing(run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, "sta", 300, env))
         if data["registers"] != result["mapping"]["flops"] or data["outputs"] != sum(result["mapping"]["outputs"].values()):
