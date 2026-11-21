@@ -92,7 +92,8 @@ module connected_control_tb #(
         edge_count++;
     endtask
 
-    task automatic reset_fixture(input bit dynamic_policy = 0, wait_policy = 0);
+    task automatic reset_fixture(input bit dynamic_policy = 0, wait_policy = 0, strict = 0,
+                                 input int shaping = 0);
         run_enable = 0;
         token_start = 0;
         rst_n = 0;
@@ -121,7 +122,12 @@ module connected_control_tb #(
         port_bucket_enable = '0;
         port_capacity = {P{16'(MAX_BYTES)}};
         port_rate = '0;
+        queue_bucket_enable[0] = shaping[0];
+        port_bucket_enable[0] = shaping[1];
+        queue_rate[0] = 20'h04000;
+        port_rate[0] = 20'h04000;
         scheduler_mode = {P{2'd1}};
+        if (strict) scheduler_mode[0] = 2'd2;
         strict_class = '0;
         dynamic_mode = dynamic_policy;
         wait_mode = wait_policy;
@@ -134,6 +140,11 @@ module connected_control_tb #(
         token_start = 1;
         tick();
         token_start = 0;
+    endtask
+
+    task automatic await_first;
+        for (int i = 0; i < 20 && !tx_valid[0]; i++) tick();
+        assert (tx_valid[0]) else $fatal(1, "first beat trigger absent");
     endtask
 
     task automatic header(input int ingress, queue_id, bytes);
@@ -330,6 +341,126 @@ module connected_control_tb #(
         $display("malformed first service shares release, zero-cell cleanup edge=%0d", edge_count-1);
     endtask
 
+    task automatic cached_collision(input int depth);
+        reset_fixture();
+        reserve_and_write(0, 0, 192);
+        await_first();
+        for (int i = 0; i < depth; i++) reserve_and_write(1, 1, 60+i);
+        header(1, 1, 63);
+        tick();
+        assert (rx_grant == P'(2) && rx_desc[1] == D'(depth+1));
+        header_valid = '0;
+        sink_ready = P'(1);
+        repeat (7) begin
+            tick();
+            assert (sampled_transfer == P'(1) && bound == 0);
+        end
+        staged_cell = P'(2);
+        tick();
+        assert (sampled_transfer == P'(1) && sampled_write && bound == 0);
+        sink_ready = '0;
+        staged_cell = '0;
+        tick();
+        assert (sampled_publish && sampled_publication == D'(depth+1));
+        assert (bound == (depth == 0 ? '0 : P'(1)));
+        if (depth > 0) assert (bound_desc[0] == D'(1) && bound_info[0][15:0] == 16'd60);
+        assert (active[1] && dut.heads.head[1] == D'(depth == 2 ? 2 : depth+1) &&
+                dut.heads.cached[1][15:0] == (depth == 2 ? 16'd61 : 16'd63));
+        if (depth == 0) begin
+            tick();
+            assert (bound == P'(1) && bound_desc[0] == D'(1));
+        end
+        $display("cached collision old_depth=%0d edge=%0d next_head=%0d",
+                 depth, edge_count-1, dut.heads.head[1]);
+    endtask
+
+    task automatic strict_collision(input bit publish_on_bind);
+        reset_fixture(0, 0, 1);
+        reserve_and_write(0, 0, 192);
+        await_first();
+        reserve_and_write(1, 1, 60);
+        header(1, 0, 61);
+        tick();
+        assert (rx_grant == P'(2) && rx_desc[1] == D'(2));
+        header_valid = '0;
+        sink_ready = P'(1);
+        repeat (6) begin
+            tick();
+            assert (sampled_transfer == P'(1) && bound == 0);
+        end
+        staged_cell = publish_on_bind ? '0 : P'(2);
+        tick();
+        assert (sampled_transfer == P'(1) && bound == 0);
+        staged_cell = publish_on_bind ? P'(2) : '0;
+        tick();
+        assert (sampled_transfer == P'(1) && bound == 0 && sampled_publish == !publish_on_bind);
+        sink_ready = '0;
+        staged_cell = '0;
+        tick();
+        assert (sampled_publish == publish_on_bind && bound == P'(1) &&
+                bound_desc[0] == D'(publish_on_bind ? 1 : 2));
+        tick();
+        assert (bound == 0 && dut.frame_desc[0][1] == D'(publish_on_bind ? 1 : 2));
+        $display("strict publish_on_bind=%0d bound=%0d edge=%0d",
+                 publish_on_bind, dut.frame_desc[0][1], edge_count-2);
+    endtask
+
+    task automatic full_credit;
+        reset_fixture();
+        reserve_and_write(0, 0, P == 4 ? 513 : 129);
+        await_first();
+        if (P == 2) reserve_and_write(1, 1, 192);
+        sink_ready = P'(1);
+        repeat (7) begin
+            tick();
+            assert (sampled_transfer == P'(1) && !sampled_cells[0]);
+        end
+        sink_ready = '0;
+        reserve_and_write(1, 4, 60);
+        for (int i = 0; i < 30 && !bound[1]; i++) tick();
+        assert (occupied[0] == 6 && bound[1] && tx_valid[0]);
+        sink_ready = P'(1);
+        tick();
+        assert (sampled_cells[0] && !sampled_descs[0] && sampled_issue &&
+                sampled_issue_port == B'(1) && occupied[0] == 5);
+        $display("full old credit=6 retire+other issue edge=%0d merged_credit=%0d", edge_count-1, occupied[0]);
+        tick();
+        if (P == 4) assert (sampled_issue && sampled_issue_port == '0);
+    endtask
+
+    function automatic logic [31:0] limiting_balance(input int shaping);
+        return shaping[0] ? dut.heads.registered_tokens.queue_state[0].balance
+                          : dut.heads.registered_tokens.port_state[0].balance;
+    endfunction
+
+    task automatic token_neighbor(input int shaping);
+        localparam logic [31:0] BELOW = 32'h0040_c000;
+        localparam logic [31:0] EXACT = 32'h0041_0000;
+        reset_fixture(0, 0, 1, shaping);
+        reserve_and_write(0, 0, MAX_BYTES);
+        await_first();
+        reserve_and_write(1, 0, 65);
+        sink_ready = P'(1);
+        repeat ((MAX_BYTES+7)/8-16) begin
+            tick();
+            assert (sampled_transfer == P'(1) && bound == 0);
+        end
+        sink_ready = '0;
+        for (int i = 0; i < 260 && limiting_balance(shaping) < BELOW; i++) begin
+            tick();
+            assert (bound == 0);
+        end
+        assert (limiting_balance(shaping) == BELOW && active[0]);
+        tick();
+        assert (bound == 0 && limiting_balance(shaping) == EXACT && active[0]);
+        tick();
+        assert (bound == P'(1) && bound_desc[0] == D'(1) && limiting_balance(shaping) == 32'h4000);
+        tick();
+        assert (bound == 0 && limiting_balance(shaping) == 32'h8000);
+        $display("reachable token threshold enabled=%0d edge=%0d pre=64.75 next=65 debit=65",
+                 shaping, edge_count-3);
+    endtask
+
     initial begin
         handoff_and_reset();
         scarcity(0);
@@ -340,6 +471,13 @@ module connected_control_tb #(
         returns(0);
         returns(1);
         malformed_and_release();
+        cached_collision(0);
+        cached_collision(1);
+        cached_collision(2);
+        strict_collision(0);
+        strict_collision(1);
+        full_credit();
+        for (int enabled_buckets = 1; enabled_buckets <= 3; enabled_buckets++) token_neighbor(enabled_buckets);
         $display("PASS connected control P=%0d L=%0d", P, L);
         $finish;
     end

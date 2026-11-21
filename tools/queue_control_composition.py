@@ -184,15 +184,16 @@ def sta(path, top, stem, sdc, extra=None):
 
 
 def focused(path, top, groups, design, mapping):
-    extra = {"TM_COMPOSED_GROUPS": " ".join(groups)}
     counts = {}
+    pin_lists = []
     for name, (starts, inputs, ends) in groups.items():
         start_pins = register_pins(design, starts, "CK")
         end_pins = register_pins(design, ends, "D")
-        extra["TM_FROM_" + name] = " ".join(start_pins)
-        extra["TM_INPUT_" + name] = " ".join(inputs)
-        extra["TM_TO_" + name] = " ".join(end_pins)
+        pin_lists.append("|".join((name, " ".join(start_pins), " ".join(inputs), " ".join(end_pins))))
         counts[name] = dict(start_registers=len(start_pins), end_registers=len(end_pins), input_patterns=inputs)
+    pin_file = path / "composed-endpoints.txt"
+    pin_file.write_text("\n".join(pin_lists) + "\n")
+    extra = {"TM_COMPOSED_GROUPS": str(pin_file)}
     raw, result = sta(path, top, "composed", EXP / "reference.sdc", extra)
     focused_paths = group_paths(raw, groups)
     if result["registers"] != mapping["flops"] or result["outputs"] != sum(mapping["outputs"].values()):

@@ -6,16 +6,18 @@ rename exit {}
 rename tm_exit exit
 
 if {[info exists ::env(TM_COMPOSED_GROUPS)]} {
-    foreach group $::env(TM_COMPOSED_GROUPS) {
-        set from_pins [get_pins -quiet $::env(TM_FROM_${group})]
-        set from_ports [get_ports -quiet $::env(TM_INPUT_${group})]
-        set to_pins [get_pins -quiet $::env(TM_TO_${group})]
+    set group_file [open $::env(TM_COMPOSED_GROUPS) r]
+    foreach record [split [string trimright [read $group_file] "\n"] "\n"] {
+        lassign [split $record "|"] group start_pins inputs end_pins
+        set from_pins [get_pins -quiet $start_pins]
+        set from_ports [get_ports -quiet $inputs]
+        set to_pins [get_pins -quiet $end_pins]
         set from [concat $from_pins $from_ports]
         if {[llength $from] == 0 || [llength $to_pins] == 0} {
             error "Empty endpoint selection for $group"
         }
-        if {[llength $from_pins] != [llength $::env(TM_FROM_${group})] ||
-            [llength $to_pins] != [llength $::env(TM_TO_${group})]} {
+        if {[llength $from_pins] != [llength $start_pins] ||
+            [llength $to_pins] != [llength $end_pins]} {
             error "Missing mapped pin for $group"
         }
         foreach delay {max min} {
@@ -26,6 +28,7 @@ if {[info exists ::env(TM_COMPOSED_GROUPS)]} {
             puts "TM_GROUP_${group}_${delay}_END"
         }
     }
+    close $group_file
 }
 puts TM_COMPOSED_DONE
 exit
