@@ -199,7 +199,8 @@ def main():
     if args.jobs < 1:
         parser.error("--jobs must be positive")
     if args.sta_only and args.fast_abc:
-        parser.error("run fast mapping in its own output directory")    if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
+        parser.error("run fast mapping in its own output directory")
+    if not all(Path(shutil.which(t) or "/").is_relative_to(ROOT / ".tools/install") for t in ("yosys", "sta")):
         parser.error("activate the validated repository toolchain")
     lock = ROOT / "tools/dependencies.json"
     if sha(LIBERTY) != json.loads(lock.read_text())["liberty"]["sha256"]:
