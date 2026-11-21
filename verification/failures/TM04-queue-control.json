@@ -1,0 +1,69 @@
+{
+  "scope": "First unexpected failures in the isolated queue/control study. Replays target the listed clean executable revision. Raw captured logs and traces are retained in .build/queue-control.",
+  "failures": [
+    {
+      "id": "small-independent-lossless-assertion",
+      "revision": "075e821e75ec95fcb7be0baffae7e971a1533755",
+      "command": "python3 tools/queue_control.py --profile small --variant direct --json .build/queue-control/small-direct.json",
+      "variants": ["direct", "cached", "registered-request"],
+      "first_symptom": "All four L=1 balanced windows passed, then the supplemental small DROP replay failed the lossless assertion at queue_control.py:739.",
+      "disposition": "verification-defect",
+      "repair": "Apply conservation to all stress replays, and retain real capacity rejections and idle edges in the diagnostic rows.",
+      "artifact": ".build/queue-control/first-small-diagnostic"
+    },
+    {
+      "id": "small-registered-request-mixture",
+      "revision": "71a7afbc5e380471cec5de8574706d62486b7ef8",
+      "command": "python3 tools/queue_control.py --profile small --variant registered-request --json .build/queue-control/final-small-registered-request.json",
+      "first_symptom": "An unconditional lossless assertion ended the run at L=2 after the first three balanced lengths. The L=2 mixed workload drops frames under the registered request timing.",
+      "disposition": "verification-defect",
+      "repair": "Keep the exact beat-rate and zero-loss criterion in --expect-gate. Record the adverse performance result with complete drain accounting and continue the remaining cases.",
+      "artifact": ".build/queue-control/first-small-registered-mix"
+    },
+    {
+      "id": "wait-record-absent-descriptor",
+      "revision": "e52f0522d1e1c6d6c1cc56f18dbcdd04f82e46cd",
+      "command": "python3 tools/queue_control_directed.py --json .build/queue-control/directed-first.json",
+      "first_symptom": "KeyError 'desc' on the first primary/direct/L1 descriptor-WAIT row, repeated on the same row at all profile, variant and latency combinations.",
+      "disposition": "verification-defect",
+      "repair": "Read absent fields as absent on WAIT observations and still require exact old-grant and returned-owner identities.",
+      "artifact": ".build/queue-control/directed-first.json"
+    },
+    {
+      "id": "sta-summary-no-text-check-names",
+      "revision": "71a7afbc5e380471cec5de8574706d62486b7ef8",
+      "command": "python3 tools/queue_control_sta.py --output .build/queue-control/small-map --profile small",
+      "first_symptom": "The mapper and STA reports completed, but the collector rejected valid paths because OpenSTA printed the asynchronous summary by path group without the word recovery.",
+      "disposition": "verification-defect",
+      "repair": "Validate the exact release path startpoint and explicit recovery/removal endpoint type in the detailed path sections.",
+      "artifacts": [".build/queue-control/small-map", ".build/queue-control/mapped-first", ".build/queue-control/admission-map"]
+    },
+    {
+      "id": "reset-write-gate-setup",
+      "revision": "d72c863b119418954e87b8a1b988e880fdbd39fe",
+      "command": "python3 tools/queue_control_sta.py --output .build/queue-control/sta-final --profile small --point cell --sta-only",
+      "first_symptom": "The fastest-to-report reset-origin max path was synchronous reset-to-write gating. Treating it as recovery rejected the measurement intake.",
+      "disposition": "verification-defect",
+      "repair": "Select the asynchronous path group explicitly for recovery/removal. Report reset-to-write setup/hold separately and intersect the arrival envelopes.",
+      "artifact": ".build/queue-control/first-cell-reset-group"
+    },
+    {
+      "id": "admission-bench-width-diagnostics",
+      "revision": "de620c2d404a45b23c206fb2a4fa0029668057fb",
+      "command": "verilator --binary --timing --assert -j 2 --top-module admission_tb --Mdir .build/queue-control/rtl-primary -GP=4 -GN_CELL=1024 -GN_DESC=256 -GMAX_BYTES=1536 experiments/queue-control/admission.sv experiments/queue-control/admission_tb.sv",
+      "first_symptom": "Verilator rejected six width-expansion/truncation diagnostics. The first was a 12-bit excess compared against the 25-bit product.",
+      "disposition": "verification-defect",
+      "repair": "Express the unsigned zero extension and one-bit mask predicates directly. The rebuilt scope passes with no width-warning suppression.",
+      "artifact": ".build/queue-control/first-rtl-diagnostics"
+    },
+    {
+      "id": "abc-sensitivity-cli-line-join",
+      "revision": "ee076ab8862503f0faea4270af5bdddf4b46f605",
+      "command": "python3 tools/queue_control_sta.py --output .build/queue-control/fast-map --fast-abc --jobs 1",
+      "first_symptom": "Python SyntaxError at the joined parser.error and tool validation lines before tool execution.",
+      "disposition": "verification-defect",
+      "repair": "Separate the option checks. Python compilation passed and the sensitivity run used the repaired runner.",
+      "artifact": ".build/queue-control/first-fast-start"
+    }
+  ]
+}
