@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 
-from queue_control_sta import EXP, LIBERTY, path_record, run
+from queue_control_sta import EXP, LIBERTY, path_record, run, timing
 
 
 def pins(design, names, endpoint):
@@ -32,6 +32,7 @@ def measure(path, boundary):
                TM_FOCUS_PORTS=" ".join(inputs), TM_FOCUS_FLOPS=" ".join(pins(design, source_nets, "CK")),
                TM_FOCUS_TO=" ".join(pins(design, destination, "D")))
     raw = run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, boundary, 900, env)
+    timing(raw)
     block = raw.split("TM_FOCUS_BEGIN", 1)[1].split("TM_FOCUS_END", 1)[0]
     result = path_record(block)
     names = {}
