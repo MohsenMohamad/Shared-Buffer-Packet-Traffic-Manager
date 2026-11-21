@@ -24,11 +24,11 @@ module admission_tb #(
         logic [Q-1:0][K-1:0] held;
         logic error_flag;
     } result_t;
-    result_t result [4];
+    result_t result [5];
     bit [N_DESC-1:0] live;
     int owner_queue [N_DESC], owner_credit [N_DESC];
 
-    for (genvar version = 0; version < 4; version++) begin : implementation
+    for (genvar version = 0; version < 5; version++) begin : implementation
         admission #(.P(P), .N_CELL(N_CELL), .N_DESC(N_DESC), .MAX_BYTES(MAX_BYTES),
                     .LOOKAHEAD(version)) dut (
             .clk, .rst_n, .dynamic_mode, .wait_mode, .header_valid, .bad_first_beat,
@@ -97,9 +97,9 @@ module admission_tb #(
         logic [P-1:0] old_valid;
         logic [P:0] old_return, old_release;
         clock_edge();
-        if (result[0] !== result[1] || result[0] !== result[2])
-            $fatal(1, "Prefix divergence at %0t: serial=%h lookahead=%h factored=%h",
-                   $time, result[0], result[1], result[2]);
+        if (result[0] !== result[1] || result[0] !== result[2] || result[0] !== result[4])
+            $fatal(1, "Prefix divergence at %0t: serial=%h lookahead=%h factored=%h balanced=%h",
+                   $time, result[0], result[1], result[2], result[4]);
         if (result[0].error_flag)
             $fatal(1, "Legal stimulus raised accounting error at %0t", $time);
         if (rst_n) reconcile();
@@ -272,7 +272,7 @@ module admission_tb #(
         mixed_edges(0, 1);
         mixed_edges(1, 0);
         mixed_edges(1, 1);
-        $display("PASS %0dx%0d serial/lookahead/factored and staged prefix, ownership, alpha and mixed edges", P, P);
+        $display("PASS %0dx%0d serial/lookahead/factored, balanced and staged prefix, ownership, alpha and mixed edges", P, P);
         $finish;
     end
 endmodule

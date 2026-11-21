@@ -25,6 +25,7 @@ POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "admission-lookahead": ("admission", {"LOOKAHEAD": 1}),
           "admission-factored": ("admission", {"LOOKAHEAD": 2}),
           "admission-staged": ("admission", {"LOOKAHEAD": 3}),
+          "admission-balanced": ("admission", {"LOOKAHEAD": 4}),
           "admission-rx": ("admission", {"LOOKAHEAD": 2, "RX_FRAMING": 1}),
           "cell": ("cell_control", {}),
           "cell-cleanup-feedback": ("cell_control", {"ABORT_FEEDBACK": 1})}
@@ -186,9 +187,14 @@ def expected_flops(top, params):
     if top == "cell_control":
         cleanup_state = ports * (1 + 5 + c + d) if params.get("ABORT_FEEDBACK") else 0
         return cells * (1 + c + d) + 6 * b + 4 * c + d + 5 + 1 + cleanup_state
+    admission = desc + k * (queues + 1) + b + ports * (4 + 3 + d + q + k) + 1
     if params["LOOKAHEAD"] == 3:
-        return None  # The retained sample fields vary with constant folding.
-    return desc + k * (queues + 1) + b + ports * (4 + 3 + d + q + k) + 1
+        # Sampled header count is at most ceil(65535/64) truncated to the
+        # fixture width. Header errors occupy two bits and alpha is per lane.
+        sample_fields = ports * (q + min(k + 1, 11) + 1 + 2 + d + 1 + 1 + 13)
+        sample_subsets = ((1 << ports) - 1) * (4 + 2 * (k + 1))
+        return admission + 1 + sample_fields + sample_subsets
+    return admission
 
 
 def point(name, profile_name, output, sta_only, short_abc):

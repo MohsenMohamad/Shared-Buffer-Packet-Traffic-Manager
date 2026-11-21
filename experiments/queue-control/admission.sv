@@ -28,6 +28,7 @@ module admission #(
 );
     localparam bit FACTORED = LOOKAHEAD >= 2;
     localparam bit STAGED = LOOKAHEAD == 3;
+    localparam bit BALANCED = LOOKAHEAD == 4;
     localparam int COUNT = $clog2((MAX_BYTES + 63) / 64 + 1);
     localparam int SUM = K + $clog2(Q+LANES+1);
     localparam int GROUP = N_DESC >= 16 ? 16 : N_DESC;
@@ -171,17 +172,39 @@ module admission #(
         assign decision_id = ranked_id;
     end
 
-    always_comb begin : inputs_and_minima
-        logic [SUM-1:0] min_sum, protected_sum;
-        min_sum = '0;
-        protected_sum = '0;
-        for (int j = 0; j < Q; j++) begin
-            min_sum += SUM'(minimum[j]);
-            if (minimum[j] > held[j])
-                protected_sum += SUM'(minimum[j]) - SUM'(held[j]);
+    if (BALANCED) begin : parallel_protection
+        // Form all positive deficits before adding so a queue comparison does
+        // not put a mux between successive adders. The legal sum fits K bits.
+        wire [K:0] protection [2*Q];
+        wire [K:0] minima [2*Q];
+        for (genvar j = 0; j < Q; j++) begin : leaves
+            assign protection[Q+j] = minimum[j] > held[j] ? (K+1)'(minimum[j] - held[j]) : '0;
+            assign minima[Q+j] = (K+1)'(minimum[j]);
         end
-        old_protected = (K+1)'(protected_sum);
-        full_minimum = (K+1)'(min_sum);
+        for (genvar j = 1; j < Q; j++) begin : branches
+            assign protection[j] = protection[2*j] + protection[2*j+1];
+            assign minima[j] = minima[2*j] + minima[2*j+1];
+        end
+        assign protection[0] = '0;
+        assign minima[0] = '0;
+        assign old_protected = protection[1];
+        assign full_minimum = minima[1];
+    end else begin : reference_protection
+        always_comb begin
+            logic [SUM-1:0] min_sum, protected_sum;
+            min_sum = '0;
+            protected_sum = '0;
+            for (int j = 0; j < Q; j++) begin
+                min_sum += SUM'(minimum[j]);
+                if (minimum[j] > held[j])
+                    protected_sum += SUM'(minimum[j]) - SUM'(held[j]);
+            end
+            old_protected = (K+1)'(protected_sum);
+            full_minimum = (K+1)'(min_sum);
+        end
+    end
+
+    always_comb begin : rotate_inputs
         for (int lane = 0; lane < P; lane++) begin
             automatic logic [B-1:0] port = cursor + B'(lane);
             lane_q[lane] = {route[port][B-1:0], raw_class[port][1:0]};
@@ -386,17 +409,45 @@ module admission #(
                 end
             end
         end
-        if (FACTORED) begin
-            credit_wide = SUM'(credit);
+        if (BALANCED) begin
+            logic [SUM-1:0] granted_cells, released_cells;
+            granted_cells = '0;
+            released_cells = '0;
             for (int lane = 0; lane < P; lane++)
-                credit_wide -= accepted_lanes[lane] ? SUM'(decision_n[lane]) : '0;
+                granted_cells += accepted_lanes[lane] ? SUM'(decision_n[lane]) : '0;
+            for (int lane = 0; lane < LANES; lane++)
+                released_cells += credit_release[lane] ? SUM'(release_count[lane]) : '0;
+            credit_wide = SUM'(credit) + released_cells - granted_cells;
+            for (int j = 0; j < Q; j++) begin
+                logic [SUM-1:0] queue_grants, queue_releases;
+                queue_grants = '0;
+                queue_releases = '0;
+                for (int i = 0; i < P; i++)
+                    queue_grants += grant[i] && qid[i] == QB'(j) ? SUM'(reserved[i]) : '0;
+                for (int i = 0; i < LANES; i++)
+                    queue_releases += credit_release[i] && release_qid[i] == QB'(j)
+                                       ? SUM'(release_count[i]) : '0;
+                held_wide[j] = SUM'(held[j]) + queue_grants - queue_releases;
+            end
         end else begin
-            credit_wide = SUM'(u);
-        end
-        for (int j = 0; j < Q; j++) begin
-            held_wide[j] = SUM'(held[j]);
-            for (int i = 0; i < P; i++)
-                if (grant[i] && qid[i] == QB'(j)) held_wide[j] += SUM'(reserved[i]);
+            if (FACTORED) begin
+                credit_wide = SUM'(credit);
+                for (int lane = 0; lane < P; lane++)
+                    credit_wide -= accepted_lanes[lane] ? SUM'(decision_n[lane]) : '0;
+            end else begin
+                credit_wide = SUM'(u);
+            end
+            for (int j = 0; j < Q; j++) begin
+                held_wide[j] = SUM'(held[j]);
+                for (int i = 0; i < P; i++)
+                    if (grant[i] && qid[i] == QB'(j)) held_wide[j] += SUM'(reserved[i]);
+            end
+            for (int lane = 0; lane < LANES; lane++) begin
+                if (credit_release[lane]) begin
+                    credit_wide += SUM'(release_count[lane]);
+                    held_wide[release_qid[lane]] -= SUM'(release_count[lane]);
+                end
+            end
         end
         bad_return = 1'b0;
         returned_mask = '0;
@@ -405,10 +456,6 @@ module admission #(
                 if (free_desc[return_id[lane]] || returned_mask[return_id[lane]])
                     bad_return = 1'b1;
                 returned_mask[return_id[lane]] = 1'b1;
-            end
-            if (credit_release[lane]) begin
-                credit_wide += SUM'(release_count[lane]);
-                held_wide[release_qid[lane]] -= SUM'(release_count[lane]);
             end
         end
         credit_next = K'(credit_wide);
