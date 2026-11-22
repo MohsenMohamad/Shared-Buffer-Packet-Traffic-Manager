@@ -362,13 +362,16 @@ def formal_campaign(run, args, profile):
                        "pool_candidate_formal/c:check_pool.c_* %u pool_candidate_formal/c:c_full_cell_exhaustion %d")
         files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
         config = result.path / "pool.sby"
-        engine = "abc pdr" if mode == "prove" and caller == "ledger" else "smtbmc z3"
+        proof_engine = args.proof_engine or ("pdr" if caller == "ledger" else "induction")
+        engine = "abc pdr" if mode == "prove" and proof_engine == "pdr" else "smtbmc z3"
         sby_mode = "cover" if mode == "exhaustion" else mode
         config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n"
                           f"[engines]\n{engine}\n[script]\n{script}\n[files]\n{files}\n")
         result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
         step = result.execute(["sby", "-f", "-d", result.path / "work", config], timeout=args.timeout)
         status, reason = completed(step, "DONE (PASS")
+        if status == "TOOL_ERROR" and "DONE (UNKNOWN" in output(step):
+            status, reason = "INCONCLUSIVE", "Engine did not establish the induction step"
         if status == "TOOL_ERROR" and "DONE (FAIL" in output(step):
             status = "INCONCLUSIVE" if sby_mode == "cover" else "FAIL"
             reason = "Required cover not reached within depth" if sby_mode == "cover" else "Formal counterexample"
@@ -384,6 +387,7 @@ def main(argv):
     parser.add_argument("--candidate-revision")
     parser.add_argument("--mutations", action="store_true")
     parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover", "exhaustion"))
+    parser.add_argument("--proof-engine", choices=("pdr", "induction"))
     parser.add_argument("--formal-caller", choices=("aggregate", "ledger"))
     parser.add_argument("--depth", type=int, choices=range(2, 65), metavar="2..64")
     parser.add_argument("--case", help="Run one named replay case for diagnosis")
@@ -409,6 +413,8 @@ def main(argv):
         parser.error("--mutations requires the full small candidate selection")
     if formal and (args.seed or args.case):
         parser.error("Formal selection uses --formal-mode and --depth")
+    if args.proof_engine and (not formal or args.formal_mode != "prove"):
+        parser.error("--proof-engine requires --formal-mode prove")
     if not formal and (args.formal_mode or args.formal_caller or args.depth):
         parser.error("Formal options require the formal target")
     source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate or formal else SOURCES

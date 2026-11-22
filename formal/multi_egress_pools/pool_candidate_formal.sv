@@ -267,20 +267,38 @@ module pool_candidate_formal #(
 `ifdef POOL_EXHAUSTION_COVER
     // Drive a legal, full-capacity setup for the deep small-profile cover.
     // Write IDs and owners stay symbolic and obey the ledger.
+    localparam int CELLS_PER_FRAME = N_CELL / N_DESC;
     int unsigned fill_edge = 0;
-    always_ff @(posedge clk)
+    desc_id_t [N_DESC-1:0] fill_owners;
+    cell_id_t first_cell;
+    always_ff @(posedge clk) begin
+        if (past_valid) begin
+            // Start with exactly two sampled reset edges and then stay active.
+            assume(rst_n == (!was_reset || $past(was_reset)));
+        end
         if (rst_n && caller_ready) begin
             fill_edge <= fill_edge + 1;
             assume(!cleanup_present);
             assume(reserve_commit == ((fill_edge < N_DESC/N_RX) ? '1 : '0));
             if (fill_edge < N_DESC/N_RX)
-                for (int lane = 0; lane < N_RX; ++lane)
-                    assume(reserve_cells[lane] == cell_count_t'(N_CELL/N_DESC));
+                for (int lane = 0; lane < N_RX; ++lane) begin
+                    assume(reserve_cells[lane] == cell_count_t'(CELLS_PER_FRAME));
+                    assume(reserve_qid[lane] == qid_t'(lane * N_CLASS));
+                    fill_owners[fill_edge*N_RX+lane] <= grant_desc[lane];
+                end
             assume(write_offer == (fill_edge > 0 && fill_edge <= N_CELL));
-            if (fill_edge <= N_CELL)
-                assume(tx_present == '0);
+            if (fill_edge > 0 && fill_edge <= N_CELL)
+                assume(write_owner == fill_owners[(fill_edge-1)/CELLS_PER_FRAME]);
+            if (fill_edge == 1 && write_accept)
+                first_cell <= write_id;
+            assume(tx_present == (fill_edge == N_CELL+1 ? N_TX'(1) : '0));
+            if (tx_present[0]) begin
+                assume(tx_desc[0] == fill_owners[0] && tx_cell[0] == first_cell);
+                assume(tx_qid[0] == '0 && !tx_final[0]);
+            end
             c_full_cell_exhaustion: cover(free_cells == 0 && |tx_present);
         end
+    end
 `endif
 
     cell_count_t assigned;
