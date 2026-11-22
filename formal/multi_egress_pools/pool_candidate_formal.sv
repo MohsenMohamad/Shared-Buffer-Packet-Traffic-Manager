@@ -396,6 +396,7 @@ module pool_candidate_formal #(
             i_cell_disjoint: assert((live_cell & dut.cells.free_bits) == '0);
             i_desc_disjoint: assert((live_desc & dut.descriptors.free_bits) == '0);
             i_total_credit: assert(live_count_t'(unreserved) + held_total == live_count_t'(N_CELL));
+            i_credit_bounds: assert(unreserved <= free_cells && reserved_free <= free_cells);
         end
 
     always @(posedge clk)
@@ -413,17 +414,27 @@ module pool_candidate_formal #(
         end
 
 `ifndef POOL_ABSTRACT_CALLER
-    live_count_t ledger_reserved;
+    live_count_t ledger_credit, ledger_written, ledger_reserved;
     always_comb begin
+        ledger_credit = '0;
+        ledger_written = '0;
         ledger_reserved = '0;
-        for (int id = 0; id < N_DESC; ++id)
-            if (live_desc[id])
+        for (int id = 0; id < N_DESC; ++id) begin
+            if (live_desc[id]) begin
+                ledger_credit += live_count_t'(credit[id]);
+                ledger_written += live_count_t'(written[id]);
                 ledger_reserved += live_count_t'(credit[id]) - live_count_t'(written[id]);
+            end
+        end
     end
 
     always @(posedge clk)
-        if (past_valid && rst_n && caller_ready)
+        if (past_valid && rst_n && caller_ready) begin
             i_unwritten_credit: assert(ledger_reserved == live_count_t'(reserved_free));
+            i_assigned_total: assert(ledger_written == live_count_t'($countones(live_cell)));
+            i_ledger_held_total: assert(ledger_credit == held_total);
+            i_ledger_credit_total: assert(ledger_credit + live_count_t'(caller_u) == live_count_t'(N_CELL));
+        end
 
     for (genvar q = 0; q < N_Q; ++q) begin : queue_ownership
         live_count_t queue_reservation;
@@ -434,8 +445,10 @@ module pool_candidate_formal #(
                     queue_reservation += live_count_t'(credit[id]);
         end
         always @(posedge clk)
-            if (past_valid && rst_n && caller_ready)
+            if (past_valid && rst_n && caller_ready) begin
                 i_held_is_owner_sum: assert(live_count_t'(held[q]) == queue_reservation);
+                i_queue_credit_bounds: assert(held[q] <= cell_count_t'(N_CELL));
+            end
     end
 
     for (genvar id = 0; id < N_DESC; ++id) begin : descriptor_ownership
