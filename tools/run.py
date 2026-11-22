@@ -344,6 +344,10 @@ def unit(run, args):
 
 
 def main(argv=None):
+    arguments = sys.argv[1:] if argv is None else argv
+    if arguments and arguments[0] in ('multi-egress-pools-preparation', 'multi-egress-pools-candidate'):
+        from multi_egress_pools import main as pool_main
+        return pool_main(arguments)
     parser = ManifestParser(description=__doc__)
     parser.add_argument('action')
     parser.add_argument('--profile', default=None)

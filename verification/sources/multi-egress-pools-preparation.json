@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "sources": [
+    "rtl/include/multi_egress/tm_multi_fixed.sv",
+    "dv/multi_egress_pools/pool_types.sv",
+    "dv/multi_egress_pools/pool_bench.sv"
+  ],
+  "headers": ["rtl/include/multi_egress/tm_multi_types.svh", "dv/multi_egress_pools/pool_random.svh"],
+  "include_dirs": ["rtl/include/multi_egress", "dv/multi_egress_pools"],
+  "scope": "Public multi-egress declarations and independent DV fixtures"
+}
