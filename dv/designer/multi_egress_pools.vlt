@@ -1,0 +1,14 @@
+`verilator_config
+// A pool-only elaboration leaves these specific public constants for other blocks.
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'MIN_FRAME_BYTES'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'RX_CAPTURE_DEPTH'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'RX_STAGING_CELLS'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'RX_DISPOSITION_DEPTH'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'TX_PREFETCH_CELLS'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'TX_FRAME_SLOTS'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'BIND_REMAINING_BEATS'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'MIN_QUANTUM'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'MAX_ALPHA'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'ALPHA_FRACTION_BITS'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'RATE_FRACTION_BITS'*"
+lint_off -rule UNUSEDPARAM -file "*/tm_multi_fixed.sv" -match "*'MAX_RATE'*"
