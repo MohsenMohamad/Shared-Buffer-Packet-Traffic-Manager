@@ -356,7 +356,8 @@ package multi_egress_pool_bench;
             end
             reset_active = !sample.reset_n;
             batch.epoch += epoch_delta;
-            sample.origin = randomized ? 1 : 0;
+            if (randomized)
+                sample.origin = 1;
             translate_admissions(batch, choice, randomized);
             translate_receive(batch, choice, randomized);
             translate_tx(batch, choice, randomized);
@@ -635,7 +636,7 @@ package multi_egress_pool_bench;
                 "full-grant-different-q", "abort-accounting", "final-cleanup", "active-reset",
                 "identity-and-drain", "crosses"};
 `ifdef POOL_CANDIDATE
-            positives = {positives, "sparse-grants", "cell-next-edge", "caller-guards"};
+            positives = {"caller-guards", "sparse-grants", "cell-next-edge", positives};
 `endif
             phase.raise_objection(this);
             if (!$value$plusargs("FIXTURES=%s", fixtures) || !$value$plusargs("EVIDENCE_DIR=%s", evidence_dir))

@@ -5,6 +5,8 @@
         desc_id_t descriptors[desc_id_t];
         cell_id_t cells[cell_id_t];
         owner_t descriptor_owners[desc_id_t];
+        desc_id_t symbolic_descriptors[desc_id_t];
+        cell_id_t symbolic_cells[cell_id_t];
         owner_t cell_owners[cell_id_t];
         int remaining_cells[desc_id_t];
         admission_t lane_intent[N_RX];
@@ -81,6 +83,8 @@
                 descriptors.delete();
                 cells.delete();
                 descriptor_owners.delete();
+                symbolic_descriptors.delete();
+                symbolic_cells.delete();
                 cell_owners.delete();
                 remaining_cells.delete();
                 return;
@@ -100,7 +104,9 @@
             for (int lane = 0; lane < N_TX; ++lane) begin
                 egress_service_t service = batch.egress_service[lane];
                 owner_t owner;
-                if (!service.present || suppress_probe(service, int'(intent.origin), batch.epoch))
+                if (!service.present)
+                    continue;
+                if (suppress_probe(service, int'(intent.origin), batch.epoch))
                     continue;
                 owner = resolve_owner(service.owner);
                 pins.tx_present[lane] = service.cell_last;
@@ -134,6 +140,7 @@
                 item.sample.batch.admission[rank++] = grant;
                 owner = '{grant.frame, grant.qid, grant.desc, grant.metadata.tag_value};
                 descriptors[lane_intent[lane].desc] = grant.desc;
+                symbolic_descriptors[grant.desc] = lane_intent[lane].desc;
                 descriptor_owners[grant.desc] = owner;
                 remaining_cells[grant.desc] = 0;
             end
@@ -174,16 +181,20 @@
             end
 
             for (int lane = 0; lane <= N_TX; ++lane) begin
-                if (batch.cell_return[lane].present) begin
-                    cells.delete(batch.cell_return[lane].address);
-                    cell_owners.delete(item.sample.batch.cell_return[lane].address);
-                    if (item.sample.batch.cell_return[lane].present)
-                        --remaining_cells[item.sample.batch.cell_return[lane].owner.desc];
+                cell_id_t address = item.sample.batch.cell_return[lane].address;
+                desc_id_t descriptor = item.sample.batch.descriptor_return[lane].owner.desc;
+                if (item.sample.batch.cell_return[lane].present && symbolic_cells.exists(address) != 0) begin
+                    cells.delete(symbolic_cells[address]);
+                    symbolic_cells.delete(address);
+                    --remaining_cells[cell_owners[address].desc];
+                    cell_owners.delete(address);
                 end
-                if (batch.descriptor_return[lane].present) begin
-                    descriptors.delete(batch.descriptor_return[lane].owner.desc);
-                    descriptor_owners.delete(item.sample.batch.descriptor_return[lane].owner.desc);
-                    remaining_cells.delete(item.sample.batch.descriptor_return[lane].owner.desc);
+                if (item.sample.batch.descriptor_return[lane].present &&
+                    symbolic_descriptors.exists(descriptor) != 0) begin
+                    descriptors.delete(symbolic_descriptors[descriptor]);
+                    symbolic_descriptors.delete(descriptor);
+                    descriptor_owners.delete(descriptor);
+                    remaining_cells.delete(descriptor);
                 end
             end
         endfunction
@@ -241,6 +252,7 @@
             observe_grants(item);
             if (pins.write_accept && batch.cell_write.present) begin
                 cells[batch.cell_write.address] = pins.write_id;
+                symbolic_cells[pins.write_id] = batch.cell_write.address;
                 cell_owners[pins.write_id] = item.sample.batch.cell_write.owner;
                 ++remaining_cells[item.sample.batch.cell_write.owner.desc];
             end
