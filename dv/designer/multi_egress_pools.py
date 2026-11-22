@@ -20,7 +20,8 @@ HERE = "dv/designer"
 BENCH = [f"{HERE}/{name}" for name in (
     "tm_pool_smoke_types.sv", "tm_pool_smoke_pkg.sv", "tm_pool_smoke_tb.sv",
 )]
-HEADERS = [f"{HERE}/{name}" for name in ("tm_pool_smoke_scoreboard.svh", "tm_pool_smoke_sequences.svh")]
+HEADERS = [f"{HERE}/tm_pool_smoke_{name}.svh"
+           for name in ("model", "coverage", "scoreboard", "sequences")]
 WAIVERS = f"{HERE}/multi_egress_pools.vlt"
 TOP = "tm_resource_pools"
 SMOKE_TOP = "tm_pool_smoke_tb"

@@ -106,6 +106,8 @@ package tm_pool_smoke_pkg;
         endtask
     endclass
 
+    `include "tm_pool_smoke_model.svh"
+    `include "tm_pool_smoke_coverage.svh"
     `include "tm_pool_smoke_scoreboard.svh"
     `include "tm_pool_smoke_sequences.svh"
 endpackage
