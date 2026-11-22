@@ -67,7 +67,10 @@ module pool_candidate_formal #(
     cell_count_t caller_u;
     logic [N_TX:0] cell_owner_matches, desc_owner_matches;
     logic write_owner_matches, cleanup_owner_matches;
-    int prefix_u, next_u;
+    localparam int PREFIX_W = 1 + $clog2(
+        (N_RX + N_TX + 2) * (2**CELL_COUNT_W - 1) + 1);
+    typedef logic signed [PREFIX_W-1:0] credit_delta_t;
+    credit_delta_t prefix_u, next_u;
 
 `ifdef POOL_ABSTRACT_CALLER
     cell_count_t [N_Q-1:0] caller_held;
@@ -149,13 +152,13 @@ module pool_candidate_formal #(
 `endif
 
     always_comb begin
-        prefix_u = int'(caller_u);
+        prefix_u = credit_delta_t'(caller_u);
         for (int lane = 0; lane < N_RX; ++lane)
             if (reserve_commit[lane])
-                prefix_u -= int'(reserve_cells[lane]);
-        next_u = prefix_u + $countones(tx_present);
+                prefix_u -= credit_delta_t'(reserve_cells[lane]);
+        next_u = prefix_u + credit_delta_t'($countones(tx_present));
         if (desc_events[N_TX])
-            next_u += int'(cleanup_released);
+            next_u += credit_delta_t'(cleanup_released);
     end
 
 `ifndef POOL_ABSTRACT_CALLER
@@ -386,7 +389,8 @@ module pool_candidate_formal #(
         if (past_valid && rst_n && caller_ready) begin
             i_cell_free_count: assert($countones(dut.cells.free_bits) == int'(free_cells));
             i_desc_free_count: assert($countones(dut.descriptors.free_bits) == int'(free_desc));
-            i_reserved_partition: assert(int'(free_cells) == int'(unreserved) + int'(reserved_free));
+            i_reserved_partition: assert(live_count_t'(free_cells) ==
+                                         live_count_t'(unreserved) + live_count_t'(reserved_free));
             i_cell_capacity: assert($countones(live_cell) + int'(free_cells) == N_CELL);
             i_desc_capacity: assert($countones(live_desc) + int'(free_desc) == N_DESC);
             i_cell_disjoint: assert((live_cell & dut.cells.free_bits) == '0);
