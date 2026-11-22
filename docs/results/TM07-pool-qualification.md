@@ -62,8 +62,9 @@ rejected missing, mismatched and modified transitive candidate inputs.
 The first small production campaign passed the 51 descriptor and 38 cell
 crosses, all eight random seeds and the seed-17 replay. It also reached
 41 descriptor and 25 cell bins in the random subset. Observed activity
-was 4,106–4,149 edges per seed. The native code report covered 59/59
-instrumented line points across the five pool modules. Code points
+was 4,106–4,149 edges per seed. The campaign used DV `527b348664951d1d44daff4f372aa68a1f81a659`
+and combined commit `6a116a3f2207651179ee861152d3ff53f61cb387`.
+The native code report covered 59/59 instrumented line points across the five pool modules. Code points
 exclude UVM, caller and scoreboard code, public declarations, and the
 designer assertions disabled for independent detector qualification.
 The candidate was unchanged for the retest after the caller-probe repair.
@@ -105,6 +106,10 @@ grant with returns, all return lanes, distinct highest and cleanup lanes,
 partial and final cleanup, zero-cell completion and active reset.
 The directed full-capacity ledger reached the cell-exhaustion cover at
 step 21. This closes all 15 small component covers across the two runs.
+The primary directed capacity witness reached step 6 after four one-cell
+grants and a staged write. It saw 1,023 free cells, 1,020 unreserved
+credits, three reserved free cells and 252 free descriptors. This run
+checks directed reachability at full primary geometry.
 
 | Formal run | Result | DV revision | Effective tree |
 | --- | --- | --- | --- |
@@ -114,6 +119,7 @@ step 21. This closes all 15 small component covers across the two runs.
 | Small aggregate induction, depth 4 and 600 seconds | TIMEOUT after passing base case | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
 | Small aggregate ABC/PDR, 420 seconds | TIMEOUT | `eca1b4959a4506a0a6e9580f9bfde4dca05d4663` | `b55c5d140c62a2b888ca9a9223e21cfb99850524` |
 | Primary aggregate BMC, depth 5 and 600 seconds | TIMEOUT | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
+| Primary capacity cover, depth 7 | Reached at step 6 | `edce268b7f6546c77efd44f4cc9fa11a6dae300e` | `9e8dd47114eb5943f59a2b1ba58f43a529a11372` |
 
 The initial small ABC/PDR job using the frame ledger timed out at
 240 seconds. The initial all-in-one depth-15 cover reached 14/15 covers.
@@ -152,5 +158,10 @@ make multi-egress-pools-candidate RUN_ARGS="--profile small --mutations --candid
 make multi-egress-pools-formal RUN_ARGS="--profile all --candidate-revision $candidate"
 ```
 
-The PR remains a pre-merge review. Exact confirmation after an RTL merge
+The pre-merge verdict is blocked by the unbounded small safety proof
+and the primary BMC timeout. The corrected live campaign and hosted
+artifact upload are tracked by the dispatched workflow.
+[Qualification workflow](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45071399539)
+
+Exact confirmation after an RTL merge
 must use the actual merged production revision as the candidate input.
