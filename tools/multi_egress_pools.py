@@ -181,10 +181,28 @@ def rejection_status(step, detector):
     return "PASS", None
 
 
+def production_line_report(database):
+    """Render native line points for the five production modules."""
+    allowed = {Path(name).name for name in PRODUCTION_SOURCES}
+    files = {}
+    for line in database.read_text().splitlines():
+        match = re.fullmatch(r"C '(.*)' (\d+)", line)
+        if not match:
+            continue
+        fields = dict(field.split("\x02", 1) for field in match[1].split("\x01") if "\x02" in field)
+        source = Path(fields.get("f", "")).name
+        if source not in allowed or fields.get("t") not in ("line", "branch"):
+            continue
+        counts = files.setdefault(source, {}).setdefault(fields["t"], {"hit": 0, "total": 0})
+        counts["total"] += 1
+        counts["hit"] += int(int(match[2]) > 0)
+    return files
+
+
 def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None, *, marker=MARKER, mutation=None):
     result = case(run, name)
     database = result.path / "coverage.dat"
-    argv = [binary, f"+FIXTURES={fixtures}", f"+EVIDENCE_DIR={result.path}",
+    argv = ["stdbuf", "-oL", binary, f"+FIXTURES={fixtures}", f"+EVIDENCE_DIR={result.path}",
             f"+verilator+coverage+file+{database}", "+UVM_NO_RELNOTES"]
     if selection is not None:
         argv.append(f"+POOL_CASE={selection}")
@@ -205,7 +223,15 @@ def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None
     if rejection:
         result.finish(*rejection_status(step, rejection), expected="SIMULATOR_FATAL", detector=rejection)
     else:
-        result.finish(*replay_status(step, marker), mutation=mutation)
+        status, reason = replay_status(step, marker)
+        if marker == CANDIDATE_MARKER and status == "PASS":
+            if not database.is_file() or database.stat().st_size == 0:
+                result.finish("TOOL_ERROR", "Simulator did not write its native coverage database")
+                return
+            report_path = result.path / "production-code-coverage.json"
+            report_path.write_text(json.dumps(production_line_report(database), indent=2) + "\n")
+            result.data["artifacts"]["production_code_coverage"] = str(report_path)
+        result.finish(status, reason, mutation=mutation)
 
 
 def campaign(run, args, profile):

@@ -156,12 +156,7 @@
                 end
             end
             item.sample.batch.cleanup = '0;
-            if (pins.cleanup_present) begin
-                owner_t owner = resolve_owner(batch.cleanup.owner);
-                owner.desc = pins.cleanup_desc;
-                owner.qid = pins.cleanup_qid;
-                item.sample.batch.cleanup = '{1'b1, owner, pins.desc_present[N_TX],
-                    pins.release_present[N_TX] ? pins.release_cells[N_TX] : cell_count_t'(0)};
+            if (batch.cleanup.present) begin
                 item.expected_cleanup = batch.cleanup;
                 item.expected_cleanup.owner = resolve_owner(batch.cleanup.owner);
                 if (batch.cell_return[N_TX].present) begin
@@ -169,6 +164,13 @@
                     item.expected_cleanup_addr = resolve_cell(batch.cell_return[N_TX].address,
                                                              item.expected_cleanup.owner);
                 end
+            end
+            if (pins.cleanup_present) begin
+                owner_t owner = item.expected_cleanup.owner;
+                owner.desc = pins.cleanup_desc;
+                owner.qid = pins.cleanup_qid;
+                item.sample.batch.cleanup = '{1'b1, owner, pins.desc_present[N_TX],
+                    pins.release_present[N_TX] ? pins.release_cells[N_TX] : cell_count_t'(0)};
             end
 
             for (int lane = 0; lane <= N_TX; ++lane) begin
