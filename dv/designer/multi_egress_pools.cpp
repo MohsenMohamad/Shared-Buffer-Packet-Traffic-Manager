@@ -102,6 +102,27 @@ struct Result {
     int address = -1;
 };
 
+// The test producer decides the ordered prefix using only the old pool view.
+unsigned admission_commits(const Batch& batch, Counts prefix, int zero_minimum_alpha) {
+    unsigned committed = 0;
+    for (int lane = 0; lane < ports; ++lane) {
+        const Request& request = batch.reserve[lane];
+        if (request.ingress < 0 || request.count < 1 || request.count > max_frame_cells ||
+            request.count > prefix.u || prefix.d == 0) continue;
+
+        const int remaining = prefix.u - request.count;
+        const int held_next = prefix.held[request.queue] + request.count;
+        if (zero_minimum_alpha >= 0 && held_next > (zero_minimum_alpha * remaining) / 256)
+            continue;
+
+        committed |= 1u << lane;
+        prefix.u = remaining;
+        prefix.held[request.queue] = held_next;
+        --prefix.d;
+    }
+    return committed;
+}
+
 template<class Packed>
 int field(const Packed& words, int lsb, int width) {
     uint64_t value;
@@ -146,13 +167,13 @@ public:
         activity.write = 1;
         activity.tx[ports - 1] = {1, 0, 0, true};
         activity.cleanup = {1, 0, 1, true, true};
-        drive(activity, false);
+        drive(activity, 1, false);
         dut.rst_n = 1;
         dut.eval();
         dut.rst_n = 0;
         dut.eval();
         for (int i = 0; i < 2; ++i) {
-            check(!dut.ready && !dut.grant && !dut.write_accept, "reset_acceptance");
+            check(!dut.ready && !dut.write_accept, "reset_acceptance");
             pulse();
         }
         owners.clear();
@@ -163,7 +184,7 @@ public:
         tx_ready.fill(0);
         dut.rst_n = 1;
         dut.eval();
-        check(!dut.ready && !dut.grant && !dut.write_accept, "initialization_acceptance");
+        check(!dut.ready && !dut.write_accept, "initialization_acceptance");
         pulse();
         check(dut.ready, "initialized");
         compare(observed(), expected());
@@ -173,15 +194,19 @@ public:
         }
     }
 
-    Result step(const Batch& batch = {}) {
-        const Counts old = expected();
-        validate_returns(batch);
-        drive(batch);
+    Result step(const Batch& batch = {}, int zero_minimum_alpha = -1) {
+        const Counts old = observed();
+        compare(old, expected());
         check(dut.ready, "ready_during_run");
+        check_old_ranks(old.d);
+        const auto ranks_before = dut.rank_id;
+        const auto valid_before = dut.rank_valid;
+        const unsigned commit = admission_commits(batch, old, zero_minimum_alpha);
+        validate_returns(batch);
+        drive(batch, commit);
+        check(dut.rank_id == ranks_before && dut.rank_valid == valid_before, "old_ranks_ignore_commit_and_returns");
 
         Result result;
-        int remaining = old.u;
-        int unused_desc = old.d;
         int grants = 0;
         std::array<bool, ports> offered_ingress{};
         for (int lane = 0; lane < ports; ++lane) {
@@ -192,16 +217,14 @@ public:
                       "ingress_eligibility");
                 offered_ingress[request.ingress] = true;
             }
-            const bool accept = present && request.count <= remaining && unused_desc > 0;
-            check(bool(dut.grant & (1 << lane)) == accept, "old_prefix_grant");
-            if (!accept) continue;
+            if (!(commit & (1u << lane))) continue;
             const int desc = field(dut.grant_desc, lane * desc_width, desc_width);
+            check((valid_before & (1u << grants)) &&
+                  desc == field(ranks_before, grants * desc_width, desc_width), "committed_rank_projection");
             descriptor_zero += desc == 0;
             descriptor_high += desc == descriptors - 1;
             check(desc_owner.at(desc) == 0, "old_free_descriptor");
             check(request.count > 0 && request.count <= max_frame_cells, "frame_length");
-            remaining -= request.count;
-            --unused_desc;
             ++grants;
             const int token = next_token++;
             desc_owner[desc] = token;
@@ -338,6 +361,36 @@ public:
 
     int descriptor(int token) const { return owners.at(token).desc; }
 
+    int ranked_descriptor(int rank) const {
+        check((dut.rank_valid & (1u << rank)) != 0, "available_descriptor_rank");
+        return field(dut.rank_id, rank * desc_width, desc_width);
+    }
+
+    int held_on(int queue) const { return observed().held.at(queue); }
+
+    // Mutate the pins after validating the legal neighbor. The RTL samples the fault.
+    void probe_return(const Batch& neighbor, const std::string& scenario) {
+        validate_returns(neighbor);
+        drive(neighbor, 0);
+        if (scenario == "rtl-duplicate-cell") {
+            dut.cleanup_cell = neighbor.tx[0].address;
+        } else if (scenario == "rtl-free-cell") {
+            dut.cleanup_cell = std::find(cell_owner.begin(), cell_owner.end(), 0) - cell_owner.begin();
+        } else if (scenario == "rtl-duplicate-descriptor") {
+            dut.cleanup_desc = neighbor.tx[0].descriptor;
+        } else if (scenario == "rtl-free-descriptor") {
+            dut.cleanup_desc = std::find(desc_owner.begin(), desc_owner.end(), 0) - desc_owner.begin();
+        }
+        present_fault(scenario);
+    }
+
+    void probe_commit(const Batch& batch, const std::string& scenario) {
+        validate_returns(batch);
+        check(admission_commits(batch, observed(), -1) == 0, "producer_denies_invalid_commit");
+        drive(batch, 1);
+        present_fault(scenario);
+    }
+
     void validate_returns(const Batch& batch) const {
         std::array<bool, cells> returning_cells{};
         std::array<bool, descriptors> returning_desc{};
@@ -382,7 +435,7 @@ public:
     void blocked_write() {
         Batch invalid;
         invalid.write = 1;
-        drive(invalid);
+        drive(invalid, 0);
         check(!dut.write_accept, "empty_cell_pool_rejected_write");
         std::cout << "EXPECTED empty_cell_pool_rejected_write\n";
         // Keep the corrupt offer present for an edge, and require an unchanged pool.
@@ -541,11 +594,31 @@ private:
         ++edge;
     }
 
-    void drive(const Batch& batch, bool vary_absent = true) {
+    void check_old_ranks(int free_descriptors) const {
+        std::array<bool, descriptors> seen{};
+        for (int rank = 0; rank < ports; ++rank) {
+            const bool valid = (dut.rank_valid & (1u << rank)) != 0;
+            check(valid == (rank < free_descriptors), "rank_availability");
+            if (!valid) continue;
+            const int desc = ranked_descriptor(rank);
+            check(desc_owner.at(desc) == 0 && !seen[desc], "distinct_old_free_rank");
+            seen[desc] = true;
+        }
+    }
+
+    void present_fault(const std::string& scenario) {
+        dut.eval();
+        std::cout << "RTL_NEIGHBOR " << scenario << " passed\n";
+        std::cout << "RTL_PROBE " << scenario << " edge=" << edge << std::endl;
+        pulse();
+        throw std::runtime_error("rtl_assertion_did_not_fire");
+    }
+
+    void drive(const Batch& batch, unsigned commit, bool vary_absent = true) {
         const auto filler = [&](int width) {
             return vary_absent ? noise.next() & ((uint64_t{1} << width) - 1) : 0;
         };
-        dut.reserve_offer = 0;
+        dut.reserve_commit = commit;
         dut.reserve_cells = 0;
         dut.reserve_qid = 0;
         dut.tx_present = 0;
@@ -557,7 +630,6 @@ private:
         for (int lane = 0; lane < ports; ++lane) {
             const auto& reserve = batch.reserve[lane];
             const bool offered = reserve.ingress >= 0;
-            if (offered) dut.reserve_offer |= 1 << lane;
             dut.reserve_cells = insert(dut.reserve_cells, lane, count_width,
                                        offered ? reserve.count : filler(count_width));
             dut.reserve_qid = insert(dut.reserve_qid, lane, queue_width,
@@ -620,7 +692,7 @@ private:
     }
 };
 
-void descriptor_scarcity(Bench& bench) {
+std::vector<int> fill_descriptors(Bench& bench) {
     std::vector<int> tokens;
     for (int i = 0; i < descriptors; ++i) {
         const int token = bench.reserve(0, 0, 1);
@@ -628,6 +700,11 @@ void descriptor_scarcity(Bench& bench) {
         bench.materialize(token, 1);
     }
     bench.idle(16);
+    return tokens;
+}
+
+void descriptor_scarcity(Bench& bench) {
+    const auto tokens = fill_descriptors(bench);
     bench.witness("D=0 pre", cells - descriptors, cells - descriptors, 0, 0);
     bench.check_descriptor_extremes();
     Batch batch;
@@ -676,6 +753,115 @@ std::pair<int, int> fill_cell_credit(Bench& bench, bool withhold_last) {
         bench.materialize(last, length - (remaining == 0 && withhold_last));
     }
     return {first, last};
+}
+
+void producer_boundary(Bench& bench) {
+    constexpr int target = 0;
+    constexpr int other = 1;
+    constexpr int retiring_queue = 4;
+    constexpr int alpha = 128;
+    constexpr int length_65_cells = (65 + 63) / 64;
+    constexpr int length_60_cells = (60 + 63) / 64;
+
+    const int retiring = bench.reserve(1, retiring_queue, 1);
+    bench.materialize(retiring, 1);
+    int old_frames = 1;
+    for (int remaining = cells - 9; remaining > 0; ++old_frames) {
+        const int count = std::min(remaining, max_frame_cells);
+        const int token = bench.reserve(0, 2, count);
+        bench.materialize(token, count);
+        remaining -= count;
+    }
+    bench.idle(16);
+    bench.witness("producer pre", 8, 8, descriptors - old_frames, 0);
+    check(bench.held_on(target) == 0 && bench.held_on(other) == 0, "producer_empty_targets");
+
+    const int first_desc = bench.ranked_descriptor(0);
+    const int second_desc = bench.ranked_descriptor(1);
+    Batch prefix;
+    prefix.offer(0, 0, target, length_65_cells).offer(1, 1, target, length_65_cells);
+    if constexpr (ports > 2) {
+        prefix.offer(2, 2, other, length_60_cells);
+        prefix.tx[1] = bench.tx(retiring);
+        const auto grants = bench.step(prefix, alpha).tokens;
+        check(grants[0] && !grants[1] && grants[2] &&
+              bench.descriptor(grants[0]) == first_desc && bench.descriptor(grants[2]) == second_desc,
+              "producer_denial_skips_rank");
+    } else {
+        const auto first = bench.step(prefix, alpha).tokens;
+        check(first[0] && !first[1] && bench.descriptor(first[0]) == first_desc,
+              "producer_threshold_denies_second");
+        bench.witness("producer first two", 8, 6, descriptors - old_frames - 1, 2);
+        check(bench.held_on(target) == 2 && bench.ranked_descriptor(0) == second_desc,
+              "producer_second_rank_retained");
+        bench.idle(16);
+
+        Batch tail;
+        tail.offer(0, 0, target, length_65_cells).offer(1, 1, other, length_60_cells);
+        tail.tx[1] = bench.tx(retiring);
+        const auto later = bench.step(tail, alpha).tokens;
+        check(!later[0] && later[1] && bench.descriptor(later[1]) == second_desc,
+              "producer_denial_skips_rank");
+    }
+
+    bench.witness("producer post", 9, 6, descriptors - old_frames - 1, 3);
+    check(bench.held_on(target) == 2 && bench.held_on(other) == 1 &&
+          bench.held_on(retiring_queue) == 0, "producer_queue_deltas");
+    bench.drain();
+
+    const int first = bench.ranked_descriptor(0);
+    const int second = bench.ranked_descriptor(1);
+    Batch sparse;
+    if constexpr (ports > 2) sparse.offer(0, 0, 0, 1);
+    sparse.offer(ports - 1, ports - 1, 0, 1);
+    const auto grants = bench.step(sparse).tokens;
+    check(grants[ports - 1] && bench.descriptor(grants[ports - 1]) == (ports > 2 ? second : first),
+          "absent_lane_skips_rank");
+    bench.drain();
+}
+
+void rtl_negative(Bench& bench, const std::string& scenario) {
+    if (scenario == "rtl-overcommit-d" || scenario == "rtl-overcommit-u") {
+        const bool descriptor_limit = scenario == "rtl-overcommit-d";
+        const auto make_neighbor = [&]() {
+            int retiring;
+            if (descriptor_limit) {
+                retiring = fill_descriptors(bench).front();
+            } else {
+                retiring = fill_cell_credit(bench, false).first;
+                bench.idle(24);
+            }
+            Batch batch;
+            batch.offer(0, descriptor_limit ? 0 : 1, 0, 1);
+            batch.tx[0] = bench.tx(retiring);
+            return batch;
+        };
+        check(!bench.step(make_neighbor()).tokens[0], "legal_neighbor_denies_overcommit");
+        bench.drain();
+        bench.probe_commit(make_neighbor(), scenario);
+    } else if (scenario == "rtl-zero-count" || scenario == "rtl-oversize-count") {
+        const int neighbor = bench.reserve(0, 0, 1);
+        bench.materialize(neighbor, 1);
+        bench.drain();
+        const int count = scenario == "rtl-zero-count" ? 0 : max_frame_cells + 1;
+        bench.probe_commit(Batch{}.offer(0, 0, 0, count), scenario);
+    } else {
+        const auto make_neighbor = [&]() {
+            const int tx = bench.reserve(0, 0, 1);
+            const int aborting = bench.reserve(1, 4, 2);
+            bench.materialize(tx, 1);
+            bench.materialize(aborting, 1);
+            bench.mark_abort(aborting);
+            bench.idle(16);
+            Batch batch;
+            batch.tx[0] = bench.tx(tx);
+            batch.cleanup = bench.cleanup(aborting);
+            return batch;
+        };
+        bench.step(make_neighbor());
+        bench.drain();
+        bench.probe_return(make_neighbor(), scenario);
+    }
 }
 
 void cell_scarcity(Bench& bench) {
@@ -775,6 +961,9 @@ void abort_and_stall(Bench& bench) {
     bench.witness("nonfinal cleanup post", cells - 1, cells - 3, descriptors - 1, 2);
     reclaim.cleanup = bench.cleanup(aborting);
     check(reclaim.cleanup.done && reclaim.cleanup.released == 3, "final_cleanup_trigger");
+    auto wrong_residual = reclaim;
+    --wrong_residual.cleanup.released;
+    intended_failure("cleanup_delta", [&] { bench.validate_returns(wrong_residual); });
     bench.step(reclaim);
     bench.witness("final cleanup post", cells, cells, descriptors, 0);
 
@@ -810,18 +999,6 @@ void identity(Bench& bench) {
     legal.tx[0] = bench.tx(token);
     legal.tx[1] = bench.tx(other);
     check(legal.tx[0].address == 0 && legal.tx[1].address != 0, "ID_zero_is_present");
-    Batch duplicate = legal;
-    duplicate.tx[1] = legal.tx[0];
-    intended_failure("duplicate_cell", [&] { bench.validate_returns(duplicate); });
-    Batch free = legal;
-    free.tx[1].address = cells - 1;
-    intended_failure("already_free_cell", [&] { bench.validate_returns(free); });
-    Batch duplicate_desc = legal;
-    duplicate_desc.tx[1].descriptor = legal.tx[0].descriptor;
-    intended_failure("duplicate_descriptor", [&] { bench.validate_returns(duplicate_desc); });
-    Batch free_desc = legal;
-    free_desc.tx[1].descriptor = descriptors - 1;
-    intended_failure("already_free_descriptor", [&] { bench.validate_returns(free_desc); });
     Batch nonfinal = legal;
     nonfinal.tx[1].final = false;
     intended_failure("real_final_retirement", [&] { bench.validate_returns(nonfinal); });
@@ -883,6 +1060,8 @@ int main(int argc, char** argv) {
         else if (scenario == "abort") abort_and_stall(bench);
         else if (scenario == "identity") identity(bench);
         else if (scenario == "reset") reset_owned(bench);
+        else if (scenario == "producer") producer_boundary(bench);
+        else if (scenario.starts_with("rtl-")) rtl_negative(bench, scenario);
         else if (scenario == "random") {
             fill_cell_credit(bench, false);
             bench.random_sequence();

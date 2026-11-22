@@ -20,20 +20,30 @@ HERE = "dv/designer"
 DRIVER = f"{HERE}/multi_egress_pools.cpp"
 WAIVERS = f"{HERE}/multi_egress_pools.vlt"
 TOP = "tm_resource_pools"
-CASES = ("descriptor", "cell", "peak", "abort", "identity", "reset", "random")
+RTL_NEGATIVES = {
+    "rtl-duplicate-cell": "cell_return_distinct",
+    "rtl-free-cell": "cell_return_allocated",
+    "rtl-duplicate-descriptor": "descriptor_return_distinct",
+    "rtl-free-descriptor": "descriptor_return_allocated",
+    "rtl-overcommit-d": "old_descriptor_credit",
+    "rtl-overcommit-u": "old_credit",
+    "rtl-zero-count": "reservation_count",
+    "rtl-oversize-count": "reservation_count",
+}
+CASES = ("descriptor", "cell", "peak", "abort", "identity", "reset", "producer", "random", *RTL_NEGATIVES)
 SEEDS = (17, 31, 53)
 DETECTIONS = {
     "cell": ["old_free_cell", "empty_cell_pool_rejected_write"],
     "peak": ["merged_queue_delta"],
-    "identity": ["duplicate_cell", "already_free_cell", "duplicate_descriptor",
-                 "already_free_descriptor", "real_final_retirement", "current_owner"],
+    "abort": ["cleanup_delta"],
+    "identity": ["real_final_retirement", "current_owner"],
     "reset": ["current_owner"],
 }
 
 
 def frontend_checks(run, geometry, jobs):
     build = Case(run, "verilator")
-    common = ["verilator", "-Wall", "--top-module", TOP, f"-GPROFILE={geometry}",
+    common = ["verilator", "-Wall", "--assert", "-DTM_POOL_ASSERTIONS", "--top-module", TOP, f"-GPROFILE={geometry}",
               f"-I{INCLUDE}", WAIVERS, *RTL]
     lint = build.execute([*common, "--lint-only"], stem="lint")
     if lint["result"] != "PASS":
@@ -72,10 +82,23 @@ def simulate(run, binary, scenario, seed, replay_of=None):
         case.finish("NOT_RUN", "Verilator build did not produce a usable executable")
         return None
     step = case.execute([binary, scenario, str(seed)], stem="simulate")
-    status, reason = completed(step, f"POOLS_PASS {scenario} seed={seed}")
     log = output(step)
+    if scenario in RTL_NEGATIVES:
+        expected = RTL_NEGATIVES[scenario]
+        detector = re.findall(r"(?m)^.*Assertion failed .*: POOL_ASSERT (\w+)$", log)
+        reached = re.search(rf"(?m)^RTL_PROBE {re.escape(scenario)} edge=\d+$", log)
+        neighbor = f"RTL_NEIGHBOR {scenario} passed" in log.splitlines()
+        if step["returncode"] and step["result"] != "TIMEOUT" and neighbor and reached and detector == [expected]:
+            case.finish("PASS", intended_detection=expected, legal_neighbor=True, sampled_edge=reached[0])
+        else:
+            status = "TIMEOUT" if step["result"] == "TIMEOUT" else "FAIL"
+            case.finish(status, f"Expected RTL assertion {expected}, observed {detector}")
+        return None
+    status, reason = completed(step, f"POOLS_PASS {scenario} seed={seed}")
     if step["returncode"] == 1 and "POOLS_FAIL " in log:
         status, reason = "FAIL", next(line for line in log.splitlines() if line.startswith("POOLS_FAIL "))
+    if step["returncode"] and "Assertion failed " in log:
+        status, reason = "FAIL", next(line for line in log.splitlines() if "Assertion failed " in line)
     detections = re.findall(r"(?m)^EXPECTED (\S+)$", log)
     samples = re.findall(r"(?m)^STATE (.+)$", log)
     totals = re.search(r"(?m)^TOTAL (.+)$", log)

@@ -6,11 +6,9 @@ module tm_pools_timing #(
 `undef TM_MULTI_ANSI_TYPES
 ) (
     input  logic clk, rst_n,
-    // Ordered eligible offers. A hole or a denied offer consumes no rank.
-    input  logic [N_RX-1:0] reserve_offer,
+    input  logic [N_RX-1:0] reserve_commit,
     input  cell_count_t [N_RX-1:0] reserve_cells,
     input  qid_t [N_RX-1:0] reserve_qid,
-    output logic [N_RX-1:0] grant,
     output desc_id_t [N_RX-1:0] grant_desc,
 
     input  logic write_offer,
@@ -35,10 +33,15 @@ module tm_pools_timing #(
     output desc_count_t free_desc,
     output cell_count_t [N_Q-1:0] held,
     output cell_id_t captured_write_id,
-    output desc_id_t [N_RX-1:0] captured_grant_desc
+    output desc_id_t [N_RX-1:0] captured_grant_desc,
+    output logic [N_RX-1:0] captured_rank_valid,
+    output desc_id_t [N_RX-1:0] captured_rank_id
 );
+    logic [N_RX-1:0] rank_valid;
+    desc_id_t [N_RX-1:0] rank_id;
+
     tm_resource_pools #(.PROFILE(PROFILE)) dut (
-        .clk, .rst_n, .reserve_offer, .reserve_cells, .reserve_qid, .grant, .grant_desc,
+        .clk, .rst_n, .reserve_commit, .reserve_cells, .reserve_qid, .rank_valid, .rank_id, .grant_desc,
         .write_offer, .write_accept, .write_id, .tx_present, .tx_final,
         .tx_cell, .tx_qid, .tx_desc, .cleanup_present, .cleanup_has_cell, .cleanup_done,
         .cleanup_cell, .cleanup_qid, .cleanup_desc, .cleanup_released,
@@ -46,8 +49,12 @@ module tm_pools_timing #(
     );
 
     always_ff @(posedge clk) begin
+        // Model a live same-edge rank consumer without duplicating pad loads on
+        // nets shared by the raw selector and the committed-lane projection.
+        captured_rank_valid <= rank_valid;
+        captured_rank_id <= rank_id;
         if (write_accept) captured_write_id <= write_id;
         for (int lane = 0; lane < N_RX; lane++)
-            if (grant[lane]) captured_grant_desc[lane] <= grant_desc[lane];
+            if (ready && reserve_commit[lane]) captured_grant_desc[lane] <= grant_desc[lane];
     end
 endmodule

@@ -1,4 +1,4 @@
-// Component boundary. Queue policy and current-epoch owner validation belong to the caller.
+// Admission owns the ordered commit. Return producers validate the current epoch and owner.
 module tm_resource_pools #(
 `include "tm_multi_parameters.svh"
 `define TM_MULTI_ANSI_TYPES
@@ -6,11 +6,13 @@ module tm_resource_pools #(
 `undef TM_MULTI_ANSI_TYPES
 ) (
     input  logic clk, rst_n,
-    // Ordered eligible offers. A hole or a denied offer consumes no rank.
-    input  logic [N_RX-1:0] reserve_offer,
+    // Successful reservations in admission order. Holes consume no rank.
+    input  logic [N_RX-1:0] reserve_commit,
     input  cell_count_t [N_RX-1:0] reserve_cells,
     input  qid_t [N_RX-1:0] reserve_qid,
-    output logic [N_RX-1:0] grant,
+    output logic [N_RX-1:0] rank_valid,
+    output desc_id_t [N_RX-1:0] rank_id,
+    // The projected ID is meaningful only for a committed lane on an active edge.
     output desc_id_t [N_RX-1:0] grant_desc,
 
     input  logic write_offer,
@@ -42,8 +44,6 @@ module tm_resource_pools #(
     desc_id_t [N_TX:0] return_desc;
     qid_t [N_TX:0] release_qid;
     cell_count_t [N_TX:0] release_cells;
-    desc_id_t [N_RX-1:0] rank_id;
-    rx_id_t [N_RX-1:0] grant_rank;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) ready <= 1'b0;
@@ -73,7 +73,13 @@ module tm_resource_pools #(
     assign release_cells[N_TX] = cleanup_released;
 
     for (genvar lane = 0; lane < N_RX; lane++) begin : g_grant_id
-        assign grant_desc[lane] = rank_id[grant_rank[lane]];
+        rx_id_t earlier_commits;
+        always_comb begin
+            earlier_commits = '0;
+            for (int earlier = 0; earlier < lane; earlier++)
+                earlier_commits += rx_id_t'(reserve_commit[earlier]);
+        end
+        assign grant_desc[lane] = reserve_commit[lane] ? rank_id[earlier_commits] : '0;
     end
 
     tm_cell_pool #(.PROFILE(PROFILE), .MEM_RD_LATENCY(MEM_RD_LATENCY)) cells (
@@ -83,12 +89,29 @@ module tm_resource_pools #(
     );
 
     tm_descriptor_pool #(.PROFILE(PROFILE), .MEM_RD_LATENCY(MEM_RD_LATENCY)) descriptors (
-        .clk, .rst_n, .ready, .grant, .return_present(desc_present), .return_desc,
-        .rank_id, .free_count(free_desc)
+        .clk, .rst_n, .ready, .reserve_commit, .return_present(desc_present), .return_desc,
+        .rank_valid, .rank_id, .free_count(free_desc)
     );
 
     tm_reservation_accounting #(.PROFILE(PROFILE), .MEM_RD_LATENCY(MEM_RD_LATENCY)) accounting (
-        .clk, .rst_n, .ready, .reserve_offer, .free_desc, .reserve_cells, .reserve_qid,
-        .release_present, .release_cells, .release_qid, .grant, .grant_rank, .unreserved, .held
+        .clk, .rst_n, .ready, .reserve_commit, .reserve_cells, .reserve_qid,
+        .release_present, .release_cells, .release_qid, .unreserved, .held
     );
+`ifdef TM_POOL_ASSERTIONS
+    always @(posedge clk) begin : check_conservation
+        int unsigned accounted;
+        if (ready) begin
+            accounted = int'(unreserved);
+            for (int queue_index = 0; queue_index < N_Q; queue_index++)
+                accounted += int'(held[queue_index]);
+            assert_credit_conservation: assert (accounted == N_CELL)
+                else $fatal(1, "POOL_ASSERT credit_conservation");
+            assert_reserved_conservation: assert (free_cells >= unreserved &&
+                int'(free_cells) == int'(unreserved) + int'(reserved_free))
+                else $fatal(1, "POOL_ASSERT reserved_conservation");
+            assert_old_reserved_write: assert (!write_accept || reserved_free != 0)
+                else $fatal(1, "POOL_ASSERT old_reserved_write");
+        end
+    end
+`endif
 endmodule

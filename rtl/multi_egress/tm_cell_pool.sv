@@ -53,4 +53,39 @@ module tm_cell_pool #(
             free_count <= cell_count_t'(free_next);
         end
     end
+`ifdef TM_POOL_ASSERTIONS
+    always @(posedge clk) begin : check_cell_contract
+        logic [N_CELL-1:0] seen;
+        if (ready) begin
+            assert_cell_population: assert ($countones(free_bits) == int'(free_count))
+                else $fatal(1, "POOL_ASSERT cell_population");
+            assert_write_old_free: assert (!write_accept || (reserved_available && free_bits[write_id]))
+                else $fatal(1, "POOL_ASSERT write_old_free");
+
+            seen = '0;
+            for (int lane = 0; lane <= N_TX; lane++) begin
+                if (return_present[lane]) begin
+                    assert_cell_return_allocated: assert (!free_bits[return_cell[lane]])
+                        else $fatal(1, "POOL_ASSERT cell_return_allocated");
+                    assert_cell_return_distinct: assert (!seen[return_cell[lane]])
+                        else $fatal(1, "POOL_ASSERT cell_return_distinct");
+                    seen[return_cell[lane]] = 1'b1;
+                end
+            end
+            assert_cell_delta_bounds: assert (free_next <= DELTA_W'(N_CELL))
+                else $fatal(1, "POOL_ASSERT cell_delta_bounds");
+        end
+    end
+
+    // Sample the edge's widened result and compare the stored count at the next active edge.
+    cell_count_t expected_free_count;
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) expected_free_count <= cell_count_t'(N_CELL);
+        else if (ready) begin
+            assert_cell_update: assert (free_count == expected_free_count)
+                else $fatal(1, "POOL_ASSERT cell_update");
+            expected_free_count <= cell_count_t'(free_next);
+        end
+    end
+`endif
 endmodule

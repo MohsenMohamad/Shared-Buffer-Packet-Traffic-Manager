@@ -86,6 +86,7 @@ def pin_groups(base):
     returns = ports(*RETURN_INPUTS)
     return {
         "CELL_ID": (from_pins(cell_state), ports("write_id*")),
+        "DESC_RANK": (from_pins(desc_state), to_pins("captured_rank_id", "captured_rank_valid")),
         "DESC_ID": (from_pins(desc_state), ports("grant_desc*")),
         "CELL_CONSUMER": (from_pins(cell_state), to_pins("captured_write_id")),
         "DESC_CONSUMER": (from_pins(desc_state), to_pins("captured_grant_desc")),
