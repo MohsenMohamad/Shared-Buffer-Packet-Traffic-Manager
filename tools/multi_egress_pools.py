@@ -87,6 +87,7 @@ def verify_candidate(revision):
         "verification_sources": (*SV_SOURCES[1:], CANDIDATE_DV[0]),
         "verification_headers": (*(DV + name for name in DV_HEADERS), *CANDIDATE_DV[1:]),
         "include_dirs": INCLUDE_DIRS,
+        "formal_sources": FORMAL_DV,
     }
     for key, paths in expected.items():
         if tuple(registry.get(key, [])) != paths:
@@ -309,28 +310,44 @@ def formal_campaign(run, args, profile):
     registry, digests = verify_candidate(args.candidate_revision)
     record_candidate(run, args.candidate_revision, digests)
     jobs = (args.formal_mode,) if args.formal_mode else (
-        ("prove", "cover") if profile.ports == 2 else ("bmc", "cover"))
+        ("prove", "cover", "exhaustion") if profile.ports == 2 else ("bmc",))
     for mode in jobs:
         result = case(run, mode)
-        depth = args.depth or (32 if profile.ports == 2 else 8)
-        inputs = (*registry["production_sources"], *FORMAL_DV)
+        if mode == "exhaustion" and profile.ports != 2:
+            result.finish("NOT_RUN", "Full cell-exhaustion cover is registered for the small profile")
+            continue
+        depth = args.depth or {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22}[mode]
+        caller = args.formal_caller or ("ledger" if mode in ("cover", "exhaustion") else "aggregate")
+        if mode == "exhaustion" and caller != "ledger":
+            result.finish("NOT_RUN", "Cell-exhaustion cover requires the frame ledger")
+            continue
+        inputs = (*registry["production_sources"], *registry["formal_sources"])
         profile_id = int(profile.ports == 2)
+        definitions = ["-DPOOL_ABSTRACT_CALLER"] if caller == "aggregate" else []
+        if mode == "exhaustion":
+            definitions.append("-DPOOL_EXHAUSTION_COVER")
         script = (f"read_slang --top pool_candidate_formal -GPROFILE={profile_id} "
-                  f"-I. {' '.join(Path(path).name for path in inputs)}")
+                  f"{' '.join(definitions)} -I. {' '.join(Path(path).name for path in inputs)}\n"
+                  "prep -top pool_candidate_formal")
+        if mode == "cover":
+            script += "\nchformal -cover -remove pool_candidate_formal/c:check_pool.c_cell_exhaustion"
+        elif mode == "exhaustion":
+            script += ("\nchformal -cover -remove pool_candidate_formal/c:c_* "
+                       "pool_candidate_formal/c:check_pool.c_* %u pool_candidate_formal/c:c_full_cell_exhaustion %d")
         files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
         config = result.path / "pool.sby"
-        engine = "abc pdr" if mode == "prove" else "smtbmc z3"
-        config.write_text(f"[options]\nmode {mode}\ndepth {depth}\n"
-                          f"[engines]\n{engine}\n[script]\n{script}\nprep -top pool_candidate_formal\n"
-                          f"[files]\n{files}\n")
+        engine = "abc pdr" if mode == "prove" and caller == "ledger" else "smtbmc z3"
+        sby_mode = "cover" if mode == "exhaustion" else mode
+        config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n"
+                          f"[engines]\n{engine}\n[script]\n{script}\n[files]\n{files}\n")
         result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
         step = result.execute(["sby", "-f", "-d", result.path / "work", config], timeout=args.timeout)
         status, reason = completed(step, "DONE (PASS")
         if status == "TOOL_ERROR" and "DONE (FAIL" in output(step):
-            status = "INCONCLUSIVE" if mode == "cover" else "FAIL"
-            reason = "Required cover not reached within depth" if mode == "cover" else "Formal counterexample"
-        result.finish(status, reason, mode=mode, depth=depth, engine=engine,
-                      parameters=vars(profile))
+            status = "INCONCLUSIVE" if sby_mode == "cover" else "FAIL"
+            reason = "Required cover not reached within depth" if sby_mode == "cover" else "Formal counterexample"
+        result.finish(status, reason, mode=sby_mode, depth=depth, engine=engine,
+                      caller=caller, parameters=vars(profile))
 
 
 def main(argv):
@@ -340,7 +357,8 @@ def main(argv):
     parser.add_argument("--profile", choices=("primary", "small", "all"), default="all")
     parser.add_argument("--candidate-revision")
     parser.add_argument("--mutations", action="store_true")
-    parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover"))
+    parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover", "exhaustion"))
+    parser.add_argument("--formal-caller", choices=("aggregate", "ledger"))
     parser.add_argument("--depth", type=int, choices=range(2, 65), metavar="2..64")
     parser.add_argument("--case", help="Run one named replay case for diagnosis")
     parser.add_argument("--seed", type=int, choices=(17, 31, 53, 67, 89, 113, 149, 197))
@@ -365,8 +383,8 @@ def main(argv):
         parser.error("--mutations requires the full small candidate selection")
     if formal and (args.seed or args.case):
         parser.error("Formal selection uses --formal-mode and --depth")
-    if not formal and (args.formal_mode or args.depth):
-        parser.error("--formal-mode and --depth require the formal target")
+    if not formal and (args.formal_mode or args.formal_caller or args.depth):
+        parser.error("Formal options require the formal target")
     source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate or formal else SOURCES
     if formal:
         source_paths += list(FORMAL_DV)

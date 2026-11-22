@@ -55,6 +55,9 @@ module pool_candidate_formal #(
     typedef logic [FRAME_W-1:0] frame_count_t;
     logic past_valid = 0;
     logic was_reset = 0;
+    logic caller_ready = 0;
+    always_ff @(posedge clk)
+        caller_ready <= rst_n;
     logic [N_DESC-1:0] live_desc;
     logic [N_CELL-1:0] live_cell;
     qid_t [N_DESC-1:0] owner_queue;
@@ -66,6 +69,85 @@ module pool_candidate_formal #(
     logic write_owner_matches, cleanup_owner_matches;
     int prefix_u, next_u;
 
+`ifdef POOL_ABSTRACT_CALLER
+    cell_count_t [N_Q-1:0] caller_held;
+    int [N_Q-1:0][31:0] held_after_add, returning_credit;
+    int caller_free, caller_reserved;
+
+    assign caller_free = N_CELL - $countones(live_cell);
+    assign caller_reserved = caller_free - int'(caller_u);
+    assign write_owner_matches = caller_reserved > 0;
+    assign cleanup_owner_matches = live_desc[cleanup_desc];
+
+    for (genvar lane = 0; lane <= N_TX; ++lane) begin : abstract_owners
+        assign desc_owner_matches[lane] = live_desc[desc_ids[lane]];
+        assign cell_owner_matches[lane] = live_cell[cell_ids[lane]] && desc_owner_matches[lane];
+    end
+
+    always_comb begin
+        held_after_add = '0;
+        returning_credit = '0;
+        for (int q = 0; q < N_Q; ++q) begin
+            held_after_add[q] = int'(caller_held[q]);
+            for (int lane = 0; lane < N_RX; ++lane)
+                if (reserve_commit[lane] && int'(reserve_qid[lane]) == q)
+                    held_after_add[q] = held_after_add[q] + int'(reserve_cells[lane]);
+            for (int lane = 0; lane <= N_TX; ++lane)
+                if (credit_events[lane] && int'(credit_queues[lane]) == q)
+                    returning_credit[q] = returning_credit[q] + int'(credit_amounts[lane]);
+        end
+    end
+
+    // This abstraction allows every schedule satisfying the local aggregate
+    // preconditions. Descriptor/queue/epoch linkage is exercised by the
+    // separate ledger and must be established at the real caller boundary.
+    always_ff @(posedge clk) begin
+        if (!rst_n || !caller_ready) begin
+            live_desc <= '0;
+            live_cell <= '0;
+            caller_u <= cell_count_t'(N_CELL);
+            caller_held <= '0;
+        end else begin
+            assume(prefix_u >= 0 && $countones(reserve_commit) <= N_DESC - $countones(live_desc));
+            assume(!write_offer || write_owner_matches);
+            if (write_accept)
+                live_cell[write_id] <= 1;
+            for (int lane = 0; lane < N_RX; ++lane) begin
+                if (reserve_commit[lane]) begin
+                    assume(reserve_cells[lane] != 0 && int'(reserve_cells[lane]) <= FRAME_CELLS);
+                    live_desc[grant_desc[lane]] <= 1;
+                end
+            end
+            for (int lane = 0; lane <= N_TX; ++lane) begin
+                if (cell_events[lane]) begin
+                    assume(cell_owner_matches[lane]);
+                    live_cell[cell_ids[lane]] <= 0;
+                end
+                if (desc_events[lane]) begin
+                    assume(desc_owner_matches[lane]);
+                    live_desc[desc_ids[lane]] <= 0;
+                end
+            end
+            for (int lane = 0; lane < N_TX; ++lane)
+                if (tx_present[lane])
+                    assume(int'(tx_qid[lane]) / N_CLASS == lane);
+            if (cleanup_present) begin
+                assume(cleanup_owner_matches && (cleanup_has_cell || cleanup_done));
+                if (cleanup_done)
+                    assume(cleanup_released != 0 &&
+                           int'(cleanup_released) + int'(write_offer) <= caller_reserved + int'(cleanup_has_cell));
+            end
+            if (!desc_events[N_TX])
+                assume(cleanup_released == 0);
+            for (int q = 0; q < N_Q; ++q) begin
+                assume(returning_credit[q] <= int'(caller_held[q]));
+                caller_held[q] <= cell_count_t'(held_after_add[q] - returning_credit[q]);
+            end
+            caller_u <= cell_count_t'(next_u);
+        end
+    end
+`endif
+
     always_comb begin
         prefix_u = int'(caller_u);
         for (int lane = 0; lane < N_RX; ++lane)
@@ -76,6 +158,7 @@ module pool_candidate_formal #(
             next_u += int'(cleanup_released);
     end
 
+`ifndef POOL_ABSTRACT_CALLER
     assign write_owner_matches = live_desc[write_owner] && !aborting[write_owner] &&
                                  credit[write_owner] > written[write_owner];
     assign cleanup_owner_matches = live_desc[cleanup_desc] && owner_queue[cleanup_desc] == cleanup_qid;
@@ -85,9 +168,13 @@ module pool_candidate_formal #(
         assign cell_owner_matches[lane] = live_cell[cell_ids[lane]] &&
                                           cell_owner[cell_ids[lane]] == desc_ids[lane] &&
                                           desc_owner_matches[lane];
+    end
+`endif
+
+    for (genvar lane = 0; lane <= N_TX; ++lane) begin : distinct_returns
         for (genvar earlier = 0; earlier < lane; ++earlier) begin : distinct
             always @(posedge clk)
-                if (rst_n && ready) begin
+                if (rst_n && caller_ready) begin
                     assume(!cell_events[lane] || !cell_events[earlier] || cell_ids[lane] != cell_ids[earlier]);
                     // One retirement service per frame, including partial returns.
                     assume(!(cell_events[lane] || desc_events[lane]) ||
@@ -97,8 +184,6 @@ module pool_candidate_formal #(
         end
     end
 
-    // The frame bookkeeping checks a local ownership abstraction. Real
-    // caller composition must establish the same assumptions at its handshake.
     always_ff @(posedge clk) begin
         past_valid <= 1;
         was_reset <= !rst_n;
@@ -106,9 +191,15 @@ module pool_candidate_formal #(
             assume(!rst_n);
         if (past_valid && rst_n && was_reset)
             assume($past(was_reset));
-
-        if (!rst_n || !ready) begin
+        if (!rst_n || !caller_ready)
             assume(reserve_commit == '0 && !write_offer && tx_present == '0 && !cleanup_present);
+    end
+
+`ifndef POOL_ABSTRACT_CALLER
+    // The frame ledger gives covers a live frame and actual selected cell
+    // owner. It leaves stalls unconstrained in the ordinary runs.
+    always_ff @(posedge clk) begin
+        if (!rst_n || !caller_ready) begin
             live_desc <= '0;
             live_cell <= '0;
             owner_queue <= '0;
@@ -171,6 +262,27 @@ module pool_candidate_formal #(
         end
     end
 
+`endif
+
+`ifdef POOL_EXHAUSTION_COVER
+    // Drive a legal, full-capacity setup for the deep small-profile cover.
+    // Write IDs and owners stay symbolic and obey the ledger.
+    int unsigned fill_edge = 0;
+    always_ff @(posedge clk)
+        if (rst_n && caller_ready) begin
+            fill_edge <= fill_edge + 1;
+            assume(!cleanup_present);
+            assume(reserve_commit == ((fill_edge < N_DESC/N_RX) ? '1 : '0));
+            if (fill_edge < N_DESC/N_RX)
+                for (int lane = 0; lane < N_RX; ++lane)
+                    assume(reserve_cells[lane] == cell_count_t'(N_CELL/N_DESC));
+            assume(write_offer == (fill_edge > 0 && fill_edge <= N_CELL));
+            if (fill_edge <= N_CELL)
+                assume(tx_present == '0);
+            c_full_cell_exhaustion: cover(free_cells == 0 && |tx_present);
+        end
+`endif
+
     cell_count_t assigned;
     assign assigned = cell_count_t'(N_CELL - $countones(dut.cells.free_bits));
     multi_egress_pool_obligations #(.N_RX(N_RX), .N_TX(N_TX), .N_CELL(N_CELL), .N_DESC(N_DESC)) check_pool (
@@ -195,6 +307,9 @@ module pool_candidate_formal #(
             a_caller_membership: assert(dut.cells.free_bits == ~live_cell &&
                                         dut.descriptors.free_bits == ~live_desc);
             a_independent_credit: assert(caller_u == unreserved);
+`ifdef POOL_ABSTRACT_CALLER
+            a_independent_queues: assert(caller_held == held);
+`endif
             a_staged_write: assert(write_accept == write_offer);
             a_return_lanes: assert(dut.cells.return_present == cell_events &&
                                   dut.descriptors.return_present == desc_events &&

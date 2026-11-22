@@ -164,6 +164,8 @@ jobs:
       CXX: g++-14
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - name: Ensure native build prerequisites
         uses: ./.github/actions/native-prerequisites
       - name: Receive prepared installation
@@ -184,7 +186,6 @@ jobs:
         run: |
           [[ "$POOL_REVISION" =~ ^[0-9a-f]{40}$ ]]
           make doctor
-          git fetch --unshallow origin
           git fetch origin "$POOL_REVISION"
           git worktree add --detach work/pool-candidate "$POOL_REVISION"
           git -C work/pool-candidate -c user.name='Pool qualification' \

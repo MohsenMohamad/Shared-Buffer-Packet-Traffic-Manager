@@ -27,6 +27,10 @@
     "dv/multi_egress_pools/pool_candidate.svh",
     "dv/multi_egress_pools/pool_candidate_checks.svh"
   ],
+  "formal_sources": [
+    "formal/multi_egress_pools/pool_obligations.sv",
+    "formal/multi_egress_pools/pool_candidate_formal.sv"
+  ],
   "include_dirs": [
     "rtl/include/multi_egress",
     "dv/multi_egress_pools"
