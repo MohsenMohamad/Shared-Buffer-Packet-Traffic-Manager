@@ -275,6 +275,8 @@
 `endif
             observed = witnesses.observe(sample.batch);
 `ifdef POOL_CANDIDATE
+            observed.inactive_payload = transaction.inactive_payload;
+            observed.caller_guard = transaction.caller_guard;
             observed.sparse_grants = transaction.commits[N_RX-1] && !transaction.commits[N_RX-2];
 `endif
             check_triggers(sample, observed, pre, post);

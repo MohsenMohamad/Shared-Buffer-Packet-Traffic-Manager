@@ -508,3 +508,21 @@ def generate_candidate(root, profile):
     for case in cases:
         save_rows(root / f"{case.name}.edges", profile, case.state.rows)
         save_triggers(root / f"{case.name}.triggers", case.triggers)
+
+    state = Stimulus(profile)
+    previous = state.provision(phase="tx")
+    state.reset()
+    current = state.provision(phase="tx", budget=2)
+    stale = state.edge()
+    state.rows[stale][2].services[0] = Service(previous.owner, previous.addresses[0], True, True)
+    forged = state.edge()
+    state.rows[forged][2].services[0] = Service(current.owner, current.addresses[0], True, True)
+    state.drain()
+    layout = Layout(profile)
+    probes = {stale: 2, forged: 3}
+    (root / "caller-guards.edges").write_text("".join(
+        layout.row(*row, origin=probes.get(edge, 0)) + "\n"
+        for edge, row in enumerate(state.rows)))
+    save_triggers(root / "caller-guards.triggers", {
+        "stale-epoch-input": stale, "forged-final-input": forged, "exact-drain": len(state.rows) - 1,
+    })

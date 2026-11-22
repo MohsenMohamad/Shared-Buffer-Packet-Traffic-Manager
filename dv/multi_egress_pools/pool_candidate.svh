@@ -6,9 +6,32 @@
         cell_id_t cells[cell_id_t];
         owner_t descriptor_owners[desc_id_t];
         owner_t cell_owners[cell_id_t];
+        int remaining_cells[desc_id_t];
         admission_t lane_intent[N_RX];
         bit [N_RX-1:0] intended_commits;
         bit sparse;
+        int guard;
+        owner_t probed_owner;
+        cell_id_t probed_cell;
+
+        function bit suppress_probe(egress_service_t service, int origin, epoch_t epoch);
+            if (origin < 2)
+                return 0;
+            probed_owner = service.owner;
+            if (descriptors.exists(service.owner.desc) == 0 || cells.exists(service.address) == 0)
+                `uvm_fatal("CALLER_PROBE", "Probe requires a currently owned physical address")
+            probed_owner.desc = descriptors[service.owner.desc];
+            probed_cell = cells[service.address];
+            if (service.owner.frame.epoch != epoch) begin
+                guard = 2;
+                return 1;
+            end
+            if (service.frame_last && remaining_cells[probed_owner.desc] > 1) begin
+                guard = 3;
+                return 1;
+            end
+            return 0;
+        endfunction
 
         function new(virtual pool_candidate_bus pins);
             this.pins = pins;
@@ -51,11 +74,15 @@
             pins.cleanup_qid = '1;
             pins.cleanup_released = batch.cleanup.present ? batch.cleanup.released : '0;
             intended_commits = '0;
+            guard = 0;
+            probed_owner = '0;
+            probed_cell = '0;
             if (!intent.reset_n) begin
                 descriptors.delete();
                 cells.delete();
                 descriptor_owners.delete();
                 cell_owners.delete();
+                remaining_cells.delete();
                 return;
             end
 
@@ -73,7 +100,7 @@
             for (int lane = 0; lane < N_TX; ++lane) begin
                 egress_service_t service = batch.egress_service[lane];
                 owner_t owner;
-                if (!service.present)
+                if (!service.present || suppress_probe(service, int'(intent.origin), batch.epoch))
                     continue;
                 owner = resolve_owner(service.owner);
                 pins.tx_present[lane] = service.cell_last;
@@ -108,6 +135,7 @@
                 owner = '{grant.frame, grant.qid, grant.desc, grant.metadata.tag_value};
                 descriptors[lane_intent[lane].desc] = grant.desc;
                 descriptor_owners[grant.desc] = owner;
+                remaining_cells[grant.desc] = 0;
             end
         endfunction
 
@@ -147,10 +175,13 @@
                 if (batch.cell_return[lane].present) begin
                     cells.delete(batch.cell_return[lane].address);
                     cell_owners.delete(item.sample.batch.cell_return[lane].address);
+                    if (item.sample.batch.cell_return[lane].present)
+                        --remaining_cells[item.sample.batch.cell_return[lane].owner.desc];
                 end
                 if (batch.descriptor_return[lane].present) begin
                     descriptors.delete(batch.descriptor_return[lane].owner.desc);
                     descriptor_owners.delete(item.sample.batch.descriptor_return[lane].owner.desc);
+                    remaining_cells.delete(item.sample.batch.descriptor_return[lane].owner.desc);
                 end
             end
         endfunction
@@ -167,7 +198,12 @@
             item.sample.batch.publication = batch.publication;
             item.sample.batch.dispatch = batch.dispatch;
             item.sample.batch.abort_mark = batch.abort_mark;
-            item.sample.batch.egress_service = batch.egress_service;
+            item.sample.batch.egress_service = guard != 0 ? '0 : batch.egress_service;
+            item.caller_guard = guard;
+            item.probed_cell = probed_cell;
+            item.probed_owner = probed_owner;
+            item.inactive_payload = pins.tx_present == '0 && pins.tx_cell == '1 &&
+                                    pins.tx_desc == '1 && pins.tx_qid == '1;
             item.rank_valid = pins.rank_valid;
             item.rank_id = pins.rank_id;
             item.projected_desc = pins.grant_desc;
@@ -186,7 +222,7 @@
             for (int lane = 0; lane < N_TX; ++lane) begin
                 if (batch.dispatch[lane].present)
                     item.sample.batch.dispatch[lane].owner = resolve_owner(batch.dispatch[lane].owner);
-                if (batch.egress_service[lane].present) begin
+                if (item.sample.batch.egress_service[lane].present) begin
                     owner_t owner = resolve_owner(batch.egress_service[lane].owner);
                     item.sample.batch.egress_service[lane].owner = owner;
                     item.sample.batch.egress_service[lane].address = resolve_cell(batch.egress_service[lane].address, owner);
@@ -204,6 +240,7 @@
             if (pins.write_accept && batch.cell_write.present) begin
                 cells[batch.cell_write.address] = pins.write_id;
                 cell_owners[pins.write_id] = item.sample.batch.cell_write.owner;
+                ++remaining_cells[item.sample.batch.cell_write.owner.desc];
             end
             for (int lane = 0; lane < N_RX; ++lane)
                 if (batch.abort_mark[lane].present)

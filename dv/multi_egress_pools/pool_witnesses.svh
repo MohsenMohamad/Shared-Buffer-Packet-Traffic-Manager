@@ -13,6 +13,8 @@
         bit first_ids;
 `ifdef POOL_CANDIDATE
         bit sparse_grants;
+        bit inactive_payload;
+        int caller_guard;
 `endif
     } edge_features_t;
 
@@ -162,7 +164,9 @@
 `ifdef POOL_CANDIDATE
                 "sparse-grants": return obs.sparse_grants && obs.grants == N_RX - 1;
                 "live-cell-next-edge": return obs.reused_cell;
-                "absent-fields": return pre == post && !has_events(batch);
+                "stale-epoch-input": return obs.caller_guard == 2 && pre == post;
+                "forged-final-input": return obs.caller_guard == 3 && pre == post;
+                "absent-fields": return obs.inactive_payload && pre == post && !has_events(batch);
 `else
                 "absent-fields": return batch != normalize(batch);
 `endif

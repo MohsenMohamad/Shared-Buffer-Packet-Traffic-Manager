@@ -15,6 +15,24 @@
             if (!sample.initialized)
                 return;
 
+            if (transaction.intent.origin > 1) begin
+                owner_t attempt = transaction.probed_owner;
+                descriptor_state_t current = model.descriptors[attempt.desc];
+                bit owned = model.cells[transaction.probed_cell].assigned &&
+                            model.cells[transaction.probed_cell].owner == current.owner &&
+                            current.phase == BOUND_FRAME;
+                bit supported_probe = (transaction.intent.origin == 2 &&
+                                       attempt.frame.epoch != current.owner.frame.epoch &&
+                                       attempt.frame.source == current.owner.frame.source &&
+                                       attempt.frame.sequence == current.owner.frame.sequence &&
+                                       attempt.tag_value == current.owner.tag_value) ||
+                                      (transaction.intent.origin == 3 &&
+                                       attempt == current.owner && current.credit > 1);
+                if (!owned || !supported_probe || transaction.caller_guard != int'(transaction.intent.origin) ||
+                    has_events(sample.batch) || |transaction.release_present)
+                    divergence("CALLER_GUARD", sample.edge_number);
+            end
+
             for (int index = 0; index < N_RX; ++index) begin
                 desc_id_t id = transaction.rank_id[index];
                 if (transaction.rank_valid[index] != (index < int'(pre.descriptor_free)))
@@ -50,7 +68,8 @@
                  sample.batch.cell_return[N_TX].address != transaction.expected_cleanup_addr))
                 divergence("CLEANUP_ACCEPTANCE", sample.edge_number);
             for (int lane = 0; lane <= N_TX; ++lane) begin
-                bit completes = lane < N_TX ? sample.batch.egress_service[lane].cell_last :
+                bit completes = lane < N_TX ? (sample.batch.egress_service[lane].present &&
+                                               sample.batch.egress_service[lane].cell_last) :
                                              transaction.expected_cleanup.done;
                 qid_t queue_id = lane < N_TX ? sample.batch.egress_service[lane].owner.qid :
                                                transaction.expected_cleanup.owner.qid;

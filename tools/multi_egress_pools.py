@@ -1,9 +1,9 @@
 """Run the independent multi-egress pool preparation or candidate gate."""
 
 import argparse
+import difflib
 import hashlib
 import json
-import difflib
 import os
 from pathlib import Path
 import re
@@ -130,7 +130,7 @@ def compile_bench(run, args, profile, registry=None, overrides=None):
     sources = data["sources"] if registry is None else (
         *data["production_sources"], *data["verification_sources"])
     module = TOP if registry is None else "multi_egress_pool_candidate"
-    mode = [] if registry is None else ["+define+POOL_CANDIDATE", "--coverage-line", "--coverage-toggle"]
+    mode = [] if registry is None else ["+define+POOL_CANDIDATE", "--coverage-line"]
     uvm = Path(os.environ["UVM_HOME"]) / "src"
     top = result.path / "obj"
     command = ["verilator", "--binary", "--timing", "--assert", "--coverage-user",
@@ -162,7 +162,10 @@ def compile_bench(run, args, profile, registry=None, overrides=None):
 
 def replay_status(step, marker=MARKER):
     status, reason = completed(step, marker)
-    if status == "PASS" and output(step).splitlines().count(marker) != 1:
+    log = output(step)
+    if status == "TOOL_ERROR" and re.search(r"Assertion failed .*POOL_CHECK_FAILED ", log):
+        return "FAIL", next(line for line in log.splitlines() if "POOL_CHECK_FAILED " in line)
+    if status == "PASS" and log.splitlines().count(marker) != 1:
         return "FAIL", "Expected exactly one UVM completion record"
     return status, reason
 
@@ -241,10 +244,10 @@ def mutation_sources(run):
         "tm_cell_pool.sv": (
             ".selected(write_id)", ".selected(old_write_id)",
             """    assign write_accept =""",
-            """    logic [ID_WIDTH-1:0] old_write_id;
+            """    cell_id_t old_write_id;
     assign write_id = $test$plusargs("POOL_MUTATION=return-bypass") &&
                       return_present[N_TX-1] ? return_cell[N_TX-1] : old_write_id;
-    assign write_accept =""".replace("ID_WIDTH", "CELL_ID_W"),
+    assign write_accept =""",
         ),
         "tm_resource_pools.sv": (
             "assign cell_present[lane] = tx_present[lane];",

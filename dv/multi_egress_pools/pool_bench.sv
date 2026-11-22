@@ -8,7 +8,10 @@ package multi_egress_pool_bench;
         pool_sample_t sample;
 `ifdef POOL_CANDIDATE
         pool_sample_t intent;
-        bit post_ready, expected_cleanup_cell;
+        bit post_ready, expected_cleanup_cell, inactive_payload;
+        int caller_guard;
+        owner_t probed_owner;
+        cell_id_t probed_cell;
         cleanup_t expected_cleanup;
         cell_id_t expected_cleanup_addr;
         logic [N_RX-1:0] rank_valid, commits, intended_commits;
@@ -562,6 +565,7 @@ package multi_egress_pool_bench;
 `ifdef POOL_CANDIDATE
                 "sparse-grants": required.push_back(name);
                 "cell-next-edge": required.push_back("live-cell-next-edge");
+                "caller-guards": required = {"stale-epoch-input", "forged-final-input", "exact-drain"};
 `endif
                 "abort-accounting": required = {"grant-and-abort", "zero-cell-cleanup",
                     "mark-with-staged-write", "nonfinal-abort-reclaim"};
@@ -631,7 +635,7 @@ package multi_egress_pool_bench;
                 "full-grant-different-q", "abort-accounting", "final-cleanup", "active-reset",
                 "identity-and-drain", "crosses"};
 `ifdef POOL_CANDIDATE
-            positives = {positives, "sparse-grants", "cell-next-edge"};
+            positives = {positives, "sparse-grants", "cell-next-edge", "caller-guards"};
 `endif
             phase.raise_objection(this);
             if (!$value$plusargs("FIXTURES=%s", fixtures) || !$value$plusargs("EVIDENCE_DIR=%s", evidence_dir))
