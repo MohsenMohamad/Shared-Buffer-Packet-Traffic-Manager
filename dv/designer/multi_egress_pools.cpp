@@ -841,8 +841,11 @@ void identity(Bench& bench) {
 }
 
 void reset_owned(Bench& bench) {
-    fill_cell_credit(bench, false);
-    bench.witness("reset fully assigned", 0, 0, descriptors - (cells + max_frame_cells - 1) / max_frame_cells, 0);
+    constexpr int frame_cells = cells / descriptors;
+    static_assert(cells % descriptors == 0 && frame_cells <= max_frame_cells);
+    for (int i = 0; i < descriptors; ++i)
+        bench.materialize(bench.reserve(0, 0, frame_cells), frame_cells);
+    bench.witness("reset both pools fully owned", 0, 0, 0, 0);
     bench.reset();
 
     const int aborting = bench.reserve(0, 0, 3);
