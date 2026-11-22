@@ -109,15 +109,46 @@ sources. The build registry enumerates each HDL input and rejects inherited
 lists and unexpected includes. The runner scopes both identity digests and
 failure snapshots. The primary file-access audit limited original checkout
 opens to Git metadata. Production and feasibility worktree files stayed
-outside the projection. Targeted metadata lookups also returned
-PR descriptions and result summaries embedded in the public requirements
-registry. The expectation inputs were the behavior and ABI, P02 requirement
-text, and formal rules.
+outside the projection.
 
 The baseline `make doctor` passed version and archive checks, OpenSTA source
 identity, C++20, and solver SAT/UNSAT in a 45-file public projection. The
 repository-wide document and Python discovery routes were deferred to hosted
 CI because they read outside that projection.
+
+### Pre-freeze metadata exposure
+
+**Maintainer disposition pending.** The oracle and coverage plan froze in
+commit `8ce266e97a80702c6248e635cde91ae1dca916e6` on 22 November 2026 at
+08:21:55 Jerusalem time (06:21:55 UTC). The original tool-call history
+establishes that both responses below surfaced before that commit and before
+the DV branch was created. The retained records do not establish precise
+access timestamps for the individual lookups.
+
+| Lookup | Material surfaced in the original response | Order relative to the freeze |
+| --- | --- | --- |
+| GitHub PR metadata for #13, #32 and #33 | Full PR descriptions. #13 included F01 symbolic-input proof, cover and mutation results. #32 included isolated admission timing and area, cached-head throughput, functional tests and reset removal. #33 included composed setup and hold values, electrical repairs, reset-release limits, directed and planted-fault results, and throughput. #13 and #32 were requested as PR style examples. #33 was queried to identify the baseline merge. | Initial preflight, before the source projection and main CI gate check. |
+| Baseline `verification/requirements.json` | The tool printed nine complete records and exposed their embedded evidence fields. These included P02 FIFO and pool results, P07 fixture results, P03 queue and dispatch-guard results, P05 candidate and merged-source confirmation results, P06 reset results, and P01 parameter and interface coverage. | After the projected doctor run, while the main CI gate was still pending. The same tool batch showed scheduler F0 complete and E0 uploading evidence. |
+
+The requirements lookup used commit
+`4d6940fda61e44b3c73cd4962a0c4d1857889e61` and selected `IF-02`,
+`ADM-02`, `MEM-01`, `MEM-02`, `MEM-06`, `FMT-06`, `RST-01`, `RST-02`
+and `PAR-01`. The original responses identify PR #13
+(`068e2c64cbf43f0bece51ff9065ab470407b4efa`), PR #32
+(`523f1a025aa37c60b813408ee0884ef3d5a406dd`) and PR #33
+(`4d6940fda61e44b3c73cd4962a0c4d1857889e61`) by merge SHA.
+
+The public metadata and requirement text were relevant to the task. The
+embedded author result summaries exceeded the preparation allowlist. The
+doctor and primary build traces cover their own processes. They cannot
+establish the scope of the GitHub responses or the separate requirements
+lookup. The original history records no opening of the linked result
+artifacts or retained checker bodies during those lookups. It establishes
+the exposure and its order. Its effect on oracle independence requires
+maintainer review.
+
+The original preparation results and tested revision remain recorded.
+PR #34 remains draft pending the maintainer's provenance disposition.
 
 | First unexpected failure | Disposition and correction |
 | --- | --- |
