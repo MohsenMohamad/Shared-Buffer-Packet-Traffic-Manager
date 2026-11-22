@@ -30,7 +30,7 @@ staging, request overlap, or cell availability at the next beat deadline.
 
 ## Workloads and reproduction
 
-The [Python model](../../tools/multi_egress_feasibility.py) uses static per-queue
+The [Python model](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/96508d4d05f38ee73430d811b166fe93800dc371/tools/multi_egress_feasibility.py) uses static per-queue
 limits of 1,024 cells, a shared pool of 1,024 cells and 256 descriptors,
 packet RR, and the candidate's finite ports and edge ordering. It charges
 whole-frame credit at ordered header service, services up to four ingress
@@ -67,7 +67,10 @@ different frame boundaries at the two interfaces.
 | Synchronized returns | Hold each egress on its first final beat, then release all when they have reached it and edge 64 has passed or arrived. Check four accepted cell and descriptor returns and four concurrent dispatches. Aligned short packets also bring four final cells to write arbitration together. |
 | Cleanup contention | Every eighth frame at ingresses 0 and 1 is declared as 1,536 bytes and marked malformed on serviced beat 130. Remaining beats drain. Observe concurrent aborts, an abort-cell return sharing an edge with TX cell returns, and recovery of both reservations. The two unaffected egresses sustain line-side delivery. |
 
-All runs use deterministic inputs, with no random seed. From the repository root:
+All runs use deterministic inputs. Run the model commands below from the
+root of an archived checkout at `96508d4d05f38ee73430d811b166fe93800dc371`.
+The executions and earlier model filename are identified in the provenance
+section.
 
 ```sh
 python3 tools/multi_egress_feasibility.py --expect-gate

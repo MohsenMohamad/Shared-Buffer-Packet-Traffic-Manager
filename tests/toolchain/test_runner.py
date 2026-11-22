@@ -1,4 +1,5 @@
 """Contract tests for false passes, process bounds and evidence retention."""
+import ast
 import json
 import os
 from pathlib import Path
@@ -13,7 +14,8 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools'))
 from evidence import Run, completed, execute, output
-from run import assertion_result, inspect_coverage, unit
+from run import assertion_result, inspect_coverage, unit, uvm_status
+from multi_egress_pools import MARKER, SOURCES, rejection_status, replay_status, selected_sources
 from setup_toolchain import fetch
 from runner_fixture import isolated_runner_repository
 
@@ -144,12 +146,59 @@ class RunnerTests(unittest.TestCase):
             summary, = path.glob('*/summary.json')
             self.assertEqual(json.loads(summary.read_text())['result'], expected)
 
-    def test_empty_or_code_only_coverage_cannot_pass(self):
+    def test_native_coverage_reader_reports_partial_data(self):
         path = self.path / 'coverage.dat'
-        for text in ('', "C '\x01t\x02line\x01f\x02/x/tests/toolchain/uvm_smoke.sv' 10\n"):
-            path.write_text(text)
-            with self.assertRaises(ValueError):
-                inspect_coverage(path)
+        path.write_text('')
+        self.assertEqual(inspect_coverage(path), dict(owned_code_points={}, functional_bins={}))
+        path.write_text("C '\x01t\x02line\x01f\x02/x/tests/toolchain/uvm_smoke.sv' 10\n")
+        report = inspect_coverage(path)
+        self.assertEqual(report['owned_code_points']['line'], dict(hit=1, total=1))
+        self.assertEqual(report['functional_bins'], {})
+
+    def test_live_replay_gates_fail_closed(self):
+        for status, marker in ((replay_status, MARKER), (uvm_status, 'TM_UVM_SMOKE_PASS')):
+            with self.subTest(marker=marker):
+                self.assertEqual(status(self.process(f'print({marker!r})'))[0], 'PASS')
+                self.assertNotEqual(status(self.process('pass'))[0], 'PASS')
+                self.assertNotEqual(status(self.process(f'print({marker!r}); raise SystemExit(3)'))[0], 'PASS')
+                self.assertNotEqual(status(self.process(f'print({marker!r}); print({marker!r})'))[0], 'PASS')
+                self.assertNotEqual(status(self.process(
+                    f'print({marker!r}); print("UVM_FATAL @ 12: checker [STALE_OWNER] bad batch")'))[0], 'PASS')
+
+    def test_pool_failure_probe_requires_named_fatal_and_nonzero_exit(self):
+        fatal = '[12] %Fatal: Assertion failed in checker: POOL_CHECK_FAILED STALE_OWNER stale-owner edge=19'
+        for status, log, expected in (
+            (1, fatal, 'PASS'), (0, fatal, 'FAIL'), (1, 'unrelated crash', 'FAIL'),
+            (1, fatal + '\n' + MARKER, 'FAIL'),
+        ):
+            with self.subTest(status=status, log=log):
+                step = self.process(f'print({log!r}); raise SystemExit({status})')
+                self.assertEqual(rejection_status(step, 'STALE_OWNER')[0], expected)
+
+    def test_retired_verdict_modules_are_outside_active_paths(self):
+        retired = {'check', 'oracle', 'coverage_plan', 'queue_control',
+                   'queue_control_directed', 'multi_egress_feasibility'}
+        for path in sorted(set(SOURCES).union(
+                {'tools/queue_control_sta.py', 'tools/queue_control_geometry.py'})):
+            if not path.endswith('.py'):
+                continue
+            with self.subTest(path=path):
+                tree = ast.parse((ROOT / path).read_text())
+                imports = set()
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Import):
+                        imports.update(alias.name.split('.')[0] for alias in node.names)
+                    elif isinstance(node, ast.ImportFrom) and node.module:
+                        imports.add(node.module.split('.')[0])
+                self.assertFalse(retired & imports)
+                self.assertNotIn(Path(path).stem, retired)
+        self.assertTrue(selected_sources()['sources'])
+        for directory, names in (
+            ('dv/multi_egress_pools', ('check', 'oracle', 'coverage_plan')),
+            ('tools', ('queue_control', 'queue_control_directed', 'multi_egress_feasibility')),
+        ):
+            for name in names:
+                self.assertFalse((ROOT / directory / f'{name}.py').exists())
 
     def test_corrupt_cached_dependency_is_rejected_without_network(self):
         path = self.path / 'archive'

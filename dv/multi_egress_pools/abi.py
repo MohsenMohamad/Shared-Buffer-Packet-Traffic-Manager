@@ -1,14 +1,4 @@
-"""Pack replay fixtures and decode passive monitor samples using ABI v1."""
-
-from oracle import Batch, Cleanup, Counts, Grant, Owner, Publication, Service, Write, require
-
-
-def split(value, *widths):
-    fields = []
-    for width in reversed(widths):
-        fields.append(value & ((1 << width) - 1))
-        value >>= width
-    return tuple(reversed(fields))
+"""Pack replay stimulus using ABI v1."""
 
 
 def packed(values, widths):
@@ -56,9 +46,6 @@ class Layout:
     def pack_owner(self, owner):
         return packed((*owner.frame, owner.qid, owner.descriptor, owner.tag), self.owner)
 
-    def unpack_owner(self, bits):
-        return Owner(*split(bits, *self.owner))
-
     def encode(self, batch):
         data = {name: {} for name in self.members}
         po = self.pack_owner
@@ -96,59 +83,8 @@ class Layout:
                 offset += sum(fields)
         return result
 
-    def decode(self, value):
-        data = {name: {} for name in self.members}
-        for name, (fields, lanes) in self.members.items():
-            width = sum(fields)
-            for lane in range(lanes):
-                bits = split(value, *fields)
-                value >>= width
-                if bits[0] or name in ("epoch", "present"):
-                    data[name][lane] = bits[1:] if name not in ("epoch", "present") else bits
-        require(value == 0, "ABI_WIDTH", value)
-        epoch = data["epoch"][0][0]
-        present = bool(data["present"][0][0])
-        up = self.unpack_owner
-        batch = Batch(epoch, present)
-        for lane, (owner,) in data["descriptor"].items():
-            batch.desc_returns[lane] = up(owner)
-        for lane, (owner, address) in data["cell"].items():
-            batch.cell_returns[lane] = (up(owner), address)
-        if c := data["cleanup"].get(0):
-            batch.cleanup = Cleanup(up(c[0]), bool(c[1]), c[2])
-        for lane, (owner, amount) in data["abort"].items():
-            batch.aborts[lane] = (up(owner), amount)
-        for lane, (owner, address, last, final) in data["service"].items():
-            batch.services[lane] = Service(up(owner), address, bool(last), bool(final))
-        for lane, (owner, length) in data["dispatch"].items():
-            batch.dispatches[lane] = (up(owner), length)
-        if p := data["publication"].get(0):
-            batch.publication = Publication(up(p[0]), p[1], p[2], p[3])
-        if w := data["write"].get(0):
-            batch.write = Write(up(w[0]), w[2], w[1], bool(w[3]))
-        admissions = data["admission"]
-        if present:
-            require(list(admissions) == list(range(len(admissions))), "ADMISSION_PREFIX", tuple(admissions))
-        for frame, metadata, disposition, _, route, qid, requested, desc in admissions.values():
-            if disposition != 0:
-                continue
-            length, destination, qos, tag, _ = split(metadata, 16, 8, 8, 16, 2)
-            require(route and destination < self.ports and qos < 4 and qid == destination * 4 + qos,
-                    "GRANT_ROUTE", (destination, qos, qid))
-            batch.grants.append(Grant(Owner(*split(frame, *self.frame), qid, desc, tag),
-                                      length, requested))
-        if not present:
-            require(batch == Batch(epoch, False), "RESET_ACTIVITY", epoch)
-        return batch
-
     def row(self, reset_n, initialized, batch, counts, origin=0):
         return " ".join(map(str, (int(reset_n), int(initialized), origin,
                                   f"{self.encode(batch):x}", counts.physical_free,
                                   counts.unreserved, counts.reserved_free, counts.assigned,
                                   counts.descriptor_free, *counts.queue_credit)))
-
-    def read_row(self, row):
-        reset_n, initialized, origin, batch, *rest = row.split()
-        counts = [int(n) for n in rest]
-        return (bool(int(reset_n)), bool(int(initialized)), int(origin),
-                self.decode(int(batch, 16)), Counts(*counts[:5], tuple(counts[5:])))

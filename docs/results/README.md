@@ -3,7 +3,7 @@
 - [Public multi-egress ABI](TM03-multi-egress-declarations.md)
 - [Datapath feasibility](multi-egress-datapath-feasibility.md)
 - [Queue and control feasibility](TM04-queue-control.md), [timing follow-up](TM04-control-timing.md), and [composed timing](TM04-composed-timing.md)
-- [Pool DV preparation](TM05-pool-dv-preparation.md)
+- [Live pool checking](TM05-live-pool-checking.md) and [original DV preparation](TM05-pool-dv-preparation.md)
 - [Pool RTL candidate](TM06-pool-rtl-candidate.md)
 - [Toolchain qualification](toolchain-qualification.md) and [symbolic input recipe](F01-formal-symbols.md)
 

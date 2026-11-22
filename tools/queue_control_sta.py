@@ -13,10 +13,9 @@ import subprocess
 
 from evidence import ROOT, sha
 from frontend import read_sources
-from queue_control import PROFILES
+from queue_control_geometry import PROFILES
 
 EXP = ROOT / "experiments/queue-control"
-ALLOC = ROOT / "experiments/allocator-scaling"
 LIBERTY = ROOT / ".deps/liberty.lib"
 POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "head-cached": ("queue_head", {"CACHED": 1}),
@@ -211,7 +210,7 @@ def point(name, profile_name, output, sta_only, short_abc, sta_timeout):
     params = dict(P=profile.ports, N_CELL=profile.cells, N_DESC=profile.descriptors, **extra)
     if top in ("admission", "connected_control"):
         params["MAX_BYTES"] = profile.maximum
-    script = (ALLOC / "mapping.ys.in").read_text()
+    script = (EXP / "mapping.ys.in").read_text()
     if short_abc:
         script = script.replace("abc -liberty", f"abc -script {EXP / 'abc-short.script'} -liberty")
     files = [EXP / (top + ".sv")]
@@ -220,7 +219,7 @@ def point(name, profile_name, output, sta_only, short_abc, sta_timeout):
         files.extend(EXP / (name + ".sv") for name in ("admission", "queue_head", "cell_control"))
         defines = ("QUEUE_CONTROL_CONNECTED",)
     substitutions = dict(READ=read_sources(files, top, defines=defines, params=params),
-                         TOP=top, LIBERTY=LIBERTY, ABC_CONSTR=ALLOC / "abc.constr",
+                         TOP=top, LIBERTY=LIBERTY, ABC_CONSTR=EXP / "abc.constr",
                          NETLIST=path / "mapped.v", JSON=path / "mapped.json", STATS=path / "stats.json")
     for key, value in substitutions.items():
         script = script.replace("@" + key + "@", str(value))
@@ -276,8 +275,8 @@ def main():
     destination = args.output.resolve()
     scope = [(name, profile) for profile in PROFILES for name in POINTS
              if args.profile in ("all", profile) and args.point in ("all", name)]
-    files = [*EXP.glob("*"), ALLOC / "mapping.ys.in", ALLOC / "abc.constr", lock,
-             ROOT / "tools/packages.lock.json", Path(__file__).resolve()]
+    files = [*EXP.glob("*"), lock, ROOT / "tools/packages.lock.json",
+             ROOT / "tools/queue_control_geometry.py", Path(__file__).resolve()]
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True))
     manifest = dict(source_revision=revision, dirty=dirty, liberty_sha256=sha(LIBERTY),

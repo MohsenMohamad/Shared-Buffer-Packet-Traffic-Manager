@@ -11,7 +11,7 @@ identifies the evidence still needed before freezing the architecture.
 ## Cycle and resource behavior
 
 The [definition](../../experiments/queue-control/README.md) was committed before
-measurement. The [model](../../tools/queue_control.py) implements explicit
+measurement. The [model](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/a5a3f6533295f2c02f2cc26c116a3e9f8e8f3f5e/tools/queue_control.py) implements explicit
 descriptor and cell IDs, identity and ownership, separate physical and
 unreserved free pools, per-queue held credit, queue head/tail/link state and
 the post-write publication slot. It consumes pre-edge capture and output
@@ -43,7 +43,7 @@ ports and the fixed one- or two-edge response.
 
 ## Directed witnesses and intended detections
 
-The [directed runner](../../tools/queue_control_directed.py) uses independent
+The [directed runner](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/a5a3f6533295f2c02f2cc26c116a3e9f8e8f3f5e/tools/queue_control_directed.py) uses independent
 pre-edge fixtures and literal expected transition checks. It reports each
 trigger, comparison and observed trace. All 336 rows pass, covering 28 cases
 per profile, metadata organization and latency. The 48 intended detections
@@ -218,6 +218,11 @@ measurement. Build-success, nonnegative single-corner data slack and passing
 directed model cases leave the integration gates open.
 
 ## Reproduction and provenance
+
+Run the original model commands below at
+`a5a3f6533295f2c02f2cc26c116a3e9f8e8f3f5e`. Those commands are archived
+model-only results. Use the RTL and timing revisions in the table for the
+corresponding native commands.
 
 | Scope | Tested revision |
 | --- | --- |

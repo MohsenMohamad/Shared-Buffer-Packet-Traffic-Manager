@@ -61,7 +61,6 @@ package multi_egress_pool_bench;
     class pool_trace extends uvm_subscriber #(pool_item);
         `uvm_component_utils(pool_trace)
         int file_handle;
-        int edges;
 
         function new(string name, uvm_component parent);
             super.new(name, parent);
@@ -70,15 +69,16 @@ package multi_egress_pool_bench;
         function void write(pool_item transaction);
             pool_sample_t sample = transaction.sample;
             $fwrite(file_handle, "%0d %0d %0d %0d %0h %0d %0d %0d %0d %0d",
-                    edges, sample.reset_n, sample.initialized, sample.origin, sample.batch,
+                    sample.edge_number, sample.reset_n, sample.initialized, sample.origin, sample.batch,
                     sample.counts.physical_free, sample.counts.unreserved,
                     sample.counts.reserved_free, sample.counts.assigned, sample.counts.descriptor_free);
             for (int q = 0; q < N_Q; ++q)
                 $fwrite(file_handle, " %0d", sample.counts.queue_credit[q]);
             $fwrite(file_handle, "\n");
-            ++edges;
         endfunction
     endclass
+
+    `include "pool_scoreboard.svh"
 
     class episode_choice extends uvm_object;
         rand int unsigned index;
@@ -102,6 +102,27 @@ package multi_egress_pool_bench;
         endfunction
     endclass
 
+    // Keep fixture draws local to the sequence. Simulator-wide random state
+    // can advance in other UVM processes between replays.
+    class fixture_rng;
+        int unsigned state;
+
+        function new(int unsigned seed);
+            state = seed == 0 ? 1 : seed;
+        endfunction
+
+        function int unsigned next_word();
+            state ^= state << 13;
+            state ^= state >> 17;
+            state ^= state << 5;
+            return state;
+        endfunction
+
+        function int unsigned between(int unsigned upper, int unsigned lower = 0);
+            return lower + next_word() % (upper - lower + 1);
+        endfunction
+    endclass
+
     `include "pool_random.svh"
 
     // The sequence composes legal state trajectories. The length table is a
@@ -110,8 +131,11 @@ package multi_egress_pool_bench;
         `uvm_object_utils(pool_replay_sequence)
         string input_path, template_dir;
         int activity_edges;
-        int read_edges;
         int sent_edges;
+        int next_edge;
+        int seed = 0;
+        fixture_rng rng;
+        string transport_fault;
         epoch_t epoch, epoch_delta;
         bit reset_active;
         logic [15:0] intent_length[N_DESC];
@@ -195,7 +219,7 @@ package multi_egress_pool_bench;
                         `uvm_fatal("STIMULUS_LEDGER", "Random intent selected an owned descriptor")
                     maximum = 64 * int'(batch.admission[lane].requested);
                     minimum = maximum == 64 ? MIN_FRAME_BYTES : maximum - 63;
-                    intent_length[index] = 16'($urandom_range(maximum, minimum));
+                    intent_length[index] = 16'(rng.between(maximum, minimum));
                     intent_live[index] = 1;
                     ++intent_count;
                     batch.admission[lane].metadata.length = intent_length[index];
@@ -263,8 +287,8 @@ package multi_egress_pool_bench;
                     batch.cell_return[lane].owner = owner_id(cells[old_lane].owner, choice);
                     batch.cell_return[lane].address = address(cells[old_lane].address, choice);
                 end else begin
-                    batch.cell_return[lane].owner.tag_value = 16'($urandom);
-                    batch.cell_return[lane].address = cell_id_t'($urandom);
+                    batch.cell_return[lane].owner.tag_value = 16'(rng.next_word());
+                    batch.cell_return[lane].address = cell_id_t'(rng.next_word());
                 end
                 if (descriptors[old_lane].present) begin
                     batch.descriptor_return[lane].present = 1;
@@ -277,8 +301,8 @@ package multi_egress_pool_bench;
                         --intent_count;
                     end
                 end else begin
-                    batch.descriptor_return[lane].owner.tag_value = 16'($urandom);
-                    batch.descriptor_return[lane].owner.desc = desc_id_t'($urandom);
+                    batch.descriptor_return[lane].owner.tag_value = 16'(rng.next_word());
+                    batch.descriptor_return[lane].owner.desc = desc_id_t'(rng.next_word());
                 end
             end
         endfunction
@@ -306,6 +330,11 @@ package multi_egress_pool_bench;
 
         task send_sample(pool_sample_t sample);
             pool_item item = pool_item::type_id::create("edge");
+            sample.edge_number = next_edge++;
+            if (sample.edge_number == 5 && transport_fault == "lost-edge")
+                return;
+            if (sample.edge_number == 5 && transport_fault == "duplicate-edge")
+                --sample.edge_number;
             start_item(item);
             item.sample = sample;
             finish_item(item);
@@ -339,7 +368,6 @@ package multi_egress_pool_bench;
                 ++seen;
             end
             $fclose(file_handle);
-            read_edges += seen;
             if (seen == 0)
                 `uvm_fatal("TRACE_INPUT", "Empty pool input")
             if (randomized && intent_count != 0)
@@ -363,8 +391,10 @@ package multi_egress_pool_bench;
         task random_traffic();
             traffic_choice choice = traffic_choice::type_id::create("traffic");
             pool_traffic_ledger ledger = pool_traffic_ledger::type_id::create("ledger");
-            int target = activity_edges + 2048;
+            int target = activity_edges + ACTIVITY_FLOOR;
             int attempts = 0;
+            choice.srandom(seed);
+            ledger.rng = rng;
             restart_traffic(ledger);
             while (activity_edges < target) begin
                 if (choice.randomize() != 1)
@@ -387,10 +417,12 @@ package multi_egress_pool_bench;
             episode_choice choice = episode_choice::type_id::create("choice");
             string names[$], remaining[$], name;
             int file_handle, slot;
+            rng = new(seed);
             if (template_dir == "") begin
                 play(input_path, choice, 0);
                 return;
             end
+            choice.srandom(seed);
             file_handle = $fopen({template_dir, "/templates.txt"}, "r");
             if (file_handle == 0)
                 `uvm_fatal("TRACE_INPUT", "Missing constrained-random episode index")
@@ -402,7 +434,7 @@ package multi_egress_pool_bench;
             $fclose(file_handle);
             if (names.size() == 0)
                 `uvm_fatal("TRACE_INPUT", "Empty episode index")
-            while (remaining.size() != 0 || activity_edges < 2048) begin
+            while (remaining.size() != 0 || activity_edges < ACTIVITY_FLOOR) begin
                 choice.episode_count = remaining.size() != 0 ? remaining.size() : names.size();
                 if (choice.randomize() != 1)
                     `uvm_fatal("STIMULUS_RANDOM", "Episode constraints unsatisfiable")
@@ -419,49 +451,11 @@ package multi_egress_pool_bench;
         endtask
     endclass
 
-    // The offline scoreboard sends only checked samples to these covergroups.
-    class pool_coverage extends uvm_object;
-        `uvm_object_utils(pool_coverage)
-        covergroup descriptor_cross with function sample(int returns, int grants, int old_free, int source);
-            cp_returns: coverpoint returns { bins count[] = {[0:N_TX+1]}; }
-            cp_grants: coverpoint grants { bins count[] = {[0:N_RX]}; }
-            cp_old_free: coverpoint old_free { bins bucket[] = {[0:4]}; }
-            cp_source: coverpoint source { bins origin[] = {[0:3]}; }
-            combinations: cross cp_returns, cp_grants, cp_old_free, cp_source;
-        endgroup
-        covergroup cell_cross with function sample(int returns, int writes, int old_free, int source);
-            cp_returns: coverpoint returns { bins count[] = {[0:N_TX+1]}; }
-            cp_writes: coverpoint writes { bins count[] = {[0:1]}; }
-            cp_old_free: coverpoint old_free { bins bucket[] = {[0:4]}; }
-            cp_source: coverpoint source { bins origin[] = {[0:3]}; }
-            combinations: cross cp_returns, cp_writes, cp_old_free, cp_source;
-        endgroup
-
-        function new(string name = "pool_coverage");
-            super.new(name);
-            descriptor_cross = new;
-            cell_cross = new;
-        endfunction
-
-        task sample_file(string path);
-            int handle = $fopen(path, "r");
-            int gd, dr, df, ds, cw, cr, cf, cs;
-            int seen, status;
-            if (handle == 0)
-                `uvm_fatal("POOL_COVERAGE", "Missing checked coverage samples")
-            status = $fscanf(handle, "%d %d %d %d %d %d %d %d", dr, gd, df, ds, cr, cw, cf, cs);
-            while (status == 8) begin
-                descriptor_cross.sample(dr, gd, df, ds);
-                cell_cross.sample(cr, cw, cf, cs);
-                ++seen;
-                status = $fscanf(handle, "%d %d %d %d %d %d %d %d", dr, gd, df, ds, cr, cw, cf, cs);
-            end
-            $fclose(handle);
-            if (seen == 0 || status != -1)
-                `uvm_fatal("POOL_COVERAGE", "Missing or invalid checked coverage sample")
-            $display("POOL_COVERAGE_PASS samples=%0d", seen);
-        endtask
-    endclass
+    typedef struct {
+        string name;
+        string detector;
+        int edge_number;
+    } fault_case_t;
 
     class pool_test extends uvm_test;
         `uvm_component_utils(pool_test)
@@ -469,59 +463,169 @@ package multi_egress_pool_bench;
         uvm_sequencer #(pool_item) sequencer;
         pool_monitor monitor;
         pool_trace trace;
-        string coverage_input;
+        pool_scoreboard scoreboard;
+        string fixtures, evidence_dir;
+        fault_case_t faults[11];
 
         function new(string name, uvm_component parent);
             super.new(name, parent);
+            faults = '{
+                '{"desc-return-bypass", "DESC_PRE_FREE", N_RX == 4 ? 772 : 28},
+                '{"cell-return-bypass", "CELL_PRE_FREE", N_RX == 4 ? 1116 : 32},
+                '{"descriptor-prefix-repeat", "DESC_PRE_FREE", N_RX == 4 ? 766 : 22},
+                '{"credit-return-bypass", "CREDIT_PREFIX", N_RX == 4 ? 1116 : 32},
+                '{"physical-exhaustion", "PHYSICAL_EXHAUSTION", N_RX == 4 ? 1116 : 32},
+                '{"repeat-return", "DUPLICATE_CELL_RETURN", N_RX == 4 ? 27 : 19},
+                '{"omit-high-lane", "TX_CELL_EVENT", N_RX == 4 ? 27 : 19},
+                '{"early-abort-credit", "EARLY_CLEANUP_CREDIT", 8},
+                '{"stale-owner", "STALE_OWNER", 19},
+                '{"omit-final-return", "TX_DESC_EVENT", 12},
+                '{"omit-final-cleanup", "DRAIN_OWNERSHIP", 4}
+            };
         endfunction
 
         function void build_phase(uvm_phase phase);
             virtual multi_egress_pool_bus bus;
-            if ($value$plusargs("COVER_ROWS=%s", coverage_input))
-                return;
             if (!uvm_config_db#(virtual multi_egress_pool_bus)::get(this, "", "bus", bus))
                 `uvm_fatal("POOL_CONFIG", "Missing passive observation interface")
             sequencer = new("sequencer", this);
             driver = pool_driver::type_id::create("driver", this);
             monitor = pool_monitor::type_id::create("monitor", this);
             trace = pool_trace::type_id::create("trace", this);
+            scoreboard = pool_scoreboard::type_id::create("scoreboard", this);
             driver.bus = bus;
             monitor.bus = bus;
         endfunction
 
         function void connect_phase(uvm_phase phase);
-            if (coverage_input == "") begin
-                driver.seq_item_port.connect(sequencer.seq_item_export);
-                monitor.accepted.connect(trace.analysis_export);
-            end
+            driver.seq_item_port.connect(sequencer.seq_item_export);
+            monitor.accepted.connect(trace.analysis_export);
+            monitor.accepted.connect(scoreboard.analysis_export);
         endfunction
 
-        task run_phase(uvm_phase phase);
-            pool_replay_sequence sequence_item = pool_replay_sequence::type_id::create("campaign");
-            pool_coverage coverage = pool_coverage::type_id::create("coverage");
-            string trace_path;
-            int seed;
-            phase.raise_objection(this);
-            if (coverage_input != "") begin
-                coverage.sample_file(coverage_input);
+        function void required_triggers(string name, ref string required[$]);
+            case (name)
+                "descriptor-empty-return", "descriptor-one-prefix", "descriptor-two-prefix":
+                    required = {name, "descriptor-next-edge"};
+                "cell-exchange": required = {"cell-one-exchange", "credit-next-edge",
+                    "cell-next-edge", "reserved-write-zero-U"};
+                "return-lanes": required = {"full-return", "highest-return", "sparse-cleanup"};
+                "full-grant-same-q", "full-grant-different-q": required.push_back(name);
+                "abort-accounting": required = {"grant-and-abort", "zero-cell-cleanup",
+                    "mark-with-staged-write", "nonfinal-abort-reclaim"};
+                "active-reset": required = {"active-abort-reset", "epoch-reused-cell-desc-tag", "bound-without-final"};
+                "identity-and-drain": required = {"repeated-tag-shared-queue", "zero-and-highest-IDs",
+                    "absent-fields", "exact-drain"};
+                "crosses": begin
+                    for (int kind = 0; kind < 2; ++kind) begin
+                        string kind_name;
+                        if (kind == 0)
+                            kind_name = "descriptor";
+                        else
+                            kind_name = "cell";
+                        for (int ret = 0; ret <= N_TX+1; ++ret)
+                            for (int alloc = 0; alloc <= (kind == 0 ? N_RX : 1); ++alloc)
+                                for (int bucket = 0; bucket < 5; ++bucket)
+                                    for (int origin = 0; origin < 4; ++origin)
+                                        if (scoreboard.coverage.exclusion(kind, ret, alloc, bucket, origin) == "")
+                                            required.push_back($sformatf("%s:%0d:%0d:%0d:%0d",
+                                                kind_name, ret, alloc, bucket, origin));
+                    end
+                end
+                default: return;
+            endcase
+        endfunction
+
+        task run_case(string name, string detector = "", int divergence = -1, int seed = 0,
+                      bit replay = 0, bit raw = 0);
+            string required[$];
+            string trigger_path = "";
+            string path = {fixtures, "/", name, ".edges"};
+            pool_replay_sequence scenario = pool_replay_sequence::type_id::create("campaign");
+            if (seed != 0) begin
+                scenario.seed = seed;
+                scenario.srandom(seed);
+                scenario.template_dir = fixtures;
+            end else if (name == "duplicate-edge" || name == "lost-edge") begin
+                scenario.transport_fault = name;
+                scenario.input_path = {fixtures, "/identity-and-drain.edges"};
             end else begin
-                void'($value$plusargs("REPLAY=%s", sequence_item.input_path));
-                void'($value$plusargs("TEMPLATES=%s", sequence_item.template_dir));
-                if (!$value$plusargs("MONITOR_OUT=%s", trace_path))
-                    `uvm_fatal("POOL_CONFIG", "Missing passive trace output")
-                if ($value$plusargs("POOL_SEED=%d", seed))
-                    sequence_item.srandom(seed);
-                trace.file_handle = $fopen(trace_path, "w");
-                if (trace.file_handle == 0)
-                    `uvm_fatal("POOL_CONFIG", "Cannot open passive trace output")
-                sequence_item.start(sequencer);
-                $fclose(trace.file_handle);
-                if (trace.edges != sequence_item.sent_edges || sequence_item.read_edges == 0)
-                    `uvm_fatal("POOL_MONITOR", "Passive monitor edge count differs from the driven sample count")
-                $display("POOL_REPLAY_PASS edges=%0d activity=%0d", trace.edges, sequence_item.activity_edges);
+                scenario.input_path = path;
             end
+            if (!raw && detector == "" && seed == 0) begin
+                required_triggers(name, required);
+                trigger_path = {fixtures, "/", name, ".triggers"};
+            end
+            scoreboard.begin_case(name, required, trigger_path, raw ? "" : detector, divergence, seed, replay);
+            trace.file_handle = $fopen({evidence_dir, "/", name, ".edges"}, "w");
+            if (trace.file_handle == 0)
+                `uvm_fatal("POOL_CONFIG", {"Cannot open passive trace for ", name})
+            scenario.start(sequencer);
+            $fclose(trace.file_handle);
+            scoreboard.end_case(scenario.sent_edges);
+        endtask
+
+        task run_phase(uvm_phase phase);
+            string selected;
+            bit selected_case, raw;
+            int bin_report;
+            string positives[] = '{"descriptor-empty-return", "descriptor-one-prefix", "descriptor-two-prefix",
+                "cell-exchange", "cell-exhaustion", "return-lanes", "full-grant-same-q",
+                "full-grant-different-q", "abort-accounting", "final-cleanup", "active-reset",
+                "identity-and-drain", "crosses"};
+            phase.raise_objection(this);
+            if (!$value$plusargs("FIXTURES=%s", fixtures) || !$value$plusargs("EVIDENCE_DIR=%s", evidence_dir))
+                `uvm_fatal("POOL_CONFIG", "Missing fixture or evidence directory")
+            scoreboard.report = $fopen({evidence_dir, "/witnesses.txt"}, "w");
+            bin_report = $fopen({evidence_dir, "/bins.txt"}, "w");
+            if (scoreboard.report == 0 || bin_report == 0)
+                `uvm_fatal("POOL_CONFIG", "Cannot open checked evidence records")
+            selected_case = $value$plusargs("POOL_CASE=%s", selected);
+            raw = $test$plusargs("UNQUALIFIED");
+            if (raw && !selected_case)
+                `uvm_fatal("POOL_CONFIG", "An unqualified run requires a replay case")
+            if (selected_case) begin
+                bit found = 0;
+                foreach (positives[index])
+                    if (positives[index] == selected) begin
+                        run_case(selected, "", -1, 0, 0, raw);
+                        found = 1;
+                    end
+                foreach (faults[index])
+                    if (faults[index].name == selected) begin
+                        run_case(selected, faults[index].detector, faults[index].edge_number, 0, 0, raw);
+                        found = 1;
+                    end
+                if (selected == "duplicate-edge" || selected == "lost-edge") begin
+                    run_case(selected, "EDGE_SEQUENCE", 5, 0, 0, raw);
+                    found = 1;
+                end
+                if (!found)
+                    `uvm_fatal("POOL_SELECTION", {"Unknown case ", selected})
+                scoreboard.coverage.check_and_report(bin_report, selected == "crosses");
+            end else begin
+                foreach (positives[index])
+                    run_case(positives[index]);
+                foreach (faults[index])
+                    run_case(faults[index].name, faults[index].detector, faults[index].edge_number);
+                foreach (SEEDS[index]) begin
+                    run_case($sformatf("seed-%0d", SEEDS[index]), "", -1, SEEDS[index]);
+                    if (index == 0)
+                        run_case("replay-17", "", -1, SEEDS[index], 1);
+                end
+                scoreboard.end_campaign(bin_report);
+            end
+            $fclose(bin_report);
+            $fclose(scoreboard.report);
             phase.drop_objection(this);
         endtask
+
+        function void report_phase(uvm_phase phase);
+            uvm_report_server server = uvm_report_server::get_server();
+            if (server.get_severity_count(UVM_ERROR) != 0 || server.get_severity_count(UVM_FATAL) != 0)
+                `uvm_fatal("POOL_UVM_REPORT", "UVM errors prevent completion")
+            $display("POOL_REPLAY_PASS");
+        endfunction
     endclass
 endpackage
 
