@@ -336,35 +336,44 @@ def formal_campaign(run, args, profile):
     registry, digests = verify_candidate(args.candidate_revision)
     record_candidate(run, args.candidate_revision, digests)
     jobs = (args.formal_mode,) if args.formal_mode else (
-        ("prove", "cover", "exhaustion") if profile.ports == 2 else ("bmc",))
+        ("prove", "cover", "exhaustion") if profile.ports == 2 else ("bmc", "primary-prefix"))
     for mode in jobs:
         result = case(run, mode)
         if mode == "exhaustion" and profile.ports != 2:
             result.finish("NOT_RUN", "Full cell-exhaustion cover is registered for the small profile")
             continue
-        depth = args.depth or {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22}[mode]
-        caller = args.formal_caller or ("ledger" if mode in ("cover", "exhaustion") else "aggregate")
-        if mode == "exhaustion" and caller != "ledger":
-            result.finish("NOT_RUN", "Cell-exhaustion cover requires the frame ledger")
+        if mode == "primary-prefix" and profile.ports != 4:
+            result.finish("NOT_RUN", "The primary prefix cover requires the primary profile")
+            continue
+        directed_covers = {
+            "exhaustion": ("-DPOOL_EXHAUSTION_COVER", "c_full_cell_exhaustion"),
+            "primary-prefix": ("-DPOOL_PRIMARY_PREFIX_COVER", "c_primary_capacity"),
+        }
+        is_cover = mode == "cover" or mode in directed_covers
+        depth = args.depth or {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22, "primary-prefix": 7}[mode]
+        caller = args.formal_caller or ("ledger" if is_cover else "aggregate")
+        if mode in directed_covers and caller != "ledger":
+            result.finish("NOT_RUN", "Directed capacity covers use the frame ledger")
             continue
         inputs = (*registry["production_sources"], *registry["formal_sources"])
         profile_id = int(profile.ports == 2)
         definitions = ["-DPOOL_ABSTRACT_CALLER"] if caller == "aggregate" else []
-        if mode == "exhaustion":
-            definitions.append("-DPOOL_EXHAUSTION_COVER")
+        if mode in directed_covers:
+            definitions.append(directed_covers[mode][0])
         script = (f"read_slang --top pool_candidate_formal -GPROFILE={profile_id} "
                   f"{' '.join(definitions)} -I. {' '.join(Path(path).name for path in inputs)}\n"
                   "prep -top pool_candidate_formal")
         if mode == "cover":
             script += "\nchformal -cover -remove pool_candidate_formal/c:check_pool.c_cell_exhaustion"
-        elif mode == "exhaustion":
+        elif mode in directed_covers:
+            selected = directed_covers[mode][1]
             script += ("\nchformal -cover -remove pool_candidate_formal/c:c_* "
-                       "pool_candidate_formal/c:check_pool.c_* %u pool_candidate_formal/c:c_full_cell_exhaustion %d")
+                       f"pool_candidate_formal/c:check_pool.c_* %u pool_candidate_formal/c:{selected} %d")
         files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
         config = result.path / "pool.sby"
         proof_engine = args.proof_engine or ("pdr" if caller == "ledger" else "induction")
         engine = "abc pdr" if mode == "prove" and proof_engine == "pdr" else "smtbmc z3"
-        sby_mode = "cover" if mode == "exhaustion" else mode
+        sby_mode = "cover" if is_cover else mode
         config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n"
                           f"[engines]\n{engine}\n[script]\n{script}\n[files]\n{files}\n")
         result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
@@ -386,7 +395,7 @@ def main(argv):
     parser.add_argument("--profile", choices=("primary", "small", "all"), default="all")
     parser.add_argument("--candidate-revision")
     parser.add_argument("--mutations", action="store_true")
-    parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover", "exhaustion"))
+    parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover", "exhaustion", "primary-prefix"))
     parser.add_argument("--proof-engine", choices=("pdr", "induction"))
     parser.add_argument("--formal-caller", choices=("aggregate", "ledger"))
     parser.add_argument("--depth", type=int, choices=range(2, 65), metavar="2..64")

@@ -301,6 +301,35 @@ module pool_candidate_formal #(
     end
 `endif
 
+`ifdef POOL_PRIMARY_PREFIX_COVER
+    // A full-width prefix followed by one materialization checks the primary
+    // counter widths at the real 1,024-cell and 256-descriptor capacities.
+    int unsigned capacity_edge = 0;
+    desc_id_t first_owner;
+    always_ff @(posedge clk) begin
+        if (past_valid)
+            assume(rst_n == (!was_reset || $past(was_reset)));
+        if (rst_n && caller_ready) begin
+            capacity_edge <= capacity_edge + 1;
+            assume(tx_present == '0 && !cleanup_present);
+            assume(reserve_commit == (capacity_edge == 0 ? '1 : '0));
+            assume(write_offer == (capacity_edge == 1));
+            if (capacity_edge == 0) begin
+                first_owner <= grant_desc[0];
+                for (int lane = 0; lane < N_RX; ++lane) begin
+                    assume(reserve_cells[lane] == cell_count_t'(1));
+                    assume(reserve_qid[lane] == qid_t'(lane * N_CLASS));
+                end
+            end
+            if (capacity_edge == 1)
+                assume(write_owner == first_owner);
+            c_primary_capacity: cover(capacity_edge == 2 && free_cells == cell_count_t'(N_CELL-1) &&
+                free_desc == desc_count_t'(N_DESC-N_RX) && unreserved == cell_count_t'(N_CELL-N_RX) &&
+                reserved_free == cell_count_t'(N_RX-1));
+        end
+    end
+`endif
+
     cell_count_t assigned;
     assign assigned = cell_count_t'(N_CELL - $countones(dut.cells.free_bits));
     multi_egress_pool_obligations #(.N_RX(N_RX), .N_TX(N_TX), .N_CELL(N_CELL), .N_DESC(N_DESC)) check_pool (
