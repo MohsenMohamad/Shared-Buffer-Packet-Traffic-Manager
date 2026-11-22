@@ -30,6 +30,20 @@ counts, and permits TX finishes only when the last assigned cell returns.
 The directed exhaustion job schedules a legal fill and return in the full
 small profile. It leaves selected addresses to the DUT.
 
+## Induction invariants
+
+The small proof asserts physical and descriptor free populations, the
+free/owned partitions, exact resource capacities, and global credit
+conservation. It also asserts that each live cell names a live descriptor,
+that each descriptor's materialized count equals its assigned cell
+population, and that held credit equals the sum of live reservations
+for each queue. The first release edge asserts reset values and empty
+ownership. Bounded checks run the same assertions from reset before the
+induction attempt. None of these state relations is an HDL assumption.
+
+Unbounded safety applies to the small profile. The primary gate uses
+the live campaign and the full-capacity cover.
+
 ## Composition
 
 - Admission must establish static or dynamic policy eligibility and the

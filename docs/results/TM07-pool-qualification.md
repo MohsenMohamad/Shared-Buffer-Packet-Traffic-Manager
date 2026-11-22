@@ -57,17 +57,34 @@ The hosted frozen replay passed both profiles, including the 11 named
 checker faults and five raw rejection probes per profile. The local
 resource and source checks passed on 76 Python tests and independently
 rejected missing, mismatched and modified transitive candidate inputs.
-[Hosted frozen replay](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45070330455)
+[Hosted frozen replay](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45070043511/job/137355043586)
+· [Replay traces and first qualification captures](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45070043511/artifacts/14773453990)
 
-The first small production campaign passed the 51 descriptor and 38 cell
-crosses, all eight random seeds and the seed-17 replay. It also reached
-41 descriptor and 25 cell bins in the random subset. Observed activity
-was 4,106–4,149 edges per seed. The campaign used DV `527b348664951d1d44daff4f372aa68a1f81a659`
-and combined commit `6a116a3f2207651179ee861152d3ff53f61cb387`.
-The native code report covered 59/59 instrumented line points across the five pool modules. Code points
-exclude UVM, caller and scoreboard code, public declarations, and the
-designer assertions disabled for independent detector qualification.
-The candidate was unchanged for the retest after the caller-probe repair.
+Both corrected production campaigns passed. Each ran eight seeds and
+matched its seed-17 replay edge for edge in the scoreboard. Both
+reached the stale-epoch guard at edge 15, the forged-final guard at
+edge 16, and exact drain at edge 18 in the directed caller case.
+
+| Live result | Primary 4×4 | Small 2×2 |
+| --- | ---: | ---: |
+| Checked edges across all cases | 413,706 | 46,680 |
+| Descriptor crosses | 125/125 | 51/51 |
+| Cell crosses | 62/62 | 38/38 |
+| Random descriptor and cell subsets | 32 and 28 | 41 and 25 |
+| Activity edges per seed | 13,243–13,318 | 4,106–4,149 |
+| Seed-17 replay | Exact match | Exact match |
+| Complete drain at the end of every case | PASS | PASS |
+
+The corrected local simulation uses DV
+`2675f38f51320fc5e1bc711e05962227dcb8c8cd`, combined commit
+`8ea97d46a3820048e42b79e123080ad54e34d56e`, and effective tree
+`0b40ecb0cd732a783c238d2be597d41eff5afbb0`. The small full run reused
+the byte-identical binary from the scoped `caller-guards` build.
+
+The native code report covered 59/59 instrumented line points in each profile
+across the five pool modules. These points exclude UVM, caller and
+scoreboard code, public declarations, and the designer assertions
+disabled for independent detector qualification.
 
 | Live cross | Required primary | Required small | Excluded primary / small |
 | --- | ---: | ---: | ---: |
@@ -118,7 +135,7 @@ checks directed reachability at full primary geometry.
 | Small aggregate BMC, depth 6 | PASS | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
 | Small aggregate induction, depth 4 and 600 seconds | TIMEOUT after passing base case | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
 | Small aggregate ABC/PDR, 420 seconds | TIMEOUT | `eca1b4959a4506a0a6e9580f9bfde4dca05d4663` | `b55c5d140c62a2b888ca9a9223e21cfb99850524` |
-| Primary aggregate BMC, depth 5 and 600 seconds | TIMEOUT | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
+| Primary aggregate BMC, depth 5 and 600 seconds | TIMEOUT, known tool limit | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
 | Primary capacity cover, depth 7 | Reached at step 6 | `edce268b7f6546c77efd44f4cc9fa11a6dae300e` | `9e8dd47114eb5943f59a2b1ba58f43a529a11372` |
 
 The initial small ABC/PDR job using the frame ledger timed out at
@@ -158,9 +175,10 @@ make multi-egress-pools-candidate RUN_ARGS="--profile small --mutations --candid
 make multi-egress-pools-formal RUN_ARGS="--profile all --candidate-revision $candidate"
 ```
 
-The pre-merge verdict is blocked by the unbounded small safety proof
-and the primary BMC timeout. The corrected live campaign and hosted
-artifact upload are tracked by the dispatched workflow.
+Unbounded safety is a small-profile gate. The primary gate uses the
+passing live campaign and full-capacity cover. The primary BMC timeout is
+a known tool limit. The corrected hosted campaign and its artifact upload
+are tracked by the dispatched workflow.
 [Qualification workflow](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45071399539)
 
 Exact confirmation after an RTL merge
