@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import difflib
 import os
 from pathlib import Path
 import re
@@ -40,6 +41,8 @@ PRODUCTION_HEADERS = tuple("rtl/include/multi_egress/tm_multi_" + name + ".svh" 
 PRODUCTION = (SV_SOURCES[0], *PRODUCTION_SOURCES, *PRODUCTION_HEADERS)
 CANDIDATE_DV = (DV + "pool_candidate_top.sv", DV + "pool_candidate.svh",
                 DV + "pool_candidate_checks.svh")
+FORMAL_DV = ("formal/multi_egress_pools/pool_obligations.sv",
+             "formal/multi_egress_pools/pool_candidate_formal.sv")
 CANDIDATE_MARKER = "POOL_CANDIDATE_PASS"
 TOP = "multi_egress_pool_replay"
 MARKER = "POOL_REPLAY_PASS"
@@ -121,8 +124,8 @@ def classify(result, step, marker):
     return status == "PASS"
 
 
-def compile_bench(run, args, profile, registry=None):
-    result = case(run, "build")
+def compile_bench(run, args, profile, registry=None, overrides=None):
+    result = case(run, "build-mutations" if overrides else "build")
     data = selected_sources() if registry is None else registry
     sources = data["sources"] if registry is None else (
         *data["production_sources"], *data["verification_sources"])
@@ -138,6 +141,8 @@ def compile_bench(run, args, profile, registry=None):
                *("+incdir+" + str(ROOT / name) for name in data["include_dirs"]),
                str(uvm / "uvm_pkg.sv"), *(str(ROOT / name) for name in sources),
                "--top-module", module, "--Mdir", str(top)]
+    if overrides:
+        command = [overrides.get(argument, argument) for argument in command]
     version = result.execute(["verilator", "--version"])
     if not classify(result, version, "Verilator 5.054"):
         return None
@@ -150,7 +155,8 @@ def compile_bench(run, args, profile, registry=None):
     if not binary.is_file():
         result.finish("TOOL_ERROR", "Compiler did not write the expected replay binary")
         return None
-    result.finish("PASS", parameters=vars(profile), source_set=data, binary_sha256=sha(binary))
+    result.finish("PASS", parameters=vars(profile), source_set=data, binary_sha256=sha(binary),
+                  mutation_source_digests={name: sha(path) for name, path in (overrides or {}).items()})
     return binary
 
 
@@ -171,7 +177,7 @@ def rejection_status(step, detector):
     return "PASS", None
 
 
-def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None, *, marker=MARKER):
+def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None, *, marker=MARKER, mutation=None):
     result = case(run, name)
     database = result.path / "coverage.dat"
     argv = [binary, f"+FIXTURES={fixtures}", f"+EVIDENCE_DIR={result.path}",
@@ -183,6 +189,8 @@ def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None
         argv.append(f"+POOL_SEED={args.seed}")
     if args.replay:
         argv.append("+POOL_REPLAY")
+    if mutation:
+        argv.append(f"+POOL_MUTATION={mutation}")
     if rejection:
         argv.append("+UNQUALIFIED")
     result.data["artifacts"].update(
@@ -193,7 +201,7 @@ def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None
     if rejection:
         result.finish(*rejection_status(step, rejection), expected="SIMULATOR_FATAL", detector=rejection)
     else:
-        result.finish(*replay_status(step, marker))
+        result.finish(*replay_status(step, marker), mutation=mutation)
 
 
 def campaign(run, args, profile):
@@ -216,28 +224,121 @@ def campaign(run, args, profile):
         bench_case(run, args, binary, fixtures, f"reject-{name}", name, detector)
 
 
+def record_candidate(run, revision, digests):
+    parents = git("rev-list", "--parents", "-n1", "HEAD").decode().split()[1:]
+    dv_revision = parents[1] if len(parents) == 2 and parents[0] == revision else None
+    run.provenance.update(candidate_revision=revision, candidate_digests=digests,
+                          dv_revision=dv_revision,
+                          candidate_base=git("merge-base", dv_revision or "HEAD", revision).decode().strip(),
+                          effective_tree=git("rev-parse", "HEAD^{tree}").decode().strip(),
+                          effective_parents=parents)
+
+
+def mutation_sources(run):
+    directory = run.path / "mutated-rtl"
+    directory.mkdir()
+    replacements = {
+        "tm_cell_pool.sv": (
+            ".selected(write_id)", ".selected(old_write_id)",
+            """    assign write_accept =""",
+            """    logic [ID_WIDTH-1:0] old_write_id;
+    assign write_id = $test$plusargs("POOL_MUTATION=return-bypass") &&
+                      return_present[N_TX-1] ? return_cell[N_TX-1] : old_write_id;
+    assign write_accept =""".replace("ID_WIDTH", "CELL_ID_W"),
+        ),
+        "tm_resource_pools.sv": (
+            "assign cell_present[lane] = tx_present[lane];",
+            """assign cell_present[lane] = tx_present[lane] &&
+            !($test$plusargs("POOL_MUTATION=drop-high-lane") &&
+              lane == N_TX-1 && $countones(tx_present) == 1 && !cleanup_present);""",
+        ),
+        "tm_reservation_accounting.sv": (
+            "unreserved_next = delta_t'(unreserved) + released_sum - reserved_sum;",
+            """unreserved_next = delta_t'(unreserved) + released_sum - reserved_sum
+            + delta_t'($test$plusargs("POOL_MUTATION=credit-delta") && released_sum != 0);""",
+        ),
+    }
+    overrides = {}
+    patches = []
+    for name, edits in replacements.items():
+        original = ROOT / "rtl/multi_egress" / name
+        before = original.read_text()
+        after = before
+        for anchor, replacement in zip(edits[::2], edits[1::2], strict=True):
+            if after.count(anchor) != 1:
+                raise ValueError(f"Mutation anchor changed in {name}: {anchor}")
+            after = after.replace(anchor, replacement)
+        path = directory / name
+        path.write_text(after)
+        overrides[str(original)] = str(path)
+        relative = str(original.relative_to(ROOT))
+        patches.extend(difflib.unified_diff(before.splitlines(True), after.splitlines(True),
+                                           f"a/{relative}", f"b/{relative}"))
+    (directory / "mutations.patch").write_text("".join(patches))
+    return overrides
+
+
 def candidate_campaign(run, args, profile):
     from stimulus import generate_candidate
 
     registry, digests = verify_candidate(args.candidate_revision)
-    run.provenance.update(candidate_revision=args.candidate_revision, candidate_digests=digests,
-                          candidate_base=git("merge-base", "HEAD^1", args.candidate_revision).decode().strip()
-                          if len(git("rev-list", "--parents", "-n1", "HEAD").split()) == 3
-                          else git("merge-base", "HEAD", args.candidate_revision).decode().strip(),
-                          effective_tree=git("rev-parse", "HEAD^{tree}").decode().strip(),
-                          effective_parents=git("rev-list", "--parents", "-n1", "HEAD").decode().split()[1:])
+    record_candidate(run, args.candidate_revision, digests)
+    fixtures = run.path / "stimulus"
+    generate_candidate(fixtures, profile)
+    if args.mutations:
+        binary = compile_bench(run, args, profile, registry, mutation_sources(run))
+        if binary is None:
+            return
+        for mutation, neighbor in (("return-bypass", "cell-exchange"),
+                                   ("drop-high-lane", "return-lanes"),
+                                   ("credit-delta", "final-cleanup")):
+            bench_case(run, args, binary, fixtures, f"legal-{mutation}", neighbor,
+                       marker=CANDIDATE_MARKER)
+            bench_case(run, args, binary, fixtures, mutation, neighbor,
+                       marker=f"POOL_MUTATION_DETECTED {mutation}", mutation=mutation)
+        return
     binary = compile_bench(run, args, profile, registry)
     if binary is not None:
-        fixtures = run.path / "stimulus"
-        generate_candidate(fixtures, profile)
         bench_case(run, args, binary, fixtures, "candidate", args.case, marker=CANDIDATE_MARKER)
+
+
+def formal_campaign(run, args, profile):
+    registry, digests = verify_candidate(args.candidate_revision)
+    record_candidate(run, args.candidate_revision, digests)
+    jobs = (args.formal_mode,) if args.formal_mode else (
+        ("prove", "cover") if profile.ports == 2 else ("bmc", "cover"))
+    for mode in jobs:
+        result = case(run, mode)
+        depth = args.depth or (32 if profile.ports == 2 else 8)
+        inputs = (*registry["production_sources"], *FORMAL_DV)
+        profile_id = int(profile.ports == 2)
+        script = (f"read_slang --top pool_candidate_formal -GPROFILE={profile_id} "
+                  f"-I. {' '.join(Path(path).name for path in inputs)}")
+        files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
+        config = result.path / "pool.sby"
+        engine = "abc pdr" if mode == "prove" else "smtbmc z3"
+        config.write_text(f"[options]\nmode {mode}\ndepth {depth}\n"
+                          f"[engines]\n{engine}\n[script]\n{script}\nprep -top pool_candidate_formal\n"
+                          f"[files]\n{files}\n")
+        result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
+        step = result.execute(["sby", "-f", "-d", result.path / "work", config], timeout=args.timeout)
+        status, reason = completed(step, "DONE (PASS")
+        if status == "TOOL_ERROR" and "DONE (FAIL" in output(step):
+            status = "INCONCLUSIVE" if mode == "cover" else "FAIL"
+            reason = "Required cover not reached within depth" if mode == "cover" else "Formal counterexample"
+        result.finish(status, reason, mode=mode, depth=depth, engine=engine,
+                      parameters=vars(profile))
 
 
 def main(argv):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("multi-egress-pools-preparation", "multi-egress-pools-candidate"))
+    parser.add_argument("action", choices=("multi-egress-pools-preparation", "multi-egress-pools-candidate",
+                                           "multi-egress-pools-formal"))
     parser.add_argument("--profile", choices=("primary", "small", "all"), default="all")
     parser.add_argument("--candidate-revision")
+    parser.add_argument("--mutations", action="store_true")
+    parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover"))
+    parser.add_argument("--depth", type=int, choices=range(2, 65), metavar="2..64")
     parser.add_argument("--case", help="Run one named replay case for diagnosis")
     parser.add_argument("--seed", type=int, choices=(17, 31, 53, 67, 89, 113, 149, 197))
     parser.add_argument("--replay", action="store_true", help="Check an identical replay of seed 17")
@@ -255,8 +356,17 @@ def main(argv):
         parser.error("--case and --seed select different runs")
     if args.replay and args.seed != 17:
         parser.error("--replay requires --seed 17")
+    formal = args.action == "multi-egress-pools-formal"
     candidate = args.action == "multi-egress-pools-candidate"
-    source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate else SOURCES
+    if args.mutations and (not candidate or args.profile != "small" or args.seed or args.case):
+        parser.error("--mutations requires the full small candidate selection")
+    if formal and (args.seed or args.case):
+        parser.error("Formal selection uses --formal-mode and --depth")
+    if not formal and (args.formal_mode or args.depth):
+        parser.error("--formal-mode and --depth require the formal target")
+    source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate or formal else SOURCES
+    if formal:
+        source_paths += list(FORMAL_DV)
 
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     env_file = ROOT / ".tools/environment.json"
@@ -271,9 +381,12 @@ def main(argv):
     for profile in profiles:
         run = Run(args.output / (args.action + "-" + profile + "-" + stamp),
                   profile, source_paths=list(dict.fromkeys(source_paths)))
-        run.scope = ("Production pool component" if candidate else "Independent UVM pool preparation")
+        run.scope = ("Production pool component formal" if formal else
+                     "Production pool component" if candidate else "Independent UVM pool preparation")
         try:
-            if candidate:
+            if formal:
+                formal_campaign(run, args, PROFILES[profile])
+            elif candidate:
                 candidate_campaign(run, args, PROFILES[profile])
             else:
                 campaign(run, args, PROFILES[profile])

@@ -123,7 +123,38 @@
                     `uvm_fatal("DIRECTED_CONFIG", {"Missing required trigger ", required[index]})
         endfunction
 
+`ifdef POOL_CANDIDATE
+        string production_mutation;
+`endif
+
         function void divergence(string code, int edge_number, string detail = "");
+`ifdef POOL_CANDIDATE
+            if (production_mutation != "") begin
+                string required_detector;
+                int required_edge;
+                case (production_mutation)
+                    "return-bypass": begin
+                        required_detector = "CELL_PRE_FREE";
+                        required_edge = 32;
+                    end
+                    "drop-high-lane": begin
+                        required_detector = "TX_CELL_EVENT";
+                        required_edge = 19;
+                    end
+                    "credit-delta": begin
+                        required_detector = "REPORTED_COUNTS";
+                        required_edge = 4;
+                    end
+                    default: `uvm_fatal("POOL_MUTATION", "Unknown production mutation")
+                endcase
+                if (code == required_detector && edge_number == required_edge) begin
+                    $display("POOL_MUTATION_DETECTED %s %s edge=%0d %s",
+                             production_mutation, code, edge_number, detail);
+                    $display("POOL_MUTATION_DETECTED %s", production_mutation);
+                    $finish;
+                end
+            end
+`endif
             if (code != intended_fault || detected != "" || edge_number != fault_edge)
                 $fatal(1, "POOL_CHECK_FAILED %s %s edge=%0d %s", code, case_name, edge_number, detail);
             detected = code;

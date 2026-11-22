@@ -642,6 +642,9 @@ package multi_egress_pool_bench;
                 `uvm_fatal("POOL_CONFIG", "Cannot open checked evidence records")
             selected_case = $value$plusargs("POOL_CASE=%s", selected);
             raw = $test$plusargs("UNQUALIFIED");
+`ifdef POOL_CANDIDATE
+            void'($value$plusargs("POOL_MUTATION=%s", scoreboard.production_mutation));
+`endif
             if (raw && !selected_case)
                 `uvm_fatal("POOL_CONFIG", "An unqualified run requires a replay case")
             seed_selected = $value$plusargs("POOL_SEED=%d", selected_seed);
