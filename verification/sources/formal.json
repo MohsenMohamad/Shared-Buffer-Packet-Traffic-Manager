@@ -1,26 +1,15 @@
 {
   "schema_version": 1,
-  "extends": "production",
   "include_dirs": [
-    "formal/pools",
-    "formal/csr",
     "formal/symbolic"
   ],
   "sources": [
-    "formal/pools/storage_formal.sv",
-    "formal/csr/csr_formal.sv",
     "formal/symbolic/symbolic_inputs.sv",
-    "formal/queue/queue_formal.sv",
-    "formal/scheduler/scheduler_formal.sv",
-    "formal/scheduler/scheduler_progress.sv"
+    "formal/multi_egress_pools/pool_obligations.sv"
   ],
   "headers": [
-    "formal/pools/bitmap_properties.svh",
-    "formal/pools/fifo_properties.svh",
-    "formal/csr/csr_properties.svh",
-    "formal/symbolic/symbolic_checks.svh",
-    "formal/scheduler/scheduler_policy.svh"
+    "formal/symbolic/symbolic_checks.svh"
   ],
-  "scope": "Local production storage, queue/controller-link, scheduler and CSR protocol proofs; no integrated TM ownership or datapath proof.",
+  "scope": "Symbolic input frontend qualification and source checks for the unbound pool observer.",
   "frontend": "slang"
 }

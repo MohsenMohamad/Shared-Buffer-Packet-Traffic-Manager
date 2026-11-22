@@ -11,7 +11,7 @@ traffic-manager validation. Production RTL and tool pins are unchanged.
 
 ## Configuration and observed results
 
-The [compact record](F01-formal-symbols.json) retains tested revision/dirty state,
+The [compact record](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/F01-formal-symbols.json) retains tested revision/dirty state,
 source/configuration/lock digests, tool identities, per-case outcomes and negative
 identities. Tests ran from branch `fix/formal-symbolic-inputs`, based on current
 `origin/main` **6b7d556**. Dirty executions identify their actual input hashes;

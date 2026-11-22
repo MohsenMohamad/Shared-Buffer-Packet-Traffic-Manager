@@ -57,7 +57,7 @@ wrong-load connection on a disposable comparison triggers the connection
 check. Omitting a required min report triggers the endpoint check. The
 first unexpected hold results and the initial limits of the repair and
 report tools are preserved with replay inputs.
-[Failure captures](../../verification/failures/TM04-composed-timing.json)
+[Failure captures](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/verification/failures/TM04-composed-timing.json)
 
 ## Reset at the system boundary
 
@@ -144,7 +144,7 @@ per-workload beat, idle and loss deltas for both alternatives.
 | Final legacy comparators, multi-sink hold and reset reports | `7295c7066c17079f4f4a24ebd8254062a8700fc4` |
 
 Use the [committed criteria](../../experiments/queue-control/composed-timing.md)
-and [machine evidence](TM04-composed-timing.json) for file digests, raw artifact
+and [machine evidence](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-composed-timing.json) for file digests, raw artifact
 references, per-path measurements, and traffic accounting. Run the existing
 prepared Verilator 5.054, Yosys 0.70/Slang/ABC and OpenSTA 3.2.0 tools.
 The mapping matches PR #32's 10 ns, 0.10 ns uncertainty, 0.2/2.0 ns min/max

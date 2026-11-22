@@ -4,7 +4,9 @@ from pathlib import Path
 from evidence import ROOT
 
 
-def selected(args, source_set='synthesis'):
+def selected(args, source_set=None):
+    if source_set is None:
+        return getattr(args, 'frontend', None) or 'slang'
     data = json.loads((ROOT / 'verification/sources' / (source_set + '.json')).read_text())
     return getattr(args, 'frontend', None) or data['frontend']
 

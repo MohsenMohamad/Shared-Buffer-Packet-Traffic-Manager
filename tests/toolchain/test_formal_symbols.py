@@ -59,12 +59,12 @@ class SymbolicPolicyTests(unittest.TestCase):
             path.write_text('// `include "missing.svh"\n/* `include `H */\ninitial $display("`include `H");')
             self.assertEqual(check_sources([path]), [path])
 
-    def test_all_production_sources_follow_one_policy(self):
+    def test_all_registered_formal_sources_follow_one_policy(self):
         registered = sources('formal')
         checked = check_sources([ROOT/p for p in registered['sources'] + registered['headers']],
                                 [ROOT/p for p in registered['include_dirs']])
-        self.assertIn((ROOT/'formal/pools/storage_formal.sv').resolve(), checked)
-        self.assertIn((ROOT/'formal/csr/csr_formal.sv').resolve(), checked)
+        self.assertIn((ROOT/'formal/multi_egress_pools/pool_obligations.sv').resolve(), checked)
+        self.assertIn((ROOT/'formal/symbolic/symbolic_inputs.sv').resolve(), checked)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'storage_formal.sv'
             path.write_text('module storage_formal(input clk); (* anyseq *) logic x; endmodule')

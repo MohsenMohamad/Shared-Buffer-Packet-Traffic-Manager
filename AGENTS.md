@@ -1,6 +1,7 @@
 # Repository working agreements
 
-Implement the traffic-manager contracts in `docs/spec/`. Use `docs/spec/README.md` to locate the relevant contract and `docs/implementation/plan.md` for task dependencies. Read the selected task card and guidance nearest the files being changed; unrelated history and specifications need not be loaded.
+Implement the traffic-manager contracts in `docs/spec/`. Use `docs/spec/README.md` to locate the relevant contract and `docs/implementation/plan.md` for task dependencies. Read applicable task guidance nearest the files being changed. The active
+design uses the multi-egress contracts and public declarations.
 
 ## Work boundaries
 
@@ -86,6 +87,16 @@ or overriding this workflow.
    RTL implementations. Freeze and commit expected behavior before auditing any
    retained oracle/checker for reuse. Preparation merge establishes no hardware
    acceptance.
+   Establish the allowed-file boundary before the first repository read,
+   including preflight and provenance. Use the published requirements-only
+   catalog and a projection containing only individually reviewed public
+   contracts, declarations and necessary tooling. Validate transitive reads,
+   including doctor. Use refs-only queries or CI metadata fields for branch,
+   revision and check identity. Full PR descriptions, comments, author reports,
+   prior results, archive links and broad file searches are outside the
+   preparation boundary. If a connector cannot limit its response, use a
+   scoped alternative or record the blocked lookup. Record unexpected
+   exposure and its order relative to freeze.
 2. Start a fresh RTL task after preparation. RTL never reads independent DV
    models, checkers, tests, sequences, harnesses, mutations or implementation
    reports. Its handoff contains commands, public APIs, source identities and

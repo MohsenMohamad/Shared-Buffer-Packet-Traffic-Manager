@@ -10,7 +10,7 @@ Dependencies: Initial specification seed. Preserve an existing P00 implementatio
 
 - [toolchain.md](../../spec/toolchain.md)
 - [automation.md](../../spec/automation.md)
-- [acceptance.md](../../spec/acceptance.md)
+- [acceptance.md](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/spec/acceptance.md)
 
 `tools/`, `tests/toolchain/`, dependency locks, `Makefile`, capability CI and their focused documentation.
 

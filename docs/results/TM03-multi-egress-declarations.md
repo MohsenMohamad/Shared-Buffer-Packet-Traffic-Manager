@@ -12,7 +12,7 @@ and [ABI decision](../decisions/0009-multi-egress-interface-abi.md).
 - Clean tested commit `5ff24ba8ecbccc8f1fff6ae59396706d72d3a17d`,
   tree `67d016a03173a728eb420aa457c360a1a46dd136`. Sources are named
   by [the isolated declaration registration](../../verification/sources/multi-egress-declarations.json).
-  The [single-egress production list](../../verification/sources/production.json)
+  The [single-egress production list](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/verification/sources/production.json)
   remains at the baseline content.
 - Verilator 5.054 (build `vUNKNOWN-built20261112`), Yosys 0.70+post
   `28ba3cb926fe376fa05ebfc1b921747d011d4557`, sv-elab

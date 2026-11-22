@@ -28,9 +28,8 @@ matched comparisons unless a separately recorded experiment changes them.
 ## Ownership and historical evidence
 
 [R01](../implementation/tasks/R01-reset-timing.md) owns the common executable
-constraint recipe and focused qualification before allocator alternatives/P08.
-P08 measures the real consumer path; P12 applies the convention to matched full
-implementation variants and reports all intended path groups.
+constraint recipe. Allocator and composition studies use it for the real
+consumer paths and report all intended path groups.
 
 The original FIFO and allocator studies used their recorded reset IO assumptions
 and reported negative removal slack. Preserve those reports/SDCs as historical

@@ -5,7 +5,7 @@ head was `a188957a7ff716f32c94ec3a4bc92f81ed102443`.
 The branch starts from the same revision on `origin/main` after the
 [full main workflow](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/44901160895)
 passed. The entry doctor passed before measurement. Keep the source/configuration identities and run manifests with the
-results. The versioned [prior evidence](../../docs/results/TM04-control-timing.json)
+results. The versioned [prior evidence](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-control-timing.json)
 records the Liberty, tool locks, reference SDC, ABC script and mapping recipe
 digests. Preserve the original fixture source for matched maps.
 

@@ -134,7 +134,7 @@ class RunnerTests(unittest.TestCase):
         checkout = isolated_runner_repository(self.path / 'checkout', ROOT)
         for args, expected in [(['ci', '--test', ''], 'TOOL_ERROR'),
                                (['ci', '--test', 'missing'], 'TOOL_ERROR'),
-                               (['coverage'], 'TOOL_ERROR'),
+                               (['coverage'], 'NOT_IMPLEMENTED'),
                                (['uvm', '--seed', '17'], 'TOOL_ERROR'),
                                (['ci', '--jobs', '0'], 'TOOL_ERROR')]:
             path = self.path / str(len(list(self.path.iterdir())))

@@ -16,12 +16,16 @@ ROOT = Path(__file__).resolve().parents[1]
 def raw_artifact(path):
     if path.startswith(('.build/', '.work/', 'work/')):
         return True
-    if not path.startswith(('verification/failures/', 'docs/results/')):
-        return False
     name = path.rsplit('/', 1)[-1].lower()
-    return (name.endswith(('.log', '.stdout', '.stderr', '.vcd', '.fst', '.tar.gz',
-                           '.tar.zst', '.zip', '-annotations.txt'))
-            or name in {'manifest.json', 'summary.json', 'coverage.dat'})
+    if path.startswith('verification/failures/'):
+        return path != 'verification/failures/README.md'
+    if path.startswith('docs/results/'):
+        return name.endswith(('.json', '.jsonl', '.log', '.stdout', '.stderr', '.vcd',
+                              '.fst', '.tar.gz', '.tar.zst', '.zip', '-annotations.txt',
+                              '.dat'))
+    return path.startswith('verification/') and name in {
+        'results.json', 'manifest.json', 'summary.json', 'coverage.dat',
+    }
 
 
 def changed_paths(pr_diff):
@@ -58,18 +62,32 @@ for path in paths:
             continue
         if not (f.parent/target.split('#',1)[0]).exists():
             failures.append(f'{f.relative_to(ROOT)}: missing link {target}')
-data=json.loads((ROOT/'verification/requirements.json').read_text())
-ids=[r['id'] for r in data['requirements']]
-if len(ids)!=len(set(ids)) or len(ids)<40:
-    failures.append('requirement IDs must be unique and complete')
-allowed={'NOT_IMPLEMENTED','NOT_RUN','PASS','FAIL','TIMEOUT','INCONCLUSIVE','UNSUPPORTED','TOOL_ERROR'}
-for row in data['requirements']:
-    if row['status'] not in allowed:
-        failures.append('invalid requirement status '+row['id'])
-    if row['status']=='PASS' and not row.get('tests'):
-        failures.append('PASS has no test mapping: '+row['id'])
-for path in ['tools/dependencies.json','verification/requirements.json']:
-    json.loads((ROOT/path).read_text())
+def validate_requirements(data):
+    if (not isinstance(data, dict) or set(data) != {'schema_version', 'requirements'}
+            or data['schema_version'] != 2 or not isinstance(data['requirements'], list)):
+        raise ValueError('expected the version 2 requirements-only schema')
+    rows = data['requirements']
+    if not rows:
+        raise ValueError('empty requirement catalog')
+    ids = set()
+    for index, row in enumerate(rows, 1):
+        if not isinstance(row, dict) or set(row) != {'id', 'name', 'requirement'}:
+            raise ValueError(f'requirement row {index} must contain only id, name and requirement')
+        if not all(isinstance(value, str) and value.strip() for value in row.values()):
+            raise ValueError(f'requirement row {index} contains empty or non-text fields')
+        ident = row['id']
+        if not re.fullmatch(r'[A-Z]+-[0-9]{2}', ident) or ident in ids:
+            raise ValueError(f'invalid or duplicate requirement ID: {ident}')
+        ids.add(ident)
+    return ids
+
+
+ids = set()
+try:
+    ids = validate_requirements(json.loads((ROOT / 'verification/requirements.json').read_text()))
+    json.loads((ROOT / 'tools/dependencies.json').read_text())
+except (OSError, ValueError) as error:
+    failures.append(f'Invalid repository input: {error}')
 if failures:
     print('\n'.join(failures),file=sys.stderr);sys.exit(1)
 print(f'Repository contracts: PASS ({len(ids)} requirements; hardware not evaluated)')

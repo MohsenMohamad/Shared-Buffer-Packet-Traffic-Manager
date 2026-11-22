@@ -8,7 +8,7 @@ merge. The initial doctor passed on the merge revision.
 ## Comparison criteria
 
 Use the [PR #31 evidence](../../docs/results/TM04-queue-control.md) and
-its [measurements](../../docs/results/TM04-queue-control.json). Rerun serial
+its [measurements](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-queue-control.json). Rerun serial
 and lookahead with the short ABC script. Map each follow-up admission variant
 with the same short script, both profile sizes and live registered RX and
 resource consumers. Fix the mode only for path attribution on the same mapped

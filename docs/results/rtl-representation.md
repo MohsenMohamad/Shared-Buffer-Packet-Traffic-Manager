@@ -3,7 +3,7 @@
 Representation-only scope, recorded before RTL edits. Baseline is clean
 `fb3cd3fd7e2c73379617f11a82c8418e1a590d24` (fetched `origin/main`).
 The [capability table](../implementation/toolchain-capabilities.md) and
-[P01 card](../implementation/tasks/P01-followup-representation.md) govern this
+[P01 card](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/implementation/tasks/P01-followup-representation.md) govern this
 migration. P03+ production implementation and allocator/scheduler optimization
 remain paused.
 
@@ -36,7 +36,7 @@ is PASS, including all six CSR jobs and handoff cleanup. Its PR head is
 merge object. Later task/result documentation does not imply execution on a
 later SHA. The final candidate's own run is linked from [PR #8](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/8).
 
-[The compact evidence record](rtl-representation.json) identifies each local
+[The compact evidence record](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/rtl-representation.json) identifies each local
 run's actual tested revision and dirty flag, configuration/dependency/constraint
 hashes, observed tool identities, inference/mapping data, expected-negative
 identities and hosted artifact IDs/digests. Earlier dirty local runs retain

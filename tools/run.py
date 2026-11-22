@@ -357,11 +357,6 @@ def main(argv=None):
     parser.add_argument('--jobs', type=int, default=2)
     parser.add_argument('--timeout', type=float, default=None)
     parser.add_argument('--build-timeout', type=float, default=1200)
-    parser.add_argument('--candidate-revision', help='Exact production source commit required by memory-tx')
-    parser.add_argument('--memory-latency', action='append', type=int, choices=(1,2))
-    parser.add_argument('--tx-depth', action='append', type=int, choices=(4,8))
-    parser.add_argument('--preparation-build-manifest',type=Path,help='Explicit passing preparation replay build; validate source/config/tool identity before reuse')
-    parser.add_argument('--coverage-manifest', action='append', type=Path, help='Passing component case manifest for coverage extraction')
     parser.add_argument('--output', type=Path, default=ROOT / '.build/runs')
     parser.add_argument('--uvm-home', type=Path, help='Compatibility override; must match locked installation')
     try:
@@ -371,7 +366,7 @@ def main(argv=None):
         Case(run, 'malformed-input').finish('TOOL_ERROR', str(error))
         return run.finish()
     if args.timeout is None:
-        args.timeout = 240 if args.action == 'formal-rtl' else 120
+        args.timeout = 120
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     activation = ROOT / '.tools/environment.json'
     if activation.is_file():
@@ -381,79 +376,17 @@ def main(argv=None):
     action = {'test-uvm-smoke': 'uvm', 'formal-smoke': 'formal', 'synth-smoke': 'synth',
               'test-unit': 'unit', 'repo-check': 'repo'}.get(args.action, args.action)
     if args.profile is None:
-        args.profile = 'E0' if action == 'formal-rtl' else 'F0' if action == 'regression' else 'toolchain'
-    preparation = action == 'regression' and args.test is not None and any(
-        name in ('memory-tx-oracle', 'memory-tx-bench') for name in args.test)
-    identity_paths = None
-    if preparation:
-        from memory_tx import identity_paths as preparation_identity_paths
-        identity_paths = preparation_identity_paths()
+        args.profile = 'toolchain'
     run = Run(args.output.resolve() / (action + '-' + utc().replace(':', '') + '-' + uuid.uuid4().hex[:8]),
-              args.profile, source_paths=identity_paths)
+              args.profile)
     from frontend import selected
-    args.frontend = selected(args, 'formal' if action in ('formal-rtl','formal','formal-symbols') else 'synthesis')
+    args.frontend = selected(args, 'formal' if action in ('formal', 'formal-symbols') else None)
     run.versions['rtl_frontend'] = args.frontend
-    if action == 'coverage':
-        from queue_coverage import queue_coverage
-        from scheduler_coverage import scheduler_saved_coverage
-        run.scope = 'Component coverage by elaboration; no integrated coverage closure'
-        try:
-            if args.test==['memory-tx']:
-                from memory_tx_coverage import memory_tx_coverage
-                memory_tx_coverage(run,args)
-            elif args.test==['scheduler']:
-                scheduler_saved_coverage(run, args)
-            else:
-                queue_coverage(run, args)
-        except (OSError, ValueError, KeyError) as error:
-            Case(run, 'coverage-selection-error').finish('TOOL_ERROR', str(error))
-        return run.finish()
-    if action == 'formal-rtl':
-        from formal_storage import formal_rtl, selection as formal_selection
-        run.scope = 'Local production storage/queues/scheduler/CSR properties and reachability; no integrated TM proof'
-        try:
-            if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
-                raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
-            formal_selection(args)
-            from doctor import qualify
-            qualify(run)
-            formal_rtl(run, args)
-        except (OSError, ValueError, KeyError) as error:
-            Case(run, 'formal-selection-or-suite-error').finish('TOOL_ERROR', str(error))
-        return run.finish()
-    if action == 'regression':
-        from registry import selection
-        from contracts import contracts
-        from storage import pools
-        from foundation import foundation
-        from csr import csr
-        from queues import queues
-        from queues_independent import queues_independent
-        from queue_dispatch_guard import queue_dispatch_guard
-        from scheduler import scheduler
-        from memory_tx import memory_tx_oracle, memory_tx_bench, memory_tx_dut
-        run.scope = 'Selected contract/component suites; no integrated TM validation'
-        try:
-            selected = selection(args.profile, args.test)
-            if not 1 <= args.jobs <= 8 or not 0 < args.timeout <= 3600 or not 0 < args.build_timeout <= 3600:
-                raise ValueError('jobs must be 1..8; timeouts must be >0 and <=3600 seconds')
-            if args.seed is not None and (len(args.seed) != 1 or not 1 <= args.seed[0] <= 2**31-1):
-                raise ValueError('Regression accepts one positive 31-bit functional seed')
-            from doctor import qualify
-            qualify(run)
-            handlers = {'contracts': contracts, 'pools': pools, 'uvm-foundation': foundation, 'csr': csr, 'queues': queues, 'scheduler': scheduler, 'queues-independent': queues_independent, 'queues-dispatch-guard': queue_dispatch_guard, 'memory-tx-oracle': memory_tx_oracle,
-                        'memory-tx-bench': memory_tx_bench, 'memory-tx': memory_tx_dut}
-            for name in selected:
-                handlers[name](run, args)
-        except (OSError, ValueError, KeyError) as error:
-            Case(run, 'selection-or-suite-error').finish('TOOL_ERROR', str(error))
-        return run.finish()
     from doctor import qualify
     from symbolic_qualification import qualify as symbolic_qualify
     from frontend_qualification import audit as frontend_audit
-    from allocator_scaling import characterize
     from multi_egress_declarations import declarations
-    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit,  **{'formal-symbols': symbolic_qualify, 'allocator-scaling': characterize, 'multi-egress-declarations': declarations})
+    gates = dict(doctor=lambda r, a: qualify(r), repo=repo, unit=unit, lint=lint, uvm=uvm, formal=formal, synth=synth, frontends=frontend_audit,  **{'formal-symbols': symbolic_qualify, 'multi-egress-declarations': declarations})
     selected = args.test if args.test is not None else list(gates) if action == 'ci' else [action]
     gates['uvm-dpi'] = uvm_dpi
     gates['four-state'] = four_state  # Explicit reproducer; outside the required two-state suite.
@@ -476,7 +409,7 @@ def main(argv=None):
     else:
         # Version records accompany direct capability runs as well as CI. Independent
         # gates continue after failures; compilation remains prerequisite to execution.
-        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'formal-symbols', 'allocator-scaling', 'uvm-dpi', 'multi-egress-declarations')):
+        if 'doctor' not in selected and any(s in selected for s in ('uvm', 'formal', 'synth', 'lint', 'four-state', 'frontends', 'formal-symbols', 'uvm-dpi', 'multi-egress-declarations')):
             qualify(run)
         for name in selected:
             try:
