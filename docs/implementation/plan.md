@@ -87,6 +87,12 @@ balanced beat target at both latencies. The staged admission organization
 misses that target with the published buffering. Keep the freeze gate open
 pending the remaining reset and integration characterization.
 
+The [composed timing study](../results/TM04-composed-timing.md) closes slew,
+capacitance and data timing in its bounded fixtures with buffer-only
+repairs. The [queue/control decision](../decisions/0010-multi-egress-queue-control.md#composed-control-disposition)
+keeps the freeze gate open for reset ownership and remaining integration
+timing.
+
 Also replay independent legal frame-length streams on all four inputs under
 the same fixed one-to-one routing. The supplemental review probe used default
 buffers, `random.Random(104729 + ingress_id)` per ingress, and uniform choices
@@ -168,6 +174,13 @@ that workflow at their recorded scopes. Preserve the documented P05
 preparation exposure. Follow [P04 evidence](../results/P04-scheduler.md)
 for byte-DRR visit accounting, finite fairness and conditional progress.
 P03/P04 single-egress evidence retains its original scope.
+
+Apply this standard to every new traffic-manager task prompt at the assigned
+role's boundary. Pin the profile, latency, seeds, source identities and
+decision criteria. For each critical obligation, give the stimulus,
+independent expected transition, required observed coverage, legal neighbor,
+intended detector and replay command. Add cases when a concrete risk warrants
+them and preserve the first unexpected counterexample.
 
 - **Independent DV preparation.** Set the allowed-source boundary before the
   first command. Audit provenance, doctor, source policy, test discovery and

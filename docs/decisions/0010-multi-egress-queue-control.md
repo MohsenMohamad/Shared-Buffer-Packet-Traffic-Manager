@@ -40,3 +40,19 @@ to carry the balanced same-edge control forward for integrated timing after
 identifying the reset release boundary. Compare that boundary with the
 required release window and check the remaining scheduler and datapath
 composition before freezing the design.
+
+## Composed control disposition
+
+Carry balanced same-edge admission and same-edge cached heads into the next
+integration measurement. The [composed study](../results/TM04-composed-timing.md)
+clears the known capacitance violations and the newly measured short control
+paths with mapped buffers. The buffers preserve all logical connections and
+ownership edges. Both latency settings pass the balanced traffic model gate.
+
+Keep the RTL freeze gate open. The integration maintainer needs to identify
+the coordinator's reset launch, slew and distribution and demonstrate the
+resulting envelope at the actual capture and write endpoints. The connected
+primary reference requires 0.34368–6.88617 ns at its ideal reset root and
+leaves 0.73 ps of data hold margin. Before freezing, remeasure with the
+remaining ingress, payload and CSR paths live and a specified fanout limit.
+Independent qualification remains a separate phase.
