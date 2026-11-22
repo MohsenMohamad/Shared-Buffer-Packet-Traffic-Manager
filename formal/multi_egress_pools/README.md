@@ -1,53 +1,50 @@
 # Multi-egress pool proof targets
 
-Production binding and proof execution are **NOT_RUN**. The observer exposes
-FP-ALLOC, FP-DESC and FP-CREDIT targets for the widened pool boundary. Connect
-it to the named production revision before using any property or cover as
-hardware evidence.
+The harness binds FP-ALLOC, FP-DESC and FP-CREDIT to the production pool's
+registered free bitmaps and counts and to the physical lanes at the three
+state-owning submodules. [Run results and reproduction](../../docs/results/TM07-pool-qualification.md)
 
-| Target | Assertions | Covers |
+| Target | Assertions | Reachability |
 | --- | --- | --- |
-| FP-ALLOC | Old free membership, live distinct returns, free population and merged bitmap | Physical exhaustion, write with returns, full cell return fan-in and next-edge ID reuse |
-| FP-DESC | Old free prefix selections, distinct grants and returns, merged bitmap and count | Descriptor exhaustion, grant with returns, full grant and return fan-in and next-edge ID reuse |
-| FP-CREDIT | Nonnegative old credit prefix, per-queue merged deltas, global conservation and exact cleanup completion | Zero-cell cleanup, coincident normal and abort returns, and reset with live work |
+| FP-ALLOC | Old-free membership, legal staged write, distinct live returns, exact bitmap and count deltas | Exhaustion with a return, next-edge reuse, write with returns, all physical lanes |
+| FP-DESC | Distinct old-free rank selections, committed-lane projection, distinct returns and exact bitmap/count deltas | Descriptor exhaustion with returns, next-edge reuse, full grants and return fan-in |
+| FP-CREDIT | Old credit prefix, exact queue deltas, global conservation, reset and initialization | Zero-cell, partial and final cleanup, highest TX lane with cleanup, active reset |
 
-## Binding
+## Assumptions
 
-Use the public profiles first. Primary has four ingress grants, four TX
-lanes and one cleanup lane. Small has two ingress grants, two TX lanes and one
-cleanup lane. Any reduced elaboration must preserve the assertion semantics
-and state its configuration-specific cover limits. Bind to the actual state
-representing free membership and live counters. A design with a different
-representation must expose equivalent passive observations. Bind the write
-event to the accepted allocation and each release to its respective physical
-accepted lane. Preserve dense grant order and all physical return indices.
+The symbolic inputs are top-level ports. The cell and descriptor witness IDs
+hold after their first sample, including across later reset. The harness
+requires reset to start asserted and to cover two rising edges before
+release. It models readiness independently for the caller. The ordinary
+safety and cover jobs allow arbitrary legal stalls.
 
-- Admission supplies spec-legal granted reservations and routes. Prove
-  prefix legality at the combined admission/allocator boundary. A local
-  caller assumption is insufficient for a composition result.
-- RX supplies a staged cell with current-epoch owner and one unmaterialized
-  unit of credit. Bind the write owner-match signal to derived ownership and
-  credit checks at that boundary.
-- TX ties returns to accepted cell-final and packet-final beats, including
-  correct descriptor and epoch. Bind owner-match signals before any ID-only
-  narrowing. A caller must exclude stale ownership before presenting an
-  ID-only physical release.
-- Cleanup returns only live cells of a marked abort and atomically releases
-  remaining credit at completion. Bind the cleanup owner-match signal to the
-  epoch-aware cleanup state. Establish the completing ingress's exclusion
-  from the current grant prefix.
-- Reset follows the contract's hold and synchronous release rules. Bind
-  initialization to the first usable state. Prove current-epoch ownership
-  before unmasking new work.
+The aggregate caller derives free membership and old credit from shadow
+state. It requires a legal committed prefix, distinct live returns, a prior
+staged unit for each offered write and enough old queue credit for each
+release. Cleanup completion may release its old reserved credit and the
+cell it reclaims on that edge. A simultaneous write needs its own old
+reserved unit. This model allows arbitrary ownership associations within
+those aggregate preconditions. The separate frame ledger binds physical
+IDs to a live frame and queue, checks per-frame reserved and materialized
+counts, and permits TX finishes only when the last assigned cell returns.
+The directed exhaustion job schedules a legal fill and return in the full
+small profile. It leaves selected addresses to the DUT.
 
-Use explicit symbolic top-level inputs. The witness-stability assumptions hold
-through later DUT resets. Safety tasks impose no progressing-sink, service
-fairness or arbitration assumptions. Progress tasks may use named eligibility
-bounds and progressing sinks. Run separate covers for a later initialized
-epoch and composed reclamation. For any memory-facing binding, run latencies
-one and two with the public response contract.
+## Composition
 
-Register production Slang/SBY source lists only when the exact modules and
-adapter are available. For each property family, retain proof mode, engine
-result, covers and counterexamples. Exercise a selected bitmap-delta and a
-reservation-delta mutation after binding.
+- Admission must establish static or dynamic policy eligibility and the
+  rotating commit prefix before the pool's committed reservation inputs.
+- RX must tie the write offer to a pre-existing staged reservation and the
+  selected address to the accepted memory write.
+- TX must derive the physical return lanes from real `valid && ready`
+  handshakes. Check cell-last, frame-last and epoch before narrowing the
+  owner to its pool IDs.
+- Cleanup must derive the dedicated lane from the marked abort and the
+  service acceptance. Prove exact residual credit and exclusion of the
+  completing ingress from the commit prefix.
+- Reset coordination must establish physical release and integration
+  timing, then prevent stale memory responses from crossing epochs.
+
+The isolated pool has no memory response interface. The proof modes and
+actual capacities in the run report distinguish local safety, bounded
+checks and covers from these composition obligations.
