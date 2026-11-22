@@ -6,12 +6,39 @@ the public multi-egress edge records through a passive UVM monitor. The
 scoreboard reconstructs state from the captured records and checks reported
 counts as observations. Preparation establishes replay and checker behavior.
 
+## Results
+
+Both profile campaigns passed at clean commit `b67c593a94aa2c577e8af25c64ee3855abadfaf3`.
+The evidence preserves source hashes, pre- and post-edge accounting, return
+masks, seed fingerprints, exclusion rules and observed bin counts.
+[Machine-readable results](../../verification/multi-egress-pools/results.json)
+
+| Check | Primary | Small |
+| --- | --- | --- |
+| Required descriptor cross | 125/125 | 51/51 |
+| Required cell cross | 62/62 | 38/38 |
+| Intended detector failures | 11 detected | 11 detected |
+| Random campaign | 8 seeds, 10,454–10,491 activity edges each | 8 seeds, 4,107–4,143 activity edges each |
+| Seed 17 event and result fingerprints | Match | Match |
+| Independent scoreboards and exact drain | PASS | PASS |
+
+The randomized subset observed both occupancy boundaries, same- and
+different-queue merges, concurrent allocations and returns, mixed
+normal/abort returns, active reset and next-edge reuse in both profiles.
+The dedicated cross cases close the remaining count, source and occupancy
+combinations. The legal neighbor for each negative case passed.
+
+Slang elaborated the formal observer at both public geometries.
+Production proofs remain pending. The candidate command returned
+`NOT_RUN` with a nonzero exit when the production binding was absent.
+
 ## Reproduction
 
 The prepared toolchain supplies Verilator 5.054 and the locked Accellera
-UVM 2020.3.2 library. Use an allowlisted checkout containing the
-[registered sources](../../verification/sources/multi-egress-pools-preparation.json),
-their scoped runner, and the [public baseline inputs](../../verification/multi-egress-pools/baseline-allowlist.txt).
+UVM 2020.3.2 library. Use an allowlisted checkout containing the registered
+sources, their scoped runner, and the public baseline inputs.
+[Source registry](../../verification/sources/multi-egress-pools-preparation.json) ·
+[Baseline allowlist](../../verification/multi-egress-pools/baseline-allowlist.txt)
 
 ```sh
 make multi-egress-pools-preparation
@@ -31,10 +58,10 @@ Directed episodes construct old ownership through legal reservations, writes,
 publication and dispatch. The sampled pool boundary can align a staged write,
 TX final acceptances and abort service without modeling payload timing. The
 cross cases construct each required count, source and occupancy combination.
-The [coverage plan](../../dv/multi_egress_pools/coverage_plan.py) supplies the
-required matrix and its exclusion rules. Cleanup cells always retain the unused
-abort reservation until completion. A concurrent writer consumes another
-reservation, which rules out a write coincident with cleanup at one free cell.
+The frozen plan specifies count, occupancy and source bins. A cleanup cell
+has an unused abort reservation until completion. A concurrent writer consumes
+another reservation, which excludes a write and cleanup at one free cell.
+[Coverage plan](../../dv/multi_egress_pools/coverage_plan.py)
 
 The UVM sequence shuffles and translates occupancy episodes, varying legal
 IDs, queue classes, port coordinates, byte lengths, and selected abort-service
@@ -47,22 +74,67 @@ small keep separate covergroup databases.
 
 ## Production binding
 
-Bind the observed pool events to the accepted actions in
-[ABI v1](../spec/multi-egress-interfaces.md#edge-observation). Preserve the
+Bind the observed pool events to accepted ABI v1 actions. Preserve the
 ordered admission prefix, original TX indices and dedicated cleanup index.
 Bind the write to its selected physical address and prior staged owner.
 Cross-check TX returns with independent output handshakes and cleanup completion
-with the abort-service acceptance. Export pre-edge initialization and current
-epoch, and sample registered F, U, R, A, D and H after each edge. Cross-check
-any ID-only return at its nearest epoch-aware caller before the ID is narrowed.
+with the abort-service acceptance. Capture initialization, epoch and event
+records on the rising edge. Pair them with registered F, U, R, A, D and H
+sampled after that edge's state updates. Cross-check an ID-only return at its
+nearest epoch-aware caller before narrowing the ID.
+[ABI v1 edge observation](../spec/multi-egress-interfaces.md#edge-observation)
 
-Composed reachability still needs real ingress staging, publication, queue
-binding, and TX acceptance for the scarcity exchanges, full fan-in and
-shortest reuse intervals. The pool replay assumes legal caller decisions and
-abstract service timing. The candidate also needs an exact RTL revision,
-a linked production observation adapter and independent run manifests. Run
-read latencies 1 and 2 when the binding exercises the memory interface.
+Composed reachability requires the following production witnesses.
+
+- Align descriptor and credit scarcity with acceptance on real TX ports.
+- Align one old free cell with a prior staged write and a legal retirement.
+- Align all TX finals with cleanup, and align the grant prefix with writes
+  and retirements at full lane occupancy.
+- Reach zero-cell and partial aborts from malformed ingress traffic. Confirm
+  exact drain, stalled ownership, and active-reset reuse at epoch-aware ports.
+
+The candidate needs an exact RTL revision, a linked production observation
+adapter and independent run manifests. Run read latencies 1 and 2 when the
+binding exercises the memory interface.
 
 Production RTL qualification, production functional and code coverage, and
-formal results are **NOT_RUN**. The [F01-compatible observer](../../formal/multi_egress_pools/README.md)
-lists the ownership and conservation targets, covers and caller assumptions.
+formal results are **NOT_RUN**. The observer records the ownership and
+conservation targets, covers and caller assumptions.
+[F01-compatible observer](../../formal/multi_egress_pools/README.md)
+
+## Source isolation and failures
+
+The preparation worktree contains allowlisted baseline files and the new DV
+sources. The build registry enumerates each HDL input and rejects inherited
+lists and unexpected includes. The runner scopes both identity digests and
+failure snapshots. The primary file-access audit limited original checkout
+opens to Git metadata. Production and feasibility worktree files stayed
+outside the projection. Targeted metadata lookups also returned
+PR descriptions and result summaries embedded in the public requirements
+registry. The expectation inputs were the behavior and ABI, P02 requirement
+text, and formal rules.
+
+The baseline `make doctor` passed version and archive checks, OpenSTA source
+identity, C++20, and solver SAT/UNSAT in a 45-file public projection. The
+repository-wide document and Python discovery routes were deferred to hosted
+CI because they read outside that projection.
+
+| First unexpected failure | Disposition and correction |
+| --- | --- |
+| Credit-bypass mutation took `DESC_PRE_FREE` at primary edge 1,116 | Verification defect. The probe now selects an old free descriptor and isolates `CREDIT_PREFIX`. |
+| Verilator rejected a packed member as a `ref` argument and later lost a packed member written by `$fscanf` | Tool environment. The replay reads and translates local packed values and copies them into the sampled record. |
+| The random generator's read-only lane inherited a `ref` direction | Verification defect. Explicit input arguments preserve the intended call boundary. |
+| The coverage importer missed all native scoped group names | Verification defect. The importer matches the saved group names and reconciles every cross's sample count. |
+| Slang reported a duplicate assertion cell while unrolling a procedural loop | Tool environment. Generated lane instances provide unique property identities. Both geometry elaborations pass. |
+
+The retained raw build and replay captures record the first command, source,
+stimulus and diagnostic. The results record separately identifies the intended
+seeded-defect detections.
+
+The formal observer elaboration used these commands with the locked Slang
+frontend. They check source and property elaboration.
+
+```sh
+yosys -Q -T -p 'read_slang --top multi_egress_pool_obligations -D FORMAL formal/multi_egress_pools/pool_obligations.sv; hierarchy -check'
+yosys -Q -T -p 'read_slang --top multi_egress_pool_obligations -D FORMAL -GN_RX=4 -GN_CELL=1024 -GN_DESC=256 formal/multi_egress_pools/pool_obligations.sv; hierarchy -check'
+```
