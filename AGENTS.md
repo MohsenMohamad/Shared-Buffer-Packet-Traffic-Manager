@@ -52,6 +52,16 @@ individual edits. When review-ready, mark the PR ready or explicitly request
 A light-only success is not hardware qualification. Main/manual full routes
 remain integration gates; see [hosted CI policy](docs/spec/automation.md#hosted-iteration-policy).
 
+## Behavioral verification language
+
+Keep behavioral verdicts in live SystemVerilog UVM scoreboards, assertions
+or the formal harness at the appropriate boundary. A model too complex for
+SV may supply expectations through C/C++ DPI-C. The SV scoreboard compares
+observations and owns the verdict. Python may generate stimulus, run tools
+and render results. It may propagate tool status and reject missing execution
+or completion. It may never compare DUT transactions, reconstruct observed
+behavior for acceptance, qualify faults from traces or enforce functional bins.
+
 ## Code Review Rules
 
 - Check readability: descriptive names, separated statements and state transitions, manageable functions, and explanations of non-obvious invariants.

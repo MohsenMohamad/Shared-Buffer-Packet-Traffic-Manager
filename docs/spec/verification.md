@@ -15,6 +15,21 @@ and resource ownership models. Check trace batches against port observations.
 Retain the checked pre-edge state, accepted events and expected next state in
 replayable evidence.
 
+Behavioral scoreboards compare each observed transaction live. An atomic
+architectural edge is one transaction. Derive pre-edge legality and compare
+post-edge state before sampling functional coverage. The SV/UVM campaign
+checks required bins, seeded detectors, reproducibility and exact drain. Keep
+temporal assertions and formal properties at their respective boundaries.
+C/C++ through DPI-C may supply expected values when the reference model is
+demonstrably too complex for SV. The SV scoreboard owns the comparison and
+verdict.
+
+Python may generate stimulus, launch tools, propagate named tool outcomes
+and render emitted results. Missing or failed execution and missing completion
+are non-success. Python must never reconstruct observed state, compare DUT
+transactions, qualify a fault from trace contents or decide functional coverage
+acceptance. Apply the same boundary to behavioral checker qualification.
+
 Run directed cases and seeded stimulus in both profiles, and both fixed read
 latencies wherever the memory interface participates. Add targeted cases for
 reachable coverage holes. The [implementation plan](../implementation/plan.md#directed-multi-egress-qualification-obligations)

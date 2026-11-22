@@ -21,6 +21,7 @@ package multi_egress_pool_types;
         bit reset_n;
         bit initialized;
         int unsigned origin;
+        int edge_number;
         edge_batch_t batch;
         pool_counts_t counts;
     } pool_sample_t;
@@ -33,6 +34,17 @@ package multi_egress_pool_types;
                 return 1;
         for (int lane = 0; lane < N_TX; ++lane)
             if (batch.dispatch[lane].present || batch.egress_service[lane].present)
+                return 1;
+        return 0;
+    endfunction
+    function automatic bit has_events(edge_batch_t batch);
+        if (activity(batch) || batch.read_issue.command.valid || batch.read_response.identity.valid)
+            return 1;
+        for (int lane = 0; lane < N_RX; ++lane)
+            if (batch.ingress_service[lane].present)
+                return 1;
+        for (int lane = 0; lane <= N_TX; ++lane)
+            if (batch.cell_return[lane].present || batch.descriptor_return[lane].present)
                 return 1;
         return 0;
     endfunction

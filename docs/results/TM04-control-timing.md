@@ -250,6 +250,10 @@ capacitance violations remain open at the composed boundary.
 
 ## Reproduction and evidence
 
+Use archived revision `05c1dbb90e787ab1d62a71d1323245355018f8a7` for the
+original Python model replay commands below. Their results cover the model
+study. The measured RTL and STA source identities are in the linked evidence.
+
 The pinned toolchain is Verilator 5.054, Yosys 0.70 with Slang and locked
 ABC, and OpenSTA 3.2.0. See the [toolchain inventory](../implementation/toolchain-inventory.md).
 Use the [reference SDC](../../experiments/queue-control/reference.sdc) and
