@@ -20,6 +20,21 @@ order, include root, profile IDs and public declarations. Both pool profiles
 use the published packet and software ABI types. The checked-in report is a
 documentation-only follow-up to the tested source revision.
 
+| Designer-language migration | Revision |
+| --- | --- |
+| Reviewed PR #36 head before migration | `3b6d6d66078680085b7119eb640c79407adadc06` |
+| Current main brought into the draft | `836aca88fc02e8184a61db317693962a0d44f9dc` |
+| Clean SV/UVM designer run | `0aa96a3f759c43a9654f38f315e072fc03bec50f` |
+| Clean re-map after main updated the shared STA helper | `25591964beca16f1d802cb093dfe4a5f8cf74373` |
+
+The [previous candidate report](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/3b6d6d66078680085b7119eb640c79407adadc06/docs/results/TM06-pool-rtl-candidate.md)
+records the historical C++ designer execution and its source identity.
+The candidate RTL, public ABI, mapped wrapper, SDC, and ABC constraints
+are byte-identical across the migration. Main changed the shared STA
+helper. A fresh map after that merge reproduced the prior mapped Verilog
+SHA-256 and focused timing results in each profile. The preparation
+migration from main retains its separate qualification scope.
+
 ## Binding the component
 
 Before the rising edge, admission reads `unreserved` (U), `held[q]` (H),
@@ -77,17 +92,20 @@ The assertion code and its sampled reference state are omitted from the
 Slang synthesis and timing runs. The checks sample active edges and verify
 legal old credit, distinct old-free ranks, write eligibility, allocated and
 distinct return IDs, bounded widened sums, bitmap populations, conservation
-and exact per-queue updates. The C++ checker also verifies the public old
-counts and projected IDs before each edge and the resulting state immediately
-after it.
+and exact per-queue updates. A passive UVM monitor publishes the complete
+pre-edge and post-edge transaction to the scoreboard. The SV owner model
+reconstructs resource expectations from observed events. The scoreboard
+checks old ranks, accepted IDs, and F/U/R/D/H after the atomic update.
+A separate SV covergroup and named counters qualify the case's required
+bins from checked observations.
 
 | Check | Both profiles |
 | --- | --- |
 | Legal directed scenarios | Descriptor and cell scarcity with coincident returns and following-edge reuse. Maximal commits overlap a staged write and TX returns. Five primary or three small returns include cleanup. Partial and zero-cell aborts, a withheld final, holes, live reset and complete drain pass. |
 | Producer boundary | From U=8 and H=0 on both target queues, length 65 commits and leaves U=6, H=2. The second length 65 to that queue would put H=4 above threshold 2 and is denied. Length 60 to another queue consumes the second old rank. One retirement to a third queue gives next U=6 and H=2/1/0 for the three queues. Small splits the witness across two two-lane edges and verifies the retained second rank. |
-| RTL negatives | Eight probes run a legal neighbor, then present the malformed input at RTL sampling. Duplicate and already-free cell or descriptor returns fail at the named allocated/distinct checks. Old D and U overcommits fail with returns present. Zero and oversized commits fail the reservation-count check. Each probe requires a nonzero simulator exit and its exact assertion. |
+| RTL negatives | Eight probes run a legal neighbor, then present the malformed input at RTL sampling. Duplicate and already-free cell or descriptor returns fail at the named allocated/distinct checks. Old D and U overcommits fail with returns present. Zero and oversized commits fail the reservation-count check. A separate UVM invocation qualifies the fatal transcript by checking that the legal neighbor passed, the injector armed, and the actual RTL fatal matches the exact assertion with a nonzero exit. |
 | Caller negatives | The caller check detects a forged final flag, stale tokens after reuse or reset and incorrect cleanup residual. The monitor detects planted old-ID and combined-credit observations. An old-empty cell pool blocks a write offer. |
-| Random and replay | Seeds 17, 31 and 53 each run 1,024 active edges per profile, then drain. The seed-17 replay matches exactly in each profile. |
+| Random and replay | Seeds 17, 31 and 53 each run 1,024 active edges per profile, then drain. SV compares the seed-17 replay edge by edge, including both snapshots and driven pins, through exact end of trace. |
 
 | Profile / seed | Sparse TX | Simultaneous returns | Partial / completed cleanup | Grants with returns | Release at U=0 | Before drain F/U/R/D |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -97,6 +115,20 @@ after it.
 | Small / 17 | 443 | 36 | 2 / 43 | 67 | 43 | 4 / 2 / 2 / 0 |
 | Small / 31 | 437 | 37 | 10 / 53 | 54 | 35 | 8 / 5 / 3 / 3 |
 | Small / 53 | 443 | 21 | 9 / 50 | 46 | 29 | 7 / 2 / 5 / 0 |
+
+Across both profiles, the seven directed cases reproduced the historical
+resource snapshots and upstream detector names. All sixteen injected RTL
+probes reproduced their named failures with legal neighbors. For all six
+profile/seed pairs, SV/UVM reproduced the trigger counts above and the
+complete pre-drain F/U/R/D/H snapshots. Both end states drain to zero live
+owners, with full F/U/D and zero R/H. The SV seed-17 replay checked 18,086
+primary and 3,676 small sampled edges including reset, idle and drain.
+
+The first SV compile exposed a 2-state field in a net struct and implicit
+width conversions. After those were corrected, the first executed UVM
+prefix comparison visited the packed lanes in declaration order. The
+scoreboard now traverses lane zero upward. Both first failures are
+retained as `verification-defect` captures.
 
 The first assertion run was retained before repair as a `verification-defect`.
 The concurrent `queue_update` comparison fired on legal traffic before
@@ -183,8 +215,9 @@ git diff --check origin/main...HEAD
 make multi-egress-pools-candidate RUN_ARGS="--profile all --candidate-revision $(git rev-parse HEAD)"
 ```
 
-Run the two mapping commands at both recorded revisions to reproduce the
-comparison. Raw logs, manifests and failure snapshots live under
+Run the two mapping commands at the recorded revisions to reproduce the
+boundary comparison and the remap after the main merge. Raw logs, manifests,
+replay transcripts and failure snapshots live under
 `.build/runs/` and the hosted designer evidence artifact.
 
 | Scope | Local run directory under `.build/runs/` |
@@ -192,9 +225,12 @@ comparison. Raw logs, manifests and failure snapshots live under
 | Doctor at reviewed head | `doctor-2026-11-22T120938.322678+0000-27d8eada` |
 | Before timing | `pools-sta-primary-20261122T121013-9df5b0a6`, `pools-sta-small-20261122T121013-132d0afc` |
 | After timing | `pools-sta-primary-20261122T121714-3ac791bb`, `pools-sta-small-20261122T121714-e1c3485f` |
-| Both designer profiles | `pools-designer-{primary,small}-20261122T121714-5381635a` |
-| Public declaration gate | `multi-egress-declarations-2026-11-22T121714.202948+0000-fd19036f` |
-| Candidate adapter check | `multi-egress-pools-candidate-{primary,small}-2026-11-22T121714.380380+0000-e44baf92` |
+| Historical C++ designer runs | `pools-designer-{primary,small}-20261122T121714-5381635a` |
+| Clean SV/UVM designer runs | `pools-designer-{primary,small}-20261122T164135-40994e42` |
+| SV/UVM first compile and lane-order failures | `pools-designer-small-20261122T163240-bb852662`, `pools-designer-small-20261122T163303-447ba95c` |
+| Re-map after main merge | `pools-sta-primary-20261122T163720-373ecc5c`, `pools-sta-small-20261122T163720-e453ae40` |
+| Public declaration gate after main merge | `multi-egress-declarations-2026-11-22T163720.909924+0000-549b32ba` |
+| Candidate adapter check with the SV/UVM source | `multi-egress-pools-candidate-{primary,small}-2026-11-22T163752.528261+0000-c4dbdfb2` |
 | First assertion and timing failures | `pools-designer-{primary,small}-20261122T121341-a8c12817`, `pools-sta-primary-20261122T121217-8bf8cedb`, `pools-sta-primary-20261122T121502-5b2708ec` |
 
 The simulator is Verilator 5.054. The mapping uses Yosys
