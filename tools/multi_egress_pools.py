@@ -351,8 +351,8 @@ def formal_campaign(run, args, profile):
         }
         is_cover = mode == "cover" or mode in directed_covers
         depth = args.depth or {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22, "primary-prefix": 7}[mode]
-        caller = args.formal_caller or ("ledger" if is_cover else "aggregate")
-        if mode in directed_covers and caller != "ledger":
+        caller = args.formal_caller or ("ledger" if mode in ("cover", "exhaustion") else "aggregate")
+        if mode == "exhaustion" and caller != "ledger":
             result.finish("NOT_RUN", "Directed capacity covers use the frame ledger")
             continue
         inputs = (*registry["production_sources"], *registry["formal_sources"])
@@ -369,6 +369,8 @@ def formal_campaign(run, args, profile):
             selected = directed_covers[mode][1]
             script += ("\nchformal -cover -remove pool_candidate_formal/c:c_* "
                        f"pool_candidate_formal/c:check_pool.c_* %u pool_candidate_formal/c:{selected} %d")
+            if mode == "primary-prefix":
+                script += "\nchformal -assert -remove\nopt_clean"
         files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
         config = result.path / "pool.sby"
         proof_engine = args.proof_engine or ("pdr" if caller == "ledger" else "induction")
