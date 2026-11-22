@@ -37,9 +37,16 @@ def exclusions(kind, returns, allocations, old_free, origin, profile):
         return "mixed source needs two distinct return lanes"
     if kind == "descriptor" and origin in ("cleanup", "mixed") and allocations == profile.ports:
         return "the ingress completing cleanup is unavailable for a grant"
+    needed = allocations
+    if kind == "cell" and origin in ("cleanup", "mixed"):
+        # A malformed frame never writes its good final cell. Its unused
+        # reservation is distinct from the live RX writer's credit.
+        needed += 1
+        if needed > high:
+            return "abort cleanup and the RX writer need distinct reserved free cells"
     if allocations > high:
         return "allocation cannot exceed pre-edge free ID count"
-    if max(low, allocations) + returns > capacity:
+    if max(low, needed) + returns > capacity:
         return "returns must have distinct pre-edge owners"
     return None
 

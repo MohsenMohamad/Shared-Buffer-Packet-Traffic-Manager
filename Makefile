@@ -8,3 +8,7 @@ setup:
 
 doctor repo-check lint test-unit test-uvm-smoke uvm-dpi formal-smoke formal-rtl synth-smoke frontends formal-symbols allocator-scaling multi-egress-declarations ci regression coverage benchmark synthesis sta:
 	$(PYTHON) tools/run.py $@ --jobs $(JOBS) $(RUN_ARGS)
+
+.PHONY: multi-egress-pools-preparation multi-egress-pools-candidate
+multi-egress-pools-preparation multi-egress-pools-candidate:
+	$(PYTHON) tools/run.py $@ --jobs $(JOBS) $(RUN_ARGS)

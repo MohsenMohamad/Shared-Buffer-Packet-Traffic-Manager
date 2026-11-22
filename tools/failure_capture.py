@@ -21,12 +21,13 @@ def git(root, *args, diff=False):
     return result.stdout
 
 
-def snapshot(root):
+def snapshot(root, source_paths=None):
     """HEAD plus tracked edits and nonignored new files, excluding prior captures."""
     revision = git(root, 'rev-parse', 'HEAD').decode().strip()
-    patch = git(root, 'diff', '--no-ext-diff', '--binary', 'HEAD', '--', *SOURCE_PATHS)
+    paths = SOURCE_PATHS if source_paths is None else source_paths
+    patch = git(root, 'diff', '--no-ext-diff', '--binary', 'HEAD', '--', *paths)
     untracked = git(root, 'ls-files', '--others', '--exclude-standard', '-z',
-                    '--', *SOURCE_PATHS).split(b'\0')
+                    '--', *paths).split(b'\0')
     for name in filter(None, untracked):
         patch += git(root, 'diff', '--no-ext-diff', '--no-index', '--binary',
                      '--', '/dev/null', os.fsdecode(name), diff=True)
@@ -63,7 +64,7 @@ def capture_failure(data, path, root):
                   run_dirty=data.get('dirty'), run_directory=str(path),
                   steps=data.get('steps', []), artifacts=data.get('artifacts', {}))
     try:
-        revision, patch = snapshot(root)
+        revision, patch = snapshot(root, data.get('source_capture_paths'))
         record.update(source_revision=revision, dirty=bool(patch), source_patch=None)
         if patch:
             patch_path = directory / (name + '.patch')
