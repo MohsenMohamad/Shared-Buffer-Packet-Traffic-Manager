@@ -104,8 +104,8 @@ module pool_candidate_formal #(
         was_reset <= !rst_n;
         if (!past_valid)
             assume(!rst_n);
-        if (past_valid && rst_n && $past(!rst_n) && !$past(was_reset))
-            assume(1'b0);
+        if (past_valid && rst_n && was_reset)
+            assume($past(was_reset));
 
         if (!rst_n || !ready) begin
             assume(reserve_commit == '0 && !write_offer && tx_present == '0 && !cleanup_present);
@@ -203,6 +203,26 @@ module pool_candidate_formal #(
             c_final_with_cell: cover(cleanup_present && cleanup_done && cleanup_has_cell);
             c_high_and_cleanup: cover(cell_events[N_TX-1] && cell_events[N_TX] &&
                                       cell_ids[N_TX-1] != cell_ids[N_TX]);
+        end
+    end
+
+    for (genvar lane = 0; lane < N_RX; ++lane) begin : admission_binding
+        always @(posedge clk) begin
+            int prior_commits;
+            prior_commits = 0;
+            for (int previous = 0; previous < lane; ++previous)
+                prior_commits += int'(reserve_commit[previous]);
+            if (rst_n && ready) begin
+                a_rank_valid: assert(rank_valid[lane] == (lane < N_DESC - $countones(live_desc)));
+                a_rank_membership: assert(!rank_valid[lane] || !live_desc[rank_id[lane]]);
+                a_projection: assert(!reserve_commit[lane] ||
+                                     (rank_valid[prior_commits] && grant_desc[lane] == rank_id[prior_commits]));
+            end
+        end
+        for (genvar previous = 0; previous < lane; ++previous) begin : distinct
+            always @(posedge clk)
+                if (rst_n && ready && rank_valid[lane] && rank_valid[previous])
+                    a_rank_distinct: assert(rank_id[lane] != rank_id[previous]);
         end
     end
 

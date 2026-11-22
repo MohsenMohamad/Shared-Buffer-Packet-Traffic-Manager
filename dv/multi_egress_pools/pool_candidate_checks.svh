@@ -24,7 +24,7 @@
                 bit supported_probe = (transaction.intent.origin == 2 &&
                                        attempt.frame.epoch != current.owner.frame.epoch &&
                                        attempt.frame.source == current.owner.frame.source &&
-                                       attempt.frame.sequence == current.owner.frame.sequence &&
+                                       attempt.frame.sequence_number == current.owner.frame.sequence_number &&
                                        attempt.tag_value == current.owner.tag_value) ||
                                       (transaction.intent.origin == 3 &&
                                        attempt == current.owner && current.credit > 1);
@@ -80,4 +80,18 @@
                     divergence("CREDIT_LANE", sample.edge_number,
                                $sformatf("lane=%0d queue=%0d credit=%0d", lane, queue_id, credit));
             end
+        endfunction
+
+        function void report_candidate_counts(pool_counts_t pre, pool_counts_t expected,
+                                              pool_counts_t actual);
+            $display("POOL_COUNTS F/U/R/A/D before=%0d/%0d/%0d/%0d/%0d expected=%0d/%0d/%0d/%0d/%0d actual=%0d/%0d/%0d/%0d/%0d",
+                     pre.physical_free, pre.unreserved, pre.reserved_free, pre.assigned, pre.descriptor_free,
+                     expected.physical_free, expected.unreserved, expected.reserved_free,
+                     expected.assigned, expected.descriptor_free, actual.physical_free, actual.unreserved,
+                     actual.reserved_free, actual.assigned, actual.descriptor_free);
+            for (int queue_index = 0; queue_index < N_Q; ++queue_index)
+                if (expected.queue_credit[queue_index] != actual.queue_credit[queue_index])
+                    $display("POOL_QUEUE_CREDIT q=%0d before=%0d expected=%0d actual=%0d", queue_index,
+                             pre.queue_credit[queue_index], expected.queue_credit[queue_index],
+                             actual.queue_credit[queue_index]);
         endfunction

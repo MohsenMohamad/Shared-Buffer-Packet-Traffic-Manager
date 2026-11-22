@@ -261,6 +261,10 @@
 `endif
             failure = model.advance(sample, pre, sample.edge_number, post);
             if (failure != "") begin
+`ifdef POOL_CANDIDATE
+                if (failure == "REPORTED_COUNTS")
+                    report_candidate_counts(pre, post, sample.counts);
+`endif
                 divergence(failure, sample.edge_number,
                            $sformatf("pre=%h expected_post=%h observed_post=%h", pre, post, sample.counts));
                 if (!isolated) begin
