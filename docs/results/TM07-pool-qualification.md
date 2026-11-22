@@ -57,8 +57,8 @@ The hosted frozen replay passed both profiles, including the 11 named
 checker faults and five raw rejection probes per profile. The local
 resource and source checks passed on 76 Python tests and independently
 rejected missing, mismatched and modified transitive candidate inputs.
-[Hosted frozen replay](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45070043511/job/137355043586)
-· [Replay traces and first qualification captures](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45070043511/artifacts/14773453990)
+[Hosted replay and qualification logs](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45071399539/job/137359122376)
+· [Replay traces, coverage and formal artifacts](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45071399539/artifacts/14775032770)
 
 Both corrected production campaigns passed. Each ran eight seeds and
 matched its seed-17 replay edge for edge in the scoreboard. Both
@@ -132,11 +132,32 @@ checks directed reachability at full primary geometry.
 | --- | --- | --- | --- |
 | Small general covers, depth 12 | 14 reached | `4d1197cac54d3ecf484b338c307912d72c4c432e` | `e9f06e8b145ae8f558be57159a9cef2adb4f2839` |
 | Small full cell-exhaustion cover, depth 22 | Reached at step 21 | `eca1b4959a4506a0a6e9580f9bfde4dca05d4663` | `b55c5d140c62a2b888ca9a9223e21cfb99850524` |
-| Small aggregate BMC, depth 6 | PASS | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
+| Small strengthened ledger BMC, depth 6 | PASS | `e17397f50414027435e9ccb54adbe8300941e5cd` | `c474d267329b0fca95fb8b750d738616050e46bd` |
+| Small directed exhaustion BMC, depth 22 | PASS through step 21 | `e17397f50414027435e9ccb54adbe8300941e5cd` | `c474d267329b0fca95fb8b750d738616050e46bd` |
+| Small unrestricted ABC/BMC, depth 22 and 1,200 seconds | TIMEOUT after checking step 6 | `9784bc4d0fe16cacc9bf8e436c123062c15c832f` | `c5a67b30e21e6c4f20dd3d6e2d82ea7a57758493` |
+| Small strengthened k-induction, depth 4 and 900 seconds | TIMEOUT in the induction step after passing the base case | `e17397f50414027435e9ccb54adbe8300941e5cd` | `c474d267329b0fca95fb8b750d738616050e46bd` |
+| Small strengthened ABC/PDR, 480 seconds | TIMEOUT | `e17397f50414027435e9ccb54adbe8300941e5cd` | `c474d267329b0fca95fb8b750d738616050e46bd` |
+| Small unrestricted Z3 bit-vector BMC, depth 22 and 1,200 seconds | TIMEOUT while checking step 6 | `b6e0fd0c324fb6913095f283d88c61ae8ebc6836` | `3e44104bee828b27d573067b795b97940cc38647` |
 | Small aggregate induction, depth 4 and 600 seconds | TIMEOUT after passing base case | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
 | Small aggregate ABC/PDR, 420 seconds | TIMEOUT | `eca1b4959a4506a0a6e9580f9bfde4dca05d4663` | `b55c5d140c62a2b888ca9a9223e21cfb99850524` |
 | Primary aggregate BMC, depth 5 and 600 seconds | TIMEOUT, known tool limit | `ef1a0cd2744b547872972a2c7906df4ee946c3e6` | `2136c86c28e34f1cb7465dc692b41c0130b2605f` |
 | Primary capacity cover, depth 7 | Reached at step 6 | `edce268b7f6546c77efd44f4cc9fa11a6dae300e` | `9e8dd47114eb5943f59a2b1ba58f43a529a11372` |
+
+The strengthened harness asserts both free populations, ownership
+exclusion, descriptor and cell capacities, total credit, each descriptor's
+materialized count, and each queue's sum of live reservation credit. It
+also asserts empty ownership on the first release edge. The unrestricted
+depth-6 run evaluated the helpers from reset with the small frame ledger
+and arbitrary legal stalls.
+
+The directed depth-22 run checks all assertions through the step-21
+full-cell exhaustion and return. It schedules two reset edges, four
+full reservation batches, sixteen staged writes and one TX cell return.
+The normal frame ledger determines input legality and the DUT selects the
+allocated IDs. This run covers safety for that fill-and-return schedule.
+For reproduction, use the depth-22 BMC configuration, add
+`-DPOOL_EXHAUSTION_COVER` to `read_slang`, and use the engine
+`smtbmc --stbv --nopresat z3`.
 
 The initial small ABC/PDR job using the frame ledger timed out at
 240 seconds. The initial all-in-one depth-15 cover reached 14/15 covers.
@@ -173,12 +194,19 @@ cd work/pool-qualification
 make multi-egress-pools-candidate RUN_ARGS="--profile all --candidate-revision $candidate"
 make multi-egress-pools-candidate RUN_ARGS="--profile small --mutations --candidate-revision $candidate"
 make multi-egress-pools-formal RUN_ARGS="--profile all --candidate-revision $candidate"
+make multi-egress-pools-formal RUN_ARGS="--profile small --formal-mode prove --depth 4 --timeout 900 --candidate-revision $candidate"
+make multi-egress-pools-formal RUN_ARGS="--profile small --formal-mode prove --proof-engine pdr --timeout 480 --candidate-revision $candidate"
+make multi-egress-pools-formal RUN_ARGS="--profile small --formal-mode bmc --bmc-engine abc --depth 22 --timeout 1200 --candidate-revision $candidate"
 ```
 
 Unbounded safety is a small-profile gate. The primary gate uses the
 passing live campaign and full-capacity cover. The primary BMC timeout is
-a known tool limit. The corrected hosted campaign and its artifact upload
-are tracked by the dispatched workflow.
+a known tool limit. Hosted CI at DV
+`b3387464858cd14a268da1a74addb53603584346` passed both live campaigns,
+the three RTL mutations and their neighbors, both frozen profiles and
+the small covers. Its aggregate job failed on formal timeouts under the
+earlier gate configuration. The optimized local primary capacity cover
+supplies the full-width primary witness.
 [Qualification workflow](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45071399539)
 
 Exact confirmation after an RTL merge
