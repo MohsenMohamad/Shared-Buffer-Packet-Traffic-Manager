@@ -9,7 +9,7 @@ Recommended starting tiers:
 | Functional regression | Full directed matrix plus at least 20 diverse seeds/configuration for the main functional profiles; expand based on coverage gaps | Longer scheduled/manual run |
 | Parameter regression | Focused scenarios for every required profile | Parameter/interface change and delivery |
 | Traffic benchmark | Recorded workloads, stable configurations and reference-policy comparisons | Performance change and delivery |
-| Implementation | Mapped synthesis/STA for I0/I1 under matched analysis conditions | Microarchitecture change and delivery |
+| Implementation | Mapped synthesis/STA for the primary and small profiles under matched analysis conditions | Microarchitecture change and delivery |
 
 Seed count is a starting execution budget, not evidence of completeness. Record packet/cycle counts and distributions. Serial execution and bounded worker pools are supported. Size parallel work to measured memory and CPU limits.
 
@@ -21,7 +21,16 @@ Waveforms should be generated on a failing rerun with the identical revision/see
 
 ## Stable command interface
 
-P00 establishes `make doctor`, `make repo-check`, `make lint`, `make test-unit`, `make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke` and `make ci`. P01 adds functional `make regression` selection. P02 adds `make formal-rtl` for production-module proofs; `make formal-smoke` retains its capability-fixture meaning. Later tasks add `make coverage`, `make benchmark`, `make synthesis` and `make sta`. Commands take explicit configuration/test/seed options through the common Python runner. Until implemented, a command fails with NOT_IMPLEMENTED; it never reports an empty PASS.
+Use `make doctor`, `make repo-check`, `make lint`, `make test-unit`,
+`make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke` and `make ci`
+for repository and toolchain gates. `make multi-egress-declarations` covers
+the two published interfaces at both read latencies.
+`make multi-egress-pools-preparation` runs independent pool replay on both
+profiles. `make multi-egress-pools-candidate` requires a production adapter
+and exact candidate source identity. Unimplemented actions exit nonzero with
+NOT_IMPLEMENTED. An unbound candidate exits nonzero with NOT_RUN.
+
+`make repo-check`, `make lint`, `make test-unit`, `make test-uvm-smoke`, `make formal-smoke`, `make synth-smoke` and `make ci`. P01 adds functional `make regression` selection. P02 adds `make formal-rtl` for production-module proofs; `make formal-smoke` retains its capability-fixture meaning. Later tasks add `make coverage`, `make benchmark`, `make synthesis` and `make sta`. Commands take explicit configuration/test/seed options through the common Python runner. Until implemented, a command fails with NOT_IMPLEMENTED; it never reports an empty PASS.
 
 `make repo-check` validates repository documents, requirement data and the raw
 artifact rule for tracked worktree changes. Hardware is checked by the separate
@@ -33,13 +42,6 @@ Use a separate build directory per tool/profile/feature-set. A passing cache fro
 
 GitHub Actions may run the same open-source commands on hosted Linux runners. Core commands must also run in the cloud development workspace. CI does not require an LLM key, a hardware server, a GUI or a container daemon.
 
-G1 implements `regression --profile F0 --test contracts --seed 17`, with
-F0/F1/I0/I1/E0/E1 registered separately. This suite compiles declarations and
-checks independent event batching; it does not execute a TM datapath. Suite and
-source registration, seed/replay rules and case scope are defined in
-[module-contracts.md](module-contracts.md). Capability CI selectors remain
-separate from regression suite selectors.
-
 ## Durable versus execution evidence
 
 Follow the [durable evidence policy](../documentation.md#durable-evidence-for-new-work)
@@ -48,8 +50,7 @@ under `.build/runs/failures/`, covered by the existing CI run-artifact uploads
 after both success and failure. For incomplete or ad-hoc work, follow the
 [manual capture instructions](../../verification/failures/README.md#interrupted-or-ad-hoc-runs).
 
-Frontend selection is explicit in the formal/synthesis registries; only the
-selected Slang frontend is executable. `make formal-symbols` qualifies explicit
+The pinned Slang frontend is used for synthesis and formal. `make formal-symbols` qualifies explicit
 fixed/time-varying inputs, source guards and missing-stability negative controls.
 `make frontends` qualifies independent current-stack language and memory checks.
 Consumers validate the shared installation and never invoke setup. See the
@@ -58,7 +59,8 @@ Consumers validate the shared installation and never invoke setup. See the
 
 ## Hosted iteration policy
 
-The CI workflow implements [C01](../implementation/tasks/C01-ci-economy.md).
+Full CI runs the toolchain capability matrix and both pool replay profiles.
+It uploads run artifacts even on failure.
 `repository-contracts` checks documents/requirements and screens the complete
 PR merge-base-to-head diff for raw artifacts.
 `python-unit-syntax` runs Python unit tests and Python/JSON/shell syntax checks

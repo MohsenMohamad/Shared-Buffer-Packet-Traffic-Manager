@@ -89,18 +89,19 @@ and how to use it. Assignment cards should ask for compact evidence and artifact
 references. A small change can use the PR and an existing authoritative record
 when they already cover the result.
 
-Protect existing historical results JSON, including P01/P02, as published. For
-removed raw files or redundant copies, record a reachable immutable commit and
-the original path in the authoritative report after verifying byte-exact
-retrieval. Preserve current consumers and unique replay inputs.
+Keep generated result JSON, raw failure records, capture patches and coverage
+exports under ignored run storage and upload them with the associated CI job.
+Keep a compact human-readable result with the tested SHA, command and meaningful
+outcome. Keep reviewed indispensable replay inputs under a dedicated test or
+fixture path with a linked reproducer. Configuration, source registries and
+fixtures can use JSON. The requirements catalog admits only requirement IDs,
+names and normative text. Keep test mappings in suite or coverage definitions
+and do not embed author or run results in public preparation inputs.
 
-The light PR check screens the complete merge-base-to-head diff. It flags added
-or changed paths in `.build/`, `.work/` and `work/`, plus recognizable raw output
-under `docs/results/` and `verification/failures/` (logs, stdout/stderr, waves,
-archives, CI annotations, runner manifests/summaries and coverage databases).
-Durable JSON, patches and fixtures remain valid. If an essential byte-exact input
-matches the check, document a reviewed exception for its exact path and purpose.
-Local `make repo-check` screens staged and tracked working-tree changes.
+The repository checker screens every added/modified path in the complete PR
+diff and staged or tracked edits locally. Generated evidence paths cannot be
+force-added to Git. The [historical baseline](results/README.md#historical-baseline)
+preserves prior records at their original paths.
 
 Record the actual tested SHA and dirty state, configuration/dependency/constraint digests, exact commands and tool identities. Associate the PR and workflow/run references when available. An integration SHA on merged main may be added as metadata; it must not replace the tested SHA or imply execution on that untested revision. For historical dirty runs, retain the recorded base SHA and behavioral hashes; do not invent a clean tested commit.
 
@@ -114,16 +115,3 @@ git fetch origin pull/NUMBER/head:refs/remotes/origin/pr-NUMBER
 ```
 
 Substitute actual recorded values. Consult the report's commands, locks and source hashes before replaying; a dirty historical base alone cannot reconstruct missing edits. Record unavailable artifacts or unrecoverable source differences explicitly. Expiring artifacts must never be the only explanation of a result.
-
-### Historical P01/P02 retrieval
-
-The existing reports remain authoritative and their JSON is unchanged. P01 records base `56abc747f1b86aa7a5f6631e5bb4f4e24613a218` with a dirty P01 worktree; [PR #2](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/2) contains delivered head `fb5e05ed9880fd9883d5570364932d46b1065c2a`. That delivered head is a retrieval aid, not a replacement tested SHA. Compare the recorded behavioral hashes; checking out the clean base alone does not reproduce P01.
-
-P02 records tested revision `040863d055ba5fd70b3c09f18e3c268c67d3c1ef` with per-run dirty flags and behavioral hashes. It is a commit in [PR #3](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/3) and remains fetchable:
-
-```sh
-git fetch origin 040863d055ba5fd70b3c09f18e3c268c67d3c1ef
-git worktree add --detach ../p02-tested 040863d055ba5fd70b3c09f18e3c268c67d3c1ef
-```
-
-The [Repository push run 42962551741](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/42962551741) references that exact P02 SHA and concluded failure; it is not the recorded local storage proof/regression result. The P02 report explicitly records its hosted storage qualification as NOT_RUN. Later successful integrated-main runs and merge `b663f47de525e132f32afe621cff69ac82633478` must not be substituted for those historical tested records. Retrieve commands and source hashes from [P01](results/P01-contracts.md) and [P02](results/P02-storage-primitives.md), preserving their original scope and limitations.

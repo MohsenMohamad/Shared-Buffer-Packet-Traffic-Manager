@@ -2,7 +2,7 @@
 
 Historical decision: current tool/frontend restrictions and their dispositions
 are covered by [decision 0006](0006-toolchain-and-frontend-selection.md). The active
-[P07 follow-up](../results/P07-followup-stimulus.md) records the readable checker
+[P07 follow-up](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/P07-followup-stimulus.md) records the readable checker
 phases, constrained packet qualification and separate baseline timing checks. The original evidence
 and behavioral choices below remain historical records.
 

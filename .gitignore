@@ -12,3 +12,12 @@ coverage.dat
 .env
 .env.*
 work/
+
+# Generated run evidence. Reviewed, indispensable replay inputs live with tests.
+docs/results/**/*.json
+docs/results/**/*.jsonl
+verification/failures/*
+!verification/failures/README.md
+verification/**/results.json
+verification/**/manifest.json
+verification/**/summary.json

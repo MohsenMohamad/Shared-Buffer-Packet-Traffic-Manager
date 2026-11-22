@@ -108,45 +108,24 @@ should print `TM_FOUR_STATE_PASS`; Verilator instead reaches
 and exits nonzero. It is kept outside the required two-state capability
 suite, with its limitation retained in the results.
 
-P01 adds `regression --profile E0 --test contracts --seed 17` (all six
-production profiles supported). This selects declaration elaboration and batching
-examples only. See [module contracts](../spec/module-contracts.md) for source
-ownership, seed rules and verification limits.
-
-P02 adds the `pools` component suite under all six production profiles. It runs
-both FIFO depths and cell/descriptor exhaustion/recovery, invalid requests and
-reset collisions with independent models. An extra ID encoding bit exercises
-out-of-range requests. Example:
+Run the active interface and pool replay checks in the prepared environment:
 
 ```sh
-make regression RUN_ARGS='--profile I0 --test pools --seed 19'
-make formal-rtl RUN_ARGS='--timeout 240'
-make formal-rtl RUN_ARGS='--test descriptor --test fifo4 --timeout 240'
+make multi-egress-declarations
+make multi-egress-pools-preparation
 ```
 
-The production formal route defaults to E0 with a 240-second per-task timeout
-and rejects other profiles, empty,
-duplicate or unknown family selections and seeds. It runs prove/cover tasks and
-the pool wrong-delta qualifications. See [proof scope](../../formal/pools/README.md).
-`formal-smoke` remains the P00 counter fixture. Component tests and local pool
-proofs do not establish integrated traffic-manager ownership or payload behavior.
-
-P07 adds `regression --profile E0 --test uvm-foundation --seed 17`. The suite
-executes real UVM agents, frontdoor RAL, independent observed-transaction models,
-saved coverage and exact seeded-defect detections on a declared behavioral
-fixture. I0 also qualifies simultaneous descriptor returns in the model probe.
-This route is separate from production TM requirements and the P00 tool fixture.
-See [P07 results](../results/P07-verification-foundation.md).
+The pool candidate command requires a real adapter. The current
+[pool result and binding report](../results/TM05-pool-dv-preparation.md) gives
+the exact replay and candidate commands.
 
 ## Slang frontend checks
 
-The formal and synthesis source registries select `slang`, built into the pinned
-Yosys executable. The runner accepts only that selected frontend.
+The runner selects `slang`, built into the pinned Yosys executable.
 
 ```sh
 make frontends
 make formal-symbols
-python3 tools/run.py formal-rtl
 python3 tools/run.py uvm-dpi
 ```
 

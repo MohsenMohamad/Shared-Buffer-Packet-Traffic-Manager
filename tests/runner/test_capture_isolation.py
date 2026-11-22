@@ -52,7 +52,7 @@ class CaptureIsolationTests(unittest.TestCase):
             self.assertEqual(saved['test'], 'repository-contracts')
             self.assertEqual(saved['result'], 'TOOL_ERROR')
             self.assertTrue(Path(saved['run_directory']).is_relative_to(output))
-            self.assertIn('invalid requirement status', saved['log_tails'][0]['stderr']['text'])
+            self.assertIn('must contain only id, name and requirement', saved['log_tails'][0]['stderr']['text'])
             source_patch = record.parent / saved['source_patch']
             replay = directory / 'replay'
             subprocess.run(['git', 'clone', '-q', str(checkout), str(replay)], check=True)

@@ -15,7 +15,7 @@ bound. F0 screening establishes no new F0 acceptance requirement.
 
 ## Definition and tested sources
 
-The [experiment definition](../../experiments/allocator-scaling/README.md),
+The [experiment definition](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/experiments/allocator-scaling/README.md),
 constraints, matrix, mapping script and numeric decision rules were committed
 and pushed first at `2beb248978ceb5d26a509f91aa13f0811bbe46f9`.
 The accepted measurements target clean
@@ -31,7 +31,7 @@ IO constraints, exceptions nor logic. Original failed evidence is retained and
 excluded from accepted timing numbers. All eight original/corrected maps have
 identical area, cell histograms, state and buffer counts, independently checked.
 
-[The durable JSON](allocator-scaling.json) records exact source/lock/definition/
+[The durable JSON](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/allocator-scaling.json) records exact source/lock/definition/
 library digests, tool identities, per-point measurements, mapped-to-RTL state
 aliases, original/rejected run identities, actual tested revisions/dirty flags,
 commands and artifact hashes. Production RTL, formal properties, benches and
@@ -47,7 +47,7 @@ Nangate45 typical, 1.10 V / 25 °C, with BUF_X1 drive and 10 fF load. OpenSTA
 3.2.0 passes the runtime source-identity check. Exact commits and Liberty
 SHA256 are in the definition and durable JSON.
 
-The [mapping template](../../experiments/allocator-scaling/mapping.ys.in) uses
+The [mapping template](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/experiments/allocator-scaling/mapping.ys.in) uses
 flat `synth -noabc`, `dffunmap`, `dfflibmap`, constrained Liberty ABC and
 `check -assert`, without an ABC delay-target override or inference prepasses.
 All four output buses/signals stay live. All action inputs are independent;
@@ -61,7 +61,7 @@ buffers. It excludes payload, FIFO, metadata/link/info arrays, reservation
 accounting, observation logic and consumers outside these wrappers. Cell area
 uses the library's µm² convention; it is not placement/core area.
 
-The [SDC](../../experiments/allocator-scaling/timing.sdc) fixes an ideal 10 ns
+The [SDC](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/experiments/allocator-scaling/timing.sdc) fixes an ideal 10 ns
 clock, 0.10 ns uncertainty, min/max IO delays 0.2/2 ns including reset, and 10 fF
 on **each output bit**. Primary `slew` mode uses 0.05 ns nonclock input slew;
 `drive` sensitivity uses library BUF_X1/Z. Both use the identical mapped netlist.

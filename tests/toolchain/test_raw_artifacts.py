@@ -40,16 +40,16 @@ class RawArtifactTests(unittest.TestCase):
     def test_pr_checks_earlier_commits_and_allows_removing_old_logs(self):
         old_log = 'verification/failures/old/F0.log'
         self.write(old_log, 'old job output\n')
-        self.git('add', old_log)
+        self.git('add', '-f', old_log)
         self.git('commit', '-qm', 'Legacy capture')
         base = self.git('rev-parse', 'HEAD')
         self.git('rm', old_log)
         raw = 'verification/failures/p05-postmerge-checkout-43617402959/F0.log'
         self.write(raw, 'raw workflow log\n')
-        self.git('add', raw)
+        self.git('add', '-f', raw)
         self.git('commit', '-qm', 'Add raw capture')
-        self.write('docs/results/component.json', '{"result": "PASS"}\n')
-        self.write('verification/failures/replay.patch', 'Reviewed reproduction input\n')
+        self.write('docs/results/component.md', 'Scoped result and replay command\n')
+        self.write('tests/fixtures/replay.patch', 'Reviewed reproduction input\n')
         self.write('tests/fixtures/manifest.json', '{}\n')
         self.git('add', '.')
         self.git('commit', '-qm', 'Add durable evidence and fixture')
@@ -61,6 +61,22 @@ class RawArtifactTests(unittest.TestCase):
         self.git('commit', '-qm', 'Move raw capture out of the PR diff')
         result = self.check_pr(base)
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_generated_evidence_is_rejected_but_schema_and_fixtures_are_allowed(self):
+        for path in ('docs/results/timing.json', 'docs/results/trace.jsonl',
+                     'verification/failures/capture.patch', 'verification/pools/results.json'):
+            self.write(path, '{}\n')
+            self.git('add', '-f', path)
+        self.write('verification/sources/pools.json', '{}\n')
+        self.write('tests/fixtures/expected.json', '{}\n')
+        self.git('add', 'verification/sources/pools.json', 'tests/fixtures/expected.json')
+        result = self.check()
+        self.assertEqual(result.returncode, 1)
+        for path in ('docs/results/timing.json', 'docs/results/trace.jsonl',
+                     'verification/failures/capture.patch', 'verification/pools/results.json'):
+            self.assertIn(path, result.stderr)
+        self.assertNotIn('verification/sources/pools.json', result.stderr)
+        self.assertNotIn('tests/fixtures/expected.json', result.stderr)
 
     def test_local_check_rejects_force_added_run_output(self):
         raw = '.build/runs/failures/capture.json'

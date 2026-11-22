@@ -1,1847 +1,245 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "requirements": [
     {
       "id": "IF-01",
       "name": "Stream handshake",
-      "requirement": "Every captured beat obeys valid/ready; no output changes while stalled. Independently vary input valid and output ready.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "requirement": "Capture and deliver only on rising-edge valid/ready handshakes. Hold the complete offered output record stable while stalled."
     },
     {
       "id": "IF-02",
-      "name": "Input FIFOs",
-      "requirement": "Fill, empty, simultaneous push/pop, full-to-pop recovery and depth 2/4. Verify registered ready and absence of combinational top input-to-output paths by structure/timing review.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "component_tests": [
-        "pools",
-        "formal-rtl"
-      ],
-      "component_scope": "Local FIFO depth 2/4 handshakes, order, stalls, wrap and reset; top-level path review remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md"
+      "name": "Independent ingress capture",
+      "requirement": "Keep a registered two-beat capture FIFO per input. Captured entries become serviceable on the following edge. One input can fill or stall independently of the others."
     },
     {
       "id": "IF-03",
       "name": "Metadata",
-      "requirement": "Every source and qid; duplicate tags; changing non-SOP user metadata; preservation of meaningful fields and zeroed output reserved bits.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "requirement": "Take metadata from the first accepted beat. Preserve the specified egress metadata across the frame. Reused opaque tags do not alias frame identity."
     },
     {
       "id": "LEN-01",
-      "name": "Length sweep",
-      "requirement": "1, 7, 8, 9, CELL_BYTES\u22121, CELL_BYTES, CELL_BYTES+1, MAX\u22121 and MAX. Compare all valid bytes and final keep.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Legal frame size",
+      "requirement": "Accept declared lengths 60 through 1536 bytes in primary and 60 through 192 bytes in small. Reject out-of-range lengths."
     },
     {
       "id": "LEN-02",
-      "name": "Multi-cell data",
-      "requirement": "Distinct per-byte patterns across cell and word boundaries; no corruption or missing final partial cell.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Byte order and final keep",
+      "requirement": "Send bytes in ascending lane order. Require contiguous low-bit keep on final beats and all lanes on nonfinal beats."
     },
     {
       "id": "LEN-03",
-      "name": "Single-beat commit",
-      "requirement": "New head cell and descriptor fields must bypass correctly when admission and EOF service coincide.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Cell count",
+      "requirement": "Reserve the ceiling of declared bytes divided by 64. Cover one-cell, exact cell boundary, partial final cell and maximum geometry cases."
     },
     {
       "id": "ADM-01",
-      "name": "Basic admission",
-      "requirement": "Empty pool, valid header, exact reservation and one descriptor. All selected policies/reasons match the specification.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      "name": "Whole-frame reservation",
+      "requirement": "An accepted reservation consumes the full cell credit and one descriptor atomically."
     },
     {
       "id": "ADM-02",
-      "name": "Cell-credit boundary",
-      "requirement": "U=n, U=n\u22121 and same-cycle release. Admission uses pre-cycle U, not optimistic reclaimed resources.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      "name": "Old-state admission",
+      "requirement": "Evaluate rotated eligible capture heads in order against earlier grants in the prefix. Return IDs and credits become eligible on the following edge."
     },
     {
       "id": "ADM-03",
-      "name": "Descriptor exhaustion",
-      "requirement": "Exhaust descriptors with short packets before cells; release descriptor at packet EOF, not queue dispatch.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      }
+      "name": "Static queue limits",
+      "requirement": "Test existing queue credit plus the proposed reservation against the configured static limit and both shared pools."
     },
     {
       "id": "ADM-04",
-      "name": "Queue limits",
-      "requirement": "H[q]+n exactly at and one above limit; include receiving, queued, TX and aborted ownership in H[q].",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Dynamic queue limits",
+      "requirement": "Protect configured minima. Assess borrowed credit against the post-reservation shared capacity with widened arithmetic and the specified alpha rounding."
     },
     {
       "id": "ADM-05",
-      "name": "DROP mode",
-      "requirement": "Reject for each resource reason, drain to TLAST, emit one disposition, allocate no resources to a rejected header.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Reject reason",
+      "requirement": "Apply public rejection precedence when several constraints fail. A failed request consumes no reservation."
     },
     {
       "id": "ADM-06",
-      "name": "WAIT mode",
-      "requirement": "Hold a temporarily unserviceable head while other eligible inputs progress; resume after resources become available. A packet larger than its static queue cap is rejected rather than waiting forever. Document per-input HOL behavior.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "DROP and WAIT",
+      "requirement": "Drain when DROP rejects. Under WAIT, keep temporarily blocked heads pending and reject invalid or permanently impossible heads."
     },
     {
       "id": "ADM-07",
-      "name": "Reason priority",
-      "requirement": "Make two or more predicates fail simultaneously and check the specified priority.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
-    },
-    {
-      "id": "ADM-08",
-      "name": "Multi-input headers",
-      "requirement": "Capture SOPs simultaneously on four interfaces; service/reserve in internal RR order without overbooking.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Admission rotation",
+      "requirement": "Advance from the first serviced decision in the batch. Retain the cursor on an empty batch."
     },
     {
       "id": "MEM-01",
-      "name": "Physical uniqueness",
-      "requirement": "Live cells have unique owners; no free cell is also allocated; double-free detection cannot inflate capacity.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "component_tests": [
-        "pools",
-        "formal-rtl"
-      ],
-      "component_scope": "Local cell-pool free/live uniqueness and count consistency; packet/controller ownership composition remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md",
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      }
+      "name": "Cell ownership",
+      "requirement": "Pick one pre-edge-free physical cell per write; accept each legal distinct normal or cleanup return once."
     },
     {
       "id": "MEM-02",
-      "name": "Reservation equations",
-      "requirement": "Check A+F=N, F=U+R and U+sum(H)=N each event batch, including multiple releases.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      "name": "Descriptor ownership",
+      "requirement": "Select distinct old-free IDs across up to four primary or two small grants. Merge each distinct return once."
     },
     {
       "id": "MEM-03",
-      "name": "Read/write ports",
-      "requirement": "No more than one payload read and one payload write per cycle; no physical word collision.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Payload ports",
+      "requirement": "Support one 512-bit read and one write per edge. Ownership excludes same-address read/write."
     },
     {
       "id": "MEM-04",
-      "name": "Output read credits",
-      "requirement": "Buffered+outstanding responses never exceed FIFO capacity; long stalls start immediately after read bursts. Run read latency 1 and 2.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Fixed read latency",
+      "requirement": "Return mandatory tagged responses after one or two cycles. Reserve buffer credit at issue and consume the response at the published edge."
     },
     {
       "id": "MEM-05",
-      "name": "Cell retirement",
-      "requirement": "Free a cell exactly on its final accepted output beat; capture its next link before reuse. Force rapid reuse of just-returned cells.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Links",
+      "requirement": "Append a link on allocated write. Capture the next link at issue except on the last cell. Reuse IDs after legal return."
     },
     {
       "id": "MEM-06",
-      "name": "Descriptor returns",
-      "requirement": "Coincident TX completion, abort completion and new admission; two set bits and one clear bit are merged correctly.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "component_tests": [
-        "pools",
-        "formal-rtl"
-      ],
-      "component_scope": "Local descriptor allocation plus two-return merge and duplicate/invalid handling; TX/abort/admission composition remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md",
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Credit conservation",
+      "requirement": "Track physically free, unreserved, reserved-free, assigned and queue-owned credit. Enforce exact merged deltas for reservations, writes, TX returns, abort reclamation and cleanup."
+    },
+    {
+      "id": "MEM-07",
+      "name": "Read credit",
+      "requirement": "Each egress has six slots including outstanding responses and the cell being serialized. Use pre-edge slot credit."
     },
     {
       "id": "Q-01",
-      "name": "Basic FIFO order",
-      "requirement": "Several packets per queue from different inputs; expected order follows internal valid commit, not external SOP order.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      },
-      "wrong_descriptor_guard": {
-        "status": "PASS",
-        "suite": "queues-dispatch-guard",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": null,
-        "tests": [
-          "queues_dispatch_guard_tb",
-          "descriptor-match guard-removal mutation"
-        ],
-        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
-        "evidence": "docs/results/P03-dispatch-guard.json",
-        "qualification_state": "AWAITING_DV_PR_MERGE"
-      }
+      "name": "Publication",
+      "requirement": "Publish on the edge after a validated final cell write. The published frame becomes selectable on the following edge."
     },
     {
       "id": "Q-02",
-      "name": "Last dequeue plus enqueue",
-      "requirement": "Queue has exactly one descriptor; concurrent dequeue/enqueue must leave the new descriptor at head and tail.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      }
+      "name": "Queue ordering",
+      "requirement": "Serve each queue in publication order and preserve transmit binding order between classes on an egress."
     },
     {
       "id": "Q-03",
-      "name": "Longer queue race",
-      "requirement": "Concurrent enqueue/dequeue at count>1; next links, tail and count all agree with the abstract list.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      }
+      "name": "Concurrent queue update",
+      "requirement": "Merge concurrent append and pop. Preserve the correct head and tail on singleton replacement, and use the old successor when the queue is longer."
     },
     {
       "id": "Q-04",
-      "name": "Different queue updates",
-      "requirement": "Enqueue one queue while dispatching another; no state update is lost or applied to the wrong queue.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      }
-    },
-    {
-      "id": "Q-05",
-      "name": "Empty dequeue",
-      "requirement": "Empty queue cannot dispatch, including a concurrent first commit; next-cycle visibility is explicit.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      }
-    },
-    {
-      "id": "Q-06",
-      "name": "Input completion order",
-      "requirement": "A short packet on one input commits before an earlier-started long packet on another input; preserve the resulting queue commit order.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      "name": "Active queues",
+      "requirement": "Make the active bitmap match merged next-state queue occupancy."
     },
     {
       "id": "SCH-01",
-      "name": "Eligible grants",
-      "requirement": "No dispatch from an empty queue; descriptor/length belong to its head; no double dispatch.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Packet round robin",
+      "requirement": "Use the specified rotating round-robin policy to select among eligible class heads in packet RR mode."
     },
     {
       "id": "SCH-02",
-      "name": "Credit discipline",
-      "requirement": "Add quantum once per visit, debit packet bytes once per dispatch, freeze during TX stalls and avoid counter wrap.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Byte DRR",
+      "requirement": "Track deficit and visits in bytes. Reset empty queues as specified. Debit the bound frame exactly once."
     },
     {
       "id": "SCH-03",
-      "name": "Small quantum",
-      "requirement": "A large packet eventually becomes eligible after several visits; credit carries rather than resets while backlogged.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Strict priority",
+      "requirement": "Select the eligible strict-priority class before DRR peers in strict-plus-DRR mode. Once bound, preserve successor order through stalls."
     },
     {
       "id": "SCH-04",
-      "name": "Empty/reactivation",
-      "requirement": "Deficit resets on true empty transition; same-cycle enqueue/dequeue uses merged count; later arrival cannot inherit idle credit.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Rate shaping",
+      "requirement": "Check pre-edge queue and port token balances, charge once at binding and apply refill in the specified order."
     },
     {
       "id": "SCH-05",
-      "name": "Mixed packet sizes",
-      "requirement": "Saturated 64/1536-byte flows with equal and unequal quanta; compare delivered bytes, not packet counts.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Successor binding",
+      "requirement": "Open the successor window at the specified active-frame remainder. A tentative choice has no dispatch, debit or read effects."
     },
     {
       "id": "SCH-06",
-      "name": "Progress",
-      "requirement": "Under explicit progressing-sink assumptions, continuously backlogged queues obtain service; no lost activation. No unconditional latency claim under infinite external stalls.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Progress is finite simulation under a progressing fixture sink, not an unbounded liveness theorem.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Egress isolation",
+      "requirement": "Track binding, serialization and credits per egress so a stalled output cannot occupy another output's slots."
     },
     {
       "id": "FMT-01",
-      "name": "Bad headers",
-      "requirement": "Invalid qid encodings and zero/oversize declared lengths; no resource allocation.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      "name": "First beat",
+      "requirement": "Check framing before assembly. A valid header with malformed first beat may reserve and abort on one edge with no cell write."
     },
     {
       "id": "FMT-02",
-      "name": "Bad keep",
-      "requirement": "Sparse/empty keep, partial nonfinal beat and wrong final mask; no partial packet reaches output. Include a first-beat error with zero allocated cells and deferred descriptor return.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      }
+      "name": "Malformed suffix",
+      "requirement": "Abort a malformed frame while retaining any permitted staged write from before the abort mark. Discard unwritten staging of that frame."
     },
     {
       "id": "FMT-03",
-      "name": "Early TLAST",
-      "requirement": "Abort and reclaim an admitted packet at each representative word/cell boundary.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Drain boundary",
+      "requirement": "Drain the malformed or rejected frame under the published resynchronization rules. Accept a new frame only when the applicable drain and cleanup conditions are met."
     },
     {
       "id": "FMT-04",
-      "name": "Missing/late TLAST",
-      "requirement": "Detect error at the expected final beat, stop writes, drain to a later TLAST; unrelated inputs progress.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Disposition",
+      "requirement": "Produce the specified terminal disposition per frame in ingress order, including committed, rejection and format-error outcomes."
     },
     {
       "id": "FMT-05",
-      "name": "Abort concurrency",
-      "requirement": "Several input aborts while normal output cells return; bounded ports, no starvation of cleanup under allowed traffic.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Acceptance-based retirement",
+      "requirement": "Return TX cells on accepted cell-final beats and descriptors on accepted frame-final beats."
     },
     {
       "id": "FMT-06",
-      "name": "Complete cleanup",
-      "requirement": "After valid streams stop and bad frames drain, all cells/descriptors return and IDLE becomes true.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Abort cleanup",
+      "requirement": "Use the dedicated cleanup lane. Reclaim physical cells without releasing queue credit early. Release remaining credit and the descriptor once at completion."
     },
     {
       "id": "RST-01",
-      "name": "Reset state",
-      "requirement": "RUN=0, all valid outputs low, empty queues and full pools; packet-memory contents need not be zero.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "component_tests": [
-        "pools",
-        "formal-rtl"
-      ],
-      "component_scope": "FIFO/pool and CSR reset verified locally, including RUN/configuration/statistics defaults; queue and integrated packet reset remain pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md",
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      },
-      "wrong_descriptor_guard": {
-        "status": "PASS",
-        "suite": "queues-dispatch-guard",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": null,
-        "tests": [
-          "queues_dispatch_guard_tb",
-          "descriptor-match guard-removal mutation"
-        ],
-        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
-        "evidence": "docs/results/P03-dispatch-guard.json",
-        "qualification_state": "AWAITING_DV_PR_MERGE"
-      }
+      "name": "Logical reset",
+      "requirement": "Gate transfers during reset. Flush live ownership and initialize pools and control before enabling packet traffic."
     },
     {
       "id": "RST-02",
-      "name": "Reset in flight",
-      "requirement": "Reset during RX reservation, commit/dispatch race, sink stall, outstanding RAM responses, abort cleanup and AXI-Lite responses. No stale new-epoch output.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      },
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Epoch isolation",
+      "requirement": "Prevent old responses, outputs, dispositions and returns from changing new-epoch state after reset."
     },
     {
       "id": "CSR-01",
-      "name": "Register map",
-      "requirement": "Reset values, capabilities, all implemented qids, unmapped/misaligned accesses and RO/WO semantics.",
-      "tests": [],
-      "status": "NOT_RUN",
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
+      "name": "AXI4-Lite protocol",
+      "requirement": "Accept AW and W independently and hold responses stable under backpressure."
     },
     {
       "id": "CSR-02",
-      "name": "Independent AW/W",
-      "requirement": "AW before W, W before AW, same cycle, and long separation. No coupled-channel assumption.",
-      "tests": [],
-      "status": "NOT_RUN",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
+      "name": "Register map",
+      "requirement": "Use the public register map, address decoding, access restrictions, strobes and error responses."
     },
     {
       "id": "CSR-03",
-      "name": "Bus backpressure",
-      "requirement": "BREADY/RREADY stalls, read/write overlap, no lost response, one-outstanding transaction limits.",
-      "tests": [],
-      "status": "NOT_RUN",
-      "fixture_qualification": {
-        "suite": "uvm-foundation",
-        "status": "PASS",
-        "scope": "Bench/checker qualification on a behavioral fixture; does not satisfy the production requirement",
-        "profiles": [
-          "E0",
-          "I0"
-        ],
-        "evidence": "docs/results/P07-verification-foundation.json"
-      },
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
+      "name": "Configuration lifecycle",
+      "requirement": "Apply policy writes only in allowed states and validate merged fields against their bounds."
     },
     {
       "id": "CSR-04",
-      "name": "Write strobes",
-      "requirement": "Each byte lane, zero strobes, merged-value range checks and rejected atomic updates.",
-      "tests": [],
-      "status": "NOT_RUN",
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
+      "name": "Counter updates",
+      "requirement": "Merge simultaneous port and queue events without losing increments. Expose the specified occupancy and statistics."
     },
     {
       "id": "CSR-05",
-      "name": "Configuration lock",
-      "requirement": "Busy disable and running configuration writes reject without changing behavior. Reconfiguration after legitimate drain succeeds.",
-      "tests": [],
-      "status": "NOT_RUN",
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
+      "name": "Snapshot",
+      "requirement": "Sample the defined pre-edge live state into coherent split-word snapshots."
     },
     {
       "id": "CSR-06",
-      "name": "Statistics",
-      "requirement": "Snapshot coherence, low/high read order, pre-update capture, live/shadow separation, clear restrictions and reset.",
-      "tests": [],
-      "status": "NOT_RUN",
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "integration_scope": "Component verification passed; top-level AXI/config/event wiring is not yet integrated or tested."
+      "name": "ECN",
+      "requirement": "Mark ECT frames at the configured threshold from pre-publication queue credit and preserve the specified handling of other codepoints."
     },
     {
       "id": "PAR-01",
-      "name": "Parameter matrix",
-      "requirement": "F0/F1/I0/I1/E0/E1; counters/indices at minimum sizes; invalid elaborations rejected.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "contract_tests": [
-        "contracts"
-      ],
-      "contract_scope": "G1 checks production declarations, profile guards and type layouts only. Functional parameter regression remains NOT_IMPLEMENTED.",
-      "component_tests": [
-        "pools",
-        "formal-rtl"
-      ],
-      "component_scope": "FIFO/pool portion of all six profiles; CSR behavior at E0/F0 and contract elaboration at all six profiles. Complete TM functional parameter regression remains pending.",
-      "component_evidence": "docs/results/P02-storage-primitives.md",
-      "csr_component_verification": {
-        "suite": "csr",
-        "formal_selection": "formal-rtl --test csr",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "scope": "Production CSR/statistics with independent event and busy-context fixture. Actual datapath event wiring and whole-system IDLE generation remain P09/P10 checks. Reset/parameter claims cover CSR only.",
-        "evidence": "docs/results/P06-registers.json"
-      },
-      "queue_component_verification": {
-        "suite": "queues",
-        "formal_selection": "formal-rtl --test queues",
-        "status": "PASS",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "scope": "Production controller/link array FIFO order/count, merged updates, stale-ID reuse and reset; P02 pool retained through dispatch in simulation. Reduced N_Q=2/N_DESC=8 unbounded proof assumes legal RX-owned, not-already-queued commits. Scheduler/TX and integrated ownership remain composition obligations.",
-        "evidence": "docs/results/P03-queues.json"
-      },
-      "independent_queue_verification": {
-        "status": "PASS",
-        "suite": "queues-independent",
-        "formal_selection": "formal-rtl --test queues-independent",
-        "coverage_selection": "coverage --test queues-independent",
-        "scope": "Independent API FIFO/descriptor ownership on actual merged production queue/link/pool RTL. No cell/payload/TX/scheduler or caller-composition qualification; verified scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P03-independent-dv.md",
-        "qualification_state": "AWAITING_DV_PR_MERGE",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": 23,
-        "tests": [
-          "queue_api_monitor",
-          "queues_empty_tb",
-          "FP-QUEUE / FP-ORDER prove/cover/order-link-count mutation"
-        ]
-      },
-      "wrong_descriptor_guard": {
-        "status": "PASS",
-        "suite": "queues-dispatch-guard",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seed": null,
-        "tests": [
-          "queues_dispatch_guard_tb",
-          "descriptor-match guard-removal mutation"
-        ],
-        "scope": "Local nonempty queue diagnostic guard only: rejected wrong in-range descriptor, preserved concurrent publication, sticky error and reset. No scheduler/caller ownership or whole-system reset qualification.",
-        "evidence": "docs/results/P03-dispatch-guard.json",
-        "qualification_state": "AWAITING_DV_PR_MERGE"
-      }
+      "name": "Supported configurations",
+      "requirement": "Qualify primary and small, each with read latency one and two. Reject incompatible profile parameters."
     },
     {
       "id": "PERF-01",
-      "name": "Throughput",
-      "requirement": "Saturated large packets against one-read/one-write ceiling; identify scan, metadata and boundary bubbles.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "memory_tx_candidate_verification": {
-        "status": "PASS",
-        "qualification_state": "PRE_MERGE_CANDIDATE_PASS",
-        "rtl_revision": "479b5c1ceee2eee8db58d863bd5de5e20305cc8c",
-        "suite": "memory-tx",
-        "formal_selection": "formal-rtl --test memory-tx",
-        "coverage_selection": "coverage --test memory-tx",
-        "profiles": [
-          "F0",
-          "F1",
-          "I0",
-          "I1",
-          "E0",
-          "E1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53,
-          17
-        ],
-        "latencies": [
-          1,
-          2
-        ],
-        "fifo_depths": [
-          4,
-          8
-        ],
-        "scope": "Exact candidate RAM/metadata/TX component. Expected bytes/lifetimes from observed writes/actions; reduced FP-TX safety. Caller/pool/abort/RX/scheduler composition and merged-source confirmation remain separate.",
-        "evidence": "docs/results/P05-candidate-qualification.json",
-        "refreshed_head_applicability": {
-          "rtl_revision": "dc7682f16dcdba05b1f2b7d80b1bf11732d17c47",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical relevant inputs and sixteen fresh I1 production runs; original execution identities retained."
-        },
-        "merged_source_confirmation": {
-          "rtl_revision": "3ede1a5e40791ff00d98a0faa8389154d632e0c5",
-          "status": "PASS",
-          "evidence": "docs/results/P05-candidate-qualification.json",
-          "basis": "Identical integrated inputs and sixteen fresh production runs; original execution identities retained."
-        }
-      }
+      "name": "Balanced throughput",
+      "requirement": "For the specified four-port ready-sink fixed permutations, deliver and accept one beat per port per cycle in the measurement window and reconcile all offered frames after drain."
     },
     {
       "id": "PERF-02",
-      "name": "Fairness",
-      "requirement": "Complete-round/visit service accounting; distinguish dispatched from delivered bytes at finite endpoints.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED",
-      "scheduler_component_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "status": "PASS",
-        "profiles": [
-          "E0",
-          "F0"
-        ],
-        "tests": [
-          "tm_scheduler_rtl_test",
-          "tm_schedule_test",
-          "FP-SCHED prove/cover/extra-quantum mutation"
-        ],
-        "scope": "Production scheduler with actual P03 queue/link RTL and fixture metadata/TX; both modes, pre-state dispatch and merged empty handling. Reduced N_Q=2/N_DESC=8/MAX_PACKET_BYTES=128 unbounded safety; no integrated payload proof. Finite equal/unequal-quantum byte accounting includes in-flight work; P12 system fairness remains open.",
-        "evidence": "docs/results/P04-scheduler.json"
-      },
-      "independent_scheduler_verification": {
-        "suite": "scheduler",
-        "formal_selection": "formal-rtl --test scheduler",
-        "coverage_selection": "coverage --test scheduler",
-        "scope": "Executed production scheduler/queue component qualification only: event/length policy, three seeds plus replay in both modes, finite fairness assertions, explicit progress deadlines, lifecycle/reset/input checks and named mutations. Reduced local safety and conditional progress proofs; no integrated payload proof. P09/P11B retain caller/TX/epoch composition, P10 retains optimization diagnosis, P12 retains system fairness. Verified acceptance scope awaits passing DV PR merge.",
-        "evidence": "docs/results/P04-independent-dv.json",
-        "result": "PASS",
-        "executed_profiles": [
-          "E0",
-          "I0",
-          "I1",
-          "E1",
-          "F0",
-          "F1"
-        ],
-        "seeds": [
-          17,
-          31,
-          53
-        ],
-        "replay_seed": 17,
-        "workflow_run": 43384557984
-      }
+      "name": "Mixed traffic",
+      "requirement": "Measure mixed destinations, independent frame lengths, incast, stall behavior and shaping as separate workloads."
     },
     {
       "id": "PERF-03",
-      "name": "Shared capacity",
-      "requirement": "Equal-capacity shared/fixed admission models; hot, uniform and adversarial queue usage.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
-    },
-    {
-      "id": "PERF-04",
-      "name": "Implementation trade-off",
-      "requirement": "Two mapped memory/pipeline configurations, same library/PVT/load conditions, functional latency accounted for.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
-    },
-    {
-      "id": "AI-01",
-      "name": "Triage integration",
-      "requirement": "Actual regression failure invokes the utility and produces a reviewable report tied to seed/config/revision; evidence and final outcome are preserved.",
-      "tests": [],
-      "status": "NOT_IMPLEMENTED"
+      "name": "Mapped timing",
+      "requirement": "Measure the implemented small and primary configurations at explicit library, clock, IO and reset conditions and document any SRAM assumptions."
     }
-  ],
-  "contract_gate": {
-    "id": "G1",
-    "suite": "contracts",
-    "evidence": "docs/results/P01-contracts.md",
-    "scope": "Module declarations and event-batching interfaces only; no functional requirement is marked PASS by declaration compilation."
-  }
+  ]
 }

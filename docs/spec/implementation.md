@@ -12,8 +12,8 @@ A required implementation comparison is one-stage flat versus two-stage banked/r
 
 
 
-Verilator RTL lint is required. Do not blanket-disable warning classes to close lint. Scope a waiver to the exact construct and document its functional reason. Keep simulation-only classes and monitors out of synthesis source lists. Use synthesizable SystemVerilog accepted by the registered pinned `read_slang` flow. Consume the [qualified representation recipes](../implementation/tasks/P01-followup-representation.md). Qualify constructs beyond that tested subset before relying on them.
+Verilator RTL lint is required. Do not blanket-disable warning classes to close lint. Scope a waiver to the exact construct and document its functional reason. Keep simulation-only classes and monitors out of synthesis source lists. Use synthesizable SystemVerilog accepted by the registered pinned `read_slang` flow. Qualify constructs beyond that tested subset before relying on them.
 
-Use the shared [reset timing convention](reset-timing.md). [R01](../implementation/tasks/R01-reset-timing.md) owns its executable recipe before new allocator/P08 measurements. Separate data setup/hold from reset recovery/removal and fanout; retain conditional or unresolved reset closure when the external release envelope is not established. Preserve original study constraints/results rather than relabeling them after a scenario change.
+Use the shared [reset timing convention](reset-timing.md). [R01](../implementation/tasks/R01-reset-timing.md) owns its executable recipe for allocator and integrated timing measurements. Separate data setup/hold from reset recovery/removal and fanout; retain conditional or unresolved reset closure when the external release envelope is not established. Preserve original study constraints/results rather than relabeling them after a scenario change.
 
 Follow the [durable evidence policy](../documentation.md#durable-evidence-for-new-work) for generated netlists, timing scripts, logs, waves and measured results. Report positive setup slack within the measured reference corner and constraints.

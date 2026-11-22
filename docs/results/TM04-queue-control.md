@@ -85,7 +85,7 @@ of the measured logic through the exposed endpoints.
 Every run uses 2,048 warm-up and 9,216 measurement edges with four staging
 cells and six prefetch slots. All runs finish previously offered frames,
 drain and reconcile physical IDs, cells, reservation credit and descriptor
-ownership. [Measured data](TM04-queue-control.json) gives per-port beats,
+ownership. [Measured data](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-queue-control.json) gives per-port beats,
 bytes, frames, outcomes, idle/blocked edges, maxima and final ownership
 through drain.
 
@@ -172,7 +172,7 @@ mapped area than the direct primary cone. The primary cache and cell
 cones still exceed Liberty capacitance by 0.03693 fF and 4.96770 fF at
 their worst pins. Typical low-margin data hold is +0.00397 ns in the
 primary cache, +0.00499 ns in the direct head, and +0.00732 ns in cell
-control. Inspect the endpoint and fanout data in the [measurements](TM04-queue-control.json).
+control. Inspect the endpoint and fanout data in the [measurements](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-queue-control.json).
 
 The default primary serial prefix misses data setup by 10.87996 ns from
 `minimum[1]` to `_72559_/D`. With admission mode fixed on the same
@@ -228,7 +228,7 @@ directed model cases leave the integration gates open.
 | Serial reference map and admission RTL fixture | `0996ea10a5c0b53c00e61f6ec84c91d5933c0d22` |
 | Metadata RTL fixtures and final declaration gate | `546fe6b611d564d92273fd3d2f35d214c3e4e214` |
 
-The [machine-readable evidence](TM04-queue-control.json) gives each map
+The [machine-readable evidence](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-queue-control.json) gives each map
 and STA revision, script and netlist SHA-256, exact lock and Liberty
 identities, case-analysis artifacts, source digests and drain results.
 The later STA/sensitivity runs marked dirty had in-progress report text
@@ -307,7 +307,7 @@ for profile in primary small; do
 done
 ```
 
-The [reproducible failure record](../../verification/failures/TM04-queue-control.json)
+The [reproducible failure record](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/verification/failures/TM04-queue-control.json)
 preserves initial failed attempts and their dispositions. The included
 fixtures, exact source identities and replay commands regenerate raw traces,
 mapped netlists and STA logs in ignored build storage. Repository contracts,

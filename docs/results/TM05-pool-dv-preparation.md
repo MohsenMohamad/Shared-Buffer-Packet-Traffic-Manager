@@ -11,7 +11,7 @@ counts as observations. Preparation establishes replay and checker behavior.
 Both profile campaigns passed at clean commit `b67c593a94aa2c577e8af25c64ee3855abadfaf3`.
 The evidence preserves source hashes, pre- and post-edge accounting, return
 masks, seed fingerprints, exclusion rules and observed bin counts.
-[Machine-readable results](../../verification/multi-egress-pools/results.json)
+[Machine-readable results](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/verification/multi-egress-pools/results.json)
 
 | Check | Primary | Small |
 | --- | --- | --- |
@@ -35,8 +35,8 @@ Production proofs remain pending. The candidate command returned
 ## Reproduction
 
 The prepared toolchain supplies Verilator 5.054 and the locked Accellera
-UVM 2020.3.2 library. Use an allowlisted checkout containing the registered
-sources, their scoped runner, and the public baseline inputs.
+UVM 2020.3.2 library. Use the registered sources and their scoped runner. To reproduce the
+original preparation projection, use its archived baseline and exact allowlist.
 [Source registry](../../verification/sources/multi-egress-pools-preparation.json) ·
 [Baseline allowlist](../../verification/multi-egress-pools/baseline-allowlist.txt)
 

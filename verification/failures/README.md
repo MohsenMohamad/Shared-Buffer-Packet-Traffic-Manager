@@ -16,11 +16,10 @@ errors alongside the original case result.
 
 Review the capture before cleanup and apply the [durable evidence policy](../../docs/documentation.md#durable-evidence-for-new-work).
 Use the [failure dispositions](../../AGENTS.md#failure-capture) and link repeat
-cases to a shared diagnosis. This directory contains published records and
-reviewed replay inputs. For original paths of P05 files moved to history, use
-the [qualification report](../../docs/results/P05-candidate-qualification.md),
-[preparation report](../../docs/results/P05-fresh-dv-preparation.md) or
-[designer report](../../docs/results/P05-memory-tx-rtl.md).
+cases to a shared diagnosis. This directory documents the capture workflow.
+Use ignored run storage and CI artifacts for new captures and the
+[historical baseline](../../docs/results/README.md#historical-baseline) for
+tracked captures retired from the active tree.
 
 ## Interrupted or ad-hoc runs
 

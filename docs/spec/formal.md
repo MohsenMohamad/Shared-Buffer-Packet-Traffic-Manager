@@ -16,7 +16,7 @@ Retain separate proof statuses per property family. Passing the cell allocator d
 | Formal ID | Target | Properties | Scope/assumption boundary |
 |---|---|---|---|
 | FP-ALLOC | Cell pool | Allocation only from a free cell; no duplicate live allocation; count equals free bitmap population; valid/invalid release handling; simultaneous allocation/return. | Local API assumptions are explicit. Prefer proving invalid-return handling rather than assuming it away. |
-| FP-DESC | Descriptor pool | Unique descriptor ownership, two simultaneous returns, no count under/overflow, no stale reuse while RX/TX/abort still references it. | Compose local pool proof with ownership controller checks. |
+| FP-DESC | Descriptor pool | Unique descriptor ownership, distinct simultaneous grants and returns up to the profile limits, no count under/overflow, no stale reuse while RX/TX/abort still references it. | Compose local pool proof with ownership controller checks. |
 | FP-CREDIT | Admission/reservation | U+sum(H)=N; physical F=U+R; reservations are not overbooked; abort unused/reclaimed credit is released exactly once. | Finite full control configuration, payload abstracted only where data do not affect control. |
 | FP-QUEUE | Queue control | Counts and head/tail match an independent abstract FIFO; no loss on last-pop+enqueue; per-queue order for arbitrary operation duration. | Enqueued descriptor is owned and not already queued. Prove the caller enforces that contract separately. |
 | FP-TX | Read/output control | Bounded buffered+outstanding reads; no response loss/overwrite; stable stalled output; exactly-once cell retirement; no read after reuse. | Fixed 1/2-cycle RAM response contract. Do not assume sink readiness for safety properties. |
@@ -24,7 +24,10 @@ Retain separate proof statuses per property family. Passing the cell allocator d
 | FP-ORDER | Selected per-queue order | An unbounded independent FIFO-order proof on the production queue controller is mandatory. Symbolic packet tracking through a larger integrated commit-to-output path is a stretch task. | Reduced configuration; report exact dimensions and any payload abstraction. Do not imply that a local FIFO proof proves the complete payload path. |
 | FP-CSR | Register slave | Independent AW/W capture, stable responses, one response per accepted request, rejected writes do not mutate state. | Legal AXI input stability, arbitrary response backpressure. |
 
-Initial integrated formal profile SHOULD use two input contexts, two queues, four descriptors and eight cells with short bounded packet lengths. That is a reduced formal elaboration, not F0. Increase dimensions only where runtime remains useful. Production-module parameter constraints and formal abstraction knobs must be separate and documented.
+Start with the small multi-egress profile when tractable. If a proof needs
+a reduced elaboration, report exact dimensions, omitted behaviors and
+composition obligations. Keep production parameters and formal abstraction
+knobs separate.
 
 ### Assumptions, covers and composition
 

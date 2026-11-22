@@ -1,101 +1,45 @@
 # Shared-Buffer Packet Traffic Manager
 
-The single-egress traffic manager is a single-clock SystemVerilog design for
-variable-length packets. Four independently backpressured 64-bit inputs share
-sixteen logical queues, 64 KiB of payload cells and 256 packet descriptors,
-with one packet output.
-The design combines whole-packet reservation, store-and-forward publication,
-byte-based deficit round robin and an AXI4-Lite control/statistics plane.
+A single-clock SystemVerilog traffic manager for variable-length Ethernet
+frames. The primary architecture connects four 64-bit inputs to four independent
+64-bit outputs. Sixteen output queues share 1,024 payload cells and 256
+descriptors. The design reserves an entire frame before service, publishes it
+after the final validated write, and schedules four traffic classes per egress.
 
-The [multi-egress traffic manager](docs/spec/multi-egress-traffic-manager.md)
-defines a primary 4×4 profile and a smaller implementation and proof profile.
-The [public interfaces](docs/spec/multi-egress-interfaces.md) cover packet,
-cell memory, observation and control wiring. See the [status](docs/status.md)
-for the feasibility result and implementation gates.
+| Profile | Ports | Queues | Cells / descriptors | Frame bytes |
+| --- | --- | --- | --- | --- |
+| Primary | 4×4 | 16 | 1,024 / 256 | 60–1,536 |
+| Small | 2×2 | 8 | 16 / 8 | 60–192 |
 
-## Single-egress data path
+Both profiles use 64-byte cells, one shared read and one shared write per
+cycle, and fixed read latency of one or two cycles. The contract defines
+static or dynamic admission, byte DRR and packet round robin, an optional
+strict class, token-bucket shaping, ECN metadata and AXI4-Lite control.
+[Behavior](docs/spec/multi-egress-traffic-manager.md) · [Interfaces](docs/spec/multi-egress-interfaces.md)
 
-```mermaid
-flowchart TD
-  IN["Packet inputs"] --> FIFO["Ingress FIFOs"]
-  FIFO --> RX["Arbitration, admission and cleanup"]
-  RX --> RAM["Shared cell store"]
-  RX --> Q["Descriptor queues"]
-  Q --> DRR["DRR scheduler"]
-  DRR --> TX["Read engine and output FIFO"]
-  RAM --> TX
-  TX --> OUT["Packet output"]
-  POOL["Cell and descriptor pools"] <--> RX
-  TX --> POOL
-  CSR["AXI4-Lite configuration and statistics"] --> RX
-  CSR --> DRR
-```
+## Status
 
-The single-egress components in the repository include FIFOs,
-bitmap pools, CSR/statistics, descriptor queues, the DRR/packet-RR scheduler and
-the UVM foundation. The packet RAM, finite-port metadata store and credited TX
-are merged and qualified at component scope. Receive/admission and production
-top integration are pending. [Current status](docs/status.md) and the
-[implementation plan](docs/implementation/plan.md) record the evidence and gates.
+The public ABI and independent pool replay bench are integrated. The cycle
+model met the balanced four-port throughput target in the specified workloads.
+Control timing studies support carrying balanced same-edge admission and
+cached queue heads into integration. Production datapath implementation,
+independent RTL qualification and composed reset/timing acceptance remain
+open. [Current evidence and gates](docs/status.md)
 
-## Single-egress engineering decisions
+## Run the available checks
 
-| Decision | Consequence |
-| --- | --- |
-| Reserve the declared packet's cells and one descriptor before service | Admission cannot overbook shared capacity; DROP/WAIT and malformed cleanup are explicit |
-| Publish at successful commit; dequeue at dispatch | Per-queue order follows commit, including cross-input completion races |
-| One payload read and one write per cycle | Four inputs share ingress bandwidth; read credits track fixed one/two-cycle responses |
-| DRR accounts in bytes, packet RR is the comparison mode | Mixed packet sizes exercise fairness beyond equal packet counts |
-| Reset flushes in-flight work | No stale responses or packets may appear in the next epoch |
-| ANSI records/types through the selected Slang frontend | Shared fixed/dependent types preserve explicit layouts and supported configurations |
-
-The default profile is F0; F1 tests read latency two. I0/I1 are small fully mapped
-implementation profiles, and E0/E1 exercise configuration boundaries. The
-[architecture](docs/spec/architecture.md) defines the six profiles, targets and
-exclusions. The project does not claim Ethernet wire rate, physical signoff or
-silicon power measurement. New mapped timing uses the identified public reference
-library and explicitly scoped reset/IO assumptions.
-
-## Build and verification
-
-Use the qualified Linux x86-64 cloud toolchain and repository setup recipe:
+Use the pinned Linux x86-64 toolchain from the [setup guide](docs/implementation/toolchain.md).
 
 ```sh
 make setup
 make doctor
 make multi-egress-declarations
-make regression RUN_ARGS='--profile E0 --test pools --seed 17'
-make regression RUN_ARGS='--profile I0 --test uvm-foundation --seed 23'
-make regression RUN_ARGS='--profile E0 --test csr --seed 17'
-make formal-rtl RUN_ARGS='--timeout 240'
+make multi-egress-pools-preparation
+make formal-symbols
 ```
 
-Setup installs pinned dependencies; ordinary tests use that installation.
-`make repo-check` validates repository contracts only. `make ci` includes
-capability fixtures and registered component checks; its actual cases and scopes
-come from the runner. Future production suites are added by their owning tasks.
-
-The exercised stack uses Yosys 0.70+post/Slang, Verilator 5.054, official UVM
-2020.3.2, SBY 0.71, Z3 5.4.1 and OpenSTA 3.2.0. Exact source/transitive identities,
-ABI requirements and activation commands are in the
-[locks](tools/dependencies.json) and [toolchain guide](docs/implementation/toolchain.md).
-
-SV/UVM drivers, passive monitors, RAL, independently batched policy/resource
-models, constrained packet generation, SVA and selected production formal proofs
-are exercised at their recorded component/fixture scope. The black-box scoreboard
-uses monitored handshakes, not driver intentions. Four-state simulation remains
-outside the qualified two-state flow. The
-[F01 symbolic-input recipe](docs/implementation/tasks/F01-formal-symbols.md)
-applies to new fixed formal witnesses.
-
-## Results and navigation
-
-- [Normative specifications](docs/spec/README.md) and [module contracts](docs/spec/module-contracts.md)
-- [Toolchain qualification](docs/results/toolchain-qualification.md) and [RTL representation](docs/results/rtl-representation.md)
-- [Allocator scaling](docs/results/allocator-scaling.md): established F0 selection-depth risk; alternatives and real-consumer timing are assigned work
-- [P07 stimulus/checker qualification](docs/results/P07-followup-stimulus.md)
-- [Verification requirements](verification/requirements.json), [acceptance gates](docs/spec/acceptance.md) and [contribution workflow](CONTRIBUTING.md)
-
-Reports retain their actual tested source/tool/configuration identities. Merged
-documentation does not substitute for execution or promote a local proof into
-whole-subsystem verification.
+The declaration checks exercise the public interfaces. The pool command
+runs directed and seeded SV/UVM replay with independent ownership and credit
+checking, functional coverage and planted-fault detection. The symbolic check
+qualifies the formal frontend. See the [verification plan](docs/spec/verification.md)
+and [results](docs/results/README.md) for exact scopes and replay commands.

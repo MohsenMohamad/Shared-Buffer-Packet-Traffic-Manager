@@ -20,7 +20,7 @@ Inventory/failure criteria were committed first at `e09e28a`.
 contains this refresh; integration remains with the maintainer. Historical
 P00/P01/P02/P06/P07 reports and production `rtl/`, `formal/` and `dv/` are unchanged.
 
-[The durable JSON](toolchain-qualification.json) records actual tested SHAs/dirty flags,
+[The durable JSON](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/toolchain-qualification.json) records actual tested SHAs/dirty flags,
 commands, profiles/seeds, dependency/constraint hashes, source fingerprints, tool
 identities, configurations, outcomes, negative identities, coverage/replay data,
 property inventories and timing measurements. Apply each run's source overrides
@@ -248,7 +248,7 @@ without overwriting the selected-stack results. The JSON separately records
 the pinned audit's synthesis and formal commands and input-preservation hashes.
 
 The [decision table](../implementation/toolchain-capabilities.md) and
-[P01 recipe](../implementation/tasks/P01-followup-representation.md) give executable
+[P01 recipe](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/implementation/tasks/P01-followup-representation.md) give executable
 accepted alternatives. Whitespace in source paths remains unqualified. DPI
 force/release/polling, additional concurrent formal SVA, physical timing closure
 and integrated TM behavior are not established. P03+ stays paused; representation

@@ -2,8 +2,7 @@
 
 ## Objective and entry
 
-Establish a single constraint convention before P08 and before comparing allocator
-alternatives. Consume [implementation analysis](../../spec/implementation.md),
+Establish a single constraint convention before integrated measurements and allocator comparisons. Consume [implementation analysis](../../spec/implementation.md),
 [reset timing](../../spec/reset-timing.md), the FIFO timing qualification and
 [allocator measurements](../../results/allocator-scaling.md).
 
@@ -25,14 +24,14 @@ the environment. Existing negative removal slack is a result under the recorded
    Reconcile the existing bench's falling-edge reset-drive convention with the
    STA release model; a testbench drive phase is not a characterized reset source.
 3. Add the shared constraint/configuration mechanism used by new allocator, FIFO,
-   P08 consumer and P12 studies. Retain original SDCs/results as historical inputs.
+   composed-control and full-datapath studies. Retain original SDCs/results as historical inputs.
    Document intentional differences in data IO budgets between capability and
    production studies; a shared reset convention does not make their full setups
    identical. Avoid blanket reset false paths or dropped recovery/removal checks.
 4. Run focused matched checks on the actual mapped FIFO and allocator under the
    stated convention; exercise missing/bad reset constraints and retain meaningful
    path endpoints. Keep measurement validity separate from timing closure.
-5. Update relevant experiment documentation and P08/P12 entry requirements. Do not
+5. Update relevant experiment documentation and integration entry requirements. Do not
    add a reset synchronizer, change reset polarity/flush behavior, or claim CTS,
    routed parasitics or multi-corner signoff as part of this analysis task.
 
@@ -41,7 +40,7 @@ the environment. Existing negative removal slack is a result under the recorded
 One reviewed convention and executable recipe are shared by future studies,
 old violations remain visible, and data/reset results have separate scopes and
 owners. Unresolved physical assumptions are explicit. R01 is required before
-A01's measured comparison and P08; it does not block queue implementation.
+A01's measured comparison and integrated timing; it does not block queue implementation.
 
 ## Role assignments
 

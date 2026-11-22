@@ -122,7 +122,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gate: [uvm, uvm-dpi, formal, synth, frontends, formal-symbols, allocator-scaling, multi-egress-declarations]
+        gate: [uvm, uvm-dpi, formal, synth, frontends, formal-symbols, multi-egress-declarations]
     env:
       CXX: g++-14
     steps:
@@ -151,40 +151,40 @@ jobs:
           include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
-  contracts:
+  pool-preparation:
     needs: prepare
-    uses: ./.github/workflows/contracts.yml
-    with:
-      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
-  storage:
-    needs: prepare
-    uses: ./.github/workflows/storage.yml
-    with:
-      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
-  csr:
-    needs: prepare
-    uses: ./.github/workflows/csr.yml
-    with:
-      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
-  scheduler:
-    needs: prepare
-    uses: ./.github/workflows/scheduler.yml
-    with:
-      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
-  foundation:
-    needs: prepare
-    uses: ./.github/workflows/uvm-foundation.yml
-    with:
-      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
-  memory_tx:
-    needs: prepare
-    uses: ./.github/workflows/memory-tx.yml
-    with:
-      toolchain-artifact: ${{ needs.prepare.outputs.artifact }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Ensure native build prerequisites
+        uses: ./.github/actions/native-prerequisites
+      - name: Receive prepared installation
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ needs.prepare.outputs.artifact }}
+          path: .build/toolchain-transfer
+      - name: Unpack and validate; consumers never build
+        run: |
+          tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
+          python3 tools/toolchain_cache.py validate
+      - name: Replay both pool profiles
+        run: make multi-egress-pools-preparation JOBS=2
+      - name: Upload pool replay evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pool-preparation-${{ github.sha }}
+          path: .build/runs/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error
   cleanup-handoff:
     name: cleanup-handoff
     if: ${{ always() && needs.prepare.result != 'skipped' }}
-    needs: [prepare, capability, contracts, storage, csr, foundation, scheduler, memory_tx]
+    needs: [prepare, capability, pool-preparation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -207,7 +207,7 @@ jobs:
   full-ci-summary:
     name: full-ci-summary
     if: ${{ always() }}
-    needs: [repository, policy, prepare, capability, contracts, storage, csr, foundation, scheduler, memory_tx]
+    needs: [repository, policy, prepare, capability, pool-preparation]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

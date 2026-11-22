@@ -255,10 +255,10 @@ ABC, and OpenSTA 3.2.0. See the [toolchain inventory](../implementation/toolchai
 Use the [reference SDC](../../experiments/queue-control/reference.sdc) and
 Nangate45 typical at 1.10 V, 25 °C, with the ideal 10 ns clock, 0.10 ns
 clock uncertainty, 0.2/2.0 ns min/max I/O, 0.05 ns slew and 10 fF load.
-The [evidence](TM04-control-timing.json) includes the command inputs,
+The [evidence](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/docs/results/TM04-control-timing.json) includes the command inputs,
 source revision and file identities, timing and electrical measurements,
 replay accounting and verification outcomes. The
-[failure record](../../verification/failures/TM04-control-timing.json)
+[failure record](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/4634d5a4dacb00304635ddb64a3f83747d8b03e8/verification/failures/TM04-control-timing.json)
 documents unexpected measurement and verification attempts.
 
 ```sh
