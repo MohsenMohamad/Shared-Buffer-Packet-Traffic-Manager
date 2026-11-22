@@ -13,7 +13,8 @@ repair. Independent binding, physical reset and composed timing remain open.
 | Fetched `origin/main` baseline | `b5e82af3ff84fd77c994458eb576d9dcf9c917b2` |
 | Integrated preparation merge, PR #34 | `4634d5a4dacb00304635ddb64a3f83747d8b03e8` |
 | Preparation head | `42b6eec32597e85967db4c09d09cdf6e7d231312` |
-| Clean RTL, designer and timing sources used for the runs below | `0507a74d6efb839e820aa0371eeb56e5e8413d9e` |
+| Clean RTL candidate, declaration gate and mapped sources | `0507a74d6efb839e820aa0371eeb56e5e8413d9e` |
+| Clean designer run with both pools fully owned at reset | `0f8c611f600e47043646063c70ea9b381363f8c0` |
 
 Preparation is an ancestor of the baseline. Required main CI and local
 `make doctor` passed at the baseline. [Main CI run](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45015054949)
@@ -94,7 +95,7 @@ against old ownership and checks every queue credit after every edge.
 | Concurrent and sparse lanes | The first overlap accepted all four or two grants, one old staged write and all TX finals. Starting at `F=N_CELL-N_TX`, the edge ended at `F=N_CELL-1` with the same U and `R=N_TX`. The separate return peak accepted all five or three physical and descriptor returns, one write, and all non-cleaning ingress grants. The highest TX lane operated alone. |
 | Abort and withheld final | A three-cell reservation with two writes reclaimed one cell, changing R from one to two while H stayed at three and D stayed depleted by one. Completion with the last reclaim restored three credits and one descriptor. A separate zero-cell abort released its reservation and descriptor together. Withholding a TX final kept the owner live. |
 | Identity and invalid events | Repeated tags and recycled IDs kept distinct ownership. A corrupt offer at F=0 was held through an edge and rejected by the module without state changes. The caller's assertions detected disposable duplicate/free cell and descriptor IDs, a forged final flag and a stale token. Corrupt old-ID and merged-credit observations hit their specific checks. Legal neighboring edges passed. |
-| Reset and drain | Reset dropped fully assigned state and a separate mixture of assigned, staged reserved and aborting state. Offers remained blocked at reset and initialization sampling. The caller rejected a stale token for a reused physical ID. Current-owner return passed. Every case ended with empty owner maps, full F/U/D and zero R and H. |
+| Reset and drain | Reset dropped fully owned cell and descriptor pools (F=U=R=D=0) and a separate mixture of assigned, staged reserved and aborting state. Offers remained blocked at reset and initialization sampling. The caller rejected a stale token for a reused physical ID. Current-owner return passed. Every case ended with empty owner maps, full F/U/D and zero R and H. |
 
 Each randomized interval had 1,024 active edges after legal full-credit
 setup. An active edge has a grant, materialization, retirement or cleanup.
@@ -225,7 +226,7 @@ outputs through the multi-egress declaration job's existing run artifact.
 | Scope | Local run directory below `.build/runs/` |
 | --- | --- |
 | Baseline doctor | `doctor-2026-11-22T112537.449347+0000-18452e4b` |
-| Both designer profiles | `pools-designer-{primary,small}-20261122T113829-9c1fc6c5` |
+| Both designer profiles | `pools-designer-{primary,small}-20261122T114319-77bad118` |
 | Primary mapping | `pools-sta-primary-20261122T113829-712b9f36` |
 | Small mapping | `pools-sta-small-20261122T113829-a0cfe810` |
 | Public declaration gate | `multi-egress-declarations-2026-11-22T113829.369751+0000-47b9d9b4` |
