@@ -379,13 +379,18 @@ def formal_campaign(run, args, profile):
         result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
         step = result.execute(["sby", "-f", "-d", result.path / "work", config], timeout=args.timeout)
         status, reason = completed(step, "DONE (PASS")
-        if status == "TOOL_ERROR" and "DONE (UNKNOWN" in output(step):
+        transcript = output(step)
+        reached = [{"step": int(edge), "name": name} for edge, name in re.findall(
+            r"Reached cover statement in step (\d+) at pool_candidate_formal: (\S+)", transcript)]
+        if status == "PASS" and is_cover and not reached:
+            status, reason = "TOOL_ERROR", "Formal tool reported no executed cover"
+        if status == "TOOL_ERROR" and "DONE (UNKNOWN" in transcript:
             status, reason = "INCONCLUSIVE", "Engine did not establish the induction step"
-        if status == "TOOL_ERROR" and "DONE (FAIL" in output(step):
+        if status == "TOOL_ERROR" and "DONE (FAIL" in transcript:
             status = "INCONCLUSIVE" if sby_mode == "cover" else "FAIL"
             reason = "Required cover not reached within depth" if sby_mode == "cover" else "Formal counterexample"
         result.finish(status, reason, mode=sby_mode, depth=depth, engine=engine,
-                      caller=caller, parameters=vars(profile))
+                      caller=caller, parameters=vars(profile), reached_covers=reached)
 
 
 def main(argv):
