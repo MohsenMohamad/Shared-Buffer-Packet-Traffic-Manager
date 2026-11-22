@@ -71,7 +71,7 @@ module pool_candidate_formal #(
 
 `ifdef POOL_ABSTRACT_CALLER
     cell_count_t [N_Q-1:0] caller_held;
-    int [N_Q-1:0][31:0] held_after_add, returning_credit;
+    logic [N_Q-1:0][31:0] held_after_add, returning_credit;
     int caller_free, caller_reserved;
 
     assign caller_free = N_CELL - $countones(live_cell);
