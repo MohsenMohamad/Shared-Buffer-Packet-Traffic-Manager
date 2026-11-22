@@ -1,109 +1,95 @@
 # Multi-egress resource pools RTL candidate
 
-The production component grants cell credit and a distinct descriptor on the
-reservation edge. Materialization uses a pre-edge-free cell. The TX and
-cleanup lanes apply their returns to the next state. Both profiles pass
-designer smoke and meet the isolated 10 ns data target after mapped load
-repair. Independent binding, physical reset and composed timing remain open.
+Admission owns one ordered prefix decision. The pool publishes old credit,
+queue occupancy and descriptor ranks. It applies the committed
+reservations, writes and returns to state on the same edge. The
+[reviewed candidate report](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/5db09905e19e458044e2ec895b722215706601d3/docs/results/TM06-pool-rtl-candidate.md)
+records the original implementation and evidence.
 
 ## Tested identities
 
-| Role | Revision |
+| Scope | Revision |
 | --- | --- |
-| Fetched `origin/main` baseline | `b5e82af3ff84fd77c994458eb576d9dcf9c917b2` |
+| Main baseline | `b5e82af3ff84fd77c994458eb576d9dcf9c917b2` |
 | Integrated preparation merge, PR #34 | `4634d5a4dacb00304635ddb64a3f83747d8b03e8` |
-| Preparation head | `42b6eec32597e85967db4c09d09cdf6e7d231312` |
-| Clean RTL candidate, declaration gate and mapped sources | `0507a74d6efb839e820aa0371eeb56e5e8413d9e` |
-| Clean designer run with both pools fully owned at reset | `0f8c611f600e47043646063c70ea9b381363f8c0` |
+| PR #36 before this change, doctor and remapped comparison baseline | `5db09905e19e458044e2ec895b722215706601d3` |
+| PR #36 revised RTL, designer and mapped sources | `9f5f96405f99cff0e9a963254ae05c4095d59cbc` |
 
-Preparation is an ancestor of the baseline. Required main CI and local
-`make doctor` passed at the baseline. [Main CI run](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/actions/runs/45015054949)
-
-The [source manifest](../../dv/designer/pool_sources.py) identifies the
-compilation order, include root, profile IDs and public files at the tested
-revision. The production top is [tm_resource_pools](../../rtl/multi_egress/tm_resource_pools.sv).
-The Verilator and Slang runs compile only the listed package and pool sources.
-The timing run adds [same-edge consumers](../../experiments/multi-egress-pools/tm_pools_timing.sv).
-The public types, port declaration and CSR package match the baseline.
-Candidate manifests in run storage give the complete source and dependency
-SHA-256s. Both geometries encode every possible cell, descriptor and queue
-index in their published widths.
+The [source manifest](../../dv/designer/pool_sources.py) gives the compilation
+order, include root, profile IDs and public declarations. Both pool profiles
+use the published packet and software ABI types. The checked-in report is a
+documentation-only follow-up to the tested source revision.
 
 ## Binding the component
 
-Sample offers, grants, ownership and the staged-write handshake immediately
-before the rising edge. Sample the updated counts after that edge. Sample
-the offer slots in the caller's rotating order. For queue policy, the caller
-can evaluate earlier successful reservations using pre-edge `U`, `D`
-and `H`. Supply eligible offers for that prefix, with holes for entries
-blocked by policy or other caller resources. The component independently
-checks the old descriptor count and remaining credit. Each successful offer
-takes the next old descriptor rank and commits that ID and its full
-reservation on the same edge. A failed or absent offer consumes no rank.
-The caller can observe the actual ID only where `grant` is set.
+Before the rising edge, admission reads `unreserved` (U), `held[q]` (H),
+`free_desc` (D), `rank_valid` and `rank_id`. The rank outputs depend on the
+old descriptor bitmap. A valid rank can be read before the commit mask
+is available. Admission walks the rotated header prefix and accounts for
+each earlier success when deciding the next lane's header legality, queue
+policy and shared credit. It drives successful lanes on `reserve_commit`
+with `reserve_cells` and `reserve_qid` in the same rotated order. An absent
+or denied lane consumes neither credit nor a rank. Each asserted bit
+commits its full count and consumes the next old descriptor rank. Where
+a commit bit is set, `grant_desc` is the corresponding rank ID projected
+into that lane. The producer samples the commit and projected ID on the
+same active edge. New credit, IDs and queue occupancy are visible to the
+following edge.
 
 | Observation | Component boundary | Caller supplies or checks |
 | --- | --- | --- |
-| Admission | `reserve_offer`, `reserve_cells`, `reserve_qid`, `grant`, `grant_desc` | Rotated order, ingress/frame identity, one eligible header per ingress, valid queue and full-frame count. New grants may mark a first-beat abort without a write. |
-| Write | `write_offer`, `write_accept`, `write_id` | An old staged cell with an unused credit for that frame. Payload memory, links, owner, index and final flag use the same accepted ID and edge. |
-| TX return | `tx_present[p]`, `tx_cell[p]`, `tx_qid[p]`, `tx_final[p]`, `tx_desc[p]` | Accepted cell-last beat on physical egress `p`, with `tx_final` only for the real final frame retirement. Descriptor ID is relevant on a final. |
-| Abort cleanup | `cleanup_present`, `cleanup_has_cell`, `cleanup_cell`, `cleanup_done`, `cleanup_qid`, `cleanup_desc`, `cleanup_released` | The dedicated cleanup grant selects one old abort. Supply the physical cell when present. On done, supply the residual credit and descriptor. The cleaning ingress remains ineligible on that edge. |
-| State | `free_cells` (F), `unreserved` (U), `reserved_free` (R), `free_desc` (D), `held[q]` (H) | Current live owner maps can cross-check assigned cells, live descriptors and credits at each edge. Gate CSR and packet activity with the system initialization and RUN controls. |
-| Reset | `rst_n`, `ready` | Assert common reset asynchronously across two rising edges and release synchronously. Ready and handshakes are low during reset and through sampling of the first released edge. Counts are initialized in reset and ready rises after that first released edge. |
+| Admission | `ready`, `unreserved`, `held`, `free_desc`, `rank_valid`, `rank_id`, `reserve_commit`, `reserve_cells`, `reserve_qid`, `grant_desc` | Valid headers, correct rotation and policy, one eligible header per ingress, and valid full-frame reservation count and queue. A first-beat abort may coincide with its reservation. |
+| Write | `write_offer`, `write_accept`, `write_id` | An old staged cell with a reserved credit for that owner. The accepted payload and link write use the same ID and edge. |
+| TX return | `tx_present[p]`, `tx_cell[p]`, `tx_qid[p]`, `tx_final[p]`, `tx_desc[p]` | Cell-last handshake on physical egress `p`. Final descriptor validity comes from the real frame-last handshake. Descriptor bits are irrelevant for nonfinal cells. |
+| Cleanup | `cleanup_present`, `cleanup_has_cell`, `cleanup_cell`, `cleanup_done`, `cleanup_qid`, `cleanup_desc`, `cleanup_released` | One old abort in the dedicated cleanup lane. Only completion supplies the descriptor and residual credit. A cleaning ingress stays ineligible on that edge. |
+| State and reset | `free_cells` (F), `reserved_free` (R), `rst_n`, `ready` | Sample transactions with ready high. Assert reset asynchronously across two rising edges and release synchronously. Ready rises after the first released edge. Gate packet and CSR activity in the system initialization and RUN logic. |
 
-Each ID-only return names a distinct current owner in the correct TX or
-cleanup lane. Caller state excludes stale epochs, duplicates, already-free
-IDs, wrong-queue releases and work from a completed cleanup. Repeated opaque
-tags have no bearing on pool ownership. Probe wider malformed IDs before
-narrowing at an upstream boundary. An out-of-range ID cannot be encoded
-at these component ports. Absent lanes and unqualified payload fields carry
-no information. Keep caller ownership assertions live when adapting the
-public tagged events.
+Before reducing a return to IDs, validate the current reset epoch, owner,
+queue, accepted handshake and cleanup residual in the corresponding
+producer. A live descriptor ID alone cannot authenticate a frame-final
+claim. The pool can check pre-edge allocation and distinct return IDs
+across all lane pairs. Absent fields are irrelevant. All encoded cell,
+descriptor and queue indices are in range on the supported geometries.
+Illegal committed inputs violate the contract.
 
-The grouped cell selector and grouped descriptor selection at each successive
-rank follow Decision 0010. Bitmaps apply the allocation clear and distinct
-return set once. A descriptor rank's mask removes its pre-edge candidate
-from the next rank. The valid grant count determines how many ranks the
-pool consumes. The credit ledger uses widened grant and release sums before
-storing U and each H. R is derived as F − U, and assigned cells as N_CELL − F.
+The grouped cell selector uses only old free membership and reserved
+capacity. The descriptor stages remove each selected rank from the old
+bitmap for the next rank. Commit and return masks merge once per edge.
+The widened ledger applies the following deltas.
 
-| Edge event | F | U | R | H for the owner | D |
+| Event | F | U | R | H for the owner | D |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Reserve n | 0 | −n | +n | +n | −1 |
 | Materialize | −1 | 0 | −1 | 0 | 0 |
-| Accepted TX retirement | +1 | +1 | 0 | −1 | +1 on a final |
+| Accepted TX cell retirement | +1 | +1 | 0 | −1 | +1 on a final |
 | Physical abort reclaim | +1 | 0 | +1 | 0 | 0 |
 | Finish abort with n residual credits | 0 | +n | −n | −n | +1 |
 
-A final physical reclaim can coincide with cleanup completion, including
-its descriptor return. For zero-cell abort only the completion row applies.
-These deltas preserve `F = U + R`, `N_CELL = assigned + F = U + sum(H[q])`
-and `N_DESC = D + live_descriptors`. Qualification of the caller, memory
-ports and top-level observation wiring belongs to later integration.
+A completion may coincide with the last physical reclaim or run alone
+for a zero-cell abort. The resulting invariants are `F = U + R`,
+`N_CELL = assigned + F = U + sum(H[q])` and
+`N_DESC = D + live_descriptors`.
 
 ## Designer validation
 
-Each profile ran six directed cases, three deterministic sequences and an
-identical log replay of seed 17. The driver reconstructs resource state from
-its frame tokens and returns. It verifies the actual grant and write IDs
-against old ownership and checks every queue credit after every edge.
+Verilator enables the named RTL assertions with `--assert -DTM_POOL_ASSERTIONS`.
+The assertion code and its sampled reference state are omitted from the
+Slang synthesis and timing runs. The checks sample active edges and verify
+legal old credit, distinct old-free ranks, write eligibility, allocated and
+distinct return IDs, bounded widened sums, bitmap populations, conservation
+and exact per-queue updates. The C++ checker also verifies the public old
+counts and projected IDs before each edge and the resulting state immediately
+after it.
 
-| Directed case | Observed trigger and result |
+| Check | Both profiles |
 | --- | --- |
-| Descriptor scarcity | With a legal final return, D=0 gave no grant and D=1 gave one grant. D=2 gave two distinct grants when all slots offered. At D=0 the sole returned ID granted on the following edge. Saturation exercised descriptor IDs zero and 255 or seven. |
-| Cell and credit scarcity | Primary and small each reached `(F,U,R)=(1,0,1)`. The old cell was selected while a different cell retired, restoring `(1,1,0)`. An oversized-for-credit prefix offer consumed neither credit nor rank, and the later one-cell request grabbed the returned credit on the next edge. Full occupancy reached F=U=R=0 after passing through both cell index extremes. |
-| Concurrent and sparse lanes | The first overlap accepted all four or two grants, one old staged write and all TX finals. Starting at `F=N_CELL-N_TX`, the edge ended at `F=N_CELL-1` with the same U and `R=N_TX`. The separate return peak accepted all five or three physical and descriptor returns, one write, and all non-cleaning ingress grants. The highest TX lane operated alone. |
-| Abort and withheld final | A three-cell reservation with two writes reclaimed one cell, changing R from one to two while H stayed at three and D stayed depleted by one. Completion with the last reclaim restored three credits and one descriptor. A separate zero-cell abort released its reservation and descriptor together. Withholding a TX final kept the owner live. |
-| Identity and invalid events | Repeated tags and recycled IDs kept distinct ownership. A corrupt offer at F=0 was held through an edge and rejected by the module without state changes. The caller's assertions detected disposable duplicate/free cell and descriptor IDs, a forged final flag and a stale token. Corrupt old-ID and merged-credit observations hit their specific checks. Legal neighboring edges passed. |
-| Reset and drain | Reset dropped fully owned cell and descriptor pools (F=U=R=D=0) and a separate mixture of assigned, staged reserved and aborting state. Offers remained blocked at reset and initialization sampling. The caller rejected a stale token for a reused physical ID. Current-owner return passed. Every case ended with empty owner maps, full F/U/D and zero R and H. |
+| Legal directed scenarios | Descriptor and cell scarcity with coincident returns and following-edge reuse. Maximal commits overlap a staged write and TX returns. Five primary or three small returns include cleanup. Partial and zero-cell aborts, a withheld final, holes, live reset and complete drain pass. |
+| Producer boundary | From U=8 and H=0 on both target queues, length 65 commits and leaves U=6, H=2. The second length 65 to that queue would put H=4 above threshold 2 and is denied. Length 60 to another queue consumes the second old rank. One retirement to a third queue gives next U=6 and H=2/1/0 for the three queues. Small splits the witness across two two-lane edges and verifies the retained second rank. |
+| RTL negatives | Eight probes run a legal neighbor, then present the malformed input at RTL sampling. Duplicate and already-free cell or descriptor returns fail at the named allocated/distinct checks. Old D and U overcommits fail with returns present. Zero and oversized commits fail the reservation-count check. Each probe requires a nonzero simulator exit and its exact assertion. |
+| Caller negatives | The caller check detects a forged final flag, stale tokens after reuse or reset and incorrect cleanup residual. The monitor detects planted old-ID and combined-credit observations. An old-empty cell pool blocks a write offer. |
+| Random and replay | Seeds 17, 31 and 53 each run 1,024 active edges per profile, then drain. The seed-17 replay matches exactly in each profile. |
 
-Each randomized interval had 1,024 active edges after legal full-credit
-setup. An active edge has a grant, materialization, retirement or cleanup.
-Sparse counts below refer to TX activity with fewer than all TX lanes
-present. Simultaneous counts include concurrent TX and cleanup. Ending
-values are before drain and ordered F/U/R/D.
-
-| Profile / seed | Sparse TX | Simultaneous returns | Nonfinal / completed cleanups | Grants with returns | Release at U=0 | Before drain |
+| Profile / seed | Sparse TX | Simultaneous returns | Partial / completed cleanup | Grants with returns | Release at U=0 | Before drain F/U/R/D |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Primary / 17 | 425 | 61 | 150 / 51 | 48 | 14 | 98 / 61 / 37 / 191 |
 | Primary / 31 | 428 | 85 | 87 / 56 | 40 | 36 | 52 / 28 / 24 / 185 |
@@ -112,136 +98,117 @@ values are before drain and ordered F/U/R/D.
 | Small / 31 | 437 | 37 | 10 / 53 | 54 | 35 | 8 / 5 / 3 / 3 |
 | Small / 53 | 443 | 21 | 9 / 50 | 46 | 29 | 7 / 2 / 5 / 0 |
 
-Expected detector failures are recorded separately from unexpected failures.
-The earliest-lint capture preserved the exact diagnostics for the 12
-unused public package constants in this pool-only build
-(`tool-environment`). The [lint configuration](../../dv/designer/multi_egress_pools.vlt)
-waives only those constants. The first directed and random simulations
-also retained failures (`verification-defect`). The directed driver
-offered a new frame before the modeled abort ingress had cleared drain.
-The random driver could mark an old frame while offering another header
-on that ingress. Independent follow-up counts exposed missing primary
-credit-exhaustion and small multi-cell reclaim triggers. The repair blocks
-those illegal ingress schedules and deliberately reaches those triggers.
-Reproduction uses the captured revision and patch with the original profile,
-case and seed. The clean candidate passes the affected cases. These captures
-found no production RTL defect.
+The first assertion run was retained before repair as a `verification-defect`.
+The concurrent `queue_update` comparison fired on legal traffic before
+negative probes reached their injection edges. The monitor now explicitly
+samples expected values in reset-aware simulation-only state and checks the
+stored values at the next active edge. All legal and intended negative cases
+passed with the revised monitor.
 
-## Reference mapping
+## Matched 10 ns mapping
 
-Pinned Slang/Yosys/ABC and OpenSTA map the actual production modules with
-grant outputs, IDs, counters and all return lanes live. The synthesis wrapper
-also captures each accepted ID into a same-edge observer register. The
-[shared Decision 0010 constraints](../../experiments/queue-control/reference.sdc)
-use Nangate45 typical at 1.10 V and 25 °C, an ideal 10 ns clock, 0.10 ns
-uncertainty, 0.20/2.00 ns min/max I/O and reset deassertion delays,
-0.05 ns slew and 10 fF output load. ABC uses the [BUF_X1 drive and
-10 fF load](../../experiments/multi-egress-pools/abc.constr) of the reference
-default mapping flow.
+The old and new source revisions were mapped with identical
+[Decision 0010 reference constraints](../../experiments/queue-control/reference.sdc)
+and [ABC constraints](../../experiments/multi-egress-pools/abc.constr).
+The library is Nangate45 typical at 1.10 V and 25 °C. The reference uses a
+10 ns ideal clock, 0.10 ns uncertainty, 0.20/2.00 ns I/O and reset release
+delays, 0.05 ns slew and 10 fF output load.
 
-| Mapped measure | Primary | Small |
-| --- | ---: | ---: |
-| Worst data setup / hold (ns) | +3.37490 / +0.01092 | +5.21581 / +0.00730 |
-| Cell selection arrival (ns) / levels | 1.66014 / 43 | 0.45194 / 8 |
-| Descriptor selection arrival (ns) / levels | 4.22725 / 94 | 0.65959 / 11 |
-| Cell ID consumer setup / hold (ns) | +8.16303 / +0.11787 | +9.35387 / +0.08557 |
-| Descriptor ID consumer setup / hold (ns) | +5.59211 / +0.11481 | +9.13631 / +0.08210 |
-| Cell return feedback setup / hold (ns) | +6.92799 / +0.19438 | +7.34923 / +0.14691 |
-| Descriptor return feedback setup / hold (ns) | +7.05720 / +0.19648 | +7.36276 / +0.14715 |
-| Credit return feedback setup / hold (ns) | +6.58341 / +0.24157 | +7.11743 / +0.20800 |
-| Mapped area (µm²) | 32,503.604 | 1,889.132 |
-| Clock / reset / max data fanout | 1,530 / 1,488 / 10 | 89 / 79 / 10 |
-| Worst capacitance slack before → after (fF) | −0.33198 → +0.66554 | −0.85554 → +0.91958 |
-| Inserted identity buffers | 3 | 2 |
+The before map includes resource-prefix decision logic inside the pool.
+The after map starts at the commit inputs and includes separate same-edge
+rank observer registers. The projected descriptor ID and staged-write
+capture paths use the same observer role in both maps. The new rank
+endpoint measures bitmap-to-rank arrival at its observer register.
+Selection depth counts mapped combinational cells on the reported late path.
+Return feedback starts at the return inputs and ends at the relevant
+bitmap, count or credit registers. The STA manifests give the exact paths.
 
-| Max path | Primary launch → endpoint | Small launch → endpoint |
-| --- | --- | --- |
-| Cell ID | `_45488_/Q` → `write_id[1]` | `_2604_/Q` → `write_id[1]` |
-| Descriptor ID | `_46610_/Q` → `grant_desc[24]` | `_2634_/Q` → `grant_desc[3]` |
-| Cell consumer | `_45488_/Q` → `_46914_/D` | `_2604_/Q` → `_2623_/D` |
-| Descriptor consumer | `_46610_/Q` → `_46941_/D` | `_2634_/Q` → `_2628_/D` |
-| Cell return feedback | `tx_present[1]` → `_46979_/D` | `tx_present[1]` → `_2673_/D` |
-| Descriptor return feedback | `tx_present[1]` → `_46977_/D` | `tx_present[1]` → `_2669_/D` |
-| Credit return feedback | `tx_qid[2]` → `_46962_/D` | `tx_present[1]` → `_2672_/D` |
+| Measure | Primary before | Primary after | Small before | Small after |
+| --- | ---: | ---: | ---: | ---: |
+| Worst data setup / hold (ns) | +3.37490 / +0.01092 | +3.47879 / +0.00626 | +5.21581 / +0.00730 | +5.69787 / +0.01271 |
+| Cell ID arrival (ns) / levels | 1.66014 / 43 | 1.85795 / 42 | 0.45194 / 8 | 0.45185 / 8 |
+| Projected descriptor ID arrival (ns) / levels | 4.22725 / 94 | 4.42121 / 105 | 0.65959 / 11 | 0.55459 / 10 |
+| New raw rank consumer arrival (ns) / levels | — | 4.27236 / 96 | — | 0.49965 / 9 |
+| Cell ID consumer setup / hold (ns) | +8.16303 / +0.11787 | +7.98672 / +0.08254 | +9.35387 / +0.08557 | +9.35396 / +0.08557 |
+| Projected ID consumer setup / hold (ns) | +5.59211 / +0.11481 | +5.49136 / +0.14157 | +9.13631 / +0.08210 | +9.25990 / +0.06849 |
+| Raw rank consumer setup / hold (ns) | — | +5.58773 / +0.05855 | — | +9.35782 / +0.01735 |
+| Cell return setup / hold (ns) | +6.92799 / +0.19438 | +6.93211 / +0.20111 | +7.34923 / +0.14691 | +7.35764 / +0.16249 |
+| Descriptor return setup / hold (ns) | +7.05720 / +0.19648 | +7.09182 / +0.18549 | +7.36276 / +0.14715 | +7.41352 / +0.15375 |
+| Credit return setup / hold (ns) | +6.58341 / +0.24157 | +6.60537 / +0.21113 | +7.11743 / +0.20800 | +7.26478 / +0.23409 |
+| Reset recovery / removal (ns) | +7.93947 / -0.14368 | +7.93947 / -0.14368 | +7.93947 / -0.14368 | +7.93947 / -0.14368 |
+| Mapped area (µm²) | 32,503.604 | 34,562.178 | 1,889.132 | 2,225.888 |
+| Max clock / reset / data fanout | 1,530 / 1,488 / 10 | 1,566 / 1,488 / 10 | 89 / 79 / 10 | 97 / 79 / 10 |
+| Worst capacitance slack (fF) | +0.66554 | +0.98070 | +0.91958 | +0.91958 |
+| Worst slew slack (ns) | +0.07560 | +0.07961 | +0.07740 | +0.07740 |
 
-Selection depth counts combinational cells on the reported latest-arrival
-bitmap-to-ID path, including buffers. Focused consumer paths end at the
-wrapper's capture registers. Return paths launch at the physical return
-inputs and end in the free bitmap/count, or U/H state. The focused script
-lists every matched mapped pin in the generated Tcl. The overall
-setup path ends at a descriptor ID and launches at a reservation-count
-input in both geometries. The measures are for one post-mapping typical
-corner with ideal clock and reset distribution.
+The first new primary fixture exposed raw ranks and projected IDs as
+separate ports. Shared rank drivers carried the duplicated output
+load, then a rank node with one 10 fF port and internal sinks still
+exceeded its Liberty budget after four buffer splits. Both maps and
+the failures were retained before repair. The fixture now measures
+rank use at a separate same-edge consumer while keeping projected IDs
+at the I/O boundary. The rank observer is measurement logic. Admission
+composition still needs its own timing measurement.
 
-The initial Liberty capacitance violations came from heavily loaded mapped
-drivers. Buffer splits repaired the affected nets without modifying any
-original cell, port or logical connection. The repair reuses the earlier
-composition check to contract only added noninverting Liberty buffers and
-compare every original cell pin. Arrival and slack were remeasured after
-the split.
+With the revised fixture, targeted identity buffers clear cap and slew
+checks on both maps. The repair validates every original cell pin and port
+after contracting the added buffers. Area includes the new 36 primary or
+eight small rank observation bits. The worst data path now begins at the
+old descriptor bitmap in primary and at `reserve_commit[0]` in small.
+The primary projected ID is slower from the bitmap even as worst overall
+setup improves under the changed boundary.
 
-The reference reset check still fails removal by 0.14368 ns at the
-0.20 ns release assumption. Recovery passes by 7.93947 ns. The resulting
-ideal-root window is 0.34368–9.93947 ns after the reference launch at
-0.05 ns slew, subject to actual reset distribution and integration
-endpoints. Slew and capacitance pass after buffering. Max fanout acceptance
-is `UNSUPPORTED` because the library and SDC give no limit. Fanout counts
-remain available. Keep the architecture freeze open under
-[Decision 0010](../decisions/0010-multi-egress-queue-control.md).
+The reference reset release still misses removal by 0.14368 ns in both
+profiles. The isolated required arrival window is 0.34368–9.93947 ns at
+0.05 ns slew. Max fanout acceptance remains `UNSUPPORTED` because the
+reference provides no limit. These are single-corner pre-layout measurements.
 
-## Reproduction and remaining qualification
+## Reproduction and handoff
 
-Use the prepared toolchain at the recorded revision.
+Use the prepared toolchain at the tested source revisions.
 
 ```sh
 export CXX=g++-14
 source .tools/activate.sh
 make doctor
 python3 dv/designer/multi_egress_pools.py --jobs 2
-python3 dv/designer/multi_egress_pools.py --profile small --case random --seed 17
+python3 dv/designer/multi_egress_pools.py --profile small --case rtl-overcommit-u
 python3 dv/designer/multi_egress_pools_sta.py --profile primary
 python3 dv/designer/multi_egress_pools_sta.py --profile small
 make multi-egress-declarations
 make repo-check
 python3 tools/check_light.py
+PYTHONPATH=tools python3 -m unittest discover -s tests/runner -v
 git diff --check origin/main...HEAD
 make multi-egress-pools-candidate RUN_ARGS="--profile all --candidate-revision $(git rev-parse HEAD)"
 ```
 
-The public declaration gate passed both geometries at both read latencies
-with layout, malformed geometry and intended-fault checks. Repository
-contracts, 73 lightweight unit tests, syntax and Git whitespace checks passed.
+Run the two mapping commands at both recorded revisions to reproduce the
+comparison. Raw logs, manifests and failure snapshots live under
+`.build/runs/` and the hosted designer evidence artifact.
 
-The candidate command reported `NOT_RUN` in both profiles and exited
-nonzero because the production adapter has not been bound. Designer smoke,
-the declaration gate and the existing preparation replay retain their
-distinct scopes. Independent production checks and proofs remain pending
-at named RTL and DV revisions. The isolated DUT has no memory response
-interface. Use both read latencies when an integrated binding exercises it.
-
-Generated scripts, netlists, reports and failure captures are in ignored
-`.build/runs/` storage. Hosted full CI uploads fresh designer and timing
-outputs through the multi-egress declaration job's existing run artifact.
-
-| Scope | Local run directory below `.build/runs/` |
+| Scope | Local run directory under `.build/runs/` |
 | --- | --- |
-| Baseline doctor | `doctor-2026-11-22T112537.449347+0000-18452e4b` |
-| Both designer profiles | `pools-designer-{primary,small}-20261122T114319-77bad118` |
-| Primary mapping | `pools-sta-primary-20261122T113829-712b9f36` |
-| Small mapping | `pools-sta-small-20261122T113829-a0cfe810` |
-| Public declaration gate | `multi-egress-declarations-2026-11-22T113829.369751+0000-47b9d9b4` |
-| Missing production binding | `multi-egress-pools-candidate-primary-2026-11-22T113829.300970+0000-bd417da0` and `multi-egress-pools-candidate-small-2026-11-22T113829.300970+0000-bd417da0` |
-| Initial lint and smoke failures | `manual-failure-pools-entry`, `pools-designer-{primary,small}-20261122T113400-91e7d093` and `pools-designer-{primary,small}-20261122T113500-d1d06d9f` |
+| Doctor at reviewed head | `doctor-2026-11-22T120938.322678+0000-27d8eada` |
+| Before timing | `pools-sta-primary-20261122T121013-9df5b0a6`, `pools-sta-small-20261122T121013-132d0afc` |
+| After timing | `pools-sta-primary-20261122T121714-3ac791bb`, `pools-sta-small-20261122T121714-e1c3485f` |
+| Both designer profiles | `pools-designer-{primary,small}-20261122T121714-5381635a` |
+| Public declaration gate | `multi-egress-declarations-2026-11-22T121714.202948+0000-fd19036f` |
+| Candidate adapter check | `multi-egress-pools-candidate-{primary,small}-2026-11-22T121714.380380+0000-e44baf92` |
+| First assertion and timing failures | `pools-designer-{primary,small}-20261122T121341-a8c12817`, `pools-sta-primary-20261122T121217-8bf8cedb`, `pools-sta-primary-20261122T121502-5b2708ec` |
 
-Verilator is 5.054. The mapping uses Yosys
+The simulator is Verilator 5.054. The mapping uses Yosys
 `28ba3cb926fe376fa05ebfc1b921747d011d4557` with integrated Slang
-`545f88b2ed3a2d20325fbd17413af177a6bca72f` and OpenSTA 3.2.0.
-The locked Liberty SHA-256 is
-`8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1`.
-The reference SDC SHA-256 is
-`4ab8a2d789d76c1258a4183a64bc727c856da2ff2781a9e2294c7d9902af3924`.
-The mapped Verilog after repair has SHA-256
-`41e9e2f9ae9b539a361a57f034b485443eab2cc6c045cdd1ce4825339bd4e144`
-for primary and
-`aee28b7f1ced3b673f5b63da88219fe35699025c0af9e24d36ce6a0d1272922a`
-for small.
+`545f88b2ed3a2d20325fbd17413af177a6bca72f` and OpenSTA 3.2.0. The locked
+Liberty SHA-256 is `8d540a4d4cf6d09d27c87ad067857a9c0c2eeb023ab7a56e058cd3113db4e9b1`.
+The manifests include the exact netlist hashes, endpoint reports and
+source digests for all four maps.
+
+The public declaration gate passed both profiles at both read latencies.
+Repository, lightweight and failure-capture checks passed. The published
+candidate command reported `NOT_RUN` in both profiles and exited nonzero
+because the production adapter is unbound. Independent qualification and
+proofs remain pending at named RTL and DV sources. Use both read latencies
+when the integrated binding exercises the memory interface. Keep
+[Decision 0010](../decisions/0010-multi-egress-queue-control.md) open for
+physical reset and composed timing.
