@@ -392,7 +392,20 @@ module pool_candidate_formal #(
             i_cell_disjoint: assert((live_cell & dut.cells.free_bits) == '0);
             i_desc_disjoint: assert((live_desc & dut.descriptors.free_bits) == '0);
             i_total_credit: assert(live_count_t'(unreserved) + held_total == live_count_t'(N_CELL));
-            i_ready_agrees: assert(ready);
+        end
+
+    always @(posedge clk)
+        if (past_valid && rst_n) begin
+            i_ready_agrees: assert(ready == caller_ready);
+            if (!caller_ready) begin
+                i_release_bitmaps: assert((&dut.cells.free_bits) && (&dut.descriptors.free_bits));
+                i_release_counts: assert(free_cells == cell_count_t'(N_CELL) &&
+                                         free_desc == desc_count_t'(N_DESC) &&
+                                         unreserved == cell_count_t'(N_CELL) &&
+                                         reserved_free == '0 && held == '0);
+                i_release_owners: assert(live_cell == '0 && live_desc == '0 &&
+                                         caller_u == cell_count_t'(N_CELL));
+            end
         end
 
 `ifndef POOL_ABSTRACT_CALLER
