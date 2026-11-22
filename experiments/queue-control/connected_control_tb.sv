@@ -288,6 +288,8 @@ module connected_control_tb #(
     endtask
 
     task automatic returns(input bit hold_one);
+        localparam logic [N_CELL-1:0] OLD_CELLS = (N_CELL'(1) << (P+1)) - N_CELL'(1);
+        localparam logic [N_DESC-1:0] OLD_DESCS = (N_DESC'(1) << (P+1)) - N_DESC'(1);
         reset_fixture();
         for (int p = 0; p < P; p++) header(p, 4*p, 60);
         tick();
@@ -305,6 +307,8 @@ module connected_control_tb #(
         abort_late = P'(1);
         tick();
         assert (sampled_write && sampled_write_address == C'(P) && sampled_descs == '0);
+        assert (dut.pool.free_cell == ~OLD_CELLS && dut.admission_logic.free_desc == ~OLD_DESCS);
+        assert (credit == K'(N_CELL-P-2) && held[1] == K'(2));
         staged_cell = '0;
         abort_late = '0;
         sink_ready = hold_one ? ~P'(1) : '1;
@@ -314,12 +318,16 @@ module connected_control_tb #(
         for (int i = 0; i <= P; i++)
             if (sampled_cells[i]) assert (sampled_cell_ids[i] == C'(i) && sampled_desc_ids[i] == D'(i));
         assert (credit == K'(N_CELL-int'(hold_one)));
+        assert (dut.pool.free_cell == ~N_CELL'(hold_one) &&
+                dut.admission_logic.free_desc == ~N_DESC'(hold_one));
+        assert (held == (Q*K)'(hold_one));
         $display("reachable returns hold_one=%0d edge=%0d lanes=%b merged_U=%0d",
                  hold_one, edge_count-1, sampled_cells, credit);
         if (hold_one) begin
             sink_ready = P'(1);
             tick();
             assert (sampled_descs == (P+1)'(1) && credit == K'(N_CELL));
+            assert (&dut.pool.free_cell && &dut.admission_logic.free_desc && held == '0);
         end
     endtask
 
