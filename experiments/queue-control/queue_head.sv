@@ -23,6 +23,18 @@ module queue_head #(
     output logic [P-1:0][D-1:0] bound_desc,
     output logic [P-1:0][W-1:0] bound_info,
     output logic invariant_error
+`ifdef QUEUE_CONTROL_CONNECTED
+    , input logic [Q-1:0] queue_bucket_enable
+    , input logic [P-1:0] port_bucket_enable
+    , input logic [Q-1:0][19:0] queue_rate
+    , input logic [P-1:0][19:0] port_rate
+    , input logic [Q-1:0][12:0] quantum
+    , input logic [P-1:0][1:0] scheduler_mode, strict_class
+    , output logic [P-1:0] bind_now
+    , output logic [P-1:0][1:0] class_now
+    , output logic [P-1:0][D-1:0] desc_now
+    , output logic [P-1:0][W-1:0] info_now
+`endif
 );
     logic [Q-1:0][D-1:0] head, tail;
     logic [P-1:0][1:0] cursor;
@@ -36,15 +48,27 @@ module queue_head #(
     logic [Q-1:0][15:0] queue_available;
     logic [P-1:0][15:0] port_available;
 
+`ifdef QUEUE_CONTROL_CONNECTED
+    logic [Q-1:0] open_visit;
+    logic [Q-1:0][12:0] deficit;
+    logic [P-1:0] drr_attempt, fits_deficit;
+    logic [P-1:0][12:0] available_deficit;
+    assign bind_now = pop;
+    assign class_now = cls;
+    assign desc_now = old_head;
+    assign info_now = selected_info;
+`endif
+
     // The composed point treats the byte inputs as configured capacities.
     // Every bucket is enabled and shares the supplied Q16.16 refill rate.
     function automatic logic [31:0] update_tokens(
         input logic [31:0] old_balance,
-        input logic [15:0] capacity_bytes, charged_bytes
+        input logic [15:0] capacity_bytes, charged_bytes,
+        input logic [19:0] refill_rate
     );
         logic [32:0] balance, capacity;
         capacity = {1'b0, capacity_bytes, 16'b0};
-        balance = {1'b0, old_balance} - {1'b0, charged_bytes, 16'b0} + 33'(token_rate);
+        balance = {1'b0, old_balance} - {1'b0, charged_bytes, 16'b0} + 33'(refill_rate);
         return token_start || balance >= capacity ? capacity[31:0] : balance[31:0];
     endfunction
 
@@ -59,8 +83,13 @@ module queue_head #(
                 if (!rst_n)
                     balance <= '0;
                 else
+`ifdef QUEUE_CONTROL_CONNECTED
                     balance <= update_tokens(balance, port_credit_bytes[e],
-                                             pop[e] ? selected_info[e][15:0] : 16'b0);
+                         pop[e] && port_bucket_enable[e] ? selected_info[e][15:0] : 16'b0, port_rate[e]);
+`else
+                    balance <= update_tokens(balance, port_credit_bytes[e],
+                                             pop[e] ? selected_info[e][15:0] : 16'b0, token_rate);
+`endif
             end
         end
         for (genvar q = 0; q < Q; q++) begin : queue_state
@@ -72,8 +101,13 @@ module queue_head #(
                 if (!rst_n)
                     balance <= '0;
                 else
+`ifdef QUEUE_CONTROL_CONNECTED
                     balance <= update_tokens(balance, queue_credit_bytes[q],
-                                             debit ? selected_info[E][15:0] : 16'b0);
+                         debit && queue_bucket_enable[q] ? selected_info[E][15:0] : 16'b0, queue_rate[q]);
+`else
+                    balance <= update_tokens(balance, queue_credit_bytes[q],
+                                             debit ? selected_info[E][15:0] : 16'b0, token_rate);
+`endif
             end
         end
     end
@@ -83,14 +117,31 @@ module queue_head #(
         for (genvar c = 0; c < 4; c++) begin : class_head
             localparam int QID = e * 4 + c;
             wire [15:0] length = CACHED != 0 ? cached[QID][15:0] : metadata[head[QID]][15:0];
+`ifdef QUEUE_CONTROL_CONNECTED
+            assign eligible[c] = active[QID] && !token_start
+                                && (!queue_bucket_enable[QID] || length <= queue_available[QID])
+                                && (!port_bucket_enable[e] || length <= port_available[e]);
+`else
             assign eligible[c] = active[QID] && length <= queue_available[QID]
                                 && length <= port_available[e] && !(TOKEN_FEEDBACK != 0 && token_start);
+`endif
         end
         wire [3:0] rotated = (eligible >> cursor[e]) | (eligible << (4 - cursor[e]));
         wire [1:0] offset = rotated[0] ? 2'd0 : rotated[1] ? 2'd1 : rotated[2] ? 2'd2 : 2'd3;
         wire [QB-1:0] qid = {B'(e), cls[e]};
+`ifdef QUEUE_CONTROL_CONNECTED
+        wire strict_wins = scheduler_mode[e] == 2'd2 && eligible[strict_class[e]];
+        wire rr_mode = scheduler_mode[e] == 2'd1;
+        wire still_queued = !pop_last[e] || (publish && publish_q == qid);
+        assign cls[e] = strict_wins ? strict_class[e] : cursor[e] + offset;
+        assign drr_attempt[e] = bind_window[e] && (|eligible) && !strict_wins && !rr_mode;
+        assign available_deficit[e] = deficit[qid] + (open_visit[qid] ? 13'b0 : quantum[qid]);
+        assign fits_deficit[e] = 16'(available_deficit[e]) >= selected_info[e][15:0];
+        assign pop[e] = bind_window[e] && (|eligible) && (strict_wins || rr_mode || fits_deficit[e]);
+`else
         assign cls[e] = cursor[e] + offset;
         assign pop[e] = bind_window[e] && (|eligible);
+`endif
         assign old_head[e] = head[qid];
         assign successor[e] = next_link[old_head[e]];
         assign pop_last[e] = old_head[e] == tail[qid];
@@ -106,8 +157,19 @@ module queue_head #(
                 bound_info[e] <= '0;
             end else begin
                 bound[e] <= pop[e];
-                if (pop[e]) begin
+`ifdef QUEUE_CONTROL_CONNECTED
+                if (drr_attempt[e])
+                    cursor[e] <= fits_deficit[e] && still_queued ? cls[e] : cls[e] + 2'd1;
+                else if (pop[e] && rr_mode)
                     cursor[e] <= cls[e] + 2'd1;
+                else if (bind_window[e] && !token_start && !(|eligible) && !rr_mode &&
+                         open_visit[{B'(e), cursor[e]}])
+                    cursor[e] <= cursor[e] + 2'd1;
+`endif
+                if (pop[e]) begin
+`ifndef QUEUE_CONTROL_CONNECTED
+                    cursor[e] <= cls[e] + 2'd1;
+`endif
                     bound_class[e] <= cls[e];
                     bound_desc[e] <= old_head[e];
                     bound_info[e] <= selected_info[e];
@@ -133,6 +195,24 @@ module queue_head #(
         wire remove = pop[E] && cls[E] == 2'(q % 4);
         wire takes_publication = append && (!active[q] || (remove && pop_last[E]));
         wire follows_successor = remove && !pop_last[E];
+
+`ifdef QUEUE_CONTROL_CONNECTED
+        wire drained = remove && pop_last[E] && !append;
+        wire attempted = drr_attempt[E] && cls[E] == 2'(q % 4);
+        always_ff @(posedge clk or negedge rst_n) begin
+            if (!rst_n) begin
+                open_visit[q] <= 1'b0;
+                deficit[q] <= '0;
+            end else if (drained) begin
+                open_visit[q] <= 1'b0;
+                deficit[q] <= '0;
+            end else if (attempted) begin
+                open_visit[q] <= fits_deficit[E];
+                deficit[q] <= available_deficit[E] -
+                              (fits_deficit[E] ? 13'(selected_info[E][15:0]) : 13'b0);
+            end
+        end
+`endif
 
         always_ff @(posedge clk or negedge rst_n) begin
             if (!rst_n) begin

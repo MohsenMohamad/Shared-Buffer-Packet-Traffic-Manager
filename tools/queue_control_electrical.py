@@ -8,14 +8,18 @@ import os
 from pathlib import Path
 
 from evidence import sha
-from queue_control_sta import EXP, LIBERTY, mapped_measurements, run, timing
+from queue_control_sta import EXP, LIBERTY, mapped_measurements, path_record, run, timing
 
 
-def measure(path, top, stem):
+def measure(path, top, stem, repair_hold=False):
     env = dict(os.environ, TM_LIBERTY=str(LIBERTY), TM_TOP=top,
                TM_SDC=str(EXP / "reference.sdc"), TM_NETLIST=str(path / "mapped.v"),
                TM_DETAIL="1")
-    raw = run(["sta", "-no_init", "-exit", str(EXP / "timing.tcl")], path, stem, 900, env)
+    script = EXP / "timing.tcl"
+    if repair_hold:
+        env["TM_HOLD_DETAIL"] = "1"
+        script = EXP / "composed_checks.tcl"
+    raw = run(["sta", "-no_init", "-exit", str(script)], path, stem, 900, env)
     details = raw.split("TM_CAP_VIOLATIONS_BEGIN", 1)[1].split("TM_CAP_VIOLATIONS_END", 1)[0]
     violations = []
     for line in details.splitlines():
@@ -28,7 +32,18 @@ def measure(path, top, stem):
     if worst and not worst["met"] and not any(row["pin"] == worst["pin"] for row in violations):
         violations.append(dict(pin=worst["pin"], limit_ff=worst["limit"],
                                observed_ff=worst["observed"], slack_ff=worst["slack"]))
-    return measurements, violations
+    hold = {}
+    if repair_hold:
+        if raw.count("TM_SHORT_PATHS_BEGIN") != 1 or raw.count("TM_SHORT_PATHS_END") != 1:
+            raise ValueError("Missing detailed min timing paths")
+        report = raw.split("TM_SHORT_PATHS_BEGIN", 1)[1].split("TM_SHORT_PATHS_END", 1)[0]
+        for record in report.split("Startpoint: ")[1:]:
+            path_data = path_record("Startpoint: " + record)
+            if path_data["slack_ns"] < 0:
+                hold.setdefault(path_data["path_pins"][-1], path_data["slack_ns"])
+        if measurements["data_min"]["slack_ns"] < 0 and not hold:
+            raise ValueError("No detailed path for worst hold violation")
+    return measurements, violations, hold
 
 
 def insert_buffers(design, violations):
@@ -74,25 +89,22 @@ def repair(source, destination, rounds, repair_hold):
     design = json.loads((source / "mapped.json").read_text())
     top, = (name for name, module in design["modules"].items()
             if module["attributes"].get("top", "").endswith("1"))
-    base, violations = measure(source, top, "electrical")
+    base, violations, short_paths = measure(source, top, "electrical", repair_hold)
     edits, hold_edits = [], []
     observed = base
     for turn in range(rounds):
-        hold = observed["data_min"]
-        fix_hold = repair_hold and hold["slack_ns"] < 0
-        if not violations and not fix_hold:
+        if not violations and not short_paths:
             break
         edits.append(deepcopy(violations))
         module = design["modules"][top]
         free_bit = insert_buffers(module, edits[-1])
-        if fix_hold:
-            instance, pin = hold["path_pins"][-1].rsplit("/", 1)
+        for endpoint, slack in short_paths.items():
+            instance, pin = endpoint.rsplit("/", 1)
             if pin != "D":
                 raise ValueError("Expected a register data sink for the hold repair")
             [net] = module["cells"][instance]["connections"][pin]
-            name, _ = buffer(module, net, [(instance, pin, 0)], free_bit, "BUF_X1")
-            hold_edits.append(dict(endpoint=hold["path_pins"][-1], inserted=name,
-                                   slack_ns=hold["slack_ns"]))
+            name, free_bit = buffer(module, net, [(instance, pin, 0)], free_bit, "BUF_X1")
+            hold_edits.append(dict(endpoint=endpoint, inserted=name, slack_ns=slack))
         path = destination / f"round-{turn + 1}"
         path.mkdir(parents=True, exist_ok=True)
         (path / "mapped.json").write_text(json.dumps(design) + "\n")
@@ -105,13 +117,14 @@ def repair(source, destination, rounds, repair_hold):
         mapping = mapped_measurements(path, top)
         if any(mapping[key] != original["mapping"][key] for key in ("flops", "outputs")):
             raise ValueError("Buffer split changed mapped state or output width")
-        observed, violations = measure(path, top, "sta")
+        observed, violations, short_paths = measure(path, top, "sta", repair_hold)
         (path / "result.json").write_text(json.dumps(dict(mapping=mapping, timing=observed,
                                                          remaining=violations), indent=2) + "\n")
         print(f"{source.name} round {turn + 1}: {len(violations)} capacitance violators", flush=True)
     destination.mkdir(parents=True, exist_ok=True)
     evidence = dict(source=str(source), netlist_sha256=sha(source / "mapped.v"), original=base,
-                    edits=edits, hold_edits=hold_edits, remaining=violations)
+                    edits=edits, hold_edits=hold_edits, remaining=violations,
+                    remaining_hold=short_paths)
     (destination / "summary.json").write_text(json.dumps(evidence, indent=2) + "\n")
 
 

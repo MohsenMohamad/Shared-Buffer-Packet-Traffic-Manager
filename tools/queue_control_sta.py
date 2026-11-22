@@ -29,7 +29,8 @@ POINTS = {"head-direct": ("queue_head", {"CACHED": 0}),
           "admission-rx": ("admission", {"LOOKAHEAD": 2, "RX_FRAMING": 1}),
           "admission-balanced-rx": ("admission", {"LOOKAHEAD": 4, "RX_FRAMING": 1}),
           "cell": ("cell_control", {}),
-          "cell-cleanup-feedback": ("cell_control", {"ABORT_FEEDBACK": 1})}
+          "cell-cleanup-feedback": ("cell_control", {"ABORT_FEEDBACK": 1}),
+          "connected": ("connected_control", {})}
 DIAGNOSTIC = re.compile(r"(?im)^\s*(?:Error|Warning)(?:\s+\d+)?\s*:")
 
 
@@ -173,6 +174,10 @@ def mapped_measurements(path, top):
 
 
 def expected_flops(top, params):
+    if top == "connected_control":
+        # The connected representation shares state and observability across
+        # boundaries. Its repair check compares every original mapped cell.
+        return None
     ports, cells, desc = (params[key] for key in ("P", "N_CELL", "N_DESC"))
     queues = 4 * ports
     b, c, d = ((size - 1).bit_length() for size in (ports, cells, desc))
@@ -204,12 +209,17 @@ def point(name, profile_name, output, sta_only, short_abc, sta_timeout):
     path = output / f"{profile_name}-{name}"
     path.mkdir(parents=True, exist_ok=True)
     params = dict(P=profile.ports, N_CELL=profile.cells, N_DESC=profile.descriptors, **extra)
-    if top == "admission":
+    if top in ("admission", "connected_control"):
         params["MAX_BYTES"] = profile.maximum
     script = (ALLOC / "mapping.ys.in").read_text()
     if short_abc:
         script = script.replace("abc -liberty", f"abc -script {EXP / 'abc-short.script'} -liberty")
-    substitutions = dict(READ=read_sources([EXP / (top + ".sv")], top, params=params),
+    files = [EXP / (top + ".sv")]
+    defines = ()
+    if top == "connected_control":
+        files.extend(EXP / (name + ".sv") for name in ("admission", "queue_head", "cell_control"))
+        defines = ("QUEUE_CONTROL_CONNECTED",)
+    substitutions = dict(READ=read_sources(files, top, defines=defines, params=params),
                          TOP=top, LIBERTY=LIBERTY, ABC_CONSTR=ALLOC / "abc.constr",
                          NETLIST=path / "mapped.v", JSON=path / "mapped.json", STATS=path / "stats.json")
     for key, value in substitutions.items():

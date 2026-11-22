@@ -25,6 +25,12 @@ module admission #(
     output logic [K-1:0] credit,
     output logic [Q-1:0][K-1:0] held,
     output logic invariant_error
+`ifdef QUEUE_CONTROL_CONNECTED
+    , output logic [P-1:0] service_grant, service_abort
+    , output logic [P-1:0][D-1:0] service_desc
+    , output logic [P-1:0][QB-1:0] service_qid
+    , output logic [P-1:0][K-1:0] service_count
+`endif
 );
     localparam bit FACTORED = LOOKAHEAD >= 2;
     localparam bit STAGED = LOOKAHEAD == 3;
@@ -45,6 +51,14 @@ module admission #(
     logic [B-1:0] cursor_next;
     logic bad_return;
     logic [SUM-1:0] held_wide [Q], credit_wide;
+
+`ifdef QUEUE_CONTROL_CONNECTED
+    assign service_grant = grant;
+    assign service_abort = malformed;
+    assign service_desc = selected;
+    assign service_qid = qid;
+    assign service_count = reserved;
+`endif
 
     function automatic logic [D-1:0] first_free(input logic [N_DESC-1:0] bits);
         logic [GROUPS-1:0] nonempty;

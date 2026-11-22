@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "captures": [
+    {
+      "id": "connected-small-short-feedback",
+      "tested_revision": "2cb0dd9f2d3d01a0d25c3c32fd010f399d11eb72",
+      "result": "FAIL",
+      "disposition": "unresolved",
+      "command": "python3 tools/queue_control_sta.py --point connected --short-abc --jobs 2 --sta-timeout 900 --output .build/composed-control-timing/connected",
+      "expected": "Nonnegative data hold slack with the 10 ns R01 reference",
+      "observed": {
+        "profile": "small",
+        "point": "connected",
+        "netlist_sha256": "ca0665adc2e6616d5724ac27c14a13f307026cf435fa321d66190f8a80c7f029",
+        "mapping_script_sha256": "8c55ba0d3789e46a56717c88ed1ad58dcbcb040fd202502d2991294b4b6eb5dd",
+        "parameters": {
+          "P": 2,
+          "N_CELL": 16,
+          "N_DESC": 8,
+          "MAX_BYTES": 192
+        },
+        "timing": {
+          "data_min": {
+            "start": "_45708_ (rising edge-triggered flip-flop clocked by clk)",
+            "end": "_45708_ (rising edge-triggered flip-flop clocked by clk)",
+            "arrival_ns": 0.0938,
+            "slack_ns": -0.0089,
+            "path_pins": [
+              "_45708_/QN",
+              "_45708_/D"
+            ]
+          }
+        }
+      },
+      "artifact": ".build/composed-control-timing/connected/small-connected/sta.stdout",
+      "diagnosis": "A narrow beat-in-cell update feeds QN back to D on the same mapped flop. The min path misses the reference hold check. This is a mapped fixture timing finding.",
+      "followup": "Insert BUF_X1 at violating D sinks, check all original logical connections and remeasure the unchanged register boundaries.",
+      "replay_command": "python3 tools/queue_control_sta.py --point connected --profile small --short-abc --sta-timeout 900 --output .build/composed-control-timing/connected",
+      "resolution": {
+        "followup_revision": "7295c7066c17079f4f4a24ebd8254062a8700fc4",
+        "hold_slack_ns": 0.00455,
+        "result": "PASS within the measured reference",
+        "report": ".build/composed-control-timing/compared/small-connected.json"
+      }
+    },
+    {
+      "id": "connected-primary-short-feedback",
+      "tested_revision": "2cb0dd9f2d3d01a0d25c3c32fd010f399d11eb72",
+      "result": "FAIL",
+      "disposition": "unresolved",
+      "command": "python3 tools/queue_control_sta.py --point connected --short-abc --jobs 2 --sta-timeout 900 --output .build/composed-control-timing/connected",
+      "expected": "Nonnegative data hold slack with the 10 ns R01 reference",
+      "observed": {
+        "profile": "primary",
+        "point": "connected",
+        "netlist_sha256": "0a7ddb9d72d2566f1b8133918e5613cc09db9f90781f310d38cfd3d27dd19c14",
+        "mapping_script_sha256": "3da5533beaa45b4e64607c3592378a1180e7e9e81f9164eed72b3ad9aa4dd75a",
+        "parameters": {
+          "P": 4,
+          "N_CELL": 1024,
+          "N_DESC": 256,
+          "MAX_BYTES": 1536
+        },
+        "timing": {
+          "data_min": {
+            "start": "_878695_ (rising edge-triggered flip-flop clocked by clk)",
+            "end": "_878695_ (rising edge-triggered flip-flop clocked by clk)",
+            "arrival_ns": 0.0938,
+            "slack_ns": -0.0089,
+            "path_pins": [
+              "_878695_/QN",
+              "_878695_/D"
+            ]
+          },
+          "electrical": {
+            "max slew": {
+              "pin": "_468270_/ZN",
+              "limit": 0.19853,
+              "observed": 0.17288,
+              "slack": 0.02566,
+              "met": true
+            },
+            "max capacitance": {
+              "pin": "_468270_/ZN",
+              "limit": 10.4713,
+              "observed": 15.43149,
+              "slack": -4.96019,
+              "met": false
+            },
+            "max fanout": null
+          }
+        }
+      },
+      "artifact": ".build/composed-control-timing/connected/primary-connected/sta.stdout",
+      "diagnosis": "A narrow beat-in-cell update feeds QN back to D on the same mapped flop. The min path misses the reference hold check. This is a mapped fixture timing finding.",
+      "followup": "Insert BUF_X1 at violating D sinks, check all original logical connections and remeasure the unchanged register boundaries.",
+      "replay_command": "python3 tools/queue_control_sta.py --point connected --profile primary --short-abc --sta-timeout 900 --output .build/composed-control-timing/connected",
+      "resolution": {
+        "followup_revision": "7295c7066c17079f4f4a24ebd8254062a8700fc4",
+        "hold_slack_ns": 0.00073,
+        "result": "PASS within the measured reference",
+        "report": ".build/composed-control-timing/compared/primary-connected.json"
+      }
+    },
+    {
+      "id": "single-worst-hold-path-repair-limit",
+      "tested_revision": "e8ce12f6612923d333b6fe3308a021a8bfc3461e",
+      "result": "FAIL",
+      "disposition": "unresolved",
+      "command": "python3 tools/queue_control_electrical.py .build/composed-control-timing/connected/small-connected .build/composed-control-timing/electrical/small-connected --rounds 4 --repair-hold",
+      "expected": "No residual hold violation",
+      "observed": {
+        "remaining_slack_ns": -0.00038,
+        "path": [
+          "_47547_/QN",
+          "_47547_/D"
+        ]
+      },
+      "artifact": ".build/composed-control-timing/electrical/small-connected/round-4/sta.stdout",
+      "followup": "Report all violating D sinks and buffer them in the same round.",
+      "resolution": {
+        "result": "PASS after six D-pin buffers in one round",
+        "report": ".build/composed-control-timing/compared/small-connected.json"
+      }
+    },
+    {
+      "id": "primary-head-focus-argument-limit",
+      "tested_revision": "97e127fef9cbec4a71103b38336d636abd830e84",
+      "result": "ERROR",
+      "disposition": "tool-environment",
+      "command": "python3 tools/queue_control_composition.py .build/composed-control-timing/head-token-feedback/primary-head-token-feedback .build/composed-control-timing/electrical/primary-head-token-feedback .build/composed-control-timing/compared/primary-head-token-feedback.json",
+      "expected": "Run OpenSTA with every selected cache and metadata register live",
+      "observed": "OSError: [Errno 7] Argument list too long: 'sta'",
+      "artifact": ".build/composed-control-timing/unexpected/focus-argument-limit.log",
+      "followup": "Pass the same pin selection through a file and check the resolved pin count.",
+      "resolution": {
+        "result": "PASS",
+        "report": ".build/composed-control-timing/compared/primary-head-token-feedback.final.json"
+      }
+    }
+  ],
+  "scope": "Multi-egress queue/control analysis fixtures under the 10 ns R01 reference"
+}
