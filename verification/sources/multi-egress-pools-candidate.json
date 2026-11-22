@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "production_sources": [
+    "rtl/include/multi_egress/tm_multi_fixed.sv",
+    "rtl/multi_egress/tm_pool_first_free.sv",
+    "rtl/multi_egress/tm_cell_pool.sv",
+    "rtl/multi_egress/tm_descriptor_pool.sv",
+    "rtl/multi_egress/tm_reservation_accounting.sv",
+    "rtl/multi_egress/tm_resource_pools.sv"
+  ],
+  "production_headers": [
+    "rtl/include/multi_egress/tm_multi_parameters.svh",
+    "rtl/include/multi_egress/tm_multi_types.svh",
+    "rtl/include/multi_egress/tm_multi_validate.svh"
+  ],
+  "verification_sources": [
+    "dv/multi_egress_pools/pool_types.sv",
+    "dv/multi_egress_pools/pool_bench.sv",
+    "dv/multi_egress_pools/pool_candidate_top.sv"
+  ],
+  "verification_headers": [
+    "dv/multi_egress_pools/pool_random.svh",
+    "dv/multi_egress_pools/pool_scoreboard.svh",
+    "dv/multi_egress_pools/pool_model.svh",
+    "dv/multi_egress_pools/pool_coverage.svh",
+    "dv/multi_egress_pools/pool_witnesses.svh",
+    "dv/multi_egress_pools/pool_candidate.svh",
+    "dv/multi_egress_pools/pool_candidate_checks.svh"
+  ],
+  "include_dirs": [
+    "rtl/include/multi_egress",
+    "dv/multi_egress_pools"
+  ],
+  "scope": "Exact pool RTL and independently registered production DV"
+}

@@ -1,11 +1,13 @@
 """Run the independent multi-egress pool preparation or candidate gate."""
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import resource
+import subprocess
 import sys
 from uuid import uuid4
 
@@ -30,6 +32,15 @@ SOURCES = [
     "docs/spec/multi-egress-traffic-manager.md", "docs/spec/multi-egress-interfaces.md",
     "verification/multi-egress-pools/baseline-allowlist.txt",
 ]
+CANDIDATE_SET = "verification/sources/multi-egress-pools-candidate.json"
+PRODUCTION_SOURCES = tuple("rtl/multi_egress/tm_" + name + ".sv" for name in (
+    "pool_first_free", "cell_pool", "descriptor_pool", "reservation_accounting", "resource_pools"))
+PRODUCTION_HEADERS = tuple("rtl/include/multi_egress/tm_multi_" + name + ".svh" for name in (
+    "parameters", "types", "validate"))
+PRODUCTION = (SV_SOURCES[0], *PRODUCTION_SOURCES, *PRODUCTION_HEADERS)
+CANDIDATE_DV = (DV + "pool_candidate_top.sv", DV + "pool_candidate.svh",
+                DV + "pool_candidate_checks.svh")
+CANDIDATE_MARKER = "POOL_CANDIDATE_PASS"
 TOP = "multi_egress_pool_replay"
 MARKER = "POOL_REPLAY_PASS"
 
@@ -49,15 +60,57 @@ def selected_sources():
     for filename in (*SV_SOURCES, *SV_HEADERS):
         text = (ROOT / filename).read_text()
         includes = re.findall(r'(?m)^\s*`include\s+(.+)$', text)
-        allowed = {f'"{name}"' for name in (*DV_HEADERS, "tm_multi_types.svh", "uvm_macros.svh")}
+        allowed = {f'"{name}"' for name in (*DV_HEADERS, "tm_multi_types.svh", "uvm_macros.svh",
+                                              "pool_candidate.svh", "pool_candidate_checks.svh")}
         if any(name.strip() not in allowed for name in includes):
             raise ValueError(f"Unexpected transitive include in {filename}: {includes}")
     return manifest
 
 
+def git(*args):
+    return subprocess.check_output(["git", *args], cwd=ROOT, timeout=30)
+
+
+def verify_candidate(revision):
+    if not revision or not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError("Candidate requires a full lowercase 40-character commit SHA")
+    if git("cat-file", "-t", revision).strip() != b"commit":
+        raise ValueError("Candidate SHA must identify a commit")
+
+    registry = json.loads((ROOT / CANDIDATE_SET).read_text())
+    expected = {
+        "production_sources": (SV_SOURCES[0], *PRODUCTION_SOURCES),
+        "production_headers": PRODUCTION_HEADERS,
+        "verification_sources": (*SV_SOURCES[1:], CANDIDATE_DV[0]),
+        "verification_headers": (*(DV + name for name in DV_HEADERS), *CANDIDATE_DV[1:]),
+        "include_dirs": INCLUDE_DIRS,
+    }
+    for key, paths in expected.items():
+        if tuple(registry.get(key, [])) != paths:
+            raise ValueError(f"Unexpected candidate {key}")
+    files = (*PRODUCTION, *CANDIDATE_DV)
+    for name in files:
+        path = ROOT / name
+        if path.resolve() != path or not path.is_file():
+            raise ValueError(f"Missing or indirect candidate source path {name}")
+    expected_digests = {}
+    for name in (*PRODUCTION, "tools/dependencies.json", "tools/packages.lock.json"):
+        content = git("show", f"{revision}:{name}")
+        if (ROOT / name).read_bytes() != content:
+            raise ValueError(f"Candidate source differs from {revision}: {name}")
+        expected_digests[name] = hashlib.sha256(content).hexdigest()
+    for name in files:
+        includes = re.findall(r'(?m)^\s*`include\s+(.+)$', (ROOT / name).read_text())
+        allowed = {f'"{Path(header).name}"' for header in PRODUCTION_HEADERS}
+        if any(include.strip() not in allowed for include in includes):
+            raise ValueError(f"Unregistered transitive include in {name}: {includes}")
+    selected_sources()
+    return registry, expected_digests
+
+
 def case(run, name):
     result = Case(run, name)
-    result.data["source_capture_paths"] = list(SOURCES)
+    result.data["source_capture_paths"] = list(run.provenance["source_identity_paths"])
     return result
 
 
@@ -68,26 +121,30 @@ def classify(result, step, marker):
     return status == "PASS"
 
 
-def compile_bench(run, args, profile):
+def compile_bench(run, args, profile, registry=None):
     result = case(run, "build")
-    data = selected_sources()
+    data = selected_sources() if registry is None else registry
+    sources = data["sources"] if registry is None else (
+        *data["production_sources"], *data["verification_sources"])
+    module = TOP if registry is None else "multi_egress_pool_candidate"
+    mode = [] if registry is None else ["+define+POOL_CANDIDATE", "--coverage-line", "--coverage-toggle"]
     uvm = Path(os.environ["UVM_HOME"]) / "src"
     top = result.path / "obj"
     command = ["verilator", "--binary", "--timing", "--assert", "--coverage-user",
-               "--timescale", "1ns/1ps", "+define+UVM_NO_DPI",
+               "--timescale", "1ns/1ps", "+define+UVM_NO_DPI", *mode,
                f"+define+POOL_PORTS={profile.ports}", "--build-jobs", str(args.jobs),
                "--output-groups", "4", "--output-split", "20000", "--output-split-cfuncs", "500",
                "-CFLAGS", "-O0", "+incdir+" + str(uvm),
                *("+incdir+" + str(ROOT / name) for name in data["include_dirs"]),
-               str(uvm / "uvm_pkg.sv"), *(str(ROOT / name) for name in data["sources"]),
-               "--top-module", TOP, "--Mdir", str(top)]
+               str(uvm / "uvm_pkg.sv"), *(str(ROOT / name) for name in sources),
+               "--top-module", module, "--Mdir", str(top)]
     version = result.execute(["verilator", "--version"])
     if not classify(result, version, "Verilator 5.054"):
         return None
     run.versions.update(verilator=output(version).strip(),
                         uvm=f"Accellera 2020.3.2, uvm_pkg.sv SHA-256 {sha(uvm / 'uvm_pkg.sv')}")
     step = result.execute(command, timeout=args.build_timeout, stem="compile")
-    binary = top / f"V{TOP}"
+    binary = top / f"V{module}"
     if not classify(result, step, "Verilator:"):
         return None
     if not binary.is_file():
@@ -97,9 +154,9 @@ def compile_bench(run, args, profile):
     return binary
 
 
-def replay_status(step):
-    status, reason = completed(step, MARKER)
-    if status == "PASS" and output(step).splitlines().count(MARKER) != 1:
+def replay_status(step, marker=MARKER):
+    status, reason = completed(step, marker)
+    if status == "PASS" and output(step).splitlines().count(marker) != 1:
         return "FAIL", "Expected exactly one UVM completion record"
     return status, reason
 
@@ -114,7 +171,7 @@ def rejection_status(step, detector):
     return "PASS", None
 
 
-def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None):
+def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None, *, marker=MARKER):
     result = case(run, name)
     database = result.path / "coverage.dat"
     argv = [binary, f"+FIXTURES={fixtures}", f"+EVIDENCE_DIR={result.path}",
@@ -122,6 +179,10 @@ def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None
     if selection is not None:
         argv.append(f"+POOL_CASE={selection}")
         result.data["selection"] = selection
+    if args.seed is not None:
+        argv.append(f"+POOL_SEED={args.seed}")
+    if args.replay:
+        argv.append("+POOL_REPLAY")
     if rejection:
         argv.append("+UNQUALIFIED")
     result.data["artifacts"].update(
@@ -132,7 +193,7 @@ def bench_case(run, args, binary, fixtures, name, selection=None, rejection=None
     if rejection:
         result.finish(*rejection_status(step, rejection), expected="SIMULATOR_FATAL", detector=rejection)
     else:
-        result.finish(*replay_status(step))
+        result.finish(*replay_status(step, marker))
 
 
 def campaign(run, args, profile):
@@ -155,12 +216,31 @@ def campaign(run, args, profile):
         bench_case(run, args, binary, fixtures, f"reject-{name}", name, detector)
 
 
+def candidate_campaign(run, args, profile):
+    from stimulus import generate_candidate
+
+    registry, digests = verify_candidate(args.candidate_revision)
+    run.provenance.update(candidate_revision=args.candidate_revision, candidate_digests=digests,
+                          candidate_base=git("merge-base", "HEAD^1", args.candidate_revision).decode().strip()
+                          if len(git("rev-list", "--parents", "-n1", "HEAD").split()) == 3
+                          else git("merge-base", "HEAD", args.candidate_revision).decode().strip(),
+                          effective_tree=git("rev-parse", "HEAD^{tree}").decode().strip(),
+                          effective_parents=git("rev-list", "--parents", "-n1", "HEAD").decode().split()[1:])
+    binary = compile_bench(run, args, profile, registry)
+    if binary is not None:
+        fixtures = run.path / "stimulus"
+        generate_candidate(fixtures, profile)
+        bench_case(run, args, binary, fixtures, "candidate", args.case, marker=CANDIDATE_MARKER)
+
+
 def main(argv):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("multi-egress-pools-preparation", "multi-egress-pools-candidate"))
     parser.add_argument("--profile", choices=("primary", "small", "all"), default="all")
     parser.add_argument("--candidate-revision")
     parser.add_argument("--case", help="Run one named replay case for diagnosis")
+    parser.add_argument("--seed", type=int, choices=(17, 31, 53, 67, 89, 113, 149, 197))
+    parser.add_argument("--replay", action="store_true", help="Check an identical replay of seed 17")
     parser.add_argument("--output", type=Path, default=ROOT / ".build/runs")
     parser.add_argument("--jobs", type=int, default=2)
     parser.add_argument("--timeout", type=float, default=1200, help="Simulator timeout in seconds")
@@ -170,6 +250,13 @@ def main(argv):
         parser.error("jobs must be 1..8; timeouts must be >0 and <=3600 seconds")
     if args.action == "multi-egress-pools-preparation" and args.candidate_revision is not None:
         parser.error("Preparation does not accept a candidate revision")
+
+    if args.case is not None and args.seed is not None:
+        parser.error("--case and --seed select different runs")
+    if args.replay and args.seed != 17:
+        parser.error("--replay requires --seed 17")
+    candidate = args.action == "multi-egress-pools-candidate"
+    source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate else SOURCES
 
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     env_file = ROOT / ".tools/environment.json"
@@ -183,18 +270,14 @@ def main(argv):
     stamp = utc().replace(":", "") + "-" + uuid4().hex[:8]
     for profile in profiles:
         run = Run(args.output / (args.action + "-" + profile + "-" + stamp),
-                  profile, source_paths=list(SOURCES))
-        if args.action == "multi-egress-pools-candidate":
-            run.scope = "Production candidate binding"
-            reason = ("Production pool adapter has not been bound" if args.candidate_revision
-                      else "An exact candidate revision and a production pool adapter are required")
-            case(run, "candidate").finish("NOT_RUN", reason, candidate_revision=args.candidate_revision)
-        else:
-            run.scope = ("One scoped replay case" if args.case else
-                         "Independent UVM replay and pool-accounting preparation")
-            try:
+                  profile, source_paths=list(dict.fromkeys(source_paths)))
+        run.scope = ("Production pool component" if candidate else "Independent UVM pool preparation")
+        try:
+            if candidate:
+                candidate_campaign(run, args, PROFILES[profile])
+            else:
                 campaign(run, args, PROFILES[profile])
-            except (OSError, ValueError, KeyError, AssertionError) as error:
-                case(run, "preparation-error").finish("TOOL_ERROR", str(error))
+        except (OSError, ValueError, KeyError, AssertionError, subprocess.SubprocessError) as error:
+            case(run, "selection-or-build-error").finish("TOOL_ERROR", str(error))
         failed |= run.finish() != 0
     return int(failed)

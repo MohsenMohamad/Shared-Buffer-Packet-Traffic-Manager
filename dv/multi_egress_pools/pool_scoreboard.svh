@@ -186,12 +186,12 @@
             random_features[NEXT_EDGE_REUSE] |= observed.reused_cell || observed.reused_desc;
         endfunction
 
-        function void check_seed_replay(pool_sample_t sample, pool_counts_t expected);
+        function void check_seed_replay(pool_sample_t sample);
             checked_edge_t record_data;
             logic [64*(($bits(checked_edge_t)+63)/64)-1:0] words;
             if (case_seed == 0)
                 return;
-            record_data = '{sample.reset_n, sample.initialized, normalize(sample.batch), expected};
+            record_data = '{sample.reset_n, sample.initialized, normalize(sample.batch), sample.counts};
             if (replay_seed) begin
                 if (sample.edge_number >= first_seed.size() || first_seed[sample.edge_number] !== record_data)
                     `uvm_fatal("SEED_REPLAY", $sformatf("Seed %0d diverged at edge %0d", case_seed, sample.edge_number))
@@ -204,6 +204,10 @@
             for (int offset = 0; offset < $bits(words); offset += 64)
                 signature = (signature ^ words[offset +: 64]) * 64'h100000001b3;
         endfunction
+
+`ifdef POOL_CANDIDATE
+        `include "pool_candidate_checks.svh"
+`endif
 
         function void write(pool_item transaction);
             pool_sample_t sample = transaction.sample;
@@ -221,6 +225,9 @@
                 divergence(failure, sample.edge_number);
             if (!sample.reset_n && model.running)
                 witnesses.before_reset(model);
+`ifdef POOL_CANDIDATE
+            check_candidate_pre(transaction, pre);
+`endif
             failure = model.advance(sample, pre, sample.edge_number, post);
             if (failure != "") begin
                 divergence(failure, sample.edge_number,
@@ -232,10 +239,16 @@
                 end
                 return;
             end
+`ifdef POOL_CANDIDATE
+            check_candidate_post(transaction);
+`endif
             observed = witnesses.observe(sample.batch);
+`ifdef POOL_CANDIDATE
+            observed.sparse_grants = transaction.commits[N_RX-1] && !transaction.commits[N_RX-2];
+`endif
             check_triggers(sample, observed, pre, post);
             sample_bins(sample, observed, pre);
-            check_seed_replay(sample, post);
+            check_seed_replay(sample);
             witnesses.remember(sample.batch, pre);
             last_checked = sample.edge_number;
         endfunction

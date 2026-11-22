@@ -6,15 +6,35 @@ package multi_egress_pool_bench;
 
     class pool_item extends uvm_sequence_item;
         pool_sample_t sample;
+`ifdef POOL_CANDIDATE
+        pool_sample_t intent;
+        bit post_ready, expected_cleanup_cell;
+        cleanup_t expected_cleanup;
+        cell_id_t expected_cleanup_addr;
+        logic [N_RX-1:0] rank_valid, commits, intended_commits;
+        desc_id_t [N_RX-1:0] rank_id, projected_desc;
+        logic [N_TX:0] release_present;
+        qid_t [N_TX:0] release_qid;
+        cell_count_t [N_TX:0] release_cells;
+        logic [N_CELL-1:0] physical_cells;
+        logic [N_DESC-1:0] physical_desc;
+`endif
         `uvm_object_utils(pool_item)
         function new(string name = "pool_item");
             super.new(name);
         endfunction
     endclass
 
+`ifdef POOL_CANDIDATE
+    `include "pool_candidate.svh"
+`endif
+
     class pool_driver extends uvm_driver #(pool_item);
         `uvm_component_utils(pool_driver)
         virtual multi_egress_pool_bus bus;
+`ifdef POOL_CANDIDATE
+        pool_candidate_caller caller;
+`endif
 
         function new(string name, uvm_component parent);
             super.new(name, parent);
@@ -26,9 +46,12 @@ package multi_egress_pool_bench;
                 seq_item_port.get_next_item(req);
                 @(negedge bus.clk);
                 bus.sample = req.sample;
+`ifdef POOL_CANDIDATE
+                caller.drive(req.sample);
+`endif
                 bus.sample_valid = 1;
                 @(posedge bus.clk);
-                #1;
+                #2;
                 bus.sample_valid = 0;
                 seq_item_port.item_done();
             end
@@ -38,6 +61,9 @@ package multi_egress_pool_bench;
     class pool_monitor extends uvm_monitor;
         `uvm_component_utils(pool_monitor)
         virtual multi_egress_pool_bus bus;
+`ifdef POOL_CANDIDATE
+        pool_candidate_caller caller;
+`endif
         uvm_analysis_port #(pool_item) accepted;
 
         function new(string name, uvm_component parent);
@@ -51,7 +77,16 @@ package multi_egress_pool_bench;
                 @(posedge bus.clk);
                 if (bus.sample_valid) begin
                     observed = pool_item::type_id::create("observed");
+`ifdef POOL_CANDIDATE
+                    observed.intent = bus.sample;
+                    caller.observe_pre(observed);
+                    // Inputs were stable from the falling edge. Read registered
+                    // state after the rising-edge nonblocking updates settle.
+                    #1;
+                    caller.observe_post(observed);
+`else
                     observed.sample = bus.sample;
+`endif
                     accepted.write(observed);
                 end
             end
@@ -466,6 +501,9 @@ package multi_egress_pool_bench;
         pool_scoreboard scoreboard;
         string fixtures, evidence_dir;
         fault_case_t faults[11];
+`ifdef POOL_CANDIDATE
+        pool_candidate_caller caller;
+`endif
 
         function new(string name, uvm_component parent);
             super.new(name, parent);
@@ -486,6 +524,12 @@ package multi_egress_pool_bench;
 
         function void build_phase(uvm_phase phase);
             virtual multi_egress_pool_bus bus;
+`ifdef POOL_CANDIDATE
+            virtual pool_candidate_bus candidate;
+            if (!uvm_config_db#(virtual pool_candidate_bus)::get(this, "", "candidate", candidate))
+                `uvm_fatal("POOL_CONFIG", "Missing production interface")
+            caller = new(candidate);
+`endif
             if (!uvm_config_db#(virtual multi_egress_pool_bus)::get(this, "", "bus", bus))
                 `uvm_fatal("POOL_CONFIG", "Missing passive observation interface")
             sequencer = new("sequencer", this);
@@ -495,6 +539,10 @@ package multi_egress_pool_bench;
             scoreboard = pool_scoreboard::type_id::create("scoreboard", this);
             driver.bus = bus;
             monitor.bus = bus;
+`ifdef POOL_CANDIDATE
+            driver.caller = caller;
+            monitor.caller = caller;
+`endif
         endfunction
 
         function void connect_phase(uvm_phase phase);
@@ -511,6 +559,10 @@ package multi_egress_pool_bench;
                     "cell-next-edge", "reserved-write-zero-U"};
                 "return-lanes": required = {"full-return", "highest-return", "sparse-cleanup"};
                 "full-grant-same-q", "full-grant-different-q": required.push_back(name);
+`ifdef POOL_CANDIDATE
+                "sparse-grants": required.push_back(name);
+                "cell-next-edge": required.push_back("live-cell-next-edge");
+`endif
                 "abort-accounting": required = {"grant-and-abort", "zero-cell-cleanup",
                     "mark-with-staged-write", "nonfinal-abort-reclaim"};
                 "active-reset": required = {"active-abort-reset", "epoch-reused-cell-desc-tag", "bound-without-final"};
@@ -556,6 +608,9 @@ package multi_egress_pool_bench;
                 required_triggers(name, required);
                 trigger_path = {fixtures, "/", name, ".triggers"};
             end
+`ifdef POOL_CANDIDATE
+            caller.sparse = name == "sparse-grants";
+`endif
             scoreboard.begin_case(name, required, trigger_path, raw ? "" : detector, divergence, seed, replay);
             trace.file_handle = $fopen({evidence_dir, "/", name, ".edges"}, "w");
             if (trace.file_handle == 0)
@@ -567,12 +622,17 @@ package multi_egress_pool_bench;
 
         task run_phase(uvm_phase phase);
             string selected;
+            int selected_seed;
+            bit seed_selected;
             bit selected_case, raw;
             int bin_report;
             string positives[] = '{"descriptor-empty-return", "descriptor-one-prefix", "descriptor-two-prefix",
                 "cell-exchange", "cell-exhaustion", "return-lanes", "full-grant-same-q",
                 "full-grant-different-q", "abort-accounting", "final-cleanup", "active-reset",
                 "identity-and-drain", "crosses"};
+`ifdef POOL_CANDIDATE
+            positives = {positives, "sparse-grants", "cell-next-edge"};
+`endif
             phase.raise_objection(this);
             if (!$value$plusargs("FIXTURES=%s", fixtures) || !$value$plusargs("EVIDENCE_DIR=%s", evidence_dir))
                 `uvm_fatal("POOL_CONFIG", "Missing fixture or evidence directory")
@@ -584,13 +644,20 @@ package multi_egress_pool_bench;
             raw = $test$plusargs("UNQUALIFIED");
             if (raw && !selected_case)
                 `uvm_fatal("POOL_CONFIG", "An unqualified run requires a replay case")
-            if (selected_case) begin
+            seed_selected = $value$plusargs("POOL_SEED=%d", selected_seed);
+            if (seed_selected) begin
+                run_case($sformatf("seed-%0d", selected_seed), "", -1, selected_seed);
+                if ($test$plusargs("POOL_REPLAY"))
+                    run_case("replay-17", "", -1, selected_seed, 1);
+                scoreboard.coverage.check_and_report(bin_report, 0);
+            end else if (selected_case) begin
                 bit found = 0;
                 foreach (positives[index])
                     if (positives[index] == selected) begin
                         run_case(selected, "", -1, 0, 0, raw);
                         found = 1;
                     end
+`ifndef POOL_CANDIDATE
                 foreach (faults[index])
                     if (faults[index].name == selected) begin
                         run_case(selected, faults[index].detector, faults[index].edge_number, 0, 0, raw);
@@ -600,14 +667,17 @@ package multi_egress_pool_bench;
                     run_case(selected, "EDGE_SEQUENCE", 5, 0, 0, raw);
                     found = 1;
                 end
+`endif
                 if (!found)
                     `uvm_fatal("POOL_SELECTION", {"Unknown case ", selected})
                 scoreboard.coverage.check_and_report(bin_report, selected == "crosses");
             end else begin
                 foreach (positives[index])
                     run_case(positives[index]);
+`ifndef POOL_CANDIDATE
                 foreach (faults[index])
                     run_case(faults[index].name, faults[index].detector, faults[index].edge_number);
+`endif
                 foreach (SEEDS[index]) begin
                     run_case($sformatf("seed-%0d", SEEDS[index]), "", -1, SEEDS[index]);
                     if (index == 0)
@@ -624,7 +694,11 @@ package multi_egress_pool_bench;
             uvm_report_server server = uvm_report_server::get_server();
             if (server.get_severity_count(UVM_ERROR) != 0 || server.get_severity_count(UVM_FATAL) != 0)
                 `uvm_fatal("POOL_UVM_REPORT", "UVM errors prevent completion")
+`ifdef POOL_CANDIDATE
+            $display("POOL_CANDIDATE_PASS");
+`else
             $display("POOL_REPLAY_PASS");
+`endif
         endfunction
     endclass
 endpackage

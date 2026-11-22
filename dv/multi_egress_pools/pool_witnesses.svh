@@ -11,6 +11,9 @@
         bit staged_abort;
         bit repeated_tag;
         bit first_ids;
+`ifdef POOL_CANDIDATE
+        bit sparse_grants;
+`endif
     } edge_features_t;
 
     // The directed fixture declares where to look. This class derives what
@@ -156,7 +159,13 @@
                     end
                     return obs.first_ids && high_desc && high_cell;
                 end
+`ifdef POOL_CANDIDATE
+                "sparse-grants": return obs.sparse_grants && obs.grants == N_RX - 1;
+                "live-cell-next-edge": return obs.reused_cell;
+                "absent-fields": return pre == post && !has_events(batch);
+`else
                 "absent-fields": return batch != normalize(batch);
+`endif
                 "exact-drain": return post.physical_free == N_CELL && post.descriptor_free == N_DESC;
                 default: return 0;
             endcase

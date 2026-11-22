@@ -59,3 +59,38 @@ interface multi_egress_pool_bus(input logic clk);
         sample_valid |-> sample.batch.present == sample.reset_n)
         else $error("POOL_EDGE_PRESENCE");
 endinterface
+
+`ifdef POOL_CANDIDATE
+interface pool_candidate_bus(input logic clk);
+    import multi_egress_pool_types::*;
+    typedef logic [N_TX:0] return_lanes_t;
+
+    logic rst_n, ready;
+    logic [N_RX-1:0] reserve_commit, rank_valid;
+    cell_count_t [N_RX-1:0] reserve_cells;
+    qid_t [N_RX-1:0] reserve_qid;
+    desc_id_t [N_RX-1:0] rank_id, grant_desc;
+    logic write_offer, write_accept;
+    cell_id_t write_id;
+    logic [N_TX-1:0] tx_present, tx_final;
+    desc_id_t [N_TX-1:0] tx_desc;
+    cell_id_t [N_TX-1:0] tx_cell;
+    qid_t [N_TX-1:0] tx_qid;
+    logic cleanup_present, cleanup_has_cell, cleanup_done;
+    cell_id_t cleanup_cell;
+    desc_id_t cleanup_desc;
+    qid_t cleanup_qid;
+    cell_count_t cleanup_released;
+
+    return_lanes_t cell_present, desc_present, release_present;
+    cell_id_t [N_TX:0] return_cell;
+    desc_id_t [N_TX:0] return_desc;
+    qid_t [N_TX:0] release_qid;
+    cell_count_t [N_TX:0] release_cells;
+    cell_count_t free_cells, unreserved, reserved_free;
+    desc_count_t free_desc;
+    cell_count_t [N_Q-1:0] held;
+    logic [N_CELL-1:0] cell_free;
+    logic [N_DESC-1:0] desc_free;
+endinterface
+`endif

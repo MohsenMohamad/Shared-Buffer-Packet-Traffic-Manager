@@ -398,7 +398,11 @@
             failure = measure(after_counts);
             if (failure != "")
                 return failure;
+            `ifdef POOL_CANDIDATE
+            if (sample.counts !== after_counts)
+`else
             if (sample.counts !== (sample.reset_n ? after_counts : pool_counts_t'('0)))
+`endif
                 return "REPORTED_COUNTS";
             return "";
         endfunction
