@@ -6,11 +6,9 @@ until drain. Only pool events and their causality are modeled here.
 
 from copy import deepcopy
 from dataclasses import dataclass, field
-import json
 
 from abi import Layout
-from coverage_plan import BOUNDARIES, limits, matrix
-from oracle import Batch, Cleanup, Counts, Grant, Owner, Publication, Service, Write
+from replay_types import Batch, Cleanup, Counts, Grant, Owner, Publication, Service, Write
 
 
 @dataclass
@@ -192,20 +190,27 @@ class Stimulus:
                                       (0,) * self.p.queues)
 
 
+def cross_placements(profile, kind, capacity):
+    """Find fixture placements with enough IDs for the requested actions."""
+    buckets = ((0, 0), (1, 1), (2, 4), (5, capacity - 1), (capacity, capacity))
+    for cleanup in (0, 1):
+        for tx in range(profile.ports + 1):
+            origin = 3 if cleanup and tx else 2 if cleanup else int(tx > 0)
+            max_allocations = profile.ports - cleanup if kind == "descriptor" else 1
+            for allocated in range(max_allocations + 1):
+                needed = allocated + (cleanup if kind == "cell" else 0)
+                for bucket, (low, high) in enumerate(buckets):
+                    free = high if bucket == 3 and tx + cleanup == 0 else max(low, needed)
+                    if free <= high and free + tx + cleanup <= capacity:
+                        yield (tx + cleanup, allocated, bucket, origin), free
+
+
 def crosses(profile, kind):
     """Reach every required cross using legal preparation and actual events."""
     capacity = profile.descriptors if kind == "descriptor" else profile.cells
-    for coordinates, reason in matrix(kind, profile).items():
-        if reason:
-            continue
+    for coordinates, free in sorted(cross_placements(profile, kind, capacity)):
         count, allocated, old_bin, origin = coordinates
-        low, high = limits(capacity)[BOUNDARIES.index(old_bin)]
-        free = max(low, allocated)
-        if not count and old_bin == "interior":
-            free = high
-        cleanup_present = origin in ("cleanup", "mixed")
-        if kind == "cell" and cleanup_present:
-            free = max(free, allocated + 1)
+        cleanup_present = origin >= 2
         n_tx = count - int(cleanup_present)
         state = Stimulus(profile)
         transmit = [state.provision(ingress=lane, qid=4 * lane, phase="tx")
@@ -436,23 +441,28 @@ def save_rows(path, profile, rows):
     path.write_text("".join(layout.row(*row) + "\n" for row in rows))
 
 
+def save_triggers(path, triggers):
+    path.write_text("".join(f"{edge} {name}\n" for name, edge in sorted(
+        triggers.items(), key=lambda item: item[1])))
+
+
 def generate(root, profile):
     root.mkdir(exist_ok=True)
     templates = []
-    cases = {}
     for case in witnesses(profile):
         path = root / f"{case.name}.edges"
         save_rows(path, profile, case.state.rows)
-        cases[case.name] = case.triggers
+        save_triggers(root / f"{case.name}.triggers", case.triggers)
         templates.extend([path.name] * case.random_priority)
         for name, trace in case.negatives.items():
             save_rows(root / f"{name}.edges", profile, trace)
+    cross_triggers = {}
     with (root / "crosses.edges").open("w") as stream:
         offset = 0
         for kind in ("descriptor", "cell"):
             for label, rows, edge in crosses(profile, kind):
-                cases[label] = {label: offset + edge}
+                cross_triggers[label] = offset + edge
                 stream.writelines(Layout(profile).row(*row) + "\n" for row in rows)
                 offset += len(rows)
-    (root / "cases.json").write_text(json.dumps(cases, indent=2) + "\n")
+    save_triggers(root / "crosses.triggers", cross_triggers)
     (root / "templates.txt").write_text("\n".join(templates) + "\n")

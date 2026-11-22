@@ -88,12 +88,12 @@ and formal counterexamples retain their nonzero raw tool status and an
 explicit expected outcome, while the capability check passes only after
 inspecting the assertion/trace evidence.
 
-Inspect UVM `coverage.dat`, the coverage tool's report, and the manifest's
-`coverage` object. The runner requires nonzero owned line coverage and 19 named
-functional bins (4 queues, 3 length ranges, 12 crosses), including hit cross
-bins. Unhit bins stay visible. Tool percentages are not substituted for raw
-counts. Positive failures are rerun with tracing using the same executable,
-seed and profile. The negative assertion run always saves `wave.vcd`.
+The UVM campaign checks exact seed replay and all 12 queue/length crosses
+over completed transfers. It reports 4 queue bins, 3 length bins and 12
+crosses in the native coverage database. The runner renders those counters
+and code coverage as tool reports. An unexpected positive-run failure is
+replayed with tracing using the same executable and seed schedule. The
+held-data assertion negative saves `wave.vcd`.
 
 Verilator is two-state: X/Z propagation is unsupported. The [qualification report](../results/toolchain-qualification.md) records the four-state reproducer's execution status. UVM DPI/backdoor
 services are available for separately qualified uses; the default frontdoor path retains `UVM_NO_DPI`. No
@@ -116,7 +116,7 @@ make multi-egress-pools-preparation
 ```
 
 The pool candidate command requires a real adapter. The current
-[pool result and binding report](../results/TM05-pool-dv-preparation.md) gives
+[pool result and binding report](../results/TM05-live-pool-checking.md) gives
 the exact replay and candidate commands.
 
 ## Slang frontend checks

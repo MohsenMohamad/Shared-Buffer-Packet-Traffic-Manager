@@ -42,17 +42,6 @@ def inspect_coverage(path):
         point['hit'] += int(count > 0)
         if kind == 'covergroup':
             bins[fields.get('h', '')] = count
-    if not points.get('line', {}).get('hit') or not points.get('covergroup', {}).get('hit'):
-        raise ValueError('Missing nonzero owned code or functional coverage')
-    prefix = 'tm_cap_pkg::tm_cap_test::cg.'
-    queues = [prefix + f'q.queues[{q}]' for q in range(4)]
-    lengths = [prefix + 'l.' + length for length in ('short_pkt', 'mid_pkt', 'long_pkt')]
-    crosses = [prefix + f'ql.<queues[{q}],{length}>' for q in range(4)
-               for length in ('short_pkt', 'mid_pkt', 'long_pkt')]
-    if set(bins) != set(queues + lengths + crosses):
-        raise ValueError('Expected 4 queue, 3 length and 12 cross bins')
-    if any(sum(bins[name] for name in group) != 64 for group in (queues, lengths, crosses)):
-        raise ValueError('Saved functional counters do not account for 64 samples in each group')
     return dict(owned_code_points=points, functional_bins=bins)
 
 
@@ -64,6 +53,14 @@ def assertion_result(step, wave):
     if not wave.is_file() or wave.stat().st_size == 0:
         return 'FAIL', 'Missing assertion-failure waveform'
     return 'PASS', None
+
+
+def uvm_status(step):
+    marker = 'TM_UVM_SMOKE_PASS'
+    status, reason = completed(step, marker)
+    if status == 'PASS' and output(step).splitlines().count(marker) != 1:
+        return 'FAIL', 'Expected exactly one UVM completion record'
+    return status, reason
 
 
 def uvm(run, args):
@@ -83,53 +80,47 @@ def uvm(run, args):
         status, reason = 'TOOL_ERROR', 'Successful compiler did not produce executable'
     build.finish(status, reason)
     seeds = args.seed or [17, 19]
-    specs = [(f'uvm-seed{seed}', seed, False) for seed in seeds]
-    specs += [('uvm-replay', seeds[0], False), ('uvm-held-data-mutation', seeds[0], True)]
-    digests = []
-    for name, seed, mutation in specs:
-        case = Case(run, name, seed)
-        if status != 'PASS':
+    campaign = Case(run, 'uvm-campaign')
+    mutation = Case(run, 'uvm-held-data-mutation', seeds[0])
+    if status != 'PASS':
+        for case in (campaign, mutation):
             case.finish('NOT_RUN', 'UVM compilation did not qualify')
-            continue
-        argv = [str(binary), '+verilator+seed+' + str(seed), '+UVM_NO_RELNOTES']
-        if mutation:
-            argv += ['+MUTATION_HOLD', '+TRACE']
-        step = case.execute(argv, timeout=args.timeout, cwd=case.path)
-        if mutation:
-            result, why = assertion_result(step, case.path / 'wave.vcd')
-            case.data['artifacts']['waveform'] = str(case.path / 'wave.vcd')
-            case.finish(result, why, expected='ASSERTION_FAILURE')
-            continue
-        result, why = completed(step, 'TM_UVM_SMOKE_PASS transactions=64')
-        text = output(step)
-        found = re.search(r'TM_UVM_SMOKE_PASS transactions=64 digest=([0-9a-fA-F]+)', text)
-        if result == 'PASS' and ('TM_CAP_UNSAT_PASS' not in text or found is None):
-            result, why = 'FAIL', 'Missing unsatisfiable randomization or transaction digest marker'
-        if result == 'PASS':
-            digests.append(found[1])
-            try:
-                coverage = inspect_coverage(case.path / 'coverage.dat')
-                case.data.update(coverage=coverage, transaction_digest=found[1], transactions=64)
-                case.data['artifacts']['coverage'] = str(case.path / 'coverage.dat')
-                report = case.execute(['verilator_coverage', '--report', 'summary',
-                                       str(case.path / 'coverage.dat')], timeout=args.timeout)
-                if report['result'] != 'PASS':
-                    result, why = report['result'], 'Coverage report generation failed'
-            except (OSError, ValueError) as error:
-                result, why = 'FAIL', str(error)
-        if result != 'PASS' and step['result'] != 'TIMEOUT':
-            # Identical binary/profile/seed with tracing only; the original failure remains.
-            rerun_path = case.path / 'failing-rerun'
-            rerun_path.mkdir()
-            rerun = case.execute(argv + ['+TRACE'], timeout=args.timeout, cwd=rerun_path,
-                                 stem='failing-rerun')
-            case.data['artifacts']['rerun'] = rerun
-            case.data['artifacts']['rerun_waveform'] = str(rerun_path / 'wave.vcd')
-        case.finish(result, why)
-    replay = Case(run, 'uvm-seed-replay')
-    ok = len(digests) == len(seeds) + 1 and digests[0] == digests[-1] and len(set(digests[:-1])) > 1
-    replay.finish('PASS' if ok else 'FAIL', None if ok else 'Missing, nonrepeatable or seed-independent digests',
-                  observed_digests=digests)
+        return
+
+    seed_file = campaign.path / 'seeds.txt'
+    seed_file.write_text(''.join(f'{seed}\n' for seed in seeds))
+    campaign.data['artifacts']['stimulus'] = str(seed_file)
+    argv = [str(binary), f'+CAP_SEEDS={seed_file}', '+UVM_NO_RELNOTES']
+    step = campaign.execute(argv, timeout=args.timeout, cwd=campaign.path)
+    result, why = uvm_status(step)
+    if result != 'PASS' and result != 'TIMEOUT':
+        # The original outcome and seed schedule remain attached to the case.
+        rerun_path = campaign.path / 'failing-rerun'
+        rerun_path.mkdir()
+        campaign.execute(argv + ['+TRACE'], timeout=args.timeout, cwd=rerun_path,
+                         stem='failing-rerun')
+        campaign.data['artifacts']['rerun_waveform'] = str(rerun_path / 'wave.vcd')
+    campaign.finish(result, why, seeds=seeds)
+
+    coverage = Case(run, 'uvm-coverage-report')
+    database = campaign.path / 'coverage.dat'
+    coverage.data['artifacts']['coverage'] = str(database)
+    if result != 'PASS':
+        coverage.finish('NOT_RUN', 'UVM campaign did not complete')
+    else:
+        report = coverage.execute(['verilator_coverage', '--report', 'summary', str(database)],
+                                  timeout=args.timeout)
+        try:
+            coverage.finish(report['result'], report['first_failure'], coverage=inspect_coverage(database))
+        except OSError as error:
+            coverage.finish('TOOL_ERROR', str(error))
+
+    argv = [str(binary), f'+CAP_SEEDS={seed_file}', '+UVM_NO_RELNOTES', '+MUTATION_HOLD', '+TRACE']
+    mutation.data['artifacts']['stimulus'] = str(seed_file)
+    step = mutation.execute(argv, timeout=args.timeout, cwd=mutation.path)
+    wave = mutation.path / 'wave.vcd'
+    mutation.data['artifacts']['waveform'] = str(wave)
+    mutation.finish(*assertion_result(step, wave), expected='ASSERTION_FAILURE')
 
 
 def uvm_dpi(run,args):

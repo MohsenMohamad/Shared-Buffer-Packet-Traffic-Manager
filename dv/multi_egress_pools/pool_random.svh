@@ -40,6 +40,7 @@
         int free_count, free_desc, credit, edge_number;
         int publication_id;
         epoch_t epoch;
+        fixture_rng rng;
 
         `uvm_object_utils(pool_traffic_ledger)
         function new(string name = "pool_traffic_ledger");
@@ -101,16 +102,16 @@
                     continue;
                 if (cleanup_id >= 0 && int'(frames[cleanup_id].owner.frame.source) == ingress)
                     continue;
-                descriptor_id = select_phase(VACANT, int'($urandom_range(N_DESC - 1)));
+                descriptor_id = select_phase(VACANT, int'(rng.between(N_DESC - 1)));
                 budget = credit < MAX_CELLS ? credit : MAX_CELLS;
-                budget = int'($urandom_range(budget, 1));
-                length = int'($urandom_range(budget * 64, budget == 1 ? MIN_FRAME_BYTES : 64 * (budget - 1) + 1));
-                qid = int'($urandom_range(N_Q - 1));
+                budget = int'(rng.between(budget, 1));
+                length = int'(rng.between(budget * 64, budget == 1 ? MIN_FRAME_BYTES : 64 * (budget - 1) + 1));
+                qid = int'(rng.between(N_Q - 1));
                 frames[descriptor_id].phase = RECEIVING;
                 frames[descriptor_id].owner.frame = '{epoch, rx_id_t'(ingress), sequence_number[ingress]};
                 frames[descriptor_id].owner.qid = qid_t'(qid);
                 frames[descriptor_id].owner.desc = desc_id_t'(descriptor_id);
-                frames[descriptor_id].owner.tag_value = opaque_tag_t'($urandom_range(3));
+                frames[descriptor_id].owner.tag_value = opaque_tag_t'(rng.between(3));
                 frames[descriptor_id].length = length;
                 frames[descriptor_id].budget = budget;
                 frames[descriptor_id].phase_edge = edge_number;
@@ -151,7 +152,7 @@
             int start, address = -1;
             if (id < 0)
                 return;
-            start = int'($urandom_range(N_CELL - 1));
+            start = int'(rng.between(N_CELL - 1));
             for (int i = 0; i < N_CELL; ++i) begin
                 if (!allocated_cells[(i + start) % N_CELL]) begin
                     address = (i + start) % N_CELL;

@@ -10,7 +10,7 @@ The pool checker derives eligibility from live ownership and pre-edge capacity. 
 - The checker keys each cell by address and each frame by descriptor and full owner identity. Epoch and ingress sequence distinguish frames with identical tags, including frames that reuse IDs after reset.
 - Sample observations at the rising edge with all lanes and presence bits. Compare reported per-queue and global counts against ownership after every eligible batch. Require full capacities and empty maps after drain.
 
-The coverage plan defines the count, old occupancy and source crosses, reasoned exclusions, directed triggers, named negative checks and randomized subset obligations. Isolated pool preconditions can align a staged write, multiple TX finals and abort service. Composed RTL must establish those alignments with real ingress, queue, TX and memory interfaces. [Coverage plan](../../dv/multi_egress_pools/coverage_plan.py)
+The coverage plan defines the count, old occupancy and source crosses, reasoned exclusions, directed triggers, named negative checks and randomized subset obligations. Isolated pool preconditions can align a staged write, multiple TX finals and abort service. Composed RTL must establish those alignments with real ingress, queue, TX and memory interfaces. [Coverage plan](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/blob/b67c593a94aa2c577e8af25c64ee3855abadfaf3/dv/multi_egress_pools/coverage_plan.py)
 
 ## Source identity
 

@@ -153,6 +153,9 @@ data I/O, 0.05 ns slew and 10 fF output load at Nangate45 typical 1.10 V and
 directly and constrains its external ports with the same SDC. The reset
 sweep changes only the reset input delay.
 
+Use archived revision `10b85fb9a394937d4dd0717d7a85afead7d39246` for the
+original Python model replay commands below.
+
 In the prepared checkout, use the criteria commit for the six legacy maps,
 the connected map commit for the connected maps, and the final tool sources
 for repair and focused reports. Preserve the ignored map directory across
