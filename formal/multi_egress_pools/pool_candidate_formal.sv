@@ -254,6 +254,8 @@ module pool_candidate_formal #(
                 if (cleanup_done) begin
                     assume(cleanup_released == cell_count_t'(credit[cleanup_desc]));
                     live_desc[cleanup_desc] <= 0;
+                    credit[cleanup_desc] <= '0;
+                    aborting[cleanup_desc] <= 0;
                 end
             end
             if (!desc_events[N_TX])
@@ -367,6 +369,87 @@ module pool_candidate_formal #(
                                       cell_ids[N_TX-1] != cell_ids[N_TX]);
         end
     end
+
+    // Assert the state relations in every active sample. These relations
+    // are also checked from reset by the bounded run.
+    localparam int LIVE_COUNT_W = $clog2(N_DESC * (2**FRAME_W - 1) +
+                                                   (N_Q + 1) * (2**CELL_COUNT_W - 1) + 1);
+    typedef logic [LIVE_COUNT_W-1:0] live_count_t;
+    live_count_t held_total;
+    always_comb begin
+        held_total = '0;
+        for (int q = 0; q < N_Q; ++q)
+            held_total += live_count_t'(held[q]);
+    end
+
+    always @(posedge clk)
+        if (past_valid && rst_n && caller_ready) begin
+            i_cell_free_count: assert($countones(dut.cells.free_bits) == int'(free_cells));
+            i_desc_free_count: assert($countones(dut.descriptors.free_bits) == int'(free_desc));
+            i_reserved_partition: assert(int'(free_cells) == int'(unreserved) + int'(reserved_free));
+            i_cell_capacity: assert($countones(live_cell) + int'(free_cells) == N_CELL);
+            i_desc_capacity: assert($countones(live_desc) + int'(free_desc) == N_DESC);
+            i_cell_disjoint: assert((live_cell & dut.cells.free_bits) == '0);
+            i_desc_disjoint: assert((live_desc & dut.descriptors.free_bits) == '0);
+            i_total_credit: assert(live_count_t'(unreserved) + held_total == live_count_t'(N_CELL));
+            i_ready_agrees: assert(ready);
+        end
+
+`ifndef POOL_ABSTRACT_CALLER
+    live_count_t ledger_reserved;
+    always_comb begin
+        ledger_reserved = '0;
+        for (int id = 0; id < N_DESC; ++id)
+            if (live_desc[id])
+                ledger_reserved += live_count_t'(credit[id]) - live_count_t'(written[id]);
+    end
+
+    always @(posedge clk)
+        if (past_valid && rst_n && caller_ready)
+            i_unwritten_credit: assert(ledger_reserved == live_count_t'(reserved_free));
+
+    for (genvar q = 0; q < N_Q; ++q) begin : queue_ownership
+        live_count_t queue_reservation;
+        always_comb begin
+            queue_reservation = '0;
+            for (int id = 0; id < N_DESC; ++id)
+                if (live_desc[id] && owner_queue[id] == qid_t'(q))
+                    queue_reservation += live_count_t'(credit[id]);
+        end
+        always @(posedge clk)
+            if (past_valid && rst_n && caller_ready)
+                i_held_is_owner_sum: assert(live_count_t'(held[q]) == queue_reservation);
+    end
+
+    for (genvar id = 0; id < N_DESC; ++id) begin : descriptor_ownership
+        // The count can represent every physical cell, including an invalid
+        // state in which all addresses point to this descriptor.
+        cell_count_t physical_owner_count;
+        always_comb begin
+            physical_owner_count = '0;
+            for (int address = 0; address < N_CELL; ++address)
+                if (live_cell[address] && cell_owner[address] == desc_id_t'(id))
+                    physical_owner_count += cell_count_t'(1);
+        end
+        always @(posedge clk)
+            if (past_valid && rst_n && caller_ready) begin
+                i_materialized_owner_count: assert(physical_owner_count == cell_count_t'(written[id]));
+                if (live_desc[id]) begin
+                    i_live_credit: assert(credit[id] > 0 && credit[id] <= frame_count_t'(FRAME_CELLS));
+                    i_owned_within_reservation: assert(written[id] <= credit[id]);
+                    i_aborting_has_unwritten: assert(!aborting[id] || written[id] < credit[id]);
+                end else begin
+                    i_retired_owner_empty: assert(credit[id] == '0 && written[id] == '0 && !aborting[id]);
+                end
+            end
+    end
+
+    for (genvar address = 0; address < N_CELL; ++address) begin : cell_ownership
+        always @(posedge clk)
+            if (past_valid && rst_n && caller_ready && live_cell[address])
+                i_cell_has_live_owner: assert(live_desc[cell_owner[address]]);
+    end
+`endif
 
     for (genvar lane = 0; lane < N_RX; ++lane) begin : admission_binding
         always @(posedge clk) begin

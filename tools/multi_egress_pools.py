@@ -336,7 +336,7 @@ def formal_campaign(run, args, profile):
     registry, digests = verify_candidate(args.candidate_revision)
     record_candidate(run, args.candidate_revision, digests)
     jobs = (args.formal_mode,) if args.formal_mode else (
-        ("prove", "cover", "exhaustion") if profile.ports == 2 else ("bmc", "primary-prefix"))
+        ("bmc", "prove", "cover", "exhaustion") if profile.ports == 2 else ("primary-prefix",))
     for mode in jobs:
         result = case(run, mode)
         if mode == "exhaustion" and profile.ports != 2:
@@ -351,7 +351,7 @@ def formal_campaign(run, args, profile):
         }
         is_cover = mode == "cover" or mode in directed_covers
         depth = args.depth or {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22, "primary-prefix": 7}[mode]
-        caller = args.formal_caller or ("ledger" if mode in ("cover", "exhaustion") else "aggregate")
+        caller = args.formal_caller or ("ledger" if profile.ports == 2 else "aggregate")
         if mode == "exhaustion" and caller != "ledger":
             result.finish("NOT_RUN", "Directed capacity covers use the frame ledger")
             continue
@@ -373,8 +373,11 @@ def formal_campaign(run, args, profile):
                 script += "\nchformal -assert -remove\nopt_clean"
         files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
         config = result.path / "pool.sby"
-        proof_engine = args.proof_engine or ("pdr" if caller == "ledger" else "induction")
-        engine = "abc pdr" if mode == "prove" and proof_engine == "pdr" else "smtbmc z3"
+        engine = "smtbmc z3"
+        if mode == "prove":
+            engine = "abc pdr" if args.proof_engine == "pdr" else "smtbmc --unroll z3"
+        elif mode == "bmc" and args.bmc_engine == "abc":
+            engine = "abc bmc3"
         sby_mode = "cover" if is_cover else mode
         config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n"
                           f"[engines]\n{engine}\n[script]\n{script}\n[files]\n{files}\n")
@@ -404,6 +407,7 @@ def main(argv):
     parser.add_argument("--mutations", action="store_true")
     parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover", "exhaustion", "primary-prefix"))
     parser.add_argument("--proof-engine", choices=("pdr", "induction"))
+    parser.add_argument("--bmc-engine", choices=("abc", "z3"), default="z3")
     parser.add_argument("--formal-caller", choices=("aggregate", "ledger"))
     parser.add_argument("--depth", type=int, choices=range(2, 65), metavar="2..64")
     parser.add_argument("--case", help="Run one named replay case for diagnosis")
@@ -431,6 +435,8 @@ def main(argv):
         parser.error("Formal selection uses --formal-mode and --depth")
     if args.proof_engine and (not formal or args.formal_mode != "prove"):
         parser.error("--proof-engine requires --formal-mode prove")
+    if args.bmc_engine == "abc" and (not formal or args.formal_mode != "bmc"):
+        parser.error("--bmc-engine abc requires --formal-mode bmc")
     if not formal and (args.formal_mode or args.formal_caller or args.depth):
         parser.error("Formal options require the formal target")
     source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate or formal else SOURCES
