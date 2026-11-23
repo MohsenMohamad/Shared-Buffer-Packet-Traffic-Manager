@@ -166,6 +166,78 @@ declaration of the queue totals before execution. The declaration now uses
 a packed logic vector. The first logs and input source fingerprints were
 captured before each retest.
 
+## Small BMC profile
+
+The step-6 slowdown is already present in the RTL-only baseline. The
+caller ledger reduced step 6 from 274.31 to 77.61 seconds. Adding the F01
+observer moved it to 80.08 seconds while adding 214 ABC state bits.
+The step-6 conflict counts were 1,411,286, 435,795 and 481,027 respectively.
+The sweep measures each layer as a whole. The caller ledger adds both
+checks and tighter ownership constraints.
+
+The profile used the small 2×2 configuration with 16 cells and eight
+descriptors, the locked ABC engine
+`bmc3 -F 8 -v`, and a 600-second SBY cap per run. Candidate
+`d25566d0bed038bf28d73110c0bda6fad0d4ab5d` and DV
+`aed084b24ddfbd8d8314d093124c94228fb0b7c2` were merged in a disposable
+checkout at `f8f2d6de26a450b4c31ffb844a7192cbd91182e3`, with effective
+tree `567cbe2bd3ab7295577bbd3d2a7d99c2f3527667`. The merge required no
+conflict resolution.
+
+| Configuration | ABC state bits | AIGER latches before folding | Live top-level bits per cycle | Generated symbolic bits per cycle | Held witness bits | Initialization-only bits |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| A. DUT and RTL-internal assertions | 206 | 205 | 62 | 2,200 | 0 | 134 |
+| B. A plus caller ledger and its checks | 487 | 486 | 65 | 2,464 | 0 | 277 |
+| C. B plus F01 observer | 701 | 700 | 65 | 2,464 | 7 | 448 |
+
+State bits are the registers reported by ABC after `fold; strash`. ABC
+counted 57, 160 and 193 assertion outputs and 36, 55 and 57 constraints.
+The input columns use the live fan-in of the AIGER properties and
+constraints, which retained the same input support after folding. They
+separate the top-level inputs from Yosys-generated `anyseq` sources,
+initialization inputs, and the modeled clock. C uses three symbolic
+descriptor bits and four cell bits as witnesses. F01 holds them stable
+after their first sample. The legality constraints restrict which
+combinations of the reported bits are admissible.
+
+| BMC step, zero-based | A | B | C |
+| --- | ---: | ---: | ---: |
+| 0 | 0.05 | 0.06 | 0.07 |
+| 1 | 0.00 | 0.01 | 0.00 |
+| 2 | 0.01 | 0.01 | 0.02 |
+| 3 | 0.02 | 0.04 | 0.06 |
+| 4 | 0.05 | 0.12 | 0.16 |
+| 5 | 0.45 | 0.72 | 1.10 |
+| 6 | 274.31 | 77.61 | 80.08 |
+| 7 | Timeout after about 324 s wall | Timeout after about 515 s wall | Timeout after about 511 s wall |
+
+Completed-step timings are differences between ABC's cumulative CPU
+timestamps, rounded to 0.01 seconds. Step 0 includes BMC initialization.
+Timeout intervals use SBY wall timestamps. All three runs completed
+step 6 and timed out in step 7.
+
+All three profiles enabled `TM_POOL_ASSERTIONS`. They shared the same
+reset assumptions and DUT-derived legality checks for old bitmap
+membership, distinct returns, committed reservations, staged writes
+and old queue credit. B retained the PR's frame ledger assumptions and
+local checks, with the `check_pool` instance absent. C restored that
+instance. Slang rejected colliding names on eight assertions in RTL
+procedural loops. The disposable source copies removed those labels and
+preserved the predicates and fatal bodies. The label-only patch SHA-256
+is `974634c8a4aba1d919f1e8c80931d1b41940f98b989a0c696430378a2fec27dc`.
+
+The workspace retains the three SBY configurations, the generated tops,
+RTL label patch, file hashes, ABC logs and AIGER witness maps under
+`work/bmc-profile`. The run logs are `a/probe2.stdout`,
+`b/run.stdout` and `c/run.stdout`. With the locked toolchain active,
+run the saved configurations from the repository root.
+
+```sh
+sby -f -d work/bmc-profile/a/probe2 work/bmc-profile/a/pool.sby
+sby -f -d work/bmc-profile/b/run work/bmc-profile/b/pool.sby
+sby -f -d work/bmc-profile/c/run work/bmc-profile/c/pool.sby
+```
+
 ## Captured verification failures
 
 | First finding | Disposition |
