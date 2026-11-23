@@ -49,18 +49,24 @@ module tm_reservation_accounting #(
 
 `ifdef TM_POOL_ASSERTIONS
     localparam int MAX_FRAME_CELLS = (MAX_FRAME_BYTES + 63) / 64;
+    // Include every encoded lane value so malformed batches cannot wrap the checks.
+    typedef logic [CELL_COUNT_W+$clog2(N_RX)-1:0] queue_add_t;
+    typedef logic [CELL_COUNT_W+$clog2(N_TX + 1)-1:0] queue_release_t;
+    typedef logic signed [DELTA_W-1:0] queue_delta_t;
+
     always @(posedge clk) begin : check_committed_credit
-        int remaining;
+        cell_count_t remaining;
+        remaining = '0;
         if (ready) begin
-            remaining = int'(unreserved);
+            remaining = unreserved;
             for (int lane = 0; lane < N_RX; lane++) begin
                 if (reserve_commit[lane]) begin
                     assert_reservation_count: assert (reserve_cells[lane] != 0 &&
-                        int'(reserve_cells[lane]) <= MAX_FRAME_CELLS)
+                        reserve_cells[lane] <= cell_count_t'(MAX_FRAME_CELLS))
                         else $fatal(1, "POOL_ASSERT reservation_count");
-                    assert_old_credit: assert (int'(reserve_cells[lane]) <= remaining)
+                    assert_old_credit: assert (reserve_cells[lane] <= remaining)
                         else $fatal(1, "POOL_ASSERT old_credit");
-                    remaining -= int'(reserve_cells[lane]);
+                    remaining -= reserve_cells[lane];
                 end
             end
             assert_credit_delta_bounds: assert (unreserved_next <= delta_t'(N_CELL))
@@ -103,26 +109,29 @@ module tm_reservation_accounting #(
 `ifdef TM_POOL_ASSERTIONS
         cell_count_t expected_held;
         always_ff @(posedge clk or negedge rst_n) begin : check_queue_delta
-            int added, released;
-            int expected;
+            queue_add_t added;
+            queue_release_t released;
+            queue_delta_t expected;
+            added = '0;
+            released = '0;
+            expected = '0;
             if (!rst_n) expected_held <= '0;
             else if (ready) begin
                 assert_queue_update: assert (held[queue_index] == expected_held)
                     else $fatal(1, "POOL_ASSERT queue_update");
-                added = 0;
-                released = 0;
                 for (int lane = 0; lane < N_RX; lane++)
                     if (reserve_commit[lane] && reserve_qid[lane] == qid_t'(queue_index))
-                        added += int'(reserve_cells[lane]);
+                        added += queue_add_t'(reserve_cells[lane]);
                 for (int lane = 0; lane <= N_TX; lane++)
                     if (release_present[lane] && release_qid[lane] == qid_t'(queue_index))
-                        released += int'(release_cells[lane]);
+                        released += queue_release_t'(release_cells[lane]);
 
-                assert_old_queue_release: assert (released <= int'(held[queue_index]))
+                assert_old_queue_release: assert (released <= queue_release_t'(held[queue_index]))
                     else $fatal(1, "POOL_ASSERT old_queue_release");
-                expected = int'(held[queue_index]) + added - released;
-                assert_queue_delta: assert (expected >= 0 && expected <= N_CELL &&
-                    int'(held_next) == expected)
+                expected = queue_delta_t'(held[queue_index]) + queue_delta_t'(added) -
+                           queue_delta_t'(released);
+                assert_queue_delta: assert (expected >= queue_delta_t'(0) &&
+                    expected <= queue_delta_t'(N_CELL) && held_next == delta_t'(expected))
                     else $fatal(1, "POOL_ASSERT queue_delta");
                 expected_held <= cell_count_t'(expected);
             end

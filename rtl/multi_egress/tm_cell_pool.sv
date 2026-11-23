@@ -56,13 +56,13 @@ module tm_cell_pool #(
 `ifdef TM_POOL_ASSERTIONS
     always @(posedge clk) begin : check_cell_contract
         logic [N_CELL-1:0] seen;
+        seen = '0;
         if (ready) begin
             assert_cell_population: assert ($countones(free_bits) == int'(free_count))
                 else $fatal(1, "POOL_ASSERT cell_population");
             assert_write_old_free: assert (!write_accept || (reserved_available && free_bits[write_id]))
                 else $fatal(1, "POOL_ASSERT write_old_free");
 
-            seen = '0;
             for (int lane = 0; lane <= N_TX; lane++) begin
                 if (return_present[lane]) begin
                     assert_cell_return_allocated: assert (!free_bits[return_cell[lane]])

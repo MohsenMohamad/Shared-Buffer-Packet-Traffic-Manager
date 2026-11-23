@@ -70,13 +70,13 @@ module tm_descriptor_pool #(
 `ifdef TM_POOL_ASSERTIONS
     always @(posedge clk) begin : check_descriptor_contract
         logic [N_DESC-1:0] seen;
+        seen = '0;
         if (ready) begin
             assert_old_descriptor_credit: assert ($countones(reserve_commit) <= int'(free_count))
                 else $fatal(1, "POOL_ASSERT old_descriptor_credit");
             assert_descriptor_population: assert ($countones(free_bits) == int'(free_count))
                 else $fatal(1, "POOL_ASSERT descriptor_population");
 
-            seen = '0;
             for (int rank = 0; rank < N_RX; rank++) begin
                 assert_descriptor_rank_valid: assert (rank_valid[rank] == (rank < int'(free_count)))
                     else $fatal(1, "POOL_ASSERT descriptor_rank_valid");
