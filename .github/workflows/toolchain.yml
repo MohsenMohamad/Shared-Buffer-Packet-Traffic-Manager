@@ -140,6 +140,13 @@ jobs:
           python3 tools/toolchain_cache.py validate
       - name: Qualify installed versions and selected capability
         run: make ci JOBS=2 RUN_ARGS='--test doctor --test repo --test unit --test lint --test ${{ matrix.gate }}'
+      - name: Smoke and map the production resource pools
+        if: ${{ matrix.gate == 'multi-egress-declarations' }}
+        run: |
+          source .tools/activate.sh
+          python3 dv/designer/multi_egress_pools.py --jobs 2
+          python3 dv/designer/multi_egress_pools_sta.py --profile primary
+          python3 dv/designer/multi_egress_pools_sta.py --profile small
       - name: Retain manifests, separate logs, coverage, traces and mapped netlists
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
