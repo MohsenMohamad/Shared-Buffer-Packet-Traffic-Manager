@@ -58,6 +58,8 @@ module pool_candidate_formal #(
     logic caller_ready = 0;
     always_ff @(posedge clk)
         caller_ready <= rst_n;
+
+`ifndef POOL_PROFILE_A
     logic [N_DESC-1:0] live_desc;
     logic [N_CELL-1:0] live_cell;
     qid_t [N_DESC-1:0] owner_queue;
@@ -186,6 +188,7 @@ module pool_candidate_formal #(
                 end
         end
     end
+`endif
 
     always_ff @(posedge clk) begin
         past_valid <= 1;
@@ -198,6 +201,71 @@ module pool_candidate_formal #(
             assume(reserve_commit == '0 && !write_offer && tx_present == '0 && !cleanup_present);
     end
 
+`ifdef POOL_PROFILE_A
+    // Profile the DUT assertions with legality derived from the pre-edge DUT
+    // bitmaps. The frame ledger and F01 obligations are disabled in this mode.
+    typedef logic [CELL_COUNT_W+$clog2(N_RX)-1:0] reserve_sum_t;
+    localparam int RELEASE_SUM_W = $clog2(2**CELL_COUNT_W + N_TX);
+    typedef logic [RELEASE_SUM_W-1:0] release_sum_t;
+    reserve_sum_t reserved_prefix;
+    release_sum_t [N_Q-1:0] released;
+    int reserved_before;
+
+    // Count every encoded value before checking legality. Fully define both
+    // reductions even when the assertion and assumption sampling is disabled.
+    always_comb begin
+        reserved_prefix = '0;
+        released = '0;
+        for (int lane = 0; lane < N_RX; ++lane)
+            if (reserve_commit[lane])
+                reserved_prefix += reserve_sum_t'(reserve_cells[lane]);
+        for (int q = 0; q < N_Q; ++q)
+            for (int lane = 0; lane <= N_TX; ++lane)
+                if (credit_events[lane] && credit_queues[lane] == qid_t'(q))
+                    released[q] += release_sum_t'(credit_amounts[lane]);
+    end
+
+    assign reserved_before = $countones(dut.cells.free_bits) - int'(unreserved);
+
+    always @(posedge clk)
+        if (rst_n && caller_ready) begin
+            assume($countones(reserve_commit) <= $countones(dut.descriptors.free_bits));
+            for (int lane = 0; lane < N_RX; ++lane)
+                if (reserve_commit[lane])
+                    assume(reserve_cells[lane] > 0 && int'(reserve_cells[lane]) <= FRAME_CELLS);
+            assume(reserved_prefix <= reserve_sum_t'(unreserved));
+            if (write_offer)
+                assume(reserved_before > 0);
+            for (int lane = 0; lane < N_TX; ++lane)
+                if (tx_present[lane])
+                    assume(int'(tx_qid[lane]) / N_CLASS == lane);
+            if (cleanup_present) begin
+                assume(!dut.descriptors.free_bits[cleanup_desc]);
+                assume(cleanup_has_cell || cleanup_done);
+            end
+            if (desc_events[N_TX]) begin
+                assume(cleanup_released > 0 && int'(cleanup_released) <= FRAME_CELLS);
+                assume(int'(cleanup_released) + int'(write_offer) <=
+                       reserved_before + int'(cleanup_has_cell));
+            end else
+                assume(cleanup_released == 0);
+
+            for (int lane = 0; lane <= N_TX; ++lane) begin
+                if (cell_events[lane])
+                    assume(!dut.cells.free_bits[cell_ids[lane]]);
+                if (desc_events[lane])
+                    assume(!dut.descriptors.free_bits[desc_ids[lane]]);
+                for (int earlier = 0; earlier < lane; ++earlier) begin
+                    assume(!cell_events[lane] || !cell_events[earlier] || cell_ids[lane] != cell_ids[earlier]);
+                    assume(!(cell_events[lane] || desc_events[lane]) ||
+                           !(cell_events[earlier] || desc_events[earlier]) ||
+                           desc_ids[lane] != desc_ids[earlier]);
+                end
+            end
+            for (int q = 0; q < N_Q; ++q)
+                assume(released[q] <= release_sum_t'(held[q]));
+        end
+`else
 `ifndef POOL_ABSTRACT_CALLER
     // The frame ledger gives covers a live frame and actual selected cell
     // owner. It leaves stalls unconstrained in the ordinary runs.
@@ -511,4 +579,5 @@ module pool_candidate_formal #(
                      dut.accounting.release_cells[lane] == credit_amounts[lane]));
             end
     end
+`endif
 endmodule
