@@ -123,7 +123,38 @@
                     `uvm_fatal("DIRECTED_CONFIG", {"Missing required trigger ", required[index]})
         endfunction
 
+`ifdef POOL_CANDIDATE
+        string production_mutation;
+`endif
+
         function void divergence(string code, int edge_number, string detail = "");
+`ifdef POOL_CANDIDATE
+            if (production_mutation != "") begin
+                string required_detector;
+                int required_edge;
+                case (production_mutation)
+                    "return-bypass": begin
+                        required_detector = "CELL_PRE_FREE";
+                        required_edge = 32;
+                    end
+                    "drop-high-lane": begin
+                        required_detector = "TX_CELL_EVENT";
+                        required_edge = 19;
+                    end
+                    "credit-delta": begin
+                        required_detector = "REPORTED_COUNTS";
+                        required_edge = 4;
+                    end
+                    default: `uvm_fatal("POOL_MUTATION", "Unknown production mutation")
+                endcase
+                if (code == required_detector && edge_number == required_edge) begin
+                    $display("POOL_MUTATION_DETECTED %s %s edge=%0d %s",
+                             production_mutation, code, edge_number, detail);
+                    $display("POOL_MUTATION_DETECTED %s", production_mutation);
+                    $finish;
+                end
+            end
+`endif
             if (code != intended_fault || detected != "" || edge_number != fault_edge)
                 $fatal(1, "POOL_CHECK_FAILED %s %s edge=%0d %s", code, case_name, edge_number, detail);
             detected = code;
@@ -186,12 +217,12 @@
             random_features[NEXT_EDGE_REUSE] |= observed.reused_cell || observed.reused_desc;
         endfunction
 
-        function void check_seed_replay(pool_sample_t sample, pool_counts_t expected);
+        function void check_seed_replay(pool_sample_t sample);
             checked_edge_t record_data;
             logic [64*(($bits(checked_edge_t)+63)/64)-1:0] words;
             if (case_seed == 0)
                 return;
-            record_data = '{sample.reset_n, sample.initialized, normalize(sample.batch), expected};
+            record_data = '{sample.reset_n, sample.initialized, normalize(sample.batch), sample.counts};
             if (replay_seed) begin
                 if (sample.edge_number >= first_seed.size() || first_seed[sample.edge_number] !== record_data)
                     `uvm_fatal("SEED_REPLAY", $sformatf("Seed %0d diverged at edge %0d", case_seed, sample.edge_number))
@@ -204,6 +235,10 @@
             for (int offset = 0; offset < $bits(words); offset += 64)
                 signature = (signature ^ words[offset +: 64]) * 64'h100000001b3;
         endfunction
+
+`ifdef POOL_CANDIDATE
+        `include "pool_candidate_checks.svh"
+`endif
 
         function void write(pool_item transaction);
             pool_sample_t sample = transaction.sample;
@@ -221,8 +256,15 @@
                 divergence(failure, sample.edge_number);
             if (!sample.reset_n && model.running)
                 witnesses.before_reset(model);
+`ifdef POOL_CANDIDATE
+            check_candidate_pre(transaction, pre);
+`endif
             failure = model.advance(sample, pre, sample.edge_number, post);
             if (failure != "") begin
+`ifdef POOL_CANDIDATE
+                if (failure == "REPORTED_COUNTS")
+                    report_candidate_counts(pre, post, sample.counts);
+`endif
                 divergence(failure, sample.edge_number,
                            $sformatf("pre=%h expected_post=%h observed_post=%h", pre, post, sample.counts));
                 if (!isolated) begin
@@ -232,10 +274,18 @@
                 end
                 return;
             end
+`ifdef POOL_CANDIDATE
+            check_candidate_post(transaction);
+`endif
             observed = witnesses.observe(sample.batch);
+`ifdef POOL_CANDIDATE
+            observed.inactive_payload = transaction.inactive_payload;
+            observed.caller_guard = transaction.caller_guard;
+            observed.sparse_grants = transaction.commits[N_RX-1] && !transaction.commits[N_RX-2];
+`endif
             check_triggers(sample, observed, pre, post);
             sample_bins(sample, observed, pre);
-            check_seed_replay(sample, post);
+            check_seed_replay(sample);
             witnesses.remember(sample.batch, pre);
             last_checked = sample.edge_number;
         endfunction

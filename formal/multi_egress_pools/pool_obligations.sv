@@ -1,4 +1,4 @@
-// F01-compatible observer for a future production pool binding.
+// F01-compatible observer for the production pool binding.
 module multi_egress_pool_obligations #(
     parameter int N_RX = 2,
     parameter int N_TX = N_RX,
@@ -39,9 +39,14 @@ module multi_egress_pool_obligations #(
     logic history = 1'b0;
     logic [N_CELL-1:0] next_cell_free;
     logic [N_DESC-1:0] next_desc_free;
-    int expected_f, expected_u, expected_r, expected_a, expected_d;
-    int queue_delta[N_Q];
-    int after_credit, total_owned;
+    // Widen signed arithmetic enough to represent every encoded count and
+    // simultaneous lane delta, including an invalid underflow or overflow.
+    localparam int MATH_W = 1 + $clog2(
+        (N_Q + N_RX + N_TX + 4) * (2**KW - 1) + 2**DCW);
+    typedef logic signed [MATH_W-1:0] math_t;
+    math_t expected_f, expected_u, expected_r, expected_a, expected_d;
+    math_t queue_delta[N_Q];
+    math_t after_credit, total_owned;
     logic selected_witness_desc, returned_witness_desc, returned_witness_cell;
 
     always_comb begin
@@ -59,10 +64,10 @@ module multi_egress_pool_obligations #(
                 next_desc_free[release_id[i]] = 1;
         end
 
-        after_credit = int'(u_count);
-        expected_f = int'(f_count) + $countones(release_cell) - int'(write_cell);
-        expected_a = int'(a_count) - $countones(release_cell) + int'(write_cell);
-        expected_d = int'(d_count) + $countones(release_desc) - $countones(grant);
+        after_credit = math_t'(u_count);
+        expected_f = math_t'(f_count) + math_t'($countones(release_cell)) - math_t'(write_cell);
+        expected_a = math_t'(a_count) - math_t'($countones(release_cell)) + math_t'(write_cell);
+        expected_d = math_t'(d_count) + math_t'($countones(release_desc)) - math_t'($countones(grant));
         total_owned = 0;
         queue_delta = '{default:0};
         selected_witness_desc = 0;
@@ -70,23 +75,23 @@ module multi_egress_pool_obligations #(
         returned_witness_cell = 0;
         for (int i = 0; i < N_RX; ++i) begin
             if (grant[i]) begin
-                after_credit -= int'(grant_cells[i]);
-                queue_delta[grant_queue[i]] += int'(grant_cells[i]);
+                after_credit -= math_t'(grant_cells[i]);
+                queue_delta[grant_queue[i]] += math_t'(grant_cells[i]);
                 selected_witness_desc |= grant_desc[i] == witness_desc;
             end
         end
         for (int i = 0; i < N_TX; ++i)
             if (release_cell[i])
-                queue_delta[retire_queue[i]] -= 1;
+                queue_delta[retire_queue[i]] -= math_t'(1);
         if (cleanup_done)
-            queue_delta[cleanup_queue] -= int'(cleanup_credit);
+            queue_delta[cleanup_queue] -= math_t'(cleanup_credit);
         for (int q = 0; q < N_Q; ++q)
-            total_owned += int'(h_count[q]);
+            total_owned += math_t'(h_count[q]);
         for (int i = 0; i <= N_TX; ++i) begin
             returned_witness_desc |= release_desc[i] && release_id[i] == witness_desc;
             returned_witness_cell |= release_cell[i] && release_addr[i] == witness_cell;
         end
-        expected_u = after_credit + $countones(release_cell[N_TX-1:0]) + int'(cleanup_credit);
+        expected_u = after_credit + math_t'($countones(release_cell[N_TX-1:0])) + math_t'(cleanup_credit);
         expected_r = expected_f - expected_u;
     end
 
@@ -125,8 +130,8 @@ module multi_egress_pool_obligations #(
     for (genvar queue = 0; queue < N_Q; ++queue) begin : queues
         always @(posedge clk)
             if (history && reset_n && initialized && $past(reset_n && initialized))
-                a_queue_credit: assert(int'(h_count[queue]) ==
-                                       $past(int'(h_count[queue]) + queue_delta[queue]));
+                a_queue_credit: assert(math_t'(h_count[queue]) ==
+                                       $past(math_t'(h_count[queue]) + queue_delta[queue]));
     end
 
     always @(posedge clk) begin
@@ -137,11 +142,11 @@ module multi_egress_pool_obligations #(
         end
 
         if (reset_n && initialized) begin
-            a_physical_count: assert(int'(f_count) == $countones(cell_free));
-            a_descriptor_count: assert(int'(d_count) == $countones(desc_free));
-            a_conservation: assert(int'(f_count) == int'(u_count) + int'(r_count) &&
-                                  N_CELL == int'(a_count) + int'(f_count) &&
-                                  N_CELL == int'(u_count) + total_owned);
+            a_physical_count: assert(math_t'(f_count) == math_t'($countones(cell_free)));
+            a_descriptor_count: assert(math_t'(d_count) == math_t'($countones(desc_free)));
+            a_conservation: assert(math_t'(f_count) == math_t'(u_count) + math_t'(r_count) &&
+                                  math_t'(N_CELL) == math_t'(a_count) + math_t'(f_count) &&
+                                  math_t'(N_CELL) == math_t'(u_count) + total_owned);
             a_prefix_credit: assert(after_credit >= 0);
             a_materialize_old_free: assert(!write_cell || (cell_free[write_addr] && write_owner_matches));
             a_cleanup_atomic: assert(cleanup_done == release_desc[N_TX] &&
@@ -160,11 +165,11 @@ module multi_egress_pool_obligations #(
             if (history && $past(reset_n && initialized)) begin
                 a_cell_merge: assert(cell_free == $past(next_cell_free));
                 a_desc_merge: assert(desc_free == $past(next_desc_free));
-                a_merged_counts: assert(int'(f_count) == $past(expected_f) &&
-                                        int'(d_count) == $past(expected_d) &&
-                                        int'(u_count) == $past(expected_u) &&
-                                        int'(r_count) == $past(expected_r) &&
-                                        int'(a_count) == $past(expected_a));
+                a_merged_counts: assert(math_t'(f_count) == $past(expected_f) &&
+                                        math_t'(d_count) == $past(expected_d) &&
+                                        math_t'(u_count) == $past(expected_u) &&
+                                        math_t'(r_count) == $past(expected_r) &&
+                                        math_t'(a_count) == $past(expected_a));
                 c_cell_next_edge_reuse: cover($past(returned_witness_cell) &&
                                               write_cell && write_addr == witness_cell);
                 c_desc_next_edge_reuse: cover($past(returned_witness_desc) && selected_witness_desc);

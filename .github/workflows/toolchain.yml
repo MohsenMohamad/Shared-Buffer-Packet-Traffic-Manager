@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      pool_candidate_revision:
+        description: Full pool RTL commit SHA for independent qualification
+        required: false
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -154,11 +159,13 @@ jobs:
   pool-preparation:
     needs: prepare
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 90
     env:
       CXX: g++-14
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - name: Ensure native build prerequisites
         uses: ./.github/actions/native-prerequisites
       - name: Receive prepared installation
@@ -167,12 +174,36 @@ jobs:
           name: ${{ needs.prepare.outputs.artifact }}
           path: .build/toolchain-transfer
       - name: Unpack and validate; consumers never build
+        id: validate-toolchain
         run: |
           tar --zstd -xpf .build/toolchain-transfer/toolchain.tar.zst
           python3 tools/toolchain_cache.py validate
+      - name: Qualify the requested production pool revision
+        if: ${{ inputs.pool_candidate_revision != '' }}
+        env:
+          POOL_REVISION: ${{ inputs.pool_candidate_revision }}
+        run: |
+          [[ "$POOL_REVISION" =~ ^[0-9a-f]{40}$ ]]
+          make doctor
+          git fetch origin "$POOL_REVISION"
+          git worktree add --detach work/pool-candidate "$POOL_REVISION"
+          git -C work/pool-candidate -c user.name='Pool qualification' \
+            -c user.email='actions@users.noreply.github.com' merge --no-edit --no-ff "$GITHUB_SHA"
+          source .tools/activate.sh
+          export POOL_OUTPUT="$GITHUB_WORKSPACE/.build/runs"
+          cd work/pool-candidate
+          result=0
+          make multi-egress-pools-candidate JOBS=2 \
+            RUN_ARGS="--profile all --candidate-revision $POOL_REVISION --output $POOL_OUTPUT" || result=1
+          make multi-egress-pools-candidate JOBS=2 \
+            RUN_ARGS="--profile small --mutations --candidate-revision $POOL_REVISION --output $POOL_OUTPUT" || result=1
+          make multi-egress-pools-formal JOBS=2 \
+            RUN_ARGS="--profile all --candidate-revision $POOL_REVISION --output $POOL_OUTPUT --timeout 480" || result=1
+          exit "$result"
       - name: Replay both pool profiles
+        if: ${{ !cancelled() && steps.validate-toolchain.outcome == 'success' }}
         run: make multi-egress-pools-preparation JOBS=2
-      - name: Upload pool replay evidence
+      - name: Upload pool replay and requested qualification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

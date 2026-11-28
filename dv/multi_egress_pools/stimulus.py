@@ -466,3 +466,63 @@ def generate(root, profile):
                 offset += len(rows)
     save_triggers(root / "crosses.triggers", cross_triggers)
     (root / "templates.txt").write_text("\n".join(templates) + "\n")
+
+
+def generate_candidate(root, profile):
+    """Reuse frozen intent and replace the numeric endpoint witness with real scarcity."""
+    generate(root, profile)
+    state = Stimulus(profile)
+    first = state.provision(qid=0)
+    remaining = profile.cells - 2
+    for frames in range(profile.descriptors - 2, 0, -1):
+        budget = remaining // frames
+        state.provision(ingress=1, qid=1, budget=budget)
+        remaining -= budget
+    last = state.provision(qid=0, ingress=1)
+    state.edge(dispatch=[first])
+    repeated_tag = state.edge(returns=[first])
+    state.edge(dispatch=[last])
+    inactive = state.edge()
+    highest = state.edge(returns=[last])
+    state.drain()
+    cases = [Witness("identity-and-drain", state, {
+        "repeated-tag-shared-queue": repeated_tag, "zero-and-highest-IDs": highest,
+        "absent-fields": inactive, "exact-drain": len(state.rows) - 1,
+    })]
+
+    state = Stimulus(profile)
+    edge = state.edge(grants=state.grant_many(profile.ports - 1))
+    state.drain()
+    cases.append(Witness("sparse-grants", state, {"sparse-grants": edge}))
+
+    state = Stimulus(profile)
+    returning = state.provision(phase="tx")
+    first = state.provision(written=0, phase="rx", ingress=0, qid=1)
+    second = state.provision(written=0, phase="rx", ingress=1, qid=1)
+    state.fill_cells(2)
+    state.edge(write=(first, None), returns=[returning])
+    edge = state.edge(write=(second, None))
+    state.drain()
+    cases.append(Witness("cell-next-edge", state, {"live-cell-next-edge": edge}))
+
+    for case in cases:
+        save_rows(root / f"{case.name}.edges", profile, case.state.rows)
+        save_triggers(root / f"{case.name}.triggers", case.triggers)
+
+    state = Stimulus(profile)
+    previous = state.provision(phase="tx")
+    state.reset()
+    current = state.provision(phase="tx", budget=2)
+    stale = state.edge()
+    state.rows[stale][2].services[0] = Service(previous.owner, previous.addresses[0], True, True)
+    forged = state.edge()
+    state.rows[forged][2].services[0] = Service(current.owner, current.addresses[0], True, True)
+    state.drain()
+    layout = Layout(profile)
+    probes = {stale: 2, forged: 3}
+    (root / "caller-guards.edges").write_text("".join(
+        layout.row(*row, origin=probes.get(edge, 0)) + "\n"
+        for edge, row in enumerate(state.rows)))
+    save_triggers(root / "caller-guards.triggers", {
+        "stale-epoch-input": stale, "forged-final-input": forged, "exact-drain": len(state.rows) - 1,
+    })
