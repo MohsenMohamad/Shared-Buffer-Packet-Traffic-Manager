@@ -29,7 +29,8 @@
   ],
   "formal_sources": [
     "formal/multi_egress_pools/pool_obligations.sv",
-    "formal/multi_egress_pools/pool_candidate_formal.sv"
+    "formal/multi_egress_pools/pool_candidate_formal.sv",
+    "formal/multi_egress_pools/pool_safety_lemmas.sv"
   ],
   "include_dirs": [
     "rtl/include/multi_egress",

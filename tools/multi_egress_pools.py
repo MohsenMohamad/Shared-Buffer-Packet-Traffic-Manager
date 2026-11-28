@@ -42,7 +42,18 @@ PRODUCTION = (SV_SOURCES[0], *PRODUCTION_SOURCES, *PRODUCTION_HEADERS)
 CANDIDATE_DV = (DV + "pool_candidate_top.sv", DV + "pool_candidate.svh",
                 DV + "pool_candidate_checks.svh")
 FORMAL_DV = ("formal/multi_egress_pools/pool_obligations.sv",
-             "formal/multi_egress_pools/pool_candidate_formal.sv")
+             "formal/multi_egress_pools/pool_candidate_formal.sv",
+             "formal/multi_egress_pools/pool_safety_lemmas.sv")
+LEMMA_IDS = {
+    "selection": 0,
+    "cell-bitmap": 1,
+    "descriptor-bitmap": 2,
+    "credit-deltas": 3,
+    "credit-conservation": 4,
+    "reserved-credit": 5,
+    "reset-and-lanes": 6,
+    "caller-budget": 7,
+}
 CANDIDATE_MARKER = "POOL_CANDIDATE_PASS"
 TOP = "multi_egress_pool_replay"
 MARKER = "POOL_REPLAY_PASS"
@@ -335,10 +346,15 @@ def candidate_campaign(run, args, profile):
 def formal_campaign(run, args, profile):
     registry, digests = verify_candidate(args.candidate_revision)
     record_candidate(run, args.candidate_revision, digests)
-    jobs = (args.formal_mode,) if args.formal_mode else (
-        ("bmc", "prove", "cover", "exhaustion") if profile.ports == 2 else ("primary-prefix",))
+    if args.formal_mode == "lemmas":
+        jobs = (args.lemma,) if args.lemma else tuple(LEMMA_IDS)
+    elif args.formal_mode:
+        jobs = (args.formal_mode,)
+    else:
+        jobs = (*LEMMA_IDS, "cover", "exhaustion") if profile.ports == 2 else ("primary-prefix",)
     for mode in jobs:
         result = case(run, mode)
+        lemma = mode in LEMMA_IDS
         if mode == "exhaustion" and profile.ports != 2:
             result.finish("NOT_RUN", "Full cell-exhaustion cover is registered for the small profile")
             continue
@@ -350,19 +366,26 @@ def formal_campaign(run, args, profile):
             "primary-prefix": ("-DPOOL_PRIMARY_PREFIX_COVER", "c_primary_capacity"),
         }
         is_cover = mode == "cover" or mode in directed_covers
-        depth = args.depth or {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22, "primary-prefix": 7}[mode]
-        caller = args.formal_caller or ("ledger" if profile.ports == 2 else "aggregate")
+        depth = args.depth or (2 if lemma else
+                               {"prove": 4, "bmc": 6, "cover": 12, "exhaustion": 22, "primary-prefix": 7}[mode])
+        caller = "component-contract" if lemma else (
+            args.formal_caller or ("ledger" if profile.ports == 2 else "aggregate"))
         if mode == "exhaustion" and caller != "ledger":
             result.finish("NOT_RUN", "Directed capacity covers use the frame ledger")
             continue
-        inputs = (*registry["production_sources"], *registry["formal_sources"])
+        formal_inputs = registry["formal_sources"][-1:] if lemma else registry["formal_sources"][:-1]
+        inputs = (*registry["production_sources"], *formal_inputs)
         profile_id = int(profile.ports == 2)
         definitions = ["-DPOOL_ABSTRACT_CALLER"] if caller == "aggregate" else []
+        top = "pool_candidate_formal"
+        if lemma:
+            top = "pool_safety_lemmas"
+            definitions.append(f"-GLEMMA={LEMMA_IDS[mode]}")
         if mode in directed_covers:
             definitions.append(directed_covers[mode][0])
-        script = (f"read_slang --top pool_candidate_formal -GPROFILE={profile_id} "
+        script = (f"read_slang --top {top} -GPROFILE={profile_id} "
                   f"{' '.join(definitions)} -I. {' '.join(Path(path).name for path in inputs)}\n"
-                  "prep -top pool_candidate_formal")
+                  f"prep -top {top}")
         if mode == "cover":
             script += "\nchformal -cover -remove pool_candidate_formal/c:check_pool.c_cell_exhaustion"
         elif mode in directed_covers:
@@ -374,11 +397,11 @@ def formal_campaign(run, args, profile):
         files = "\n".join(str(ROOT / name) for name in (*inputs, *registry["production_headers"]))
         config = result.path / "pool.sby"
         engine = "smtbmc z3"
-        if mode == "prove":
+        if mode == "prove" or lemma:
             engine = "abc pdr" if args.proof_engine == "pdr" else "smtbmc --unroll z3"
         elif mode == "bmc" and args.bmc_engine == "abc":
             engine = "abc bmc3"
-        sby_mode = "cover" if is_cover else mode
+        sby_mode = "cover" if is_cover else "prove" if lemma else mode
         config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n"
                           f"[engines]\n{engine}\n[script]\n{script}\n[files]\n{files}\n")
         result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
@@ -405,7 +428,8 @@ def main(argv):
     parser.add_argument("--profile", choices=("primary", "small", "all"), default="all")
     parser.add_argument("--candidate-revision")
     parser.add_argument("--mutations", action="store_true")
-    parser.add_argument("--formal-mode", choices=("prove", "bmc", "cover", "exhaustion", "primary-prefix"))
+    parser.add_argument("--formal-mode", choices=("lemmas", "prove", "bmc", "cover", "exhaustion", "primary-prefix"))
+    parser.add_argument("--lemma", choices=LEMMA_IDS, help="Run one small-profile proof lemma")
     parser.add_argument("--proof-engine", choices=("pdr", "induction"))
     parser.add_argument("--bmc-engine", choices=("abc", "z3"), default="z3")
     parser.add_argument("--formal-caller", choices=("aggregate", "ledger"))
@@ -433,8 +457,12 @@ def main(argv):
         parser.error("--mutations requires the full small candidate selection")
     if formal and (args.seed or args.case):
         parser.error("Formal selection uses --formal-mode and --depth")
-    if args.proof_engine and (not formal or args.formal_mode != "prove"):
-        parser.error("--proof-engine requires --formal-mode prove")
+    if args.proof_engine and (not formal or args.formal_mode not in ("prove", "lemmas")):
+        parser.error("--proof-engine requires --formal-mode prove or lemmas")
+    if args.lemma and (not formal or args.formal_mode != "lemmas"):
+        parser.error("--lemma requires --formal-mode lemmas")
+    if args.formal_mode == "lemmas" and (args.profile != "small" or args.formal_caller):
+        parser.error("--formal-mode lemmas uses the small profile and its own component contracts")
     if args.bmc_engine == "abc" and (not formal or args.formal_mode != "bmc"):
         parser.error("--bmc-engine abc requires --formal-mode bmc")
     if not formal and (args.formal_mode or args.formal_caller or args.depth):
