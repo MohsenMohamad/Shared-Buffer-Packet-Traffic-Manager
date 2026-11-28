@@ -6,7 +6,161 @@ physical return and credit lanes, free bitmaps and all reported counts.
 It samples functional coverage after the entire edge passes. The candidate
 is the admission-owned commit interface in [PR #36](https://github.com/MohsenMohamad/Shared-Buffer-Packet-Traffic-Manager/pull/36).
 
-## Source identity
+## Component qualification at `4ff4105`
+
+The pre-merge pool component gate passed on the pinned candidate.
+The small 2×2 profile closed unbounded safety by composition. The
+primary gate passed its live campaign and full-capacity cover.
+
+### Revisions and tools
+
+| Role | Revision |
+| --- | --- |
+| Pinned PR #36 RTL | `4ff41054ce80cf5a59b053efdd610b982c297a43` |
+| PR #38 head at the start of the split | `0a1364135824de83b82ee28813f350a9fa7b4877` |
+| DV tested for the split | `76bbb75c87db1af0f85d01f4433c4826bef800c4` |
+| Combined proof checkout | `626cbec0e94ae2782830cd63d3bfb53f33581ac8` |
+| Effective proof tree | `0a307769e567b76197db49f2b9bda05985d41bcc` |
+| DV tested for live simulation and mutation qualification | `70814913affb3b28a5e433d751f4fdd771c7a9bd` |
+| Combined live and mutation tree | `fbd1ab20ea3f1ce37c369f1fa68d83673d8053bc` |
+
+Both disposable checkouts merged DV into the pinned candidate without
+conflicts. The component runner verifies the RTL and dependency lock
+bytes. The late DV changes affect formal sources and formal runner
+selection. The live bench, stimulus, checker and mutation definitions
+match the earlier tested DV revision.
+
+The locked toolchain passed `make doctor` at main
+`836aca88fc02e8184a61db317693962a0d44f9dc`. The runs used Yosys
+0.70+post (`28ba3cb926fe376fa05ebfc1b921747d011d4557`), Slang
+`545f88b2ed3a2d20325fbd17413af177a6bca72f`, the sv-elab frontend
+`9dcee13ea3862347e1715dc51f63e9f845cdd222`, SBY v0.71, Z3 5.4.1,
+ABC 1.01, Verilator 5.054, GCC 14.2.0 and Accellera UVM 2020.3.2.
+
+### Unbounded small-profile safety
+
+The 2×2 proofs use 16 cells, eight descriptors and eight queues. Each
+job elaborates the actual pool RTL with only the assertions for its
+property group. Caller inputs can change each sample. Each physical
+bitmap proof uses its own independent ownership mask. The
+reset and lane proof checks physical wiring and the pre-ready hold as
+well as the reset values. The component proof allows arbitrary later
+sampled resets and arbitrary traffic stalls.
+
+| Original obligation | Proof job | Premises and scope | Result |
+| --- | --- | --- | --- |
+| FP-ALLOC and FP-DESC pre-edge selection, no duplicate rank, committed-lane projection, holes and no same-edge return bypass | `selection` | Rank availability is checked for every encoding. The old-free grant implication uses the admission commit population bound. | Proved, k=1 |
+| FP-ALLOC physical lanes, allocation clear and distinct return sets, free population, assigned count and free/owned partition | `cell-bitmap`, `reset-and-lanes` | Every presented return identifies a distinct old owned cell. The allocated ID is the actual accepted write ID. The component proves ownership-mask complement and exact count update. | Proved, k=2 |
+| FP-DESC grant clear and distinct return sets, count bounds, free population and free/owned partition | `descriptor-bitmap`, `selection`, `reset-and-lanes` | Admission commits no more than the old free slots. Each descriptor return identifies a distinct old owner. | Proved, k=2 |
+| FP-CREDIT ordered old-U reservation budget and exact widened U and H deltas | `credit-deltas`, `reset-and-lanes` | Admission supplies a committed prefix within old U. Release spends old queue credit as discharged by `caller-budget`. Nonnegative reservation amounts make every prefix fit when the full sum fits. | Proved, k=2 |
+| FP-CREDIT queue and global bounds and U + sum(H) = N_CELL | `credit-conservation`, `credit-deltas`, `reset-and-lanes` | RTL routes all terms to exactly one queue and implements the widened deltas. The integer step uses the old invariant and the old-U and old-queue budgets. The RTL reset supplies the base and the pre-ready hold preserves it. | Proved, partition k=1 and integer step UNSAT |
+| FP-CREDIT old staged write, exact R transition, F = U + R and U ≤ F | `reserved-credit`, `cell-bitmap`, `caller-budget` | The cell population is imported from `cell-bitmap`. Distinct old cell returns and the old reservation prefix are component contracts. The caller lemma supplies old staged capacity and the joint write/cleanup budget. | Proved, k=2 |
+| Old per-queue release, final cleanup residual, and write plus cleanup spending | `caller-budget` | Distinct current-epoch owner groups partition old physical cells and held credit. A write owner has unstaged credit. Final cleanup releases its exact old credit and reclaims its last materialized cell when present. Each TX return spends one cell credit from a distinct live frame. | Proved, k=1 |
+| Initial and later reset, first release, no updates before ready, TX and cleanup lane fidelity | `reset-and-lanes`, bitmap jobs | Reset is sampled asserted initially. The proof checks the advertised physical lanes and counts directly. | Proved, k=2 |
+| Frame ownership, per-frame materialization, no stale references, H[q] as a sum of live reservations | Bitmap and credit transition jobs, `caller-budget` | Initial projections are empty. A caller that updates ownership and reservations using the proved event deltas preserves the projections. RX/TX/cleanup must establish owner, frame, epoch and lane fidelity at the integrated boundary. | Component transitions proved under the caller contract |
+
+The credit lane partition proves that the queue terms sum to the global
+reservation and release amounts. The integer check derives `U'` and
+each `H'[q]` from those terms, checks that the old premises are
+satisfiable, and proves the negation of next-edge conservation and
+bounds unsatisfiable. Those bounds justify storing the widened RTL
+deltas in the public count width.
+
+The physical and global credit deltas cancel the TX return term in
+`R' = F' - U'`, leaving
+
+```text
+R' = R + reserved_now - write + cleanup_cell_return - cleanup_credit_release
+```
+
+The caller groups and the capacities imply that old R equals the sum of
+their unstaged units. The write contributes one debit against its own
+unstaged units. Final cleanup contributes its old credit minus its
+reclaimed cell against a different owner. A partial cleanup releases no
+credit. The queue proof sums one unit per distinct TX owner and the
+exact final cleanup credit, then compares that sum with the old queue
+partition. It permits concurrent reservations to the same queue.
+
+The integrated admission block must still establish legal frame lengths,
+static or dynamic eligibility and the ordered old-credit prefix. RX must
+establish old staged ownership and tie an accepted ID to the memory
+write. TX must establish an accepted cell-final beat, current frame and
+epoch, and last-cell semantics for descriptor release. Cleanup must
+establish exclusive abort ownership and one residual release. Reset
+coordination and epoch retirement must prevent stale ownership at the
+real caller ports. These are explicit component input contracts and
+separate integration obligations.
+
+### Live, covers and fault detection
+
+| Check | Result |
+| --- | --- |
+| Primary live 4×4 | PASS. Descriptor 125/125 and cell 62/62 crosses, 413,706 checked edges. |
+| Small live 2×2 | PASS. Descriptor 51/51 and cell 38/38 crosses, 46,680 checked edges. |
+| Seeds and replay | Both profiles passed seeds 17, 31, 53, 67, 89, 113, 149 and 197, exact seed-17 replay and complete drain. |
+| Small full-ledger covers | All 15 general covers reached at steps 5–8. The grant, write, TX final and cell-bearing final cleanup reached step 7. TX and cleanup used the same queue. |
+| Small directed full-cell exhaustion | Reached at step 21. |
+| Primary capacity cover | Reached at step 6. |
+| Planted RTL faults | All three reached their named detector and each legal neighbor passed. Return bypass hit `CELL_PRE_FREE` at edge 32, dropped high TX return hit `TX_CELL_EVENT` at edge 19, and extra release credit hit `REPORTED_COUNTS` at edge 4. |
+
+### Symbolic inputs and earlier proof limits
+
+Each completed focused job has zero generated `$anyseq` cells in the prepared
+RTLIL. The final SMT2 models also contain zero generated `$anyseq`
+or `$anyconst` symbols.
+The exact jobs use the registered independent SV properties and the
+byte-exact production candidate with its optional RTL diagnostics disabled.
+
+The separate assertion-enabled config A diagnostic at `4ff4105` retained
+46 generated cells and 325 per-cycle bits, from inactive DUT
+assertion mux arms. Accounting contributes 269 bits, the cell pool 32,
+and the descriptor pool 24. The two sized and defaulted harness sums contribute
+zero. The `tm_resource_pools.check_conservation.accounted` assertion
+cone has 83 live AIG input bits and zero generated sequence bits. The
+diagnostic repeated the Slang duplicate-loop-label failure before
+removing eight labels in a scratch source copy. This preserved the
+assertion predicates and fatal bodies. The profiling model completed step
+6 in 541.28 s of wall time under shared CPU load and timed out in step 7.
+The earlier 274.31 s and 77.61 s figures below came from `d25566d`.
+
+| Earlier attempt on `4ff4105` | Scope and engine | Last result |
+| --- | --- | --- |
+| Unrestricted depth-22 BMC | Full ledger and F01, ABC `bmc3`, 1,800 s | Completed step 6 and timed out in step 7. |
+| Monolithic k-induction | Full ledger and F01, Z3, depth 4, 1,800 s | Base passed. Timed out in induction. |
+| Monolithic PDR | Full ledger and F01, ABC PDR, 1,800 s | Timed out before the full proof. |
+| First combined credit-preservation attempt | All eight RTL queue states plus U, Z3 k-induction, DV `6b66df0`, 180 s | Base completed through step 1. Induction timed out in the two-transition query. The successful rerun split lane partition and integer preservation. |
+| Cell bitmap PDR comparison | 16-cell bitmap, ownership complement, population and count updates, ABC PDR, DV `6b66df0`, 90 s | Last reported frame 16 with unresolved outputs. Z3 k-induction closed the same obligation. |
+
+The earlier directed depth-22 safety run through exhaustion remains a
+bounded result for the initial candidate and directed schedule.
+
+### Reproducing the split
+
+Activate the locked toolchain from the repository root and run the
+qualification in a detached merge.
+
+```sh
+export CXX=g++-14
+source .tools/activate.sh
+candidate=4ff41054ce80cf5a59b053efdd610b982c297a43
+dv_revision=76bbb75c87db1af0f85d01f4433c4826bef800c4
+git fetch origin pull/36/head pull/38/head
+git worktree add --detach work/pool-component-replay "$candidate"
+git -C work/pool-component-replay merge --no-edit --no-ff "$dv_revision"
+cd work/pool-component-replay
+make multi-egress-pools-formal RUN_ARGS="--profile all --candidate-revision $candidate --timeout 420"
+make multi-egress-pools-formal RUN_ARGS="--profile small --formal-mode lemmas --lemma credit-conservation --candidate-revision $candidate --timeout 120"
+make multi-egress-pools-candidate RUN_ARGS="--profile all --candidate-revision $candidate --timeout 1800 --build-timeout 1800"
+make multi-egress-pools-candidate RUN_ARGS="--profile small --mutations --candidate-revision $candidate --timeout 1200 --build-timeout 1200"
+```
+
+The stored case manifests contain the exact SymbiYosys and Z3 commands,
+generated configurations, source digests and outcome. The workspace
+retains the current runs under `work/pool-split` and the earlier
+candidate live campaign and assertion-enabled profile under
+`work/pool-requal`.
+
+## Initial candidate source identity
 
 | Input | Revision |
 | --- | --- |
@@ -211,7 +365,7 @@ combinations of the reported bits are admissible.
 | 6 | 274.31 | 77.61 | 80.08 |
 | 7 | Timeout after about 324 s wall | Timeout after about 515 s wall | Timeout after about 511 s wall |
 
-Completed-step timings are differences between ABC's cumulative CPU
+Completed-step timings are differences between ABC's cumulative wall
 timestamps, rounded to 0.01 seconds. Step 0 includes BMC initialization.
 Timeout intervals use SBY wall timestamps. All three runs completed
 step 6 and timed out in step 7.
@@ -245,7 +399,7 @@ sby -f -d work/bmc-profile/c/run work/bmc-profile/c/pool.sby
 | `caller-guards` edge 15 first reported `CALLER_DESCRIPTOR` before checking the guard. | Verification defect. Directed replay had cleared the probe marker. The marker now survives translation and returns update the caller mapping from observed physical lanes. |
 | The local frozen primary replay hit its 1,200-second limit while other jobs were running. The small job then read a source edited after its driver had loaded. | Tool contention and verification workspace error. The hosted frozen regression ran from an immutable checkout and passed both profiles. |
 
-## Reproduction
+## Initial candidate reproduction
 
 Use the prepared repository toolchain and start from the tested DV commit.
 The report retains identities of the executed DV and combined trees.
@@ -258,7 +412,7 @@ source .tools/activate.sh
 make doctor
 make multi-egress-pools-preparation
 candidate=d25566d0bed038bf28d73110c0bda6fad0d4ab5d
-dv_revision=$(git rev-parse HEAD)
+dv_revision=0a1364135824de83b82ee28813f350a9fa7b4877
 git fetch origin pull/36/head
 git worktree add --detach work/pool-qualification "$candidate"
 git -C work/pool-qualification merge --no-edit --no-ff "$dv_revision"
