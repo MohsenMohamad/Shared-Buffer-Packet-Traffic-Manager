@@ -343,9 +343,52 @@ def candidate_campaign(run, args, profile):
         bench_case(run, args, binary, fixtures, "candidate", args.case, marker=CANDIDATE_MARKER)
 
 
+def credit_preservation(result, profile, timeout):
+    """Discharge the one-edge integer step after proving the RTL deltas and lane partition."""
+    commands = ["(set-logic QF_LIA)", "(declare-const u Int)", "(assert (>= u 0))"]
+    old, added, returned, new = [], [], [], []
+    for queue in range(profile.queues):
+        held, add, release, next_held = (f"{prefix}{queue}" for prefix in ("h", "a", "r", "next_h"))
+        old.append(held)
+        added.append(add)
+        returned.append(release)
+        new.append(next_held)
+        for term in (held, add, release):
+            commands.extend((f"(declare-const {term} Int)", f"(assert (>= {term} 0))"))
+        commands.extend((f"(assert (<= {release} {held}))",
+                         f"(define-fun {next_held} () Int (- (+ {held} {add}) {release}))"))
+    capacity = profile.cells
+    commands.extend((
+        f"(assert (= (+ u {' '.join(old)}) {capacity}))",
+        f"(assert (<= (+ {' '.join(added)}) u))",
+        f"(define-fun next_u () Int (- (+ u {' '.join(returned)}) (+ {' '.join(added)})))",
+        "(check-sat)",
+    ))
+    bounds = " ".join(f"(<= 0 {value} {capacity})" for value in ("next_u", *new))
+    commands.extend((f"(assert (not (and (= (+ next_u {' '.join(new)}) {capacity}) {bounds})))",
+                     "(check-sat)"))
+    certificate = result.path / "credit_preservation.smt2"
+    certificate.write_text("\n".join(commands) + "\n")
+    result.data["artifacts"]["credit_preservation"] = str(certificate)
+    step = result.execute(["z3", "-smt2", certificate], timeout=timeout, stem="credit-preservation")
+    status, reason = completed(step, "unsat")
+    answers = output(step).split()
+    if status == "PASS" and answers == ["sat", "unsat"]:
+        return status, None
+    if answers == ["sat", "sat"]:
+        return "FAIL", "The integer step permits a credit invariant violation"
+    if status == "PASS":
+        return "TOOL_ERROR", "Expected satisfiable premises and an unsatisfiable violation"
+    return status, reason
+
+
 def formal_campaign(run, args, profile):
+    from formal_symbols import check_sources
+
     registry, digests = verify_candidate(args.candidate_revision)
     record_candidate(run, args.candidate_revision, digests)
+    check_sources([ROOT / source for source in registry["formal_sources"]],
+                  [ROOT / directory for directory in registry["include_dirs"]])
     if args.formal_mode == "lemmas":
         jobs = (args.lemma,) if args.lemma else tuple(LEMMA_IDS)
     elif args.formal_mode:
@@ -402,10 +445,12 @@ def formal_campaign(run, args, profile):
         elif mode == "bmc" and args.bmc_engine == "abc":
             engine = "abc bmc3"
         sby_mode = "cover" if is_cover else "prove" if lemma else mode
-        config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n"
+        watchdog = f"timeout {max(1, int(args.timeout))}\n" if lemma else ""
+        config.write_text(f"[options]\nmode {sby_mode}\ndepth {depth}\n{watchdog}"
                           f"[engines]\n{engine}\n[script]\n{script}\n[files]\n{files}\n")
         result.data["artifacts"].update(formal_config=str(config), traces=str(result.path / "work"))
-        step = result.execute(["sby", "-f", "-d", result.path / "work", config], timeout=args.timeout)
+        step = result.execute(["sby", "-f", "-d", result.path / "work", config],
+                              timeout=args.timeout + (5 if lemma else 0))
         status, reason = completed(step, "DONE (PASS")
         transcript = output(step)
         reached = [{"step": int(edge), "name": name} for edge, name in re.findall(
@@ -414,11 +459,24 @@ def formal_campaign(run, args, profile):
             status, reason = "TOOL_ERROR", "Formal tool reported no executed cover"
         if status == "TOOL_ERROR" and "DONE (UNKNOWN" in transcript:
             status, reason = "INCONCLUSIVE", "Engine did not establish the induction step"
+        if "DONE (TIMEOUT" in transcript:
+            status, reason = "TIMEOUT", "SymbiYosys reached its wall-clock limit"
         if status == "TOOL_ERROR" and "DONE (FAIL" in transcript:
             status = "INCONCLUSIVE" if sby_mode == "cover" else "FAIL"
             reason = "Required cover not reached within depth" if sby_mode == "cover" else "Formal counterexample"
+        proof_model = {}
+        if status == "PASS" and lemma:
+            prepared = (result.path / "work/model/design_prep.il").read_text()
+            proof_model = {
+                "assertion_cells": len(re.findall(r"^  cell \$assert ", prepared, re.M)),
+                "anyseq_cells": len(re.findall(r"^  cell \$anyseq ", prepared, re.M)),
+            }
+            if proof_model["assertion_cells"] == 0:
+                status, reason = "TOOL_ERROR", "Focused proof has no elaborated assertions"
+        if status == "PASS" and mode == "credit-conservation":
+            status, reason = credit_preservation(result, profile, args.timeout)
         result.finish(status, reason, mode=sby_mode, depth=depth, engine=engine,
-                      caller=caller, parameters=vars(profile), reached_covers=reached)
+                      caller=caller, parameters=vars(profile), reached_covers=reached, **proof_model)
 
 
 def main(argv):
@@ -469,7 +527,7 @@ def main(argv):
         parser.error("Formal options require the formal target")
     source_paths = [*SOURCES, CANDIDATE_SET, *PRODUCTION, *CANDIDATE_DV] if candidate or formal else SOURCES
     if formal:
-        source_paths += list(FORMAL_DV)
+        source_paths += [*FORMAL_DV, "tools/formal_symbols.py"]
 
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     env_file = ROOT / ".tools/environment.json"

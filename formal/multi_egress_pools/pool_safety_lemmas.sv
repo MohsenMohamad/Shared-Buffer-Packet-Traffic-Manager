@@ -185,12 +185,13 @@ module pool_safety_lemmas #(
 
     if (LEMMA == 3 || LEMMA == 4) begin : credit
         math_t [N_Q-1:0] added, returned, next_held;
-        math_t next_unreserved, total;
+        math_t next_unreserved, total_added, total_returned;
         always_comb begin
             added = '0;
             returned = '0;
             next_held = '0;
-            total = math_t'(unreserved);
+            total_added = '0;
+            total_returned = '0;
             next_unreserved = math_t'(unreserved) + returned_credit - reserved_now;
             for (int queue_index = 0; queue_index < N_Q; queue_index++) begin
                 for (int lane = 0; lane < N_RX; lane++)
@@ -203,46 +204,37 @@ module pool_safety_lemmas #(
                     returned[queue_index] += cleanup_amount;
                 next_held[queue_index] = math_t'(held[queue_index]) +
                                          added[queue_index] - returned[queue_index];
-                total += math_t'(held[queue_index]);
+                total_added += added[queue_index];
+                total_returned += returned[queue_index];
             end
-        end
-
-        always @(posedge clk)
-            if (active)
-                c_old_reservation_budget: assume(reserved_now <= math_t'(unreserved));
-
-        for (genvar queue_index = 0; queue_index < N_Q; queue_index++) begin : queues
-            always @(posedge clk)
-                if (active)
-                    c_old_queue_credit: assume(returned[queue_index] <= math_t'(held[queue_index]));
         end
 
         if (LEMMA == 3) begin : deltas
             always @(posedge clk) begin
-                if (active)
+                if (active) begin
+                    c_old_reservation_budget: assume(reserved_now <= math_t'(unreserved));
                     a_wide_unreserved: assert(math_t'(dut.accounting.unreserved_next) == next_unreserved);
+                end
                 if (history && rst_n && $past(active))
                     a_stored_unreserved: assert(unreserved == cell_count_t'($past(next_unreserved)));
             end
             for (genvar queue_index = 0; queue_index < N_Q; queue_index++) begin : queues
                 always @(posedge clk) begin
-                    if (active)
+                    if (active) begin
+                        c_old_queue_credit: assume(returned[queue_index] <= math_t'(held[queue_index]));
                         a_wide_held: assert(math_t'(dut.accounting.g_held[queue_index].held_next) ==
                                             next_held[queue_index]);
+                    end
                     if (history && rst_n && $past(active))
                         a_stored_held: assert(held[queue_index] == cell_count_t'($past(next_held[queue_index])));
                 end
             end
-        end else begin : conservation
-            always @(posedge clk)
-                if (history && rst_n) begin
-                    a_total: assert(total == math_t'(N_CELL));
-                    a_unreserved_bound: assert(math_t'(unreserved) <= math_t'(N_CELL));
-                end
-            for (genvar queue_index = 0; queue_index < N_Q; queue_index++) begin : queues
-                always @(posedge clk)
-                    if (history && rst_n)
-                        a_held_bound: assert(math_t'(held[queue_index]) <= math_t'(N_CELL));
+        end else begin : partition
+            // Each encoded queue is in range. The per-queue terms used in
+            // the widened RTL deltas account for every lane exactly once.
+            always @(posedge clk) begin
+                a_reservations: assert(total_added == reserved_now);
+                a_releases: assert(total_returned == returned_credit);
             end
         end
     end
@@ -297,6 +289,12 @@ module pool_safety_lemmas #(
                     a_reset: assert((&dut.cells.free_bits) && (&dut.descriptors.free_bits) &&
                         free_cells == cell_count_t'(N_CELL) && free_desc == desc_count_t'(N_DESC) &&
                         unreserved == cell_count_t'(N_CELL) && reserved_free == '0 && held == '0);
+                if ($past(rst_n && !ready))
+                    a_wait_for_ready: assert(
+                        dut.cells.free_bits == $past(dut.cells.free_bits) &&
+                        dut.descriptors.free_bits == $past(dut.descriptors.free_bits) &&
+                        free_cells == $past(free_cells) && free_desc == $past(free_desc) &&
+                        unreserved == $past(unreserved) && held == $past(held));
             end
             a_cell_routing: assert(dut.cells.return_present == cell_returns &&
                                    dut.cells.return_cell == returned_cells);
