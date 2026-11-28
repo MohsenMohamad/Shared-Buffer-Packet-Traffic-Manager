@@ -438,6 +438,11 @@ module pool_candidate_formal #(
             c_final_with_cell: cover(cleanup_present && cleanup_done && cleanup_has_cell);
             c_high_and_cleanup: cover(cell_events[N_TX-1] && cell_events[N_TX] &&
                                       cell_ids[N_TX-1] != cell_ids[N_TX]);
+`ifndef POOL_ABSTRACT_CALLER
+            c_grant_write_tx_cleanup: cover((|reserve_commit) && write_offer &&
+                tx_present[0] && tx_final[0] && cleanup_present && cleanup_done &&
+                cleanup_has_cell && tx_qid[0] == cleanup_qid);
+`endif
         end
     end
 

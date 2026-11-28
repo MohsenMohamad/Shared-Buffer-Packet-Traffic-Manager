@@ -26,7 +26,10 @@ module pool_safety_lemmas #(
     input desc_id_t write_owner,
     input cell_count_t write_credit, write_materialized,
     input cell_count_t cleanup_credit, cleanup_materialized,
-    input cell_count_t other_credit, other_materialized
+    input cell_count_t other_credit, other_materialized,
+    input qid_t budget_queue,
+    input cell_count_t [N_TX-1:0] retiring_credit,
+    input cell_count_t other_queue_credit
 );
     logic ready, write_accept;
     logic [N_RX-1:0] rank_valid;
@@ -311,7 +314,7 @@ module pool_safety_lemmas #(
     end
 
     if (LEMMA == 7) begin : caller
-        math_t all_credit, all_materialized, old_reserved;
+        math_t all_credit, all_materialized, old_reserved, queue_owners, queue_released;
         always_comb begin
             all_credit = math_t'(other_credit);
             all_materialized = math_t'(other_materialized);
@@ -325,6 +328,34 @@ module pool_safety_lemmas #(
             end
         end
         assign old_reserved = math_t'(free_cells) - math_t'(unreserved);
+
+        always_comb begin
+            queue_owners = math_t'(other_queue_credit);
+            queue_released = '0;
+            for (int lane = 0; lane < N_TX; lane++)
+                if (tx_present[lane] && tx_qid[lane] == budget_queue) begin
+                    queue_owners += math_t'(retiring_credit[lane]);
+                    queue_released += math_t'(1);
+                end
+            if (cleanup_retires && cleanup_qid == budget_queue) begin
+                queue_owners += math_t'(cleanup_credit);
+                queue_released += cleanup_amount;
+            end
+        end
+
+        for (genvar lane = 0; lane < N_TX; lane++) begin : release_owners
+            always @(posedge clk)
+                if (active && tx_present[lane]) begin
+                    c_live_credit: assume(retiring_credit[lane] > 0);
+                    if (cleanup_retires)
+                        c_cleanup_distinct: assume(tx_desc[lane] != cleanup_desc);
+                end
+            for (genvar prior = 0; prior < lane; prior++) begin : distinct
+                always @(posedge clk)
+                    if (active && tx_present[lane] && tx_present[prior])
+                        c_tx_distinct: assume(tx_desc[lane] != tx_desc[prior]);
+            end
+        end
 
         always @(posedge clk)
             if (active) begin
@@ -342,10 +373,12 @@ module pool_safety_lemmas #(
                         cleanup_credit != 0 && cleanup_materialized == cell_count_t'(cleanup_returns_cell));
                 else
                     c_no_early_release: assume(cleanup_released == 0);
+                c_queue_partition: assume(queue_owners == math_t'(held[budget_queue]));
 
                 a_old_stage: assert(!write_offer || old_reserved > 0);
                 a_joint_spend: assert(math_t'(write_offer) + cleanup_amount <=
                                       old_reserved + math_t'(cleanup_returns_cell));
+                a_old_queue_credit: assert(queue_released <= math_t'(held[budget_queue]));
             end
     end
 endmodule
